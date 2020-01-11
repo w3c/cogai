@@ -16,4 +16,4 @@ This is a JavaScript file that can be used with NodeJS to map the XML file expor
 
 * rules.chk
 
-A collection of rules expressed as chunks that handle different kinds of visual alert, e.g. approaching a junction, stopping at the junction itself, and cruising away following turning at a junction.
+A collection of rules expressed as chunks that handle different kinds of visual alert, e.g. searching for a route, approaching a junction, stopping at the junction itself, and cruising away following turning at a junction.
