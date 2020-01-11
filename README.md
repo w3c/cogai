@@ -33,3 +33,5 @@ We anticipate using GitHub for documents, issue tracking and open source compone
 ## Program of work
 
 The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work.
+
+p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
