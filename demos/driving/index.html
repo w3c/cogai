@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Autonomous driving demo for chunk rules</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="drive.js"></script>
+<style>
+	body {
+	}
+	canvas {
+		border: 1px solid black;
+		perspective: 400px;
+		transform-style: preserve-3d;
+		background-color: #EEE;
+	 }
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	#footnote {
+		font-size: smaller;
+	}
+	#footnote img {
+		height: 2.5em;
+		vertical-align: middle;
+		float:left;
+		margin-right: 5px;
+	}
+	p button[type=button] {
+		font-size: 1rem
+	}
+</style>
+</head>
+<body>
+<h1>Autonomous driving demo for chunk rules</h1>
+
+<p>This is a demo of a cognitive agent driving a car along a route in simulated road network for the UK town of Frome, Somerset, using data exported from Open Street Maps as XML, transformed into chunks, and indexed into a quad tree for efficient rendering. The aim of the demo is to show how a cognitive agent can dynamically manage a variety of cognitive tasks involving different kinds of reasoning. For more details, see <a href="../chunks.html">chunks and rules</a>. Other background <a href="#model">below</a>.</p>
+
+<p><button type="button" id="start">&#9199;</button>
+<button type="button" id="in">&#xFF0B; Zoom in</button>
+<button type="button" id="out">&#xFF0D; Zoom out</button>
+<button type="button" id="centre">&#x2609; Centre</button></p>
+</h1>
+
+<canvas id="road" width="800" height="600"></canvas>
+
+<p id="model">The map data is represented in terms of chunks for the map's bounding box, and multiple paths and points. Each road consists of one or more paths. Each path defines a sequence of points. Each point defines a location as latitude and longitude. Both paths and points may have additional metadata. Paths form a taxonomy reflecting the different categories of roads, e.g. trunk, primary, secondary, tertiary, unclassified, residential and so forth.</p>
+
+<p>The spatial indexing uses quad chunks to form a tree that progressively divides the map's bounding box into four equal rectangles, which themselves are so divided, and so forth. Each quad has a bounding box, a set of subpaths, and a set of child quads. The root quad has the set of paths. The Cohen-Sutherland algorithm is used to split paths into subpaths that fit within a given quad's bounding box.</p>
+
+<p>Console:</p>
+<pre id='log'>
+</pre>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732, project <a href="https://boost40.eu/">Boost 4.0</a></p>
+</div>
+
+</body>
+</html>

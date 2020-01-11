@@ -1,0 +1,132 @@
+# task to search for a route and place it in goal graph
+
+rule {
+   @condition c1
+   @action a1
+}
+navigate c1 {
+   @module goal
+   origin ?origin
+   destination ?destination
+}
+search a1 {
+   @module goal
+   @invoke search
+   origin ?origin
+   destination ?destination
+}
+
+rule {
+   @condition c2
+   @action a2, a3
+}
+start c2 {
+   route ?route
+}
+action a2 {
+   @module car
+   @invoke cruise
+   speed 30
+   route ?route
+}
+alert a3 {
+   @module goal
+   @invoke clear
+}
+
+# task for turn alert - an imminent turn
+
+rule {
+   @condition c3
+   @action a4
+}
+alert c3 {
+   @module goal
+   kind turn
+   turn ?id
+}
+turn a4 {
+   @module goal
+   @invoke recall
+   @id ?id
+}
+
+rule {
+   @condition c4
+   @action a5, a6, a7
+}
+turn c4 {
+   @module goal
+   @id ?id
+   signal ?direction
+}
+action a5 {
+   @module car
+   @invoke brake
+   turn ?id
+}
+action a6 {
+   @module car
+   @invoke signal
+   signal ?direction
+}
+alert a7 {
+   @module goal
+   @invoke clear
+}
+
+# task for stop alert - stopped at a junction
+
+rule {
+   @condition c5
+   @action a8, a9, a10
+}
+alert c5 {
+   @module goal
+   kind stop
+}
+action a8 {
+   @module car
+   @invoke steer
+   mode turn
+}
+action a9 {
+   @module car
+   @invoke cruise
+   speed 20
+}
+alert a10 {
+   @module goal
+   @invoke clear
+}
+
+# task for cruise alert - after a turn
+
+rule {
+   @condition c6
+   @action a11, a12, a13, a14
+}
+alert c6 {
+   @module goal
+   kind cruise
+   speed ?speed
+}
+action a11 {
+   @module car
+   @invoke steer
+   mode normal
+}
+action a12 {
+   @module car
+   @invoke cruise
+   speed ?speed
+}
+action a13 {
+   @module car
+   @invoke signal
+   signal none
+}
+alert a14 {
+   @module goal
+   @invoke clear
+}
