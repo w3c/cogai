@@ -1,0 +1,32 @@
+increment {
+  first 1
+  second 2
+}
+increment {
+  first 2
+  second 3
+}
+increment {
+  first 3
+  second 4
+}
+increment {
+  first 4
+  second 5
+}
+increment {
+  first 5
+  second 6
+}
+increment {
+  first 6
+  second 7
+}
+increment {
+  first 7
+  second 8
+}
+increment {
+  first 8
+  second 9
+}

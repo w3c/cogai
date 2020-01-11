@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Demo for chunk production rules</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="counting.js"></script>
+<style>
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	button {
+		font-style: italic;
+		font-weight: bold;
+		font-size: larger;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: middle;
+	}
+</style>
+</head>
+<body>
+<h1>Demo for chunk production rules</h1>
+
+<p>This is a demo of a production rule language that operates on chunks. This was inspired by the ACT-R cognitive architecture, and this demo models how people count up from a given number, e.g. 3, 4, 5. A chunk is essentially a node with a type, an id, and a set of property/value pairs. A value is a boolean, number, name or an array thereof. Names are used for named constants, chunk identifiers and named variables in rules. Names beginning with @ are reserved for use as metadata in rules. The facts graph defines chunks with type "increment" that give the successor for a given number. This model is limited to 1 to 9. A more complicated model would understand how to count beyond 9 by introducing a ten's digit as well as the unit's digit and so forth.</p>
+
+<p>Press <em>Start</em> to initiate/restart the demo, and then <em>Next</em> to execute a single step. More details are given in the <a href="#explanation">explanation</a> at the end of this page. See also <a href="../chunks.html">information on chunks and rules</a>.</p>
+
+<p>Console:</p>
+<pre id='log'>
+</pre>
+
+<p>Execute rules, one at a time: <button type="button" id="start">Start</button> <button type="button" id="next">Next</button></p>
+
+<p>Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p>Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<h2 id="explanation">Explanation</h2>
+
+<p>Digital transformation is driving a rapid growth of interest in semantic technologies and the adoption of graph data. However, as the size of the vocabularies scale up and up, it will be impractical to continue to use current approaches for manual development. Instead we will need to exploit machine learning for vocabularies and rulesets, with people taking on the role of teachers who instruct and assess performance and coverage. This demo provides a proof of concept for chunk based graphs plus an associated production rule language, and is inspired by ACT-R's <a href="http://act-r.psy.cmu.edu/wordpress/wp-content/themes/ACT-R/tutorials/unit1.htm">rule language</a>. <a href="http://act-r.psy.cmu.edu/">ACT-R</a> is a popular cognitive architecture, which has been widely used in Cognitive Science with considerable success in modelling human behaviour and neural activity, whether doing mental arithmetic or driving a car.</p>
+
+<p>The approach involves a goal directed rule language that operates on resource constrained buffers, rather than directly on graph databases. Decoupling the rule engine from the databases minimises scaling problems with ever larger databases, and allows for remote databases, something of interest for digital transformation where there are multiple information stores across the enterprise.</p>
+
+<p>Moreover, it reflects what Cognitive Neuroscience tells us about the architecture of the brain, in which the cortex acts like a collection of graph databases that are networked to rule engine implemented by the basal ganglia and thalamus. The brain can thus be compared to the Web in respect to the role of request/response message pairs exchanged between the rule engine as a client and the databases as servers. A further comparison is that the rule engine executes sequentially like human consciousness, while the databases can be likened to Web search engines which use massive parallel computation analogous to the human cortex.</p>
+
+<p>This demo has buffers for goals and facts, plus an output buffer. Each buffer can hold a single chunk. Rule actions can either update the buffers directly, or send requests to the associated database modules, where the responses are used to update the buffers. The requests are either to recall a chunk or to remember a chunk. Rules actions update the output buffer to output a chunk. Rule conditions match the contents of the buffers. Rules include local variables to bind actions to the buffer contents matched by the conditions.</p>
+
+<p>ACT-R only supports very simple queries in which you specify the chunk type and properties and get back a matching chunk. This raises the question of what would be possible with more powerful queries, and how that would impact machine learning. Are simpler rule languages easier for machine learning? On the other hand, more powerful queries have the potential to boost performance through efficient execution by the database engine. For further context, see the demos for <a href="../patterns.html">simple pattern matching, inspired by SPARQL</a> and for <a href="../shapes.html">queries based on transition networks, which can support basic inference, e.g. over taxonomies</a>.</p>
+
+<p>To address the uncertainty and incomplete knowledge, there is a need to combine symbolic and statistical approaches. ACT-R implements a stochastic model of declarative memory that mimics the characteristics of human memory. It also supports learning of rules via heuristics and reinforcement learning, along with performance improvements through repetition.  This isn't part of this particular demo, but will be featured in a future demo. Note that unlike traditional databases, Web search engines use statistical approaches to find the most relevant matches to queries, just like the human brain.</p>
+
+<p>This demo allows rules to update the current goal. A more sophisticated approach would allow rules to propose subgoals, with the rule engine keeping track of which goals are waiting to be addressed. This is a first step to enabling the agent to remember what it has done, i.e. an episodic memory, which will be needed for reasoning over past experience, and for applying reinforcement learning to rulesets. A future demo will address the distinction between short term memory and the requirements for inductive learning over the long term, inspired by what we know of the relationship between the hippocampus and the cortex.</p>
+
+<p>The Semantic Web has focused on formal logic. This work, by contrast, focuses on graph traversal and manipulation, adopting the <a href="https://en.wikipedia.org/wiki/Relativism">philosophy of relativism</a> in which views are relative to differences in perception and consideration. There is no universal, objective truth according to relativism; rather each point of view has its own truth. Further work is planned on demonstrating reasoning from within and across multiple perspectives, and on combining symbolic and statistical approaches, drawing upon decades of work in Cognitive Psychology and related disciplines.</p>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732, project <a href="https://boost40.eu/">Boost 4.0</a></p>
+</div>
+
+</body>
+</html>
