@@ -34,4 +34,10 @@ We anticipate using GitHub for documents, issue tracking and open source compone
 
 The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work.
 
+## Cognitive Architecture
+
+The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex.
+
+![Image of cognitive architecture as a set of modules connected via the cortex](https://www.w3.org/Data/demos/chunks/cogarch.jpg)
+
 p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
