@@ -40,15 +40,15 @@ These are at a very early stage of consideration, and need work on selecting the
 
 ### Learning from examples
 
-This focuses on techniques for learning knowledge graphs from potentially noisy examples, using fully supervised, weakly supervised or unsupervised learning algorithms.  A further demo would look at the potential for using reinforcement learning when imagining carrying out some sequence of actions.
+This focuses on techniques for learning knowledge graphs from potentially noisy examples, using fully supervised, weakly supervised or unsupervised learning algorithms.
 
 ### Learning Rulesets for Tasks
 
-This focuses on hierarchical reinforcement learning, and will explore techniques for applying heuristics to propose/revise rules along with a stochastic temperature controlling the level of caution in making changes.
+This focuses on hierarchical reinforcement learning, and will explore techniques for applying heuristics to propose/revise rules along with a stochastic temperature parameter controlling the level of caution in making changes.  A further demo would look at the potential for using reinforcement learning when imagining carrying out some sequence of actions.
 
 ### Different Kinds of Reasoning
 
-A suite of demos exploring different kinds of reasoning, e.g. inductive, abductive, causal, and so forth.
+A suite of demos exploring different kinds of reasoning, e.g. inductive, abductive, causal, reasoning from multiple perspectives, and so forth.
 
 ### Social Interaction and Theory of Mind
 
