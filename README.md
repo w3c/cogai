@@ -36,8 +36,10 @@ The initial focus is to describe the aims for a sequence of demonstrators, to co
 
 ## Cognitive Architecture
 
-The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex.
+The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex. The initial focus of work is on a chunk rule engine inspired by John Anderson's ACT-R. Future work will look at the other building blocks.
 
 ![Image of cognitive architecture as a set of modules connected via the cortex](https://www.w3.org/Data/demos/chunks/cogarch.jpg)
+
+
 
 p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
