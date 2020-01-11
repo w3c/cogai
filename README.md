@@ -14,11 +14,11 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
 * Collaboration on defining use cases, requirements and datasets for use in demonstrators
 * Work on open source implementations and scaling experiments
 * Work on identifying application areas, e.g.
-** Work on open source implementations and scaling experiments
-** Cognitive agents in support of customer services 
-** Smart chatbots for personal healthcare
-** Autonomous vehicles
-** Smart manufacturing
+  * Work on open source implementations and scaling experiments
+  * Cognitive agents in support of customer services 
+  * Smart chatbots for personal healthcare
+  * Autonomous vehicles
+  * Smart manufacturing
 * Outreach to explain the huge opportunities for Cognitive AI
 * Participation is open to all, free of charge: [join group](https://www.w3.org/community/cogai/join)
 
