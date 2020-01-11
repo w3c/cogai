@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Decision tree demo for chunk rules</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="decision.js"></script>
+<style>
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	button {
+		font-style: italic;
+		font-weight: bold;
+		font-size: larger;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: middle;
+	}
+</style>
+</head>
+<body>
+<p><img style="float:right;margin-left:1em" src="tree.png" alt="decision tree"></p>
+
+<h1>Decision tree demo for chunk rules</h1>
+
+<p>This is a demo of decision trees implemented as chunk rules, and inspired by a <a href="http://www2.cs.uregina.ca/~dbd/cs831/notes/ml/dtrees/c4.5/tutorial.html">tutorial for ID3</a>. The aim is to decide whether to play a round of golf based upon today's weather. A future demo will show how such decision trees can be induced from examples that potentially include some errors. A separate rule is needed for each arrow shown in the decision tree diagram. See more <a href="../chunks.html">information on chunks and rules</a>.</p>
+
+<p>The demo starts by setting a goal chunk describing the weather. This is randomly initialised to make it a little more interesting. The rule for the initial goal considers the weather outlook. If it is sunny, rules are used to consider the humidity. If it is rainy, other rules consider whether it is too windy for play to be enjoyable. The decision is written to the output module. Note that this demo doesn't use the facts module.</p>
+
+<p>Press <em>Start</em> to initiate/restart the demo, and then <em>Next</em> to execute a single step.</p>
+
+<p>Console:</p>
+<pre id='log'>
+</pre>
+
+<p>Execute rules, one at a time: <button type="button" id="start">Start</button> <button type="button" id="next">Next</button></p>
+
+<p>Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732, project <a href="https://boost40.eu/">Boost 4.0</a></p>
+</div>
+
+</body>
+</html>
