@@ -16,12 +16,30 @@ An extended version of this demo could be developed to count beyond 9 with furth
 
 * https://www.w3.org/Data/demos/chunks/decision-tree/
 
-This demo is borrowed from an old tutorial for ID3, and decides whether the weather is suitable for playing a game of golf. The weather conditions are randomly generated. The demo just uses the rules module with a decision tree implemented as a succession of rules. A future demo will cover machine learning of decision trees from examples.
+This demo is borrowed from an old tutorial for ID3, and decides whether the weather is suitable for playing a game of golf. The weather conditions are randomly generated. The demo just uses the rules module with a decision tree implemented as a succession of rules. A future demo will cover machine learning of decision trees from examples. This will be followed by a suite of demos exploring machine learning of declararive and procedural knowledge, including the use of imagination/planning, case-based reasoning, and hierarchical reinforcement learning.
 
 ## Autonomous Driving (under construction)
 
 * https://www.w3.org/Data/demos/chunks/driving/
 
-This demo simulates driving a car across a town. The map data was exported from Open Street Maps to an XML file, and converted into a file in the chunks format. The map is modelled as points with latitude and longitude, and paths as a sequence of points that denote a road or footpath. The A* algorithm is used to find a route between any two points.
+This demo simulates driving a car across a town, as a task familiar to most of us. The map data was exported from Open Street Maps to an XML file, and converted into a file in the chunks format. The map is modelled as points with latitude and longitude, and paths as a sequence of points that denote a road or footpath. The A* algorithm is used to find a route between any two points.
 
 Vision is modelled in terms of the position of the car in the lane and the change of direction of the road at a gaze point ahead of the car. Road signs and upcoming junctions trigger alerts. The cognitive agent controls the car in terms of braking or acceleration, signalling at junctions, and switching the steering mode  between lane following, and traversing a junction.  Steering and braking/accelerating are devolved to real-time control loops mimicking the cortico cerebellar circuit.
+
+## Natural Language Dialogues and Situational Plans (under consideration)
+
+This demo features a dialogue between three cognitive agents represent a waiter at a restaurant, and two visitors who are having dinner together. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
+
+Natural language is processed a word at a time, and mapped to a chunk graph that represents the meaning. This involves a lexicon of words, a simplified treatment of parts of speech and gramatical categories, and the use of spreading activation for word sense disambiguation, and bindings for prepositional phrases and pronouns etc.
+
+## Further demos
+
+These are at a very early stage of consideration, and need work on selecting the scenarios, detailed use cases, and associated datasets.
+
+### Learning from examples
+
+This focuses on techniques for learning knowledge graphs from potentially noisy examples, using fully supervised, weakly supervised or unsupervised learning algorithms.
+
+### Learning Tasks
+
+This focuses on hierarchical reinforcement learning, and will explore techniques for applying heuristics to propose/revise rules along with a stochastic temperature controlling the level of caution in making changes.
