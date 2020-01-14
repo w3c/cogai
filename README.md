@@ -41,6 +41,6 @@ The following diagram depicts how cognitive agents can be built as a collection 
 
 ![Image of cognitive architecture as a set of modules connected via the cortex](https://www.w3.org/Data/demos/chunks/cogarch.jpg)
 
-
+Perception involves interpreting sensor data, focusing attention on things of interest, and placing short lived representations in the cortex. Feelings is about fast, intuitive assessments of the current situation and potential courses of action. Thought is slower and more deliberate, involving sequential execution of rules to carry out particular tasks. Thought can be expressed at many different levels of abstraction. Action is about carrying out actions initiated under conscious control, leaving the mind free to work on other things. An example is playing a musical instrument where muscle memory is needed to control your finger placements as thinking explicitly about each finger would be far too slow. 
 
 p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
