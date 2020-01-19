@@ -42,4 +42,4 @@ Natural language processing can be modelled as a series of stages that form a pi
 
 Grammatical structure is treated in terms of dependencies, e.g. adjectives on nouns, and different slots for verbs, e.g. subject and object. Word sense ambibiguities are resolved through spreading activation, and likewise for resolution of references, and for prepositional attachment. This corresponds to a cognitive treatment of statistical parsing.
 
-Future demos will look at how to handle previously unseen words and phrases, learning from the context, and by asking questions during a dialogue.
+Future demos will look at how to handle previously unseen words and phrases, in terms of learning from the context, and by asking questions during a dialogue.
