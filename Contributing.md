@@ -54,7 +54,7 @@ Cognitive agents could likewise be applied to customer support, perhaps as a poi
 
 For autonomous driving, cognitive agents that can reason and learn from experience have an obvious role, taking the place of a human driver. Autonomous driving further provides a rich opportunity for looking at ways to improve computer vision and scene understanding, that moves beyond the limitations of today's deep learning solutions.
 
-Smart manufacturing is another exiting opportunity for exploiting cognitive agents across the factory floor, supply chain and the enterprise as a whole. This includes cyber-physical control of manufacturing machinery, and flexible adaptive planning that optimises the use of expensive assets in the face of the complication of bespoke products, disruptions to the supply chain and the need to take machinery out of operation for predictive maintenance.
+Smart manufacturing is another exciting opportunity for exploiting cognitive agents across the factory floor, supply chain and the enterprise as a whole. This includes cyber-physical control of manufacturing machinery, and flexible adaptive planning that optimises the use of expensive assets in the face of the complication of bespoke products, disruptions to the supply chain and the need to take machinery out of operation for predictive maintenance.
 
 Your help is sought for exploring application areas in more detail, and identifying the best prospects for early adoption of Cognitive AI solutions. This will involve a dialogue between the people focusing on the technical challenges and those who are focused on business and other opportunties for exploiting Cognitive AI.
 
