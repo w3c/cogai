@@ -24,7 +24,7 @@ W: Would you like anything to drink?
 C:Yes, a bottle of red wine please.
 ```
 
-From the [English the international language](https://www.english-the-international-language.com/edrst.php) website.
+From the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.
 
 The food and drinks menu and the special dishes for the day could be taken from a real restaurant. The food and drink could be classified with a taxonomy along with a model of the customer's preferences. The choices made by the customer could involve a random element rather than always picking the same things. The above example assumes a husband and wife, and could be extended to include a dialogue between them, as well as allowing for each of them to speak individually to the waiter.
 
@@ -32,7 +32,7 @@ The food and drinks menu and the special dishes for the day could be taken from 
 
 The taxonomy, and the customer preferences could be modelled using chunks. Likewise, for a generic plan for a meal with subplan for the different stages, including variations such as asking fo a window table, or a table by the open fire.
 
-The utterances from the example dialogues can be used to populate the lexicon, and to devise the target chunk graphs corresponding to each utterance. The natural language input processing then corresponds to generating the chunk graph from the word sequence for a give utterance, and the reverse process for natural language generation.
+The utterances from the example dialogues can be used to populate the lexicon, and to devise the target chunk graphs corresponding to each utterance. The natural language input processing then corresponds to generating the chunk graph from the word sequence for a given utterance, and vice versa for natural language generation.
 
 Written language is a very recent phenomena compared to spoken language in respect to the evolution of modern humans. As such, it makes sense to ignore features specific to writing, e.g. upper/lower case and punctuation, and to therefore treat each utterance as a sequence of words independent of such features. Common abbreviations such as "I'll" can be treated as single word that is distinct from the word "ill", given that these have different pronunciations.
 
