@@ -40,9 +40,11 @@ These are at a very early stage of consideration, and need work on selecting the
 
 ### Learning from examples
 
-This will be a series of demos focusing on techniques for learning knowledge graphs and decision trees from potentially noisy examples, using fully supervised, weakly supervised, or unsupervised learning algorithms using metrics for parsimonious representations. We're looking for help with surveying the literature for relevant algorithms and datasets. Here are just a few pointers:
+This will be a series of demos focusing on techniques for learning knowledge graphs and decision trees from potentially noisy examples, using strongly supervised, weakly supervised, and unsupervised learning algorithms based on metrics for parsimonious representations. We're looking for help with surveying the literature for relevant algorithms and datasets. Here are just a few pointers:
 
+* [Tour of machine learning algorithms](https://machinelearningmastery.com/a-tour-of-machine-learning-algorithms/), including regression, instance-based, regularisation, decision-trees, bayesian, clustering, association rule learning, artificial neural networks, deep learning, dimensionality reduction, ensemble and other machine learning algorithms.
 * [CHREST](http://chrest.info/chrest.html) (Chunk Hierarchy and REtrieval STructures) is a symbolic cognitive architecture which treats long term memory as a discrimination network that sorts and stores chunks. This is also very relevant to demos exploring stimulus-response as a basis for feelings and emotions.
+* [Automatic taxonomy construction](https://en.wikipedia.org/wiki/Automatic_taxonomy_construction) from a corpus of examples.
 * [Quinlan's ID3 algorithm](https://hunch.net/~coms-4771/quinlan.pdf) describes a means to inductively learn decision trees from examples.
 * [Covariance analysis](http://www.biostathandbook.com/ancova.html) provides a means to test for statistical significance of correlations in datasets.
 * [Knowledge Graph Refinement](http://semantic-web-journal.net/system/files/swj1167.pdf) - a survey of approaches and evaluation methods.
@@ -55,13 +57,13 @@ This focuses on hierarchical reinforcement learning, and will explore techniques
 
 A suite of demos exploring different kinds of reasoning, e.g. inductive, abductive, causal, reasoning from multiple perspectives, and so forth.
 
+### Feelings and Emotions
+
+One or more demos that explore how feelings can be processed via a feed forward network that models fast and instinctive emotional classifications involving the limbic system, and how these interact with thought using the separate cortico basal-ganglia circuit.
+
 ### Social Interaction and Theory of Mind
 
 A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents.
-
-### Feelings and Emotions
-
-One or more demos that explore how feelings can be processed via a feed forward network that models fast and instinctive emotional classifications and how these interact with thought using the separate cortico basal-ganglia circuit.
 
 ### Using Natural Language to Teach Everyday skills
 
