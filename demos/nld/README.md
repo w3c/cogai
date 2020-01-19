@@ -6,7 +6,8 @@ Natural language is processed a word at a time, and mapped to a chunk graph that
 
 Here is an example dialogue involving a waiter and customer:
 
-```W: Good evening.
+```
+W: Good evening.
 C: A table for two please.
 W: Certainly. Just here, sir.
 C: Could we sit by the window?
@@ -20,9 +21,10 @@ C: Oh dear. What do you recommend?
 W: The steak pie is very good.
 C: OK I'll have that.
 W: Would you like anything to drink?
-C:Yes, a bottle of red wine please.```
+C:Yes, a bottle of red wine please.
+```
 
-From: the [English the international language](https://www.english-the-international-language.com/edrst.php) website.
+From the [English the international language](https://www.english-the-international-language.com/edrst.php) website.
 
 The food and drinks menu and the special dishes for the day could be taken from a real restaurant. The food and drink could be classified with a taxonomy along with a model of the customer's preferences. The choices made by the customer could involve a random element rather than always picking the same things. The above example assumes a husband and wife, and could be extended to include a dialogue between them, as well as allowing for each of them to speak individually to the waiter.
 
