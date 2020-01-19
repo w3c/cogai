@@ -40,7 +40,12 @@ These are at a very early stage of consideration, and need work on selecting the
 
 ### Learning from examples
 
-This focuses on techniques for learning knowledge graphs from potentially noisy examples, using fully supervised, weakly supervised or unsupervised learning algorithms.
+This will be a series of demos focusing on techniques for learning knowledge graphs and decision trees from potentially noisy examples, using fully supervised, weakly supervised, or unsupervised learning algorithms using metrics for parsimonious representations. We're looking for help with surveying the literature for relevant algorithms and datasets. Here are just a few pointers:
+
+* [CHREST](http://chrest.info/chrest.html) (Chunk Hierarchy and REtrieval STructures) is a symbolic cognitive architecture which treats long term memory as a discrimination network that sorts and stores chunks. This is also very relevant to demos exploring stimulus-response as a basis for feelings and emotions.
+* [Quinlan's ID3 algorithm](https://hunch.net/~coms-4771/quinlan.pdf) describes a means to inductively learn decision trees from examples.
+* [Covariance analysis](http://www.biostathandbook.com/ancova.html) provides a means to test for statistical significance of correlations in datasets.
+* [Knowledge Graph Refinement](http://semantic-web-journal.net/system/files/swj1167.pdf) - a survey of approaches and evaluation methods.
 
 ### Learning Rulesets for Tasks
 
