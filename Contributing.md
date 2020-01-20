@@ -12,6 +12,7 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
   * Helping non-programmers to work with data
   * Cognitive agents in support of customer services
   * Smart chatbots for personal healthcare
+  * Assistants for detecting and responding to cyberattacks
   * Autonomous vehicles
   * Smart manufacturing
 * Outreach to explain the huge opportunities for Cognitive AI
