@@ -41,6 +41,8 @@ In parallel with work on the technical challenges, we want to study opportunitie
  * Helping non-programmers to work with data
  * Cognitive agents in support of customer services
  * Smart chatbots for personal healthcare
+ * Assistants for detecting and responding to cyberattacks
+ * Teaching assistants for self-paced online learning
  * Autonomous vehicles
  * Smart manufacturing
  
