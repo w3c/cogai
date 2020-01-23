@@ -61,7 +61,7 @@ A suite of demos exploring different kinds of reasoning, e.g. inductive, abducti
 
 ### Feelings and Emotions
 
-One or more demos that explore how feelings can be processed via a feed forward network that models fast and instinctive emotional classifications involving the limbic system, and how these interact with thought using the separate cortico basal-ganglia circuit.
+One or more demos that explore how feelings can be processed via a feed forward network that models fast and instinctive emotional classifications involving the limbic system, and how these interact with thought using the separate cortico basal-ganglia circuit. The [anterior cingulate cortex](https://en.wikipedia.org/wiki/Anterior_cingulate_cortex) is a component of the limbic system that supports higher-level functions, such as attention allocation, reward anticipation, decision-making, ethics and morality, impulse control (e.g. performance monitoring and error detection), and emotion.
 
 ### Social Interaction and Theory of Mind
 
