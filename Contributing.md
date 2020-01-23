@@ -34,7 +34,7 @@ To be able to convince a wide audience, we aim to provide Web based demos that p
 
 Further work is anticipated to add support for remote cognitive databases that are accessed via HTTPS or Web Sockets, using NodeJS. Simple memory based graphs can readily scale to perhaps hundreds of MB, but to go further, it is likely that we will need to develop a database implementation using memory mapped files of up to a hundred GB or so. To go even further, we can look forward to databases distributed across server farms, along with hardware redundancy for resilient operation. We're looking for help with developing high performance large scale open source cognitive databases!
 
-## Identifying application areas
+## Identifying and analysing application areas
 
 In parallel with work on the technical challenges, we want to study opportunities for applications of Cognitive AI, including:
 
