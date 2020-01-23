@@ -13,7 +13,7 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
 
 * Collaboration on defining use cases, requirements and datasets for use in demonstrators
 * Work on open source implementations and scaling experiments
-* Work on identifying application areas, e.g.
+* Work on identifying and analysing application areas, e.g.
   * Helping non-programmers to work with data
   * Cognitive agents in support of customer services 
   * Smart chatbots for personal healthcare
