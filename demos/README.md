@@ -2,7 +2,7 @@
 
 This page documents plans for developing a sequence of demonstrators that focus on different technical challenges, and together highlight the potential for Cognitive AI. The demos should be based upon cognitively plausible techniques involving graph data, graph rules and graph algorithms.
 
-## Counting
+## [Counting](counting/README.md)
 
 * https://www.w3.org/Data/demos/chunks/counting/
 
@@ -12,13 +12,13 @@ It generates a sequence of digits by counting up from an start value and ends wi
 
 An extended version of this demo could be developed to count beyond 9 with further rules and facts that support tens, hundreds and thousands etc.
 
-## Simple Decision Trees
+## [Simple Decision Trees](decision-tree/README.md)
 
 * https://www.w3.org/Data/demos/chunks/decision-tree/
 
 This demo is borrowed from an old tutorial for ID3, and decides whether the weather is suitable for playing a game of golf. The weather conditions are randomly generated. The demo just uses the rules module with a decision tree implemented as a succession of rules. A future demo will cover machine learning of decision trees from examples. This will be followed by a suite of demos exploring machine learning of declararive and procedural knowledge, including the use of imagination/planning, case-based reasoning, and hierarchical reinforcement learning.
 
-## Autonomous Driving (under construction)
+## [Autonomous Driving](driving/README.md) (under construction)
 
 * https://www.w3.org/Data/demos/chunks/driving/
 
@@ -28,7 +28,7 @@ Vision is modelled in terms of the position of the car in the lane and the chang
 
 An extended version of this demo could include multiple road users, including pedestrians, cyclists and other cars, each simulated by a separate cognitive agent. This could be further combined with work on learning from experience and reasoning about how to handle new situations.
 
-## Natural Language Dialogues and Situational Plans (under consideration)
+## [Natural Language Dialogues and Situational Plans](nld/README.md) (under consideration)
 
 This demo features a dialogue between three cognitive agents represent a waiter at a restaurant, and two visitors who are having dinner together. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
 
