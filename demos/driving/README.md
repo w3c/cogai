@@ -8,7 +8,7 @@ Vision is modelled in terms of the position of the car in the lane and the chang
 
 An extended version of this demo could include multiple road users, including pedestrians, cyclists and other cars, each simulated by a separate cognitive agent. This could be further combined with work on learning from experience and reasoning about how to handle new situations.
 
-Visual attention while driving presents interesting research opportunities to explore attention switching in rich visual environments. The eye scans the environment to provide a rough classification. Attention is then directed to what is most relevant at this particular time, e.g. to read a road sign such as a speed limit, to assess a pedestrian crossing the road in the distance, or to note an oncoming car moving into your lane in the distance, so that it can pass parked vehicles blocking its lane. What's considered interesting depends on the context, and is related to a model of control for where the eye is looking at any particular moment.
+Visual attention while driving presents interesting research opportunities to explore attention switching in rich visual environments. The eye scans the environment to provide a rough classification. Attention is then directed to what is most relevant at this particular time, e.g. to read a road sign such as a speed limit, to assess a pedestrian crossing the road in the distance, or to note an oncoming car moving into your lane in the distance, as well as adjusting the planned track to pass any parked vehicles blocking this car's lane. What's considered interesting depends on the context, and is related to a model of control for where the eye is looking at any particular moment.
 
 ## Files
 
