@@ -21,7 +21,7 @@ C: Oh dear. What do you recommend?
 W: The steak pie is very good.
 C: OK I'll have that.
 W: Would you like anything to drink?
-C:Yes, a bottle of red wine please.
+C: Yes, a bottle of red wine please.
 ```
 
 From the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.
@@ -30,7 +30,7 @@ The food and drinks menu and the special dishes for the day could be taken from 
 
 ### Implementation ideas
 
-The taxonomy, and the customer preferences could be modelled using chunks. Likewise, for a generic plan for a meal with subplan for the different stages, including variations such as asking fo a window table, or a table by the open fire.
+The taxonomy, and the customer preferences could be modelled using chunks. Likewise, for a generic plan for a meal with subplan for the different stages, including variations such as asking for a window table, or a table by the open fire.
 
 The utterances from the example dialogues can be used to populate the lexicon, and to devise the target chunk graphs corresponding to each utterance. The natural language input processing then corresponds to generating the chunk graph from the word sequence for a given utterance, and vice versa for natural language generation.
 
