@@ -1,6 +1,6 @@
 # Demonstrators
 
-This page documents plans for developing a sequence of demonstrators that focus on different technical challenges, and together highlight the potential for Cognitive AI. The demos should be based upon cognitively plausible techniques involving graph data, graph rules and graph algorithms.
+This page documents plans for developing a sequence of demonstrators that focus on different technical challenges, and together highlight the potential for Cognitive AI. The demos should be based upon cognitively plausible techniques involving graph data, graph rules and graph algorithms. Further demos will seek to apply these techniques to specific application areas.
 
 ## [Counting](counting/README.md)
 
