@@ -24,7 +24,7 @@ W: Would you like anything to drink?
 C: Yes, a bottle of red wine please.
 ```
 
-From the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.
+*From the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
 
 The food and drinks menu and the special dishes for the day could be taken from a real restaurant. The food and drink could be classified with a taxonomy along with a model of the customer's preferences. The choices made by the customer could involve a random element rather than always picking the same things. The above example assumes a husband and wife, and could be extended to include a dialogue between them, as well as allowing for each of them to speak individually to the waiter.
 
@@ -42,4 +42,4 @@ Natural language processing can be modelled as a series of stages that form a pi
 
 Grammatical structure is treated in terms of dependencies, e.g. adjectives on nouns, and different slots for verbs, e.g. subject and object. Word sense ambiguities are resolved through spreading activation, and likewise for resolution of references, and for prepositional attachment. This corresponds to a cognitive treatment of statistical parsing.
 
-Future demos will look at how to handle previously unseen words and phrases, in terms of learning from the context, and by asking questions during a dialogue.
+Traditional approaches to statistical parsing involve the need for training against very large datasets. By comparison humans are able to learn from relatively few examples. This demo will take a pragmatic approach as a starting point for further work. Future demos will look at how to handle previously unseen words and phrases, in terms of learning from the context, and by asking questions during a dialogue.
