@@ -69,4 +69,4 @@ A multi-agent demo that explores how agents can represent and reason with models
 
 ### Using Natural Language to Teach Everyday skills
 
-Demos that explore the potential for using natural language for teaching and evaluating everyday skills (also known as "commonsense".
+Demos that explore the potential for using natural language for teaching and evaluating everyday skills (also known as "commonsense". These would build upon the progress made in the other demos, e.g. work on natural language, machine learning and attention allocation.
