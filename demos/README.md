@@ -65,7 +65,7 @@ One or more demos that explore how feelings can be processed via a feed forward 
 
 ### Social Interaction and Theory of Mind
 
-A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents. A further demo would build in that to explore what is involved in supporting empathy, compassion and emotional intelligence.
+A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents. A further demo would build on that to explore what is involved in supporting empathy, compassion and emotional intelligence.
 
 ### Using Natural Language to Teach Everyday skills
 
