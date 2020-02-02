@@ -8,7 +8,7 @@ This page documents plans for developing a sequence of demonstrators that focus 
 
 This demo is borrowed from a tutorial for the popular Cognitive Science architecture [ACT-R](http://act-r.psy.cmu.edu/). The demo serves as an introduction to chunks and rules.
 
-It generates a sequence of digits by counting up from an start value and ends with a finish value. This is done using three rules. One to commence the counting task, a second rule to advance to the next digit, and a third rule to terminate the task after reaching the target value. The demo recalls chunks from the facts module that give the successor digit, e.g. 5 comes after 4.
+It generates a sequence of digits by counting up from an start value and ends with a finish value. This is done using three rules. One to commence the counting task, a second rule to advance to the next digit, and a third rule to terminate the task after reaching the target value. The demo recalls chunks from the facts module that give the successor digit, e.g. 5 comes after 4. The demo starts by injecting a chunk into the goal buffer to trigger the task.
 
 An extended version of this demo could be developed to count beyond 9 with further rules and facts that support tens, hundreds and thousands etc.
 
@@ -70,3 +70,11 @@ A multi-agent demo that explores how agents can represent and reason with models
 ### Using Natural Language to Teach Everyday skills
 
 Demos that explore the potential for using natural language for teaching and evaluating everyday skills (also known as "commonsense". These would build upon the progress made in the other demos, e.g. work on natural language, machine learning and attention allocation.
+
+### Evolutionary Approaches to Visual Perception
+
+Humans are able to recognise foreground objects and their structure from just a few examples, despite wide variations in orientation, size, backgrounds and lighting conditions. In addition, we're able to understand scenes using a combination of a wide angle low resolution sensor and a narrow angle high resolution sensor, necessitating saccades as the eye swivels to scan areas of interest. The means to replicate these capabilities will be explored via evolutionary approaches using progressively more complex scenes to refine neural networks and control systems.
+
+### Acquisition of Muscle Memory
+
+The cortico cerebellar circuit supports real-time control over many muscles using sensory relayed via the cortex as a means of carrying out actions devolved to it by the cortico basal ganglia circuit. A series of demos will explore the potential for acquisition of [muscle memory](https://en.wikipedia.org/wiki/Muscle_memory) in terms of a hierarchy of automata, and the progressive reduction of the need for conscious attention and control through successive repetitions of each action.
