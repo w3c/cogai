@@ -77,4 +77,4 @@ Humans are able to recognise foreground objects and their structure from just a 
 
 ### Acquisition of Muscle Memory
 
-The cortico cerebellar circuit supports real-time control over many muscles using sensory relayed via the cortex as a means of carrying out actions devolved to it by the cortico basal ganglia circuit. A series of demos will explore the potential for acquisition of [muscle memory](https://en.wikipedia.org/wiki/Muscle_memory) in terms of a hierarchy of automata, and the progressive reduction of the need for conscious attention and control through successive repetitions of each action.
+The cortico cerebellar circuit supports real-time control over many muscles using sensory data relayed via the cortex as a means of carrying out actions devolved to it by the cortico basal ganglia circuit. A series of demos will explore the potential for acquisition of [muscle memory](https://en.wikipedia.org/wiki/Muscle_memory) in terms of a hierarchy of automata, and the progressive reduction of the need for conscious attention and control through successive repetitions of each action.
