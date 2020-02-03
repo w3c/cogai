@@ -57,7 +57,7 @@ This focuses on hierarchical reinforcement learning, and will explore techniques
 
 ### Different Kinds of Reasoning
 
-A suite of demos exploring different kinds of reasoning, e.g. deductive, inductive, abductive, causal, reasoning from multiple perspectives, reasoning about stories, and so forth.
+A suite of demos exploring different kinds of reasoning, e.g. deductive, inductive, abductive, causal, reasoning from multiple perspectives, reasoning about stories, and so forth. In some cases, this will involve the use of context chains where some things only hold in a particular context, whilst others hold more generally.
 
 ### Feelings and Emotions
 
