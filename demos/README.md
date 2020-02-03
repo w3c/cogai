@@ -75,7 +75,7 @@ Demos that explore the potential for using natural language for teaching and eva
 
 Humans are able to recognise foreground objects and their structure from just a few examples, despite wide variations in orientation, size, backgrounds and lighting conditions. We're able to understand scenes using a combination of a wide angle low resolution sensor and a narrow angle high resolution sensor, necessitating saccades as the eye swivels to scan areas of interest. The means to replicate these capabilities will be explored via evolutionary approaches using progressively more complex scenes to refine neural networks and control systems.
 
-Learning how to differentiate the foreground from the background can be facilitated through relative movement, whether caused by movement of the foreground object or by moving the visual sensor. This shows the importance of using video rather than static images. This likewise applies to learning part-whole relationships, e.g. through observing movement of limbs relative to an animal's body, and learning to distinguish different gaits.
+Learning how to differentiate the foreground from the background can be facilitated through relative movement, whether caused by movement of the foreground object or by moving the visual sensor. This shows the importance of using video rather than static images. This likewise applies to learning part-whole relationships, e.g. through observing movement of limbs relative to an animal's body, and learning to distinguish different gaits. A cognitive approach to visual perception can draw inspiration from studies of [saccades](https://en.wikipedia.org/wiki/Saccade) in human vision.
 
 ### Acquisition of Muscle Memory
 
