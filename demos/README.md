@@ -80,7 +80,7 @@ One means for assessing children's ability is to use false-belief tests. Here is
 * While she is gone, Anne takes the marble from the basket and puts it in the box.
 * When Sally returns, children who have watched this scenario are asked where they think Sally will look for the marble.
 
-Theory mind enables children to answer "in her basket" on the basis that Sally doesn't know that Anne has moved it to the box. This ability can be modelled in a cognitive agent via the use of a separate context graph for Sally and Anne. The demo builds upon the work on natural language dialogues in an earlier demo, and extends it to include contexts, actions and queries.
+Theory mind enables children to answer "in her basket" on the basis that Sally doesn't know that Anne has moved it to the box, because Sally couldn't see Anne move it when Sally was out of the room. This ability can be modelled in a cognitive agent via the use of a separate context graph for Sally and Anne. The demo builds upon the work on natural language dialogues in an earlier demo, and extends it to include contexts, beliefs, observations, actions and queries.
 
 ### Using Natural Language to Teach Everyday skills
 
