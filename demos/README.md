@@ -65,7 +65,22 @@ One or more demos that explore how feelings can be processed via a feed forward 
 
 ### Social Interaction and Theory of Mind
 
-A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents. A further demo would build on that to explore what is involved in supporting empathy, compassion and emotional intelligence.
+A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents. A further demo would build on that to explore what is involved in supporting empathy, compassion and emotional intelligence. Theory of mind is an important social-cognitive skill that emerges in early childhood. It allows people to infer the intentions of others along with their hopes, fears, beliefs and expectations. For instance (from [verywellmind.com](https://www.verywellmind.com/theory-of-mind-4176826)):
+
+1. The understanding that the reasons why people might want something may differ from one person to the next
+2. The understanding that people can have different beliefs about the same thing or situation
+3. The understanding that people may not comprehend or have the knowledge that something is true
+4. The understanding that people can hold false beliefs about the world
+5. The understanding that people can have hidden emotions, or that they may act one way while feeling another way
+
+One means for assessing children's ability is to use false-belief tests. Here is an example in which children are shown two dolls named Sally and Anne.
+
+* Sally has a basket while Anne has a box.
+* Sally places a marble in her basket and then leaves the room.
+* While she is gone, Anne takes the marble from the basket and puts it in the box.
+* When Sally returns, children who have watched this scenario are asked where they think Sally will look for the marble.
+
+Theory mind enables children to answer "in her basket" on the basis that Sally doesn't know that Anne has moved it to the box. This ability can be modelled in a cognitive agent via the use of a separate context graph for Sally and Anne. The demo builds upon the work on natural language dialogues in an earlier demo, and extends it to include contexts, actions and queries.
 
 ### Using Natural Language to Teach Everyday skills
 
