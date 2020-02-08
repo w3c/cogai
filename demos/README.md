@@ -57,7 +57,7 @@ This focuses on hierarchical reinforcement learning, and will explore techniques
 
 ### Discovering Causal Relationships
 
-A suite of demos that apply statistical approaches to identify potential causal relationships. The simplest approach *(covariance analysis)* estimates statistical significance for pairs of correlated variables. Newer techniques include *bivariate causal discovery*, see [Anish Dhir and Ciaran M. Lee](https://assets.babylonhealth.com/pdfs/Integrating-Overlapping-Dasets-Using-Bivariate-Causal-Discovery.pdf), and can be applied across multiple overlapping datasets to identify likely causal chains based upon membership of Markov equivalence classes. 
+A suite of demos that apply statistical approaches to identify potential causal relationships. The simplest approach *(covariance analysis)* estimates statistical significance for correlations between pairs of variables, e.g. smoking and lung cancer. Newer techniques include *bivariate causal discovery*, see [Anish Dhir and Ciaran M. Lee](https://assets.babylonhealth.com/pdfs/Integrating-Overlapping-Dasets-Using-Bivariate-Causal-Discovery.pdf), and can be applied across multiple overlapping datasets to identify likely causal chains based upon membership of Markov equivalence classes. Humans and other animals can infer causal relationships from just a few examples, how can these techniques be used incrementally in a cognitively plausible manner?
 
 ### Different Kinds of Reasoning
 
