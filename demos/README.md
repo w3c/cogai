@@ -67,7 +67,7 @@ A suite of demos exploring different kinds of reasoning, e.g. deductive, inducti
 
 A series of demos that explore the interplay of emotions and cognition, in terms of example dialogues involving a small number of cognitive agents.
 
-The English language has many words for emotions, and researchers have differing ideas as to how many distinct emotions there are.
+The English language has many words for emotions, and researchers have differing ideas as to how many distinct emotions there are, e.g. Paul Ekman's list of basic emotions such as surprise, fear, anger, disgust, contempt, sadness and joy.
 
 Emotions are generally associated with a feeling (or affect), e.g. feeling sad, and a cognitive element, e.g. a situation the feeling applies to. Moods are longer lasting emotions that lack the cognitive element.
 
