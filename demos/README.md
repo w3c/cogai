@@ -65,6 +65,42 @@ A suite of demos exploring different kinds of reasoning, e.g. deductive, inducti
 
 ### Feelings and Emotions
 
+A series of demos that explore the interplay of emotions and cognition.
+
+The English language has many words for emotions, and researchers have differing ideas as to how many distinct emotions there are.
+
+Emotions are generally associated with a feeling (or affect), e.g. feeling sad, and a cognitive element, e.g. a situation the feeling applies to. Moods are longer lasting emotions that lack the cognitive element.
+
+Emotions are further associated with whether they are perceived as positive, neutral or negative (valence) and whether they are calming or exciting (arousal).
+
+- primary emotions are directly triggered by particular situations and have direct benefits
+- secondary emotions are triggered as a consequence of primary emotions, and have weaker benefits
+
+The underlying aim is to influence your behaviour to reduce unpleasant feelings and to maximise pleasant feelings.
+
+Emotions are triggered by:
+
+- sensory input, e.g. seeing a dangerous animal, or seeing a close friend
+- reasoning about a situation, e.g. winning a prize or being dumped by a lover
+- recall of emotive memories
+
+Emotions have effects:
+
+- instinctive behaviours, e.g. fleeing from danger, and how these are regulated via cognitive control
+- influencing what you are thinking about, and what feels important at this moment, e.g. which tasks you want to undertake
+- influencing recall of memories
+- influencing laying down of new memories and reinforcement of old memories
+- influencing reinforcement learning of behaviours
+
+My current idea is to emulate the cortico-limbic system with some form of discrimination network that supports fast instinctive reactions to changes in the context. This is a lot more complicated than it sounds as can be seen in the following diagram.
+
+
+
+- See [The Influences of Emotion on Learning and Memory](https://www.frontiersin.org/articles/10.3389/fpsyg.2017.01454/full)
+
+
+----
+
 One or more demos that explore how feelings can be processed via a feed forward network that models fast and instinctive emotional classifications involving the limbic system, and how these interact with thought using the separate cortico basal-ganglia circuit. The [anterior cingulate cortex](https://en.wikipedia.org/wiki/Anterior_cingulate_cortex) is a component of the limbic system that supports higher-level functions, such as attention allocation, reward anticipation, decision-making, ethics and morality, impulse control (e.g. performance monitoring and error detection), and emotion.
 
 Feelings and emotions play an important evolutionary role in respect to the survival of a species. At the most basic level, pain directs organisms to take immediate action to remove themselves from a cause of physical harm, e.g. burns from fire, damage from thorns or biting predators. Emotions are also at play in respect to fear of predators, interest in prey, courtship, mating and care of eggs and offspring. This can be seen as a computational process relating to the anticipated future reward or penalty for the outcome of particular behaviours, as well as to the observed difference between the expected and actual reward or penalty for a given behaviour.
@@ -73,7 +109,7 @@ Many species live in social groups, e.g. social insects such as ants, bees and t
 
 Basic emotions are those that have a genetic basis for our survival. However, humans are distinct from other species in the sophistication of our languages, which have resulted in cultural evolution that takes place on a much shorter timescale than genetic evolution. Agriculture and industrialisation have enabled complex civilisation, and this in turn is likely to have enabled an expanded gamut of feelings due to the complexities of life as a member of a civilisation. It can be argued that entertainment in the form of books, plays and movies help us to think about a much richer range of situations than we are likely to experience for ourselves, and to thereby prepare ourselves for new eventualities when they arise.
 
-Primary emotions are directly triggered by particular situation and have direct benefits. Secondary emotions are triggered as a consequence of primary emotions, and have weaker benefits. There are disagreements as to how many distinct emotions there are, despite there being many words for feelings and emotions in the English language. A common treatment is to position emotions on a two dimensional space involving valence and arrousal, but other dimensions are also talked about. 
+Primary emotions are directly triggered by particular situations and have direct benefits. Secondary emotions are triggered as a consequence of primary emotions, and have weaker benefits. There are disagreements as to how many distinct emotions there are, despite there being many words for feelings and emotions in the English language. Emotions are associated with whether they are perceived as positive or negative (valence) and whether they are calming or exciting (arousal).
 
 An effective theory needs to account for how a given feeling or emotion benefits the individual or others in a social group, what triggers this feeling or emotion, and how it is signalled to others. The theory must also include an account of how emotions influence thought and vice versa. Further work is needed to apply this to a range of emotions and to implement the models as demos. This is dependent on identifying scenarios that involves the chosen feeling or emotion without depending on large amounts of everyday knowledge.
 
