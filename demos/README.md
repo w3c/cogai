@@ -63,9 +63,9 @@ A suite of demos that apply statistical approaches to identify potential causal 
 
 A suite of demos exploring different kinds of reasoning, e.g. deductive, inductive, abductive, causal, reasoning from analogies, reasoning from multiple perspectives, reasoning about stories, and so forth. In some cases, this will involve the use of context chains where some things only hold in a particular context, whilst others hold more generally.
 
-### Feelings and Emotions
+### Emotions and Cognition
 
-A series of demos that explore the interplay of emotions and cognition.
+A series of demos that explore the interplay of emotions and cognition, in terms of example dialogues involving a small number of cognitive agents.
 
 The English language has many words for emotions, and researchers have differing ideas as to how many distinct emotions there are.
 
@@ -92,7 +92,7 @@ Emotions have effects:
 - influencing laying down of new memories and reinforcement of old memories
 - influencing reinforcement learning of behaviours
 
-My current idea is to emulate the cortico-limbic system with some form of discrimination network that supports fast instinctive reactions to changes in the context. This is a lot more complicated than it sounds as can be seen in the following diagram.
+The idea is to emulate the cortico-limbic system with some form of discrimination network that supports fast instinctive reactions to changes in the context as signalled by the chunks in associated cortical buffers. This is a lot more complicated than it sounds as can be seen in the following diagram.
 
 ![bottom up influences and top down regulation](chunks/nested-influences.jpg)
 
