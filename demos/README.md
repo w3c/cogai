@@ -94,7 +94,7 @@ Emotions have effects:
 
 The idea is to emulate the cortico-limbic system with some form of discrimination network that supports fast instinctive reactions to changes in the context as signalled by the chunks in associated cortical buffers. This is a lot more complicated than it sounds as can be seen in the following diagram.
 
-![bottom up influences and top down regulation](chunks/nested-influences.jpg){:width="50%"}
+![bottom up influences and top down regulation](chunks/nested-influences.jpg)
 
 - See [The Influences of Emotion on Learning and Memory](https://www.frontiersin.org/articles/10.3389/fpsyg.2017.01454/full)
 
