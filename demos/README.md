@@ -100,14 +100,15 @@ The idea is to emulate the cortico-limbic system with some form of discriminatio
 
 ### Social Interaction and Theory of Mind
 
-A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents. A further demo would build on that to explore what is involved in supporting empathy, compassion and emotional intelligence. Theory of mind is an important social-cognitive skill that emerges in early childhood. It allows people to infer the intentions of others along with their hopes, fears, beliefs and expectations. For instance (from [verywellmind.com](https://www.verywellmind.com/theory-of-mind-4176826)):
+A multi-agent demo that explores how agents can represent and reason with models of themselves and other agents. A further demo would build on that to explore what is involved in supporting empathy, compassion and emotional intelligence. Theory of mind is an important social-cognitive skill that emerges in early childhood. It allows people to infer the intentions of others along with their hopes, fears, beliefs and expectations. For instance (from [verywellmind.com](https://www.verywellmind.com/theory-of-mind-4176826)), the understanding that:
 
-1. The understanding that the reasons why people might want something may differ from one person to the next
-2. The understanding that people can have different beliefs about the same thing or situation
-3. The understanding that people may not comprehend or have the knowledge that something is true
-4. The understanding that people can hold false beliefs about the world
-5. The understanding that people can have hidden emotions, or that they may act one way while feeling another way
-6. The understanding that people may tell you something false that they want you to believe
+1. the reasons why people might want something may differ from one person to the next
+2. people can have different beliefs about the same thing or situation
+3. people may not comprehend or have the knowledge that something is true
+4. people can hold false beliefs about the world
+5. people can have hidden emotions, or that they may act one way while feeling another way
+6. people may tell you something false that they want you to believe
+7. people may tell you something in fun that shouldn't be taken literally
 
 One means for assessing children's ability is to use false-belief tests. Here is an example in which children are shown two dolls named Sally and Anne.
 
@@ -121,6 +122,12 @@ Theory of mind enables children to answer "in her basket" on the basis that Sall
 ### Using Natural Language to Teach Everyday skills
 
 Demos that explore the potential for using natural language for teaching and evaluating everyday skills (also known as "commonsense". These would build upon the progress made in the other demos, e.g. work on natural language, machine learning and attention allocation.
+
+### Virtual Personalities
+
+Personality is a term for the set of traits that a person shows consistently at different times and situations. These include openness, conscientiousness, introversion/extraversion, agreeableness and neuroticism.
+
+These traits will be explored in a series of demos starting with text based dialogue between two or more cognitive agents in a controlled situation. Following demos will use speech and then add 3D animated heads and facial expressions, as a means to model non-verbal communication. Further demos would include dialogues between humans and cognitive agents, including the means to identify facial expressions from video. Virtual personalities could be used to model widely known fictional or historical characters.
 
 ### Evolutionary Approaches to Visual Perception
 
