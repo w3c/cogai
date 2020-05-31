@@ -46,4 +46,10 @@ The following diagram depicts how cognitive agents can be built as a collection 
 
 **Perception** involves interpreting sensor data, focusing attention on things of interest, and placing short lived representations in the cortex. **Feelings** is about fast, intuitive assessments of the current situation and potential courses of action. **Thought** is slower and more deliberate, involving sequential execution of rules to carry out particular tasks. Thought can be expressed at many different levels of abstraction. **Action** is about carrying out actions initiated under conscious control, leaving the mind free to work on other things. An example is playing a musical instrument where muscle memory is needed to control your finger placements as thinking explicitly about each finger would be far too slow. 
 
+Zooming in on cognition and the role of the basal ganglia as a sequential rule engine, the architecture looks like:
+
+![Image of cognitive architecture for cognition](https://www.w3.org/Data/demos/chunks/arch.png)
+
+This has been implemented as an open source JavaScript library and used as the basis for an [evolving suite of demos](demos/README.md).
+
 p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
