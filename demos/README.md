@@ -18,6 +18,12 @@ An extended version of this demo could be developed to count beyond 9 with furth
 
 This demo is borrowed from an old tutorial for ID3, and decides whether the weather is suitable for playing a game of golf. The weather conditions are randomly generated. The demo just uses the rules module with a decision tree implemented as a succession of rules. A future demo will cover machine learning of decision trees from examples. This will be followed by a suite of demos exploring machine learning of declararive and procedural knowledge, including the use of imagination/planning, case-based reasoning, and hierarchical reinforcement learning.
 
+## [Smart Factories](robot/README.md)
+
+* https://www.w3.org/Data/demos/chunks/robot/
+
+This demo was developed for the 2020 [Summer school on AI for Industry 4.0](https://ci.mines-stetienne.fr/ai4industry/2020/). It simulates a bottling plant with a robot, two conveyor belts, filling and capping stations and boxes that hold up to six bottles. The factory is controlled by a cognitive agent that exchanges messages with the various components. You can see a log of the activity as it happens. The facts graph illustrates how chunks can be used for an ontology, and future work would use this to validate the rules, e.g. to check that actions don't pass wrong values, to check that actions only use declared methods, and to check that action responses are handled correctly.
+
 ## [Autonomous Driving](driving/README.md) (under construction)
 
 * https://www.w3.org/Data/demos/chunks/driving/
