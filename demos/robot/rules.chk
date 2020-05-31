@@ -1,0 +1,80 @@
+# procedural knowledge
+
+# start goal used to initialise the conveyor belts
+start {} =>
+	action {@do start; thing belt1},
+	space {@do wait; thing belt1; space 30},
+	full {@do wait; thing belt1},
+	space {@do wait; thing belt2; space 95},
+	full {@do wait; thing belt2},
+	action {@do move; x -120; y -75; angle -180; gap 40; step 0}
+
+# add bottle when belt1 has space and wait afresh
+space {thing belt1} =>
+	action {@do addBottle; thing belt1},
+	space {@do wait; thing belt1; space 30}
+	
+# add box when belt2 has space and wait afresh
+space {thing belt2} =>
+	action {@do addBox; thing belt2},
+	action {@do stop; thing belt2},
+	space {@do wait; thing belt2; space 95}
+
+# stop belt when it is full and move arm
+full {thing belt1} =>
+	action {@do stop; thing belt1},
+	action {@do move; x -120; y -75; angle -180; gap 40; step 1}
+	
+# ship box at end of belt2 and wait afresh
+full {thing belt2} =>
+	action {@do shipBox},
+	full {@do wait; thing belt2}
+	
+after {step 1} =>
+	action {@do move; x -170; y -75; angle -180; gap 30; step 2}
+
+after {step 2} =>
+	action {@do grasp},	
+	action {@do move; x -80; y -240; angle -90; gap 30; step 3}
+
+after {step 3} =>
+	action {@do start; thing belt1},
+	action {@do fill},
+	filled {@do wait}
+
+filled {} =>
+	action {@do move; x -80; y -140; angle -90; gap 30; step 4}
+	
+after {step 4} =>
+	action {@do move; x 90; y -160; angle -90; gap 30; step 5}
+	
+after {step 5} =>
+	action {@do move; x 90; y -240; angle -90; gap 30; step 7}
+	
+after {step 7} =>
+	action {@do cap},
+	capped {@do wait}
+
+capped {} =>
+	action {@do move; x 90; y -160; angle -90; gap 30; step 8}
+	
+after {step 8} =>
+	action {@do move; x 100; y -70; angle 0; gap 30; step 9}
+
+after {step 9} =>
+	packingSpace {@do wait}
+	
+packingSpace {x ?x; y ?y} =>
+	action {@do move; x ?x; y ?y; angle 0; gap 30; step 10}
+	
+after {step 10} =>
+	action {@do release},
+	boxFull {@do wait},
+	action {@do move; x 100; y -70; angle 0; gap 30; step 11}
+	
+after {step 11} =>
+	full {@do wait; thing belt1}
+	
+boxFull {} =>
+	action {@do start; thing belt2}
+	

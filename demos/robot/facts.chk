@@ -1,0 +1,64 @@
+# some declarative facts - currently only for explanatory purposes
+
+# Ontology for things for validating facts and rules
+# e.g. to check that actions don't pass wrong values,
+# to check that actions only used declared methods, and
+# to check that action responses are handled correctly
+
+# bottles
+thing bottle {properties level, capped}
+type level {isa number; min 0; max 100; initial 0}
+type capped {isa boolean; initial false}
+
+# robots
+thing robot {properties x, y, arm}
+thing arm {properties x, y, angle, gap}	
+type x {isa integer}
+type y {isa integer}
+type angle {isa number; min -180; max 180}
+type gap {isa integer; min 5; max 45}
+
+# belts
+thing belt {properties x, y, length, moving, items}
+
+type length {isa integer}
+type moving {isa boolean; initial false}
+
+# belts hold a list of items with a position and width
+type items {isa list; contains item}
+thing item {properties position, p2}
+type position {isa number}
+
+# instead of type width {isa number; min 0}
+# you can restrict the specific property
+# when properties with the same name for
+# different things have different metadata
+
+property p2 {
+	name width
+	isa number
+	min 0
+}
+
+# the filling and capping stations
+thing fillingStation {
+	properties x, y
+	methods fill
+}
+
+# example of a method
+method fill {
+	operation fill
+	input thing
+	response filled
+	output thing
+}
+
+# you can restrict methods and their params in
+# a similar way to that for properties above
+
+thing cappingStation {properties x, y}
+
+# boxes which can hold up to 6 bottles
+thing box {properties bottles}
+type properties {isa list; contains bottle; max 6}

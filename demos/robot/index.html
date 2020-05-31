@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Demo for robot arm</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="robot.js"></script>
+<style>
+	body {
+		background-color: #FFF;
+	}
+	canvas {
+		border: 1px solid black;
+		perspective: 400px;
+		transform-style: preserve-3d;
+		background-color: #EEE;
+	 }
+	pre {
+		height: 1em;
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	#log {
+		height: 10em;
+		max-height: 10em;
+		overflow-y: scroll;
+	}
+	button {
+		background-color: rgb(230,230,230);
+		border-width: 0;
+	}
+	#footnote {
+		font-style: italic;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: middle;
+		float: left;
+		margin-right: 1em;
+	}
+</style>
+</head>
+<body>
+<h1>Demo for robot arm</h1>
+
+<p>This is a demo of a robot arm with a simulation of a production line for filling a wine bottle, capping it, and packing it into a box that takes six bottles. Click the play button to start. You can also click the buttons to show/hide the listings for the facts and rules.</p>
+
+<canvas id="factory" width="800" height="400"></canvas>
+
+<p>This page uses Cognitive AI for behaviours. See an earlier <a href="promises.html">implementation using promises</a>, and the initial experiments with a <a href="swinging.html">swinging robot arm</a>.</p>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<p>Log:</p>
+<pre id='log'>
+</pre>
+
+<p><button id="factsButton">►</button> Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p><button id="rulesButton">►</button> Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<div id="footnote">
+<hr>
+<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
+</div>
+
+</body>
+</html>
