@@ -1,122 +1,25 @@
-rule r1 {
-  @condition g1
-  @action a1
-}
-golf g1 {
-  @module goal
-  state start
-  outlook sunny
-}
-golf a1 {
-  @module goal
-  state humidity
-}
+golf {@module goal; state start; outlook sunny} =>
+	golf {@module goal; state humidity}
 
-rule r2 {
-  @condition g2
-  @action a2, a3
-}
-golf g2 {
-  @module goal
-  state humidity
-  humidity ?num
-  @lteq ?num, 75
-}
-golf a2 {
-  @module goal
-  state done
-}
-golf a3 {
-  @module output
-  value "play"
-}
+golf {@module goal; state humidity; humidity ?num; @lteq ?num, 75} =>
+	golf {@module goal; state done},
+	console {@module output; @do log; value "play"}
 
-rule r3 {
-  @condition g3
-  @action a4, a5
-}
-golf g3 {
-  @module goal
-  state humidity
-  humidity ?num
-  @gt ?num, 75
-}
-golf a4 {
-  @module goal
-  state done
-}
-golf a5 {
-  @module output
-  value "don't play"
-}
+golf g3 {@module goal; state humidity; humidity ?num; @gt ?num, 75} =>
+	golf a4 {@module goal; state done},
+	console a5 {@module output; @do log; value "don't play"}
 
-rule r4 {
-  @condition g4
-  @action a6, a7
-}
-golf g4 {
-  @module goal
-  state start
-  outlook cloudy
-}
-golf a6 {
-  @module goal
-  state done
-}
-golf a7 {
-  @module output
-  value "play"
-}
+golf {@module goal; state start; outlook cloudy} =>
+	golf {@module goal; state done},
+	console {@module output; @do log; value "play"}
 
-rule r5 {
-  @condition g5
-  @action a8
-}
-golf g5 {
-  @module goal
-  state start
-  outlook rainy
-}
-golf a8 {
-  @module goal
-  state windy
-}
+golf {@module goal; state start; outlook rainy} =>
+	golf {@module goal; state windy}
 
-rule r6 {
-  @condition g6
-  @action a9, a10
-}
-golf g6 {
-  @module goal
-  state windy
-  windy true
-}
-golf a9 {
-  @module goal
-  state done
-}
-golf a10 {
-  @module output
-  value "don't play"
-}
+golf {@module goal; state windy; windy true} =>
+	golf {@module goal; state done},
+	console {@module output; @do log; value "don't play"}
 
-
-rule r7 {
-  @condition g7
-  @action a11, a12
-}
-golf g7 {
-  @module goal
-  state windy
-  windy false
-}
-golf a11 {
-  @module goal
-  state done
-}
-golf a12 {
-  @module output
-  value "play"
-}
-
-
+golf {@module goal; state windy; windy false} =>
+	golf {@module goal; state done},
+	console {@module output; @do log; value "play"}

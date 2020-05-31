@@ -7,6 +7,12 @@
 <script type="text/javascript" src="../chunks.js"></script>
 <script type="text/javascript" src="decision.js"></script>
 <style>
+	#content {
+		display: inline-block;
+		padding-left: 3em;
+		max-width: 160ex;
+		text-align: left;
+	}
 	pre {
 		min-height: 1em;
 		//max-height: 25em;
@@ -27,33 +33,48 @@
 		height: 3em;
 		vertical-align: middle;
 	}
+	#tree {
+		max-width 100%
+	}
 </style>
 </head>
 <body>
-<p><img style="float:right;margin-left:1em" src="tree.png" alt="decision tree"></p>
-
+<div id="content">
 <h1>Decision tree demo for chunk rules</h1>
 
 <p>This is a demo of decision trees implemented as chunk rules, and inspired by a <a href="http://www2.cs.uregina.ca/~dbd/cs831/notes/ml/dtrees/c4.5/tutorial.html">tutorial for ID3</a>. The aim is to decide whether to play a round of golf based upon today's weather. A future demo will show how such decision trees can be induced from examples that potentially include some errors. A separate rule is needed for each arrow shown in the decision tree diagram. See more <a href="../chunks.html">information on chunks and rules</a>.</p>
+</div>
 
+<p style="text-align: center"><img id="tree" src="tree.png" alt="decision tree"></p>
+
+<div id="content">
 <p>The demo starts by setting a goal chunk describing the weather. This is randomly initialised to make it a little more interesting. The rule for the initial goal considers the weather outlook. If it is sunny, rules are used to consider the humidity. If it is rainy, other rules consider whether it is too windy for play to be enjoyable. The decision is written to the output module. Note that this demo doesn't use the facts module.</p>
 
-<p>Press <em>Start</em> to initiate/restart the demo, and then <em>Next</em> to execute a single step.</p>
-
-<p>Console:</p>
-<pre id='log'>
-</pre>
+<p>Press <em>Start</em> to initiate/restart the demo, and then <em>Next</em> to execute a single step. Each time you click start, you will get a random outlook, so keep trying to explore the consequences!</p>
 
 <p>Execute rules, one at a time: <button type="button" id="start">Start</button> <button type="button" id="next">Next</button></p>
+
+<p>Output:</p>
+<pre id='output'>
+</pre>
+
+<p>Goal buffer:</p>
+<pre id='goalBuffer'>
+</pre>
+
+<p>Rule applied:</p>
+<pre id='rule'>
+</pre>
 
 <p>Rules graph:</p>
 <pre id='rules'>
 </pre>
 
 <p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
-
+</div>
 <div id="footnote">
-<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732, project <a href="https://boost40.eu/">Boost 4.0</a></p>
+<hr>
+<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
 </div>
 
 </body>
