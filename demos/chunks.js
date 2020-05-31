@@ -49,6 +49,27 @@ class Chunk {
 		
 		if (id !== undefined)
 			this.id = id;
+			
+		// return copy of self
+		this.clone = function () {
+			let chunk = new Chunk(this.type, this.id);
+			let props = this.properties;
+			for (name in props) {
+				if (props.hasOwnProperty(name)) {
+					let value = props[name];
+					
+					if (Array.isArray(value)) {
+						let list = [];
+						for (let i = 0; i < list.length; ++i)
+							list[i] = value[i];
+						chunk.properties[name] = list;
+					} else {
+						chunk.properties[name] = value;
+					}
+				}
+			}
+			return chunk;
+		};
 		
 		// clean house keeping for lists of values
 		// used to avoid lists with just one item
@@ -136,7 +157,40 @@ class Chunk {
 			return false;
 		};
 	
-		this.toString = function () {
+		this.toString = function (verbose, hideId) {
+			if (!verbose) {
+				let s= this.type + ' ';
+				if (this.id && !hideId)
+					s += this.id + ' ';
+				s += '{'
+				let props = this.properties;
+				for (let name in props) {
+						if (props.hasOwnProperty(name)) {
+							s += name + ' ';
+							let value = props[name];
+						
+							if (Array.isArray(value)) {
+								for (let i = 0; i < value.length; ++i) {
+									s += value[i];
+								
+									if (i < value.length - 1)
+										s += ', '; 
+								}
+								s += '; ';
+							} else
+								s += value + '; ';
+						}
+				}
+				
+				if (s[s.length-2] === ';')
+					s = s.substr(0, s.length-2);
+					
+				s += '}'
+				return s;
+			}
+			
+			// verbose syntax
+			
 			let s= this.type + ' ' + this.id + ' {\n'
 			let props = this.properties;
 			for (let name in props) {
@@ -169,23 +223,25 @@ class Link extends Chunk  {
 			subject: subject,
 			object:object
 		};
-		this.toString = function () {
+		this.toString = function (verbose) {
 			return this.properties.subject + 
 				' ' + this.type +
-				' ' + this.properties.object + '\n';
+				' ' + this.properties.object +
+			 	(!verbose ? '' : '\n');
 		};
 	}
 }
 
 function ChunkGraph (source) {
+	let graph = this;
 
-	this.chunks = {}; // map chunk id to chunk
-	this.types = {};  // map chunk type to list of chunks
-	this.count = 0;   // count of chunks created
+	graph.chunks = {}; // map chunk id to chunk
+	graph.types = {};  // map chunk type to list of chunks
+	graph.count = 0;   // count of chunks created
 	
 	let gensym_count = 0;
 	
- 	this.gensym = function () {
+ 	graph.gensym = function () {
 		return "_:" + (++gensym_count);
 	};
 	
@@ -274,7 +330,7 @@ function ChunkGraph (source) {
 	// apply handler(this, chunk, context) to all chunks
 	// that are an instance of a type which is declared
 	// as a kindof the chunk identified by 'kind'
-	this.forall = function (kind, handler, context) {
+	graph.forall = function (kind, handler, context) {
 		let children = this.types['kindof'];
 		
 		for (let i = 0; i < children.length; ++i) {
@@ -288,10 +344,10 @@ function ChunkGraph (source) {
 			}
 		}
 	};
-
-	// recall best chunk with given type and given property values
+	
+	// recall copy of best chunk with given type and given property values
 	// *** needs updating for stochastic recall according to expected utility
-	this.recall = function (type, values) {
+	graph.recall = function (type, values) {
 		let chunks = this.types[type];
 		let matched = matching_values(chunks, values);
 		
@@ -299,13 +355,13 @@ function ChunkGraph (source) {
 			// pick best match based on prior knowledge & past experience
 			// for now we cheat and return random choice
 			let i = randomIntFromInterval(0, matched.length - 1);
-			return matched[i];
+			return matched[i].clone();
 		}
 	};
 	
 	// create a new chunk with given type and values
 	// unless there is an existing matching chunk
-	this.remember = function (type, values, id) {
+	graph.remember = function (type, values, id) {
 		let chunk = id !== undefined ? this.chunks[i] : this.recall(type, values);
 		
 		if (chunk !== undefined) {
@@ -319,7 +375,7 @@ function ChunkGraph (source) {
 		return chunk;
 	}
 		
-	this.add = function (chunk) {
+	graph.add = function (chunk) {
 		// if it belongs to another graph we need to
 		// remove it before adding it to this graph
 		if (chunk.graph !== undefined) {
@@ -341,11 +397,12 @@ function ChunkGraph (source) {
 			
 		this.types[chunk.type].push(chunk);
 			
+		this.lastAdded = chunk;
 		this.count++;
 		return chunk;
 	};
 	
-	this.remove = function (chunk) {
+	graph.remove = function (chunk) {
 		this.count--;
 		chunk.graph = undefined;
 		delete this.chunks[chunk.id];
@@ -357,18 +414,42 @@ function ChunkGraph (source) {
 			chunk.id = undefined;
 	};
 	
-	this.parse = function (source) {
+	graph.chunkCount = function () {
+		return graph.count;
+	};
+	
+	graph.typeCount = function (type) {
+		let list = graph.types[type];
+		
+		return list ? list.length : 0;
+	};
+	
+	const PARSE_ALL = 0;
+	const PARSE_CHUNK = 1;
+	
+	graph.parseChunk = function (source) {
+		return graph.parse(source, PARSE_CHUNK);
+	};
+	
+	graph.parse = function (source, mode) {
+		if (mode === undefined)
+			mode = PARSE_ALL;
+	
 		const END_OF_INPUT = 0;
 		const WHITE_SPACE = 1;
 		const PUNCTUATION = 2;
 		const VARIABLE = 3;
 		const NAME = 4;
+		const ISO8601 = 4;   // treat ISO8601 strings as names
 		const STRING = 5;
 		const NUMBER = 6;
 		const BOOLEAN = 7;
 		const NULL = 8;
 		
-		let graph = this;
+		const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+		const re_name = /^(\*|(@)?[\w|\d|_|\-|:]+)$/;
+		const re_iso8091 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/;
+
 		let map = {};  // map from source code ids to graph ids
 
 		let skip_white = function(lexer) {
@@ -417,21 +498,23 @@ function ChunkGraph (source) {
 		
 		let find_end_of_token = function (lexer) {
 			let start = lexer.here;
+			let c;
 			
 			while (lexer.here < lexer.length) {
-				let c = lexer.source[lexer.here];
+				c = lexer.source[lexer.here];
 				
-				if (/\s/.test(c))
+				if (/[\s;,=\}\{]/.test(c))
 					break;
 					
 				lexer.here++;
 			}
 			
-			c = lexer.source[lexer.here-1];
-			
-			if (/[.;,]/.test(c))
-				lexer.here--;
-			
+			if (c === '=') {
+				c = lexer.source[lexer.here++];
+				if (c === '>')
+					return lexer.here - start;
+			}
+						
 			return lexer.here - start;
 		};
 		
@@ -456,7 +539,7 @@ function ChunkGraph (source) {
 			
 			throw new Error("Unexpected end of string on line " + lexer.line);
 		};
-		
+				
 		let lexer = {
 			graph: this,
 			source: source,
@@ -468,6 +551,11 @@ function ChunkGraph (source) {
 			blank: {},
 			token: null,
 			type: null,
+			peek: function () {
+				if (lexer.here < lexer.length) {
+					return lexer.source[lexer.here];
+				}
+			},
 			next: function () {
 				for (;;) {
 					let c = skip_white(lexer);
@@ -477,7 +565,7 @@ function ChunkGraph (source) {
 					} else if (c === '#') {
 						skip_line(lexer);
 						continue;
-					} else if (/[.;,{}|\?]/.test(c)) {
+					} else if (/[.;,{}=\?]/.test(c)) {
 						lexer.type = PUNCTUATION;
 						lexer.token = c;
 						lexer.here++;
@@ -488,14 +576,17 @@ function ChunkGraph (source) {
 						let token_start = lexer.here;
 						let token_length = find_end_of_token(lexer);
 						let token = lexer.token = source.substr(token_start, token_length);
-						
+												
 						if (/^true|false$/.test(token)) {
 							lexer.type = BOOLEAN;
 							lexer.value = (lexer.token === "true" ? true : false);
-						} else if (/^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?/.test(token)) {
+						} else if (re_number.test(token)) {
 							lexer.type = NUMBER;
 							lexer.value = parseFloat(token);
-						} else if (/^(\*|(@)?\w[\w|\d|_|\-|:]+)$/.test(token)) {
+/*						} else if (re_iso8091.test(token)) {
+							lexer.type = ISO8601;
+							lexer.value = parseFloat(token);
+*/						} else if (re_name.test(token)) {
 							lexer.type = NAME;
 							lexer.value = lexer.token;
 						} else {
@@ -560,12 +651,19 @@ function ChunkGraph (source) {
 											
 					if (!chunk) {
 						chunk = new Chunk(type, id);
-						graph.add(chunk);
 					}
 					
 					chunk.properties[name] = value;
 		
 					lexer.next();
+					
+					if (lexer.token === '}')
+						break;
+						
+					if (lexer.token === ';') {
+						lexer.next();
+						continue;
+					}
 					
 					if (lexer.type === PUNCTUATION && lexer.token === ',') {
 						chunk.properties[name] = [value];
@@ -582,6 +680,9 @@ function ChunkGraph (source) {
 						}
 					}
 					
+					if (lexer.token === '}')
+						continue;
+					
 					if (! (lexer.line > line))
 						throw new Error("Expected line break after '" + value + "' on line " + lexer.line);
 				}
@@ -589,16 +690,86 @@ function ChunkGraph (source) {
 				if (lexer.token !== '}')
 					throw new Error("Expected } on line " + lexer.line);
 					
+				if (!chunk)
+					chunk = new Chunk(type, id);
+					
 				lexer.next();
+				return chunk;
 			}
 		}
+		
+		const CHUNK = 0;
+		const LINK = 1
+		const COMMA = 2;
+		const RULE = 3;
 				
 		let line = 0;
 		lexer.next();
+		let rule = list = chunk = null;
+		let last = CHUNK;
 		
-		while (lexer.type !== END_OF_INPUT) {
+		while (true) {
+			if (lexer.type === END_OF_INPUT) {
+				if (rule) {
+					if (!chunk)
+						throw new Error("Missing action(s) for rule on line " + lexer.line);
+						
+					if (list) {
+						list.push(chunk.id);
+						rule.properties['@action'] = list;
+					} else {
+						rule.properties['@action'] = chunk.id;
+					}
+				} else if (last === COMMA) {
+					throw new Error("Unexpected comma on line " + lexer.line);
+				}
+				
+				break;
+			}
+			
+			if (lexer.type === PUNCTUATION) {
+				if (!chunk) {
+					if (lexer.token === "=" && lexer.peek() === ">") {
+						lexer.token = "=>";
+						lexer.here++;
+					}
+						
+					throw new Error("Unexpected punctuation '" + lexer.token + "' on line " + lexer.line);
+				}
+					
+				if (lexer.token === ",") {
+					// comma separates conditions or actions for rules
+					if (!list)
+						list = [];
+						
+					list.push(chunk.id);
+					lexer.next();
+					last = COMMA;
+					continue;
+					
+				} else 	if (lexer.token === "=" && lexer.peek() === ">") {
+					// condition[,condition]* '=>' action[,action]*
+					lexer.here++;
+					rule = new Chunk('rule');
+					graph.add(rule);
+					
+					if (list) {
+						list.push(chunk.id);
+						rule.properties['@condition'] = list;
+					} else {
+						rule.properties['@condition'] = chunk.id;
+					}
+					
+					list = chunk = null;
+					
+					lexer.next();
+					last = RULE;
+					continue;
+				}
+			}
+			
 			if (lexer.type !== NAME) {
-				throw new Error("Expected name token on line " + lexer.line);
+				throw new Error("Unexpected '" + lexer.token + "' on line " + lexer.line);
 			}
 			
 			let name1 = lexer.token;
@@ -607,9 +778,28 @@ function ChunkGraph (source) {
 			
 			if (lexer.type === PUNCTUATION) {
 				if (lexer.token !== "{")
-					throw new Error("Expected { on line " + lexer.line);
+					throw new Error("Unexpected '" + lexer.token + "' on line " + lexer.line);
 					
-				lexer.parseChunk(name1);
+				if (chunk && last === CHUNK) {
+					if (rule) {
+						if (list) {
+							list.push(chunk.id);
+							rule.properties['@action'] = list;
+						} else {
+							rule.properties['@action'] = chunk.id;
+						}
+					}
+					
+					rule = list = null;
+				}
+									
+				chunk = lexer.parseChunk(name1);
+				
+				if (mode === PARSE_CHUNK)
+					return chunk;
+					
+				graph.add(chunk);
+				last = CHUNK;
 				continue;
 			} else if (lexer.type !== NAME)
 				throw new Error("Expected name token on line " + lexer.line);
@@ -622,8 +812,27 @@ function ChunkGraph (source) {
 			if (lexer.type === PUNCTUATION) {
 				if (lexer.token !== "{")
 					throw new Error("Expected { on line " + lexer.line);
+
+				if (chunk && last === CHUNK) {
+					if (rule) {
+						if (list) {
+							list.push(chunk.id);
+							rule.properties['@action'] = list;
+						} else {
+							rule.properties['@action'] = chunk.id;
+						}
+					}
 					
-				lexer.parseChunk(name1, name2);
+					rule = list = null;
+				}
+				
+				chunk = lexer.parseChunk(name1, name2);
+				
+				if (mode === PARSE_CHUNK)
+					return chunk;
+					
+				graph.add(chunk);
+				last = CHUNK;
 				continue;
 			} else if (lexer.type === NAME) {
 				let subject = name1;
@@ -633,88 +842,274 @@ function ChunkGraph (source) {
 				if (! (lexer.line > line))
 					throw new Error("Expected line break after '" + object + "' on line " + lexer.line);
 					
+				if (last === CHUNK && rule) {
+					if (list) {
+						list.push(chunk.id);
+						rule.properties['@action'] = list;
+					} else {
+						rule.properties['@action'] = chunk.id;
+					}
+					
+					rule = list = chunk = null;					
+				}
+					
+				if (last === RULE)
+					throw new Error("Missing action(s) for rule on line " + lexer.line);
+					
+				if (last === COMMA)
+					throw new Error("Missing chunk after comma online " + lexer.line);
+					
 				// add new link as a subclass of chunk
 				graph.add(new Link(subject, predicate, object));
+				last = LINK;
+				
+				rule = list = id = null;
 			} else {
 				throw new Error("Expected name token on line " + lexer.line);
 			}
 			
 			line = lexer.line;
 			lexer.next();
-			
 		}
 	};
 	
-	this.toString = function () {
+	graph.toString = function () {
+		const verbose = true;
 		let s = "";
 		let graph = this;
 		forall (this.chunks, function (id) {
 			let chunk = graph.chunks[id];
-			s += chunk.toString();
+			s += chunk.toString(verbose);
 		});
 		return s;
 	}
+	
+	graph.ruleToString = function (chunk) {
+		let rule = chunk;
+		
+		if (typeof(chunk) === "string")
+			rule = graph.chunks[id];
+
+		if (rule && rule.type === 'rule') {
+			let conditions = rule.properties["@condition"];
+			let actions = rule.properties["@action"];
+			let text = "";
+			
+			if (Array.isArray(conditions)) {
+				for (let i = 0; i < conditions.length; ++i) {
+					text += graph.chunks[conditions[i]].toString(false, true);
+					if (i < conditions.length - 1)
+						text += ',\n';
+				}
+			} else {
+				text += graph.chunks[conditions].toString(false, true);
+			}
+			text += "\n => \n";
+			
+			if (Array.isArray(actions)) {
+				for (let i = 0; i < actions.length; ++i) {
+					text += graph.chunks[actions[i]].toString(false, true);
+					if (i < actions.length - 1)
+						text += ',\n';
+				}
+			} else {
+				text += graph.chunks[actions].toString(false, true);
+			}
+			
+			return text;
+		}
+		
+		return "";
+	};
+	
+	graph.rulesToString = function () {
+		let rules = gap.types['rule'];
+		let text = "";
+		
+		if (rules && rules.length > 0) {
+			for (let i = 0; i < rules.length; ++i)
+				text += graph.ruleToString(rules[i]) + "\n";
+		}
+		
+		return text;
+	};
 		
 	if (source) 
-		this.parse(source);
+		graph.parse(source);
 }
 
-
-function RuleEngine (){
-	let log_element = document.getElementById("log");
+function RuleEngine (log){
+	let engine = this;	
+	let modules = {};
+	let singleStep = true;
 	
-	let log = function (msg) {
-		if (log_element === undefined)
-			console.log(msg + '\n');
-		else
-			log_element.innerText += msg + '\n';
-	};
-	
-	let clear_log = function () {
-		if (log_element !== undefined)
-			log_element.innerText = "";
-	};
+	if (!log)
+		log = console.log;
 	
 	let randomIntFromInterval = function (min, max) {
   		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
 	
-	let engine = this;
-	let goals; // initialised by start()
-	let goal, fact;  // chunk buffers
 	
-	// *** needs updating to allow for
-	// *** registering modules by name
-	
-	let get_buffer = function (module) {
-		if (module === "goal")
-			return goal;
-			
-		if (module === "facts")
-			return fact;
+	let Module = function (name, graph, algorithms) {
+		let module = this;
+		module.updated = false;
 
-		if (module !== "output")
-			log("unknown module: " + module);
+		module.name = name;
+		module.graph = graph;
+		module.algorithms = (algorithms !== undefined ? algorithms : {});
+		
+		// Every module has a single chunk buffer
+	
+		let chunkBuffer;		// chunk buffer
+		let chunkQueue = [];	// priority queue
+	
+		module.queueLength = function () {
+			return chunkQueue.length;
+		};
+	
+		// pushes chunk into priority queue where
+		// lowest priority is 1 and maximum is 10
+		// and priority is stored in chunk.priority
+		module.pushBuffer = function (chunk) {
+			if (chunk.id === undefined)	
+				chunk.id = module.graph.gensym();
+
+			if (chunkBuffer === undefined) {
+				chunkBuffer = chunk;
+				log('set goal to: ' + chunk);
+				
+				if (!singleStep)
+					engine.run();  //after updating any module buffer
+			} else {
+				let priority = chunk.priority;
+			
+				if (priority === undefined)
+					priority = 5;
+				
+				// search queue for where to insert chunk
+			
+				if (chunkQueue.length === 0) {
+					chunkQueue.push(chunk);
+				} else {
+					for (let i = 0; i < chunkQueue.length; ++i) {
+						let c = chunkQueue[i];
+						let p = c.priority === undefined ? 5 : c.priority;
+						
+						if (priority <= p) {
+							chunkQueue.splice(i, 0, chunk);	
+							return;
+						}
+					}
+				
+					chunkQueue.push(chunk);
+				}
+			}
+		};
+
+		module.popBuffer = function () {
+			if (chunkQueue.length > 0) {
+				chunkBuffer = chunkQueue.pop();
+				module.updated = true;
+				log('popped goal: ' + chunkBuffer);
+				
+				if (!singleStep)
+					engine.run();  //after updating any module buffer
+			}
+		
+			return chunkBuffer;
+		};
+	
+		module.clearBuffer = function () {
+			chunkBuffer = undefined;
+			module.popBuffer();
+		};
+	
+		// overwrites buffer independently of the queue
+		module.writeBuffer = function (chunk) {
+			chunkBuffer = chunk;
+			module.updated = true;
+			log('set goal to: ' + chunk);
+			
+			if (!singleStep)
+				engine.run();  //after updating any module buffer
+		};
+	
+		module.readBuffer = function () {
+			return chunkBuffer
+		};
+	}
+
+	engine.addModule = function (name, graph, algorithms) {
+		return modules[name] = new Module(name, graph, algorithms);
+	};
+	
+	engine.getModule = function (name) {
+		return modules[name];
+	}
+
+	engine.getBuffer = function (name) {
+		let module = modules[name];
+		
+		if (module !== "undefined")
+			return module.readBuffer();
+		
+		log("unknown module: " + name);
+	};
+	
+	engine.setBuffer = function (name, chunk) {
+		let module = modules[name];
+		
+		if (module !== "undefined") {
+			if (typeof (chunk) === 'string')
+				chunk = module.graph.parseChunk(chunk);
+			
+			module.writeBuffer(chunk);
+			return chunk;
+		}
+		
+		log("unknown module: " + name);
+	};
+	
+	engine.setGoal = function (source) {
+		let goals = modules.goal;
+		
+		if (!goals)
+			goals = this.addModule('goal', new ChunkGraph());
+
+		let chunk = goals.graph.parseChunk(source);
+		
+		if (chunk)
+			goals.writeBuffer(chunk);
+	};
+	
+	let getCondition = function (id) {
+		return modules.rules.graph.chunks[id];
+	};
+	
+	let getAction = function (id) {
+		return modules.rules.graph.chunks[id];
 	};
 	
 	// action is a chunk
 	let apply_action = function (action, bindings) {
-		let module = "goal";
+		let module_name = "goal";
 		let operation = "update";
 		let properties = action.properties;
 		
 		if (properties["@module"])
-			module = properties["@module"];
+			module_name = properties["@module"];
+						
+		let module = modules[module_name];
 		
-		if (properties["@invoke"])
-			operation = properties["@invoke"];
-//		else if (properties["@action"])
-//			operation = properties["@action"];
+		if (properties["@do"])
+			operation = properties["@do"];
 			
-		let buffer = get_buffer(module);
+		// get property values instantiating any variables
+		
 		let values = {};
 			
-		for (name in properties) {
+		for (let name in properties) {
 			if (name[0] === "@")
 				continue;
 				
@@ -730,68 +1125,76 @@ function RuleEngine (){
 			values[name] = value;
 		}
 		
-		// if update then update buffered chunk's properties
-		if (operation === "recall") {
-			if (module === "facts") {
-				// recall facts for matching chunk for values
-				// and use response to update fact buffer
-				let facts = engine.facts; // ChunkGraph for facts
-				log("recall: " + action.type + " " + JSON.stringify(values));
-				fact = facts.recall(action.type, values);
-				log("found: " + fact);
-			} else {
-				log("sorry, recall action is currently unsupported for " + module + " module");
-			}
+		//log('apply ' + action + ' with bindings ' + JSON.stringify(bindings));
+				
+		if (module && module.algorithms[operation]) {
+			module.algorithms[operation](action, values);
+		} else if (operation === "recall") {
+			log("recall: " + action.type + " " + JSON.stringify(values));
+			module.writeBuffer(module.graph.recall(action.type, values));
+			log("found: " + module.readBuffer());
 		} else if (operation === "remember") {
-			if (module === "facts") {
-				// remember fact for given type and values
-				let facts = engine.facts; // ChunkGraph for facts
-				log("remember: " + action.type + " " + JSON.stringify(values));
-				facts.remember(action.type, values);
-			} else {
-				log("sorry, remember action is currently unsupported for " + module + " module");
-			}			
+			log("remember: " + action.type + " " + JSON.stringify(values));
+			module.graph.remember(action.type, values);
 		} else if (operation === "update") {
-			if (module === "output") {
-				log("OUTPUT: " + JSON.stringify(values));
-			} else {
-				let properties = buffer.properties;
-				for (name in values) {
-					if (values.hasOwnProperty(name))
-						properties[name] = values[name];
-				}
+			let old = module.readBuffer();
+			let buffer = new Chunk(action.type);
+			let properties = old.properties;
+			for (let name in properties) {
+				if (properties.hasOwnProperty(name))
+					buffer.properties[name] = properties[name];
 			}
+			for (let name in values) {
+				if (values.hasOwnProperty(name))
+					buffer.properties[name] = values[name];
+			}
+			module.writeBuffer(buffer);
+		} else if (operation === "pop") {
+			module.popBuffer();
+		} else if (operation === "clear") {
+			module.clearBuffer();
 		} else {
 			log("unknown action: " + operation);
 		}
+		return operation;
 	};
 	
 	let apply_actions = function (match) {
 		let rule = match[0];
 		let bindings = match[1];
+		let operation = null;
 		let actions = rule.properties["@action"]; // chunk id or list of ids
 		
 		if (actions === undefined)
 			throw (new Error("rule " + rule.id + " is missing @action"));
-		
+					
 		if (Array.isArray(actions)) {
 			for (let i = 0; i < actions.length; ++i) {
-				let action = engine.rules.chunks[actions[i]];
+				let action = getAction(actions[i]);
 				
 				if (action === undefined)
 					throw (new Error("rule " + rule.id + " is missing action " + actions[i]));
 					
-				apply_action(action, bindings);
+				if (operation === null)	
+					operation = apply_action(action, bindings);
+				else
+					apply_action(action, bindings);
 			}
 		} else { // single action
-			let action = engine.rules.chunks[actions];
-			apply_action(action, bindings);
+			let action = getAction(actions);
+			operation = apply_action(action, bindings);
 		}
 		
-		log("\ngoal buffer: " + goal);
+		log("executed rule " + rule.id + " " + operation);
 	};
 	
 	let match = function (chunk, condition, bindings) {
+		if (chunk === undefined)
+		    log("match called with undefined chunk")
+		// check that condition type is same as buffer type
+		if (chunk.type !== condition.type)
+			return false;	
+	
 		// for each property in the condition
 		// if it is an unbound variable bind it to chunk's value
 		// if it is a bound variable test if it is the same
@@ -915,8 +1318,15 @@ function RuleEngine (){
 	
 	// test if chunk matches module's buffer
 	let match_module = function (condition, bindings) {
-		let module = condition.properties["@module"];
-		let buffer = get_buffer(module);
+		let name = condition.properties["@module"];
+		
+		if (name === undefined)
+			name = 'goal';
+			
+		let buffer = modules[name].readBuffer();
+		
+		if (buffer === undefined)
+			return false;
 		
 		return match(buffer, condition, bindings);
 	};
@@ -924,7 +1334,6 @@ function RuleEngine (){
 	let matching_rule = function (rule) {
 		let conditions = rule.properties["@condition"]; // chunk id or list of ids
 		let bindings = {};
-		let rules = engine.rules; 
 		
 		if (conditions === undefined)
 			throw (new Error("rule " + rule.id + " is missing @condition"));
@@ -932,19 +1341,20 @@ function RuleEngine (){
 		if (Array.isArray(conditions)) { // list of conditions
 			for (let i = 0; i < conditions.length; ++i) {
 				let id = conditions[i]; // chunk id
-				let condition = rules.chunks[id]; // chunk for condition
+				let condition = getCondition(id); // chunk for condition
 				
 				if (!match_module(condition, bindings))
 					return false;
 			}
 		} else { // single id
-			condition = rules.chunks[conditions];
+			condition = getCondition(conditions);
 			
 			if (!match_module(condition, bindings))
 				return false;
 		}
 		
-		log("matched rule " + rule.id + " with bindings " + JSON.stringify(bindings));
+		//log("matched rule " + rule.id + " with bindings " + JSON.stringify(bindings));
+		//log("matched rule " + rule.id + " with bindings " + JSON.stringify(bindings));
 		return bindings;
 	};
 	
@@ -952,7 +1362,7 @@ function RuleEngine (){
 	
 	let matching_rules = function () {
 		let matched = [];
-		let rules = engine.rules.types["rule"];
+		let rules = modules.rules.graph.types.rule;
 		
 		for (let i = 0; i < rules.length; ++i) {
 			let rule = rules[i];
@@ -963,41 +1373,51 @@ function RuleEngine (){
 		return matched;
 	};
 
-	this.start = function (rules, facts, initial_goal) {
-		clear_log();
-		this.rules = rules;
-		this.facts = facts;
-		
-		goals = new ChunkGraph(initial_goal);
-
-		// set the initial goal	- it's the only one! :-)	
-		for (type in goals.types) {
-			if (goals.types.hasOwnProperty(type)) {
-				goal = goals.types[type][0];  // set the goal module buffer
-				break;
-			}
-		}
-		
-		log("started with initial goal:\n\n" + goal.toString());
-		log("there are " + rules.types["rule"].length + " known rules in total\n");
+	engine.start = function (ruleGraph, factGraph, initial_goal) {
+		engine.addModule('rules', ruleGraph);
+		engine.addModule('facts', factGraph);
+		engine.addModule('goal', new ChunkGraph());
+		engine.setGoal(initial_goal);
 	};
 	
 	// apply randomly chosen matching rule if any
 	// *** needs updating to pick best rule using
 	// *** stochastic choice based upon expected utility
 	
-	this.next = function () {
+	engine.next = function () {
+		singleStep = true;
 		let matches = matching_rules();
 		
 		if (matches && matches.length > 0) {
 			let i = (matches.length === 1 ? 0 : randomIntFromInterval(0, matches.length - 1));
-			apply_actions(matches[i]);
-		} else
-			log("no matching rules!");
-		return matches;
+			let match = matches[i];
+			apply_actions(match);
+			return match
+		}
+		
+		return null;
 	};
 	
-	this.getGoals = function () {
-		return goals;
+	let run = function () {
+		let goals = modules.goal;
+		let matches = matching_rules();
+		
+		if (matches && matches.length > 0) {
+			goals.updated = false;
+			let i = (matches.length === 1 ? 0 : randomIntFromInterval(0, matches.length - 1));
+			apply_actions(matches[i]);
+			
+			if (!goals.updated)
+				goals.clearBuffer();
+		} else {
+			log("no matching rules!");
+			goals.clearBuffer();
+		}
+		return matches;
+	};	
+	
+	engine.run = function () {
+		singleStep = false;
+		setTimeout(run, 0);
 	};
 };
