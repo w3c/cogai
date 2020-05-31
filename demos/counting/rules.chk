@@ -1,68 +1,16 @@
-rule r1 {
-  @condition g1
-  @action a1, a2, a3
-}
-count g1 {
-  @module goal
-  start ?num
-  state start
-}
-count a1 {
-  @module goal
-  state counting
-}
-increment a2 {
-  @module facts
-  @invoke recall
-  first ?num
-}
-increment a3 {
-  @module output
-  @invoke update
-  value ?num
-}
-rule r2 {
-  @condition g2
-  @action a4
-}
-count g2 {
-  @module goal
-  start ?num
-  end ?num
-  state counting
-}
-increment a4 {
-  @module goal
-  @invoke update
-  state stop
-}
-rule r3 {
-  @condition g3, c3
-  @action a5, a6, a7
-}
-goal g3 {
-  @module goal
-  state counting
-  start ?num1
-  end ?num2
-  @distinct ?num1, ?num2
-}
-increment c3 {
-  @module facts
-  first ?num1
-  second ?num3
-}
-increment a5 {
-  @module goal
-  @invoke update
-  start ?num3
-}
-increment a6 {
-  @module facts
-  @invoke recall
-  first ?num3
-}
-increment a7 {
-  @module output
-  value ?num3
-}
+# prepare to count up
+count {@module goal; start ?num; state start} =>
+	count {@module goal; state counting},
+	increment {@module facts; @do recall; first ?num},
+	console {@module output; @do log; value ?num}
+
+# count up one at a time
+count {@module goal; state counting; start ?num1; end ?num2; @distinct ?num1, ?num2},
+increment {@module facts; first ?num1; second ?num3} =>
+	count {@module goal; @do update; start ?num3},
+	increment {@module facts; @do recall; first ?num3},
+	console {@module output; @do log; value ?num3}
+
+# stop after last one
+count {@module goal; start ?num; end ?num; state counting} =>
+	count {@module goal; @do update; state stop}

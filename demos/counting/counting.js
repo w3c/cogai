@@ -2,49 +2,70 @@
 	Test script for Chunks rule language
 */
 
-window.addEventListener("load", function () {test.start(); }, false);
+window.addEventListener("load", count, false);
 
-let test = {
-	start: function () {
-		let startButton = document.getElementById("start");
-		let nextButton = document.getElementById("next");
-		let rule_engine = new RuleEngine();
-		startButton.disabled = true;
-		nextButton.disabled = true;
-		
-		startButton.onclick = function () {
-			nextButton.disabled = false;
-			let initial_goal = 'count {\n state start\nstart 3\n end 8\n }';
-
-			rule_engine.start(test.rules, test.facts, initial_goal);
-			return false;
-		}
+function count () {
+	let startButton = document.getElementById("start");
+	let nextButton = document.getElementById("next");
+	let goalBuffer = document.getElementById("goalBuffer");
+	let factsBuffer = document.getElementById("factsBuffer");
+	let outputView = document.getElementById("output");
+	let ruleView = document.getElementById("rule");
+	let ruleEngine = new RuleEngine();
+	let goal, facts, rules, output;
 	
-		nextButton.onclick = function () {
-			rule_engine.next(test.rules, test.facts);
-			return false;
-		}
-		
-		let do_test = function (n) {
-			test.goals = new ChunkGraph();
-			fetch("facts.chk")
-			.then((response) => response.text())
-			.then(function (source) {
-				test.facts = new ChunkGraph(source);
-				let pre = document.getElementById("facts");
-				pre.innerText = source;
-				
-				fetch("rules.chk")
-				.then((response) => response.text())
-				.then(function (source) {
-					test.rules = new ChunkGraph(source);
-					let pre = document.getElementById("rules");
-					pre.innerText = source;
-					startButton.disabled = false;
-				});
-			});
-		};
-		
-		do_test();
+	startButton.disabled = true;
+	nextButton.disabled = true;
+	
+	function showBuffers () {
+		goalBuffer.innerText = goal.readBuffer();
+		factsBuffer.innerText = facts.readBuffer();
 	}
-};
+	
+	startButton.onclick = function () {
+		nextButton.disabled = false;
+		ruleEngine.setGoal('count {\n state start\nstart 3\n end 5\n }');
+		ruleEngine.getModule('facts').clearBuffer();
+		ruleView.innerText = outputView.innerText = "";
+		showBuffers();
+		return false;
+	}
+
+	nextButton.onclick = function () {
+		let text = "";
+		let match = ruleEngine.next();
+		showBuffers();
+		
+		if (match) {
+			let rule = match[0];
+			ruleView.innerText = rules.graph.ruleToString(rule);
+		} else
+			ruleView.innerText = "*** no matching rules ***"
+		
+		
+		return false;
+	}
+	
+	output = ruleEngine.addModule('output', new ChunkGraph(), {
+		log: function (action, bindings) {
+			outputView.innerText = JSON.stringify(bindings.value);
+		}
+	});
+	goal = ruleEngine.addModule('goal', new ChunkGraph());
+
+	fetch("facts.chk")
+	.then((response) => response.text())
+	.then(function (source) {
+		facts = ruleEngine.addModule('facts', new ChunkGraph(source));
+		document.getElementById("facts").innerText = source;
+		
+		fetch("rules.chk")
+		.then((response) => response.text())
+		.then(function (source) {
+			rules = ruleEngine.addModule('rules', new ChunkGraph(source));
+			document.getElementById("rules").innerText = source;
+			startButton.disabled = false;
+			console.log('' + ruleEngine.getModule('rules').graph);
+		});
+	});
+}
