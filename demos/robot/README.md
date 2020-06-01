@@ -21,10 +21,12 @@ The demo involves the following actions that have no responses:
 
 * *start* to start a conveyor belt moving
 * *stop* to stop a conveyor belt moving
+* *addBottle* to add an empty bottle to the first belt
 * *fill* to start filling a bottle
 * *cap* to fit a cap to a bottle
 * *grasp* to instruct the robot to grasp a bottle at the current location
 * *release* to instruct the robot to release the bottle it is holding
+* *addBox* to add an empty box to the second belt
 * *shipBox* to ship the box at the end of the second conveyor belt
 
 The *@do move* action instructs the robot to move, supplying the target x and y coordinates for the robot's hand relative to the location of the robot's base. The *gap* property is used to specify the target gap between the robot's finger and thumb. The *angle* property specifies the target angle of the robot's hand. Note that the demo uses the coordinate system for the HTML CANVAS element, i.e. the origin is the upper left corner of the view, with x increasing the right, and y increasing down the screen. The *step* property is used to identify the current step, and is included in the *after* chunk for the response when the motion has completed.
