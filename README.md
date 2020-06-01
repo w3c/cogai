@@ -35,7 +35,7 @@ We anticipate using GitHub for documents, issue tracking and open source compone
 
 ## Program of work
 
-The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work.
+The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. We also are working on a formal specification of the chunk data and rules format with a view to its standardisation.
 
 ## Historical context
 
