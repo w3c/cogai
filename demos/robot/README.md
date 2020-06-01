@@ -6,7 +6,7 @@ This demo was developed for the 2020 [Summer school on AI for Industry 4.0](http
 
 The actions are implemented by passing the action chunk and variable bindings to the factory machinery. Some actions take place immediately and have no response. Others, e.g. *full {@do wait; thing belt1}*, wait for some condition to become true and then signal that by setting the goal buffer to a chunk that another rule can match to take the appropriate following actions. 
 
-For the *@do wait* actions, the chunk type is used for the kind of condition, and reflected back with the response chunk. The information passed with the action, and returned with the response is up to the implementation of that condition type. The demo uses this for the following condition:
+For the *@do wait* actions, the chunk type is used for the kind of condition, and reflected back with the response chunk. The information passed with the action, and returned with the response is up to the implementation of that condition type. The demo uses this for the following conditions:
 
 * *space* when the required space becomes available at the start of a conveyor belt
 * *full* when an item reaches the end of the conveyor belt
