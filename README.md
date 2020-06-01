@@ -38,6 +38,10 @@ We anticipate using GitHub for documents, issue tracking and open source compone
 
 The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work.
 
+## Historical context
+
+Chunk rules are a form of *production rules* as introduced by [Allen Newell](https://en.wikipedia.org/wiki/Allen_Newell) in 1973 in his production system theory of human cognition, which he subsequently developed as the [SOAR](https://en.wikipedia.org/wiki/Soar_(cognitive_architecture)) project. [John Anderson](https://www.cmu.edu/dietrich/psychology/people/core-training-faculty/anderson-john.html) published his theory of human associative memory (HAM) in 1973, and inspired by Newell, went on to combine it with a production system to form the *ACT* system in 1976, and developed it further into *ACT-R* in 1993. [ACT-R](http://act-r.psy.cmu.edu/about/) stands for *adaptive control of thought - rational* and has been widely applied to cognitive science experiments as a theory for simulating and understanding human cognition. Chunks, in turn, was inspired by ACT-R, and the realisation that the approach could be adapted for general use in artificial intelligence as the combination of graphs, statistics, rules and graph algorithms. Cognitive AI has a broader scope than ACT-R and seeks to mimic the human brain as a whole at a functional level.
+
 ## Cognitive Architecture
 
 The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex. The initial focus of work is on a chunk rule engine inspired by John Anderson's ACT-R. Future work will look at the other building blocks.
