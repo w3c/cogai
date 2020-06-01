@@ -28,8 +28,7 @@ We anticipate using GitHub for documents, issue tracking and open source compone
 
 ## Background materials
 
-* [Introduction to Cognitive AI](https://www.w3.org/Data/demos/chunks/chunks-20200110.pdf)
-* [Introduction to chunks and rules](https://www.w3.org/Data/demos/chunks/chunks-20200110.pdf)
+* [Cognitive AI and the Sentient Web](https://www.w3.org/2020/sentient-web-20200303.pdf)
 * [Demonstrators](demos/README.md)
 * [Longer treatise on Cognitive AI](https://www.w3.org/Data/demos/chunks/chunks.html)
 * [Contributing to the Cognitive AI Community Group](Contributing.md)
