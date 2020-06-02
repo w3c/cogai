@@ -36,7 +36,9 @@ An extended version of this demo could include multiple road users, including pe
 
 ## [Natural Language Dialogues and Situational Plans](nld/README.md) (under consideration)
 
-This demo features a dialogue between three cognitive agents that model a waiter at a restaurant, and two visitors who are having dinner together. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
+This demo features a dialogue between two cognitive agent that model a waiter at a restaurant, and a customer having dinner there. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
+
+A second idea is to use natural language to communicate with a cognitive agent that controls a robot in a blocks world, e.g. “Put the yellow disc on the green triangle. Move the green triangle next to the red square. Where is the yellow disc?”. This is a more restricted environment and would be simpler as an initial demo.
 
 Natural language is processed a word at a time, and mapped to a chunk graph that represents the meaning. This involves a lexicon of words, a simplified treatment of parts of speech and gramatical categories, and the use of spreading activation for word sense disambiguation, and bindings for prepositional phrases and pronouns etc.
 
