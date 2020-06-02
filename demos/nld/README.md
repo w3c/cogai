@@ -34,7 +34,7 @@ A log of goals and rule execution would be shown, however, it isn't yet clear ho
 
 ## Blocks World
 
-A second idea is to use natural language to communicate with a cognitive agent that controls a robot in a blocks world, e.g. “Put the yellow disc on the green triangle. Move the green triangle next to the red square. Where is the yellow disc?”. This is a more restricted environment and would be simpler as an initial demo. This demo would re-use the robot arm developed for the smart factory demo, and 
+A second idea is to use natural language to communicate with a cognitive agent that controls a robot in a blocks world, e.g. *“Put the yellow disc on the green triangle. Move the green triangle next to the red square. Where is the yellow disc?”.* This is a more restricted environment and would be simpler as an initial demo. This demo would re-use the robot arm developed for the smart factory demo to move the blocks around. It may be worth exploring whether the Web Speech API could be used to support speech recognition for spoken interaction with the cognitive agent.
 
 ### Implementation ideas
 
