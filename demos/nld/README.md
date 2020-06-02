@@ -1,4 +1,4 @@
-## Natural Language Dialogues and Situational Plans (under consideration)
+## Natural Language Dialogues and Situational Plans (under construction)
 
 This demo features a dialogue between three cognitive agents that represent a waiter at a restaurant, and two customers who are having dinner together, e.g. husband and wife. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
 
