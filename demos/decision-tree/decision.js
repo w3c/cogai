@@ -15,14 +15,30 @@ function test () {
 		return range[i];
 	}
 
+	let logView = document.getElementById("log");
+
+	function log (message) {
+		let atBottom = logView.scrollHeight - 
+			logView.clientHeight <= logView.scrollTop + 1;
+			
+		logView.innerText += message + '\n';
+		
+		if (logView.innerText.length > 100000)
+			// discard old data to avoid memory overflow
+			logView.innerText =
+				logView.innerText.substr(logView.innerText.length - 50000);
+		
+		if (atBottom)
+			logView.scrollTop = logView.scrollHeight;
+	}
+	
 	let goalBuffer = document.getElementById("goalBuffer");
 	let factsBuffer = document.getElementById("factsBuffer");
 	let outputView = document.getElementById("output");
 	let ruleView = document.getElementById("rule");
 	let startButton = document.getElementById("start");
 	let nextButton = document.getElementById("next");
-	let log = new Log('log');
-	let ruleEngine = new RuleEngine();
+	let ruleEngine = new RuleEngine(log);
 	let goal, rules, output;
 	
 	output = ruleEngine.addModule('output', new ChunkGraph(), {
@@ -30,6 +46,7 @@ function test () {
 			outputView.innerText = bindings.value;
 		}
 	});
+	
 	goal = ruleEngine.addModule('goal', new ChunkGraph());
 
 	startButton.disabled = true;
@@ -40,9 +57,8 @@ function test () {
 	}
 
 	startButton.onclick = function () {
-		log.clear();
 		nextButton.disabled = false;
-		ruleView.innerText = outputView.innerText = "";
+		ruleView.innerText = outputView.innerText = logView.innerText = "";
 		let initial_goal = 'golf {\n' +
 		'  state start\n ' +
 		'  outlook ' + randomChoice(["sunny", "cloudy", "rainy"]) + '\n ' +
@@ -63,9 +79,10 @@ function test () {
 		if (match) {
 			let rule = match[0];
 			ruleView.innerText = rules.graph.ruleToString(rule);
-		} else
+		} else {
 			ruleView.innerText = "*** no matching rules ***"
-
+			nextButton.disabled = true;
+		}
 		return false;
 	}
 
