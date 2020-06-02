@@ -34,7 +34,7 @@ Vision is modelled in terms of the position of the car in the lane and the chang
 
 An extended version of this demo could include multiple road users, including pedestrians, cyclists and other cars, each simulated by a separate cognitive agent. This could be further combined with work on learning from experience and reasoning about how to handle new situations.
 
-## [Natural Language Dialogues and Situational Plans](nld/README.md) (under consideration)
+## [Natural Language Dialogues and Situational Plans](nld/README.md) (under construction)
 
 This demo features a dialogue between two cognitive agent that model a waiter at a restaurant, and a customer having dinner there. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
 
