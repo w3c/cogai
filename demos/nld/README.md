@@ -28,7 +28,19 @@ C: Yes, a bottle of red wine please.
 
 The food and drinks menu and the special dishes for the day could be taken from a real restaurant. The food and drink could be classified with a taxonomy along with a model of the customer's preferences. The choices made by the customer could involve a random element rather than always picking the same things. The above example assumes a husband and wife, and could be extended to include a dialogue between them, as well as allowing for each of them to speak individually to the waiter.
 
+This demo could exploit the Web Speech API to use speech synthesis for the waiter and customer. Ideally, a series of pictures would be displayed to show what's going on, e.g. a photo of a waiter welcoming you to the restaurant, asking you for an order, the menu, the plate of food when it arrives and the bill at the end. Note that the agent playing the role of the customer will have to read the menu and construct a mental model of it.
+
+A log of goals and rule execution would be shown, however, it isn't yet clear how to show the natural language processing pipeline in operation.
+
+## Blocks World
+
+A second idea is to use natural language to communicate with a cognitive agent that controls a robot in a blocks world, e.g. “Put the yellow disc on the green triangle. Move the green triangle next to the red square. Where is the yellow disc?”. This is a more restricted environment and would be simpler as an initial demo. This demo would re-use the robot arm developed for the smart factory demo, and 
+
 ### Implementation ideas
+
+Natural language processing is an important challenge for Cognitive AI.  An open question is to what extent natural language utilises the processing pipeline for perception as opposed to the rule engine of cognition. A synthesis of the two in collaboration seems like a good solution to explore. The pipeline can be envisaged as a chain of communicating agents that have different responsibilities, and together advance the processing one word at a time, with the ability to kick off deliberative reasoning via the rule engine.
+
+As an example, it may not be possible to select the correct part of speech for a word until the next word is processed, and this may be influenced by the choice of word sense based upon the semantic context. The agents thus need some limited working memory to allow for deferred decisions. However, agents should avoid complex search algorithms, apart from utilising what's practical in terms of graph algorithms executed in the cortex.
 
 The taxonomy, and the customer preferences could be modelled using chunks. Likewise, for a generic plan for a meal with subplan for the different stages, including variations such as asking for a window table, or a table by the open fire.
 
