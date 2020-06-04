@@ -447,8 +447,8 @@ function ChunkGraph (source) {
 		const NULL = 8;
 		
 		const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-		const re_name = /^(\*|(@)?[\w|\d|_|\-|:]+)$/;
-		const re_iso8091 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/;
+		const re_name = /^(\*|(@)?[\w|\d|\.|_|\-|\/|:]+)$/;
+		const re_iso8061 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/;
 
 		let map = {};  // map from source code ids to graph ids
 
@@ -583,7 +583,7 @@ function ChunkGraph (source) {
 						} else if (re_number.test(token)) {
 							lexer.type = NUMBER;
 							lexer.value = parseFloat(token);
-/*						} else if (re_iso8091.test(token)) {
+/*						} else if (re_iso8061.test(token)) {
 							lexer.type = ISO8601;
 							lexer.value = parseFloat(token);
 */						} else if (re_name.test(token)) {
