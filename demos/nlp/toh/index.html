@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Demo for natural language processing</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../chunks.js"></script>
+<script type="text/javascript" src="toh.js"></script>
+<style>
+	body {
+		background-color: rgb(250,250,255);
+		max-width: 80em;
+	}
+	#command {
+		width: 40ex;
+		font-size: large;
+	}
+	canvas {
+		border: 1px solid black;
+		perspective: 400px;
+		transform-style: preserve-3d;
+		background-color: #EEE;
+	}
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(240,240,240);
+		border-style: solid;
+	}
+	#log {
+		height: 10em;
+		max-height: 10em;
+		overflow-y: scroll;
+		border-style: solid;
+	}
+	button {
+		font-style: italic;
+		font-weight: bold;
+		font-size: larger;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: top;
+		margin-right: 1em;
+		float: left;
+	}
+</style>
+</head>
+<body>
+<h1>Demo for natural language processing</h1>
+
+<p>This page uses <a href="https://github.com/w3c/cogai/blob/master/README.md">Cognitive AI</a> for a demo using natural language for the towers of Hanoi. Type your command into the following input field and hit the Enter key to send it. More details are given <a href="#commands">below</a>. See also <a href="game.html">the game in full</a></p>
+
+<p><button id="listen">&#x1F3A4;</button>
+<label>Command: <input id="command" value="move the red disc to the right peg"></label>
+<button id="clear">clear</button></p>
+
+<canvas id="toh" width="800" height="350"></canvas>
+
+<p>Log:</p>
+<pre id='log'>
+</pre>
+
+<p><button id="factsButton">►</button> Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p><button id="rulesButton">►</button> Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<h2 id="commands">Commands</h2>
+
+<p>You can enter commands like the following:</p>
+
+<blockquote>
+move the red disc to the right peg<br>
+move the green disc to the middle peg<br>
+move the red disc to the middle peg<br>
+move the blue disc to the right peg<br>
+move the red disc to the left peg<br>
+move the green disc to the right peg<br>
+move the red disc to the right peg
+</blockquote>
+
+<h2 id="explanation">Explanation</h2>
+
+<p>See also <a href="../chunks.html">information on chunks and rules</a>.</p>
+
+<p>This demo was chosen as a minimal starting point for further elaboration in future demos.</p>
+
+<p>Natural language understanding (NLU) is modelled as a combination of parsing plus asynchronous cognitive reasoning. The demo ignores punctuation and upper/lower case distinctions, simulating hearing. This is motivated by the observation that spoken language evolved a million years before written language. On Chrome, a microphone button is shown, and you can click or tap the button, then speak the command, and when it is shown, and if it looks okay, hit the Enter key to parse and execute the command.</p>
+
+<p> The vocabulary for this demo, whilst small, includes a determiner (the), adjectives (red, green, blue, left, middle, right), nouns (disc, peg), preposition (to) and verb (move).</p>
+
+<p>As an example, the utterance "move the red disc to the right peg" is mapped incrementally word by word to the following word graph:</p>
+
+<pre>
+verb v1 {word move; subject p1; to p2}
+np p1 {noun disc; det the; adj red}
+np p2 {noun peg; det the; adj right}
+</pre>
+
+<p>This is passed to the rule engine and mapped to the following:</p>
+
+<pre>
+move m1 {disc disc3; from peg1; to peg3}
+</pre>
+
+<p>Future demos will switch to concurrent processing of syntax and semantics, as is necessary to resolve the abundant ambiguity in natural language.</p>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<hr>
+<p><img id="ec-logo" src="../../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
+</div>
+
+</body>
+</html>

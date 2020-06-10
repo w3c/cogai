@@ -1,0 +1,33 @@
+# declarative knowledge for Towers of Hanoi demo
+
+# the discs and pegs
+
+disc disc1 {colour blue; width 200; height 50}
+disc disc2 {colour green; width 160; height 50}
+disc disc3 {colour red; width 120; height 50}
+
+peg peg1 {location left; discs disc1, disc2, disc3}
+peg peg2 {location middle}
+peg peg3 {location right}
+
+# declare parts of speech (pos) for each known word
+
+word move {pos verb}
+word to {pos prep}
+word the {pos det}
+word disc {pos noun}
+word peg {pos noun}
+word red {pos adj; isa colour}
+word green {pos adj; isa colour}
+word blue {pos adj; isa colour}
+word left {pos adj; isa location}
+word middle {pos adj; isa location}
+word right {pos adj; isa location}
+
+# word dependency graph for testing the rules that generate the meaning
+# this graph is derived from "move the red disc to the right peg"
+# we expect to generate: move m1 {disc disc3; to peg3}
+
+#verb v1 {word move; subject p1; to p2}
+#np p1 {noun disc; det the; adj red}
+#np p2 {noun peg; det the; adj right}

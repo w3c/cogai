@@ -1,0 +1,63 @@
+# Procedural knowledge for Towers of Hanoi demo
+
+# want to generate:
+#
+#    move m1 {disc disc3; to peg3}
+#
+# from the following dependency graph
+#
+#    verb v1 {word move; subject p1; to p2}
+#    np p1 {noun disc; det the; adj red}
+#    np p2 {noun peg; det the; adj right}
+#
+# start by setting goal to: for {utterance v1}
+
+# request the utterance to the facts buffer
+interpret {utterance ?id}
+=>
+	chunk {@module facts; @do recall; @id ?id},
+	for {step 2}
+	
+# save the info in the goal buffer
+for {step 2},
+	verb {@module facts; word ?word; subject ?subj; to ?dest}
+=>
+	for {step 3; word ?word; subject ?subj; to ?dest}
+
+# request the subject phrase that identifies the disc
+for {step 3; subject ?subj}
+=>
+	np {@module facts; @do recall; @id ?subj},
+	for {step 4}
+	
+# use the colour to request the corresponding disc
+for {step 4},
+	np {@module facts; adj ?colour}
+=>
+	disc {@module facts; @do recall; colour ?colour},
+	for {step 5}
+
+# save the disc chunk ID in the goal buffer
+for {step 5},
+	disc {@module facts; @id ?disc}
+=>
+	for {step 6; disc ?disc}
+
+# request the phrase that identifies the peg
+for {step 6; to ?dest}
+=>
+	np {@module facts; @do recall; @id ?dest},
+	for {step 7}
+	
+# use the location to request the corresponding peg
+for {step 7},
+	np {@module facts; adj ?location},
+=>
+	peg {@module facts; @do recall; location ?location},
+	for {step 8}
+
+# after getting the peg ID, execute the command
+for {step 8; disc ?disc},
+	peg {@module facts; @id ?peg}
+=>
+	command {@do move; disc ?disc; peg ?peg}
