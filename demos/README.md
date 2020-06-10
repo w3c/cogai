@@ -34,17 +34,9 @@ Vision is modelled in terms of the position of the car in the lane and the chang
 
 An extended version of this demo could include multiple road users, including pedestrians, cyclists and other cars, each simulated by a separate cognitive agent. This could be further combined with work on learning from experience and reasoning about how to handle new situations.
 
-## [Natural Language Dialogues and Situational Plans](nld/README.md) (under construction)
+## [Natural Language Processing](nlp/README.md)
 
-This demo features a dialogue between two cognitive agent that model a waiter at a restaurant, and a customer having dinner there. The language is predictable and the intent is well understood, making this a good scenario for exploring natural language processing, simple dialogues, reasoning about preferences, plans and episodic memories.
-
-A second idea is to use natural language to communicate with a cognitive agent that controls a robot in a blocks world, e.g. “Put the yellow disc on the green triangle. Move the green triangle next to the red square. Where is the yellow disc?”. This is a more restricted environment and would be simpler as an initial demo.
-
-Natural language is processed a word at a time, and mapped to a chunk graph that represents the meaning. This involves a lexicon of words, a simplified treatment of parts of speech and gramatical categories, and the use of spreading activation for word sense disambiguation, and bindings for prepositional phrases and pronouns etc.
-
-## Further Demos
-
-These are at a very early stage of consideration, and need work on selecting the scenarios, detailed use cases, and associated datasets.
+Natural language is key to simplifying communication between humans and cognitive agents. It is also critical for teaching cognitive agents every day (common sense) skills. A series of demos are planned to evolve richer support fo natural language and reasoning.
 
 ### Learning from examples
 
