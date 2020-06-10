@@ -36,7 +36,7 @@ An extended version of this demo could include multiple road users, including pe
 
 ## [Natural Language Processing](nlp/README.md)
 
-Natural language is key to simplifying communication between humans and cognitive agents. It is also critical for teaching cognitive agents every day (common sense) skills. A series of demos are planned to evolve richer support fo natural language and reasoning.
+Natural language is key to simplifying communication between humans and cognitive agents. It is also critical for teaching cognitive agents every day (common sense) skills. A series of demos are planned to evolve richer support for natural language understanding, generation, dialogues, reasoning and learning.
 
 ### Learning from examples
 
