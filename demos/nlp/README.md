@@ -1,6 +1,6 @@
 # Natural Language Processing
 
-Humans are unique amongst all other animals on the Earth in respect to our amazing ability to communicate via language. Speech evolved a million years ago, and perhaps even further back in time. By contrast written language is very recent and dates back just a few thousand years. Our brains are similar in many respects to other mammals and primates in particular. This suggests that language must be largely based on existing mechanisms as there hasn't been time to evolve a radical new neural system since we split from other primates.
+Humans are unique amongst all other animals on the Earth in respect to our amazing ability to communicate via language. Speech evolved at least a million years ago, and perhaps even further back in time. By contrast written language is very recent and dates back just a few thousand years. Our brains are similar in many respects to other mammals and primates in particular. This suggests that language must be largely based on existing mechanisms as there simply hasn't been the time to evolve a radical new neural system since we split from other primates.
 
 A series of demos are planned to explore how natural language understanding and generation can be implemented in a way that is cognitively plausible, and to satisfy the following goals:
 
@@ -62,7 +62,7 @@ A simplified parser has been implemented that utilises a queue for syntactic pro
 
 As the earlier section shows, to resolve ambiguity in natural language, you need to make sense of the meaning, and to do so concurrently with the syntactic processing. This essentially involves the use of declarative and procedural knowledge in the form of graphs, rules and graph algorithms. The parser can invoke these via directly invoking graph algorithms, e.g. in an unconscious resolution of lexical ambiguity, or through triggering conscious reasoning in respect to anaphora and prepositional attachment. These processes are asynchronous and run concurrently with syntactic processing.
 
-The initial demo was chosen to explore the basic concepts, and future demos will address a larger vocabulary, expanded grammar, and how statistics, dialogue history and semantic context can contribute to resolving ambiguity.
+The initial demo was chosen to explore the basic concepts, and future demos will address a larger vocabulary, an expanded grammar, and how statistics, dialogue history and semantic context can contribute to resolving ambiguity. This will be followed by work on [dialogues and natural language generation](nld/README.md) .
 
 ## Demos
 
