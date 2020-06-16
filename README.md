@@ -24,7 +24,7 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
 * Outreach to explain the huge opportunities for Cognitive AI
 * Participation is open to all, free of charge: [join group](https://www.w3.org/community/cogai/join)
 
-We anticipate using GitHub for documents, issue tracking and open source components. We have a [public mailing list](https://lists.w3.org/Archives/Public/public-cogai/), and an [IRC channel](https://www.w3.org/wiki/IRC) **#cogai**.
+We are using GitHub for documents, issue tracking and open source components. We have a [public mailing list](https://lists.w3.org/Archives/Public/public-cogai/), and an [IRC channel](https://www.w3.org/wiki/IRC) **#cogai**.
 
 ## Background materials
 
