@@ -62,7 +62,7 @@ A simplified shift-reduce parser has been implemented that utilises a queue for 
 
 As the earlier section shows, to resolve ambiguity in natural language, you need to make sense of the meaning, and to do so concurrently with the syntactic processing. This essentially involves the use of declarative and procedural knowledge in the form of graphs, rules and graph algorithms. The parser can invoke these via directly invoking graph algorithms, e.g. in an unconscious resolution of lexical ambiguity, or through triggering conscious reasoning in respect to anaphora and prepositional attachment. These processes are asynchronous and run concurrently with syntactic processing.
 
-The initial demo was chosen to explore the basic concepts, and future demos will address a larger vocabulary, an expanded grammar, and how statistics, dialogue history and semantic context can contribute to resolving ambiguity. This will be followed by work on [dialogues and natural language generation](nld/README.md) .
+The initial demo was chosen to explore the basic concepts, and future demos will address a larger vocabulary, an expanded grammar, and how statistics, dialogue history and semantic context can contribute to resolving ambiguity. This will be followed by work on [dialogues and natural language generation](../nld/README.md) .
 
 ## Demos
 
