@@ -2,9 +2,9 @@
 
 This is an analysis of what a minimalist approach to chunks would involve, and is thus the most biologically plausible design when it comes to realisation as pulsed neural networks. The minimalist approach can also serve as a baseline when considering additional features that provide greater convenience for manual development of declarative and procedural knowledge. If knowledge is acquired through machine learning rather than manual development, then such additional features may actually act as a complication rather than a benefit!
 
-A minimalist specification for chunks is that a chunk is a typed set of properties whose values are names that reference other chunks.  In other words we dispense with numbers, booleans, string literals, dates and lists as built-in data types for values.  All of these can be instead modelled as chunks
+A minimalist specification for chunks is that a chunk is a typed set of properties whose values are names that reference other chunks.  In other words we dispense with numbers, booleans, string literals, dates and lists as built-in data types for values.  All of these can be instead modelled as chunks:
 
-* Lists as a sequence of chunks with a property for the list item and the successor chunk
+* Lists as a sequence of chunks with a property for the list item and anothe property for the successor chunk
 * Booleans as chunks that denote true or false
 * Numbers as a sequence of chunks where each chunk has a single digit and a successor chunk
 * String literals as a similar sequence of characters
@@ -42,7 +42,18 @@ increment {@module facts; number ?num1; successor ?num3} =>
 count {@module goal; start ?num; end ?num; state counting} =>
 	count {@module goal; @do update; state stop}
 ```
-Another possible approach would be to have a means to signal that a condition must not match the target chunk, e.g. with a prefix on the condition's type name.
+Another possible approach would be to have a means to signal that a condition must not match the target chunk, e.g. with an exclamation mark as a prefix on the condition's type name:
+
+```
+# count up one at a time
+count {@module goal; state counting; start ?num1; end ?num2},
+!count {@module goal; state counting; start ?num1; end ?num1}
+increment {@module facts; number ?num1; successor ?num3} =>
+	count {@module goal; @do update; start ?num3},
+	increment {@module facts; @do recall; number ?num3},
+	console {@module output; @do log; value ?num3}
+```
+
 
 Sometimes we want to express rules in terms of operations on sets. One example is a smart home scenario, where we want to distinguish the case where a single named person is in a room as opposed to the case where several people are in the room including that named person.
 
@@ -65,6 +76,13 @@ And update the occupancy whenever someone enters or leaves the room.  We can the
 ```
 location {person Janet; room room1}, room room1 {occupancy one} => *some appropriate actions*
 ```
+The following rule will not be matched when Janet is in the room with someone else: 
+
+```
+location {person Janet; room room1},
+!location {person ~Janet; room room1} => *some actions *
+```
+It involves a double negative through a condition that matches someone other than Janet, and the requirement that that condition should fail.
 
 Some possible set operations to consider:
 
@@ -97,4 +115,4 @@ The cognitive architecture limits module buffers to a single chunk. If you want 
 
 ## Summary
 
-A minimalist version of chunks is practical that limits property values to names. There is a need to indicate that a condition property must not match the property in the target chunk. A wider set of data types for property values would be convenient for manual development of declarative and procedural knowledge, but this introduces the challenge of deciding just what features are needed to be built into the rule language and what should be left as module specific operations.
+A minimalist version of chunks is practical that limits property values to names. There is a need to indicate that a condition property must not match the property in the target chunk and a means to indicate that a condition must fail to match. A wider set of data types for property values would be convenient for manual development of declarative and procedural knowledge, but this introduces the challenge of deciding just what features are needed to be built into the rule language and what should be left as module specific operations.
