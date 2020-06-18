@@ -113,6 +113,41 @@ More complex operations could be implemented as graph algorithms and involved fr
 
 The cognitive architecture limits module buffers to a single chunk. If you want to perform operations over multiple chunks, one approach is to specify the query that selects the set of chunks and ask the module to apply the operation to all of the chunks that match the query.  The query and the operation can be specified by constructing a graph of chunks in the module by writing each of the chunks that it is composed from, one by one. A related approach is for the query to generate the results as a sequence that you can then iterate over with simple rules.  The query would return the first chunk for the sequence.
 
+## Iterating over matching chunks
+
+A simpler means to interate over chunks with a given type and properties is to use *@do next* in a rule action, which has the effect of loading the next matching chunk into the module's buffer in an implementation dependent sequence. To see how this works consider the following list of towns and the counties they are situated in:
+
+```
+town ascot {county berkshire}
+town earley {county berkshire}
+town newbury {county berkshire}
+town newquay {county cornwall}
+town truro {county cornwall}
+town penzance {county cornwall}
+town bath {county somerset}
+town wells { county somerset}
+town yeovil {county somerset}
+```
+
+We could list which towns are in Cornwall by setting a start goal to trigger the following ruleset:
+
+```
+start {}
+  => town {@module facts; @do recall; county cornwall}, next {}
+next {}, town {@module facts; town ?town} 
+  => action {@do log; message ?town}, town {@module facts; @do next; county cornwall}
+```
+The start goal initiates a recall on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer.
+
+A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
+
+```
+next {prev ?prev} => town {@module facts; @do next; @id ?prev; county cornwall}
+```
+Which exploits the chunk ID as a reference to find the next matching chunk and load it into the facts buffer.
+
 ## Summary
 
-A minimalist version of chunks is practical that limits property values to names. There is a need to indicate that a condition property must not match the property in the target chunk and a means to indicate that a condition must fail to match. A wider set of data types for property values would be convenient for manual development of declarative and procedural knowledge, but this introduces the challenge of deciding just what features are needed to be built into the rule language and what should be left as module specific operations.
+A minimalist version of chunks is practical that limits property values to names. There is a need to indicate that a condition property must not match the property in the target chunk and a means to indicate that a condition must fail to match. The built-in actions include *recall* to retrieve a chunk from a module to its buffer, *remember* to save a chunk to a module from its buffer, and *next* to iterate through matching chunks as explained above.  Applications can register additional actions as needed, e.g. to operate a robot's arm or turn on a light.
+
+A wider set of data types for property values would be convenient for manual development of declarative and procedural knowledge, but this introduces the challenge of deciding just what features are needed to be built into the rule language and what should be left as module specific operations. One avenue for exploration is to allow lists in the chunks format, and to expand these out as chunk sequences in respect to the operation of the modules and rule engine.
