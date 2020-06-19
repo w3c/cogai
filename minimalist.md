@@ -29,22 +29,25 @@ The demo has three rules, one to start counting, a second to proceed one digit a
 
 ```
 # prepare to count up
-count {@module goal; start ?num; state start} =>
-	count {@module goal; state counting},
-	increment {@module facts; @do recall; number ?num},
-	console {@module output; @do log; value ?num}
+count {@module goal; start ?num; state start}
+   =>
+     count {@module goal; state counting},
+     increment {@module facts; @do recall; number ?num},
+     console {@module output; @do log; value ?num}
 
 # count up one at a time
 count {@module goal; state counting; start ?num1; end ?num2},
 count {@module goal; state counting; start ?num1; end ~?num1}
-increment {@module facts; number ?num1; successor ?num3} =>
-	count {@module goal; @do update; start ?num3},
-	increment {@module facts; @do recall; number ?num3},
-	console {@module output; @do log; value ?num3}
+increment {@module facts; number ?num1; successor ?num3}
+   =>
+     count {@module goal; @do update; start ?num3},
+     increment {@module facts; @do recall; number ?num3},
+     console {@module output; @do log; value ?num3}
 
 # stop after last one
-count {@module goal; start ?num; end ?num; state counting} =>
-	count {@module goal; @do update; state stop}
+count {@module goal; start ?num; end ?num; state counting}
+   =>
+     count {@module goal; @do update; state stop}
 ```
 ## Operations of sets of chunks
 
@@ -86,7 +89,9 @@ The start goal initiates a recall on the facts module for chunks with type *town
 A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
 
 ```
-next {prev ?prev} => town {@module facts; @do next; @id ?prev; county cornwall}
+next {prev ?prev}
+   =>
+     town {@module facts; @do next; @id ?prev; county cornwall}
 ```
 which instructs the facts module to set the buffer to the next town chunk where county is cornwall, following the chunk with the given ID.
 
