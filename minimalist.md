@@ -72,9 +72,14 @@ We could list which towns are in Cornwall by setting a start goal to trigger the
 
 ```
 start {}
-  => town {@module facts; @do recall; county cornwall}, next {}
+   => 
+     town {@module facts; @do recall; county cornwall},
+     next {}
+     
 next {}, town {@module facts; town ?town} 
-  => action {@do log; message ?town}, town {@module facts; @do next; county cornwall}
+   => 
+     action {@do log; message ?town},
+     town {@module facts; @do next; county cornwall}
 ```
 The start goal initiates a recall on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer.
 
