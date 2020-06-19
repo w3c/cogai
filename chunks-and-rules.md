@@ -242,7 +242,7 @@ Here is an example:
 {:Kurt :knows :Albert.} => {:Albert :knows :Kurt.}.
 ```
 
-The first statement signifies that *John says that Kurt knows Albert*. The second statement is a rules that says that if Kurt knows Albert then we can infer that Albert knows Kurt. 
+The first statement signifies that *John says that Kurt knows Albert*. The second statement is a rule that says that if Kurt knows Albert then we can infer that Albert knows Kurt. 
 
 Here is an example that deduces if someone is someone else's uncle:
 
