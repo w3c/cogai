@@ -62,7 +62,7 @@ increment {number 5 successor 6}
 ...
 ```
 
-You can use a comma separated list of chunks for goals and for actions. Alternatively you can write out the chunks in full using their IDs and the @condtion and @action properties in the rule chunk. The above rule could be written as follows:
+You can use a comma separated list of chunks for goals and for actions. Alternatively you can write out the chunks in full using their IDs and the @condition and @action properties in the rule chunk. The above rule could be written as follows:
 
 ```
 count c1 {
