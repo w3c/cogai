@@ -35,6 +35,60 @@ which also shows the use of single line comments that start with a #.
 
 Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names are formed as a sequence of letter, digit, period, hyphen, forward slash and colon. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type.
 
+Sometimes you just want to indicate that named relationship applies between two concepts. This can expressed conveniently as follows:
+
+```
+John likes Mary
+```
+
+which is interpreted as the following chunk:
+
+```
+loves {
+  @subject John
+  @object Mary
+}
+```
+## Mapping names to RDF
+
+To relate names used in chunks to RDF, you should use @rdfmap. For instance:
+
+```
+@rdfmap {
+  dog http://example.com/ns/dog
+  cat http://example.com/ns/cat
+}
+```
+You can use @base to set a default URI for names that are not explicitly declared in an @rdfmap
+```
+@rdfmap {
+  @base http://example.org/ns/
+  dog http://example.com/ns/dog
+  cat http://example.com/ns/cat
+}
+```
+which will map *mouse* to http://example.org/ns/mouse.
+
+You can likewise use @prefix for defining URI prefixes, e.g.
+```
+@prefix p1 {
+  ex: http://example.com/ns/
+}
+@rdfmap {
+  @prefix p1
+  dog ex:dog
+  cat ex:cat
+}
+```
+It may be more convenient to refer to a collection of @rdfmap and @prefix mappings rather than inlining them, e.g.
+
+```
+@rdfmap from http://example.org/mappings
+```
+If there are multiple conflicting definitions, the most recent will override earlier ones.
+
+Note: people familiar with JSON-LD would probably suggest using @context instead of @rdfmap, however, that would be confusing given that the term @context is needed in respect to reasoning in multiple contexts and modelling the theory of mind.
+
 ## Chunk Rules
 
 Applications can utilise a low level graph API or a high level rule language. The chunk rule language can be used to access and manipulate chunks held in one or more cognitive modules, where each module has a chunk graph and a chunk buffer that holds a single chunk. These modules are equivalent to different regions in the cerebral  cortex, where the buffer corresponds to the bundle of nerve fibres connecting to that region. The concurrent firing pattern across these fibres encodes the chunk as a semantic pointer in a noisy space with a high number of dimensions.
