@@ -87,7 +87,7 @@ increment a2 {
 }
 ```
 
-Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert tilda (~) as a prefix to the condition's property value. For example, the second condition in the following rule checks that the *from* and *to* properties in the goal buffer are distinct.
+Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert tilda (~) as a prefix to the condition's property value. You can further test that a property is undefined by using ~ on its own in place of a value. In the following rule, the second condition checks that the *from* and *to* properties in the goal buffer are distinct.
 
 ```
 # count up one at a time
