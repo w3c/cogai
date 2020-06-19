@@ -39,7 +39,7 @@ Names are used for chunk types, chunk IDs, chunk property names and for chunk pr
 
 Applications can utilise a low level graph API or a high level rule language. The chunk rule language can be used to access and manipulate chunks held in one or more cognitive modules, where each module has a chunk graph and a chunk buffer that holds a single chunk. These modules are equivalent to different regions in the cerebral  cortex, where the buffer corresponds to the bundle of nerve fibres connecting to that region. The concurrent firing pattern across these fibres encodes the chunk as a semantic pointer in a noisy space with a high number of dimensions.
 
-Each rule has one or more conditions and one or more actions. These are all formed from chunks. Each condition specifies which module it matched againgst. The rule actions can either directly update the module buffers, or they can invoke asynchonous operations exposed by the module. These may in turn update the module's buffer, leading to a fresh wave of rule activation. If multiple rules match the current state of the buffers, a selection process will pick one of them for execution. This is a stochastic process that takes into account previous experience.
+Each rule has one or more conditions and one or more actions. These are all formed from chunks. Each condition specifies which module it matched against. The rule actions can either directly update the module buffers, or they can invoke asynchonous operations exposed by the module. These may in turn update the module's buffer, leading to a fresh wave of rule activation. If multiple rules match the current state of the buffers, a selection process will pick one of them for execution. This is a stochastic process that takes into account previous experience.
 
 Here is an example of a rule with one condition and two actions:
 
@@ -50,6 +50,17 @@ count {state start; from ?num1; to ?num2}
 The condition matches the goal buffer, as this is the default in you omit the @module declaration to name the module. It matches a chunk of type *count*, with a *state* property whose value must be *start*.  The chunk also needs to define the *from* and *to* properties. The condition binds their values to the variables *?num1* and *?num2* respectively. Variables allow you to copy information from rule conditions to rule actions.
 
 The rule's first action updates the goal buffer so that the *state* property takes the value *counting*. This will allow us to trigger a second rule. The second action applies to the *facts* module, and initiates recall of a chunk of type *increment* with a property named *number* with the value given by the *?num1* variable as bound in the condition. The recall operation directs the facts module to search its graph for a matching chunk and place it in the facts module buffer. This also is a stochastic process that selects from amongst the matching chunks according to statistical weights that indicate the chunk's utility based upon previous experience.
+
+The above rule would work with chunks in the facts graph that indicate the successor to a given number:
+
+```
+increment {number 1 successor 2}
+increment {number 2 successor 3}
+increment {number 3 successor 4}
+increment {number 4 successor 5}
+increment {number 5 successor 6}
+...
+```
 
 You can use a comma separated list of chunks for goals and for actions. Alternatively you can write out the chunks in full using their IDs and the @condtion and @action properties in the rule chunk. The above rule could be written as follows:
 
