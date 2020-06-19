@@ -166,7 +166,7 @@ Modules must support the following actions:
 * **@do remember** to save the buffered chunk to the module's graph
 * **@do next** to load the next matching chunk in an implementation dependent order
 
-These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID.
+These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items. see below.
 
 Applications may specify additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.
 
@@ -178,7 +178,7 @@ You can iterate over the values in a comma separated list with the *@iterate foo
 @item {value 3.1415926535}
 ```
 
-You can then use *@do step* in an action to load the next item into the buffer. If the buffer holds the last item, then *@last* will be defined with the value true. *@index* and  *@list* are used internally for housekeeping.
+You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *@last* will be defined with the value true. *@index* and  *@list* are used internally for housekeeping.
 
 Note: if you want to use the buffer for something else, and later resume the iteration, you will need to note the item's ID, e.g. by using *@id ?id* and saving *?id* in the goal. You can then later use an action that combines *@iterate foo* with *@id ?id* to restore where you left off.
 
