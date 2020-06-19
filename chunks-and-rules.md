@@ -168,7 +168,7 @@ Modules must support the following actions:
 
 These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID.
 
-Applications may specify additional operations when initialising a module.
+Applications may specify additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of hte robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.
 
 ### Operations on comma separated lists
 
