@@ -35,7 +35,7 @@ which also shows the use of single line comments that start with a #.
 
 Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names are formed as a sequence of letter, digit, period, hyphen, forward slash and colon. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type.
 
-Sometimes you just want to indicate that named relationship applies between two concepts. This can expressed conveniently as follows:
+Sometimes you just want to indicate that a named relationship applies between two concepts. This can expressed conveniently as follows:
 
 ```
 John likes Mary
