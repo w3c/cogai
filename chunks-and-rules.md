@@ -166,7 +166,7 @@ Modules must support the following actions:
 * **@do remember** to save the buffered chunk to the module's graph
 * **@do next** to load the next matching chunk in an implementation dependent order
 
-These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items. see below.
+These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below.
 
 Applications may specify additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.
 
