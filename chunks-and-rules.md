@@ -232,7 +232,7 @@ Here is an example:
 
 #### N3
 
-Notation3 (N3) is a rule language for RDF that can be used to express rules based upon first order logic that operate ove RDF triples. N3 supports quantifiers (@forAll and @forSome) and variables.
+Notation3 (N3) is a rule language for RDF that can be used to express rules based upon first order logic that operate over RDF triples. N3 supports quantifiers (@forAll and @forSome) and variables.
 
 Here is an example:
 
@@ -247,10 +247,12 @@ The first statement signifies that *John says that Kurt knows Albert*. The secon
 Here is an example that deduces if someone is someone else's uncle:
 
 ```
-{ ?X hasParent ?P .
+{
+  ?X hasParent ?P .
   ?P hasBrother ?B .
 } => {
-  ?X hasUncle ?B }.
+  ?X hasUncle ?B
+}.
 ```
 
 * [Notation3 (N3): A readable RDF syntax](https://www.w3.org/TeamSubmission/n3/) 28 March 2011
