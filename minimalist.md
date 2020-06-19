@@ -37,7 +37,7 @@ count {@module goal; start ?num; state start}
 
 # count up one at a time
 count {@module goal; state counting; start ?num1; end ?num2},
-count {@module goal; state counting; start ?num1; end ~?num1}
+count {@module goal; state counting; start ?num1; end ~?num1},
 increment {@module facts; number ?num1; successor ?num3}
    =>
      count {@module goal; @do update; start ?num3},
