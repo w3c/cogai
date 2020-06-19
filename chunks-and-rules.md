@@ -99,8 +99,6 @@ increment {@module facts; number ?num1; successor ?num3}
      increment {@module facts; @do recall; number ?num3},
      console {@module output; @do log; value ?num3}
 ```
-It also shows the use of single line comments that start with a #.
-
 For properties whose values are names, numbers or booleans, the values can be matched directly. For ISO8601 dates, the value corresponds to an ID for the iso8601 date chunk, and hence date values are compared in the same way as for names. For values which are comma separated lists, the lists must be the same length and each of their items must match as above.
 
 Both conditions and actions can use *@id* to bind to a chunk ID.
