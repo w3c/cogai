@@ -172,7 +172,13 @@ Applications may specify additional operations when initialising a module. This 
 
 ### Operations on comma separated lists
 
-You can iterate over the values in a comma separated list with the *@iterate foo* for a property named *foo* in the current chunk. This has the effect of loading the module's buffer with the first item in the list. You can then use *@do step* in an action to load the next item into the buffer. If the buffer holds the last item, then *@last* will be defined with the value true. *@index* and  *@list* are used internally for housekeeping.
+You can iterate over the values in a comma separated list with the *@iterate foo* for a property named *foo* in the current chunk. This has the effect of loading the module's buffer with the first item in the list. If the item is a chunk ID, then the corresponding chunk is loaded into the buffer, otherwise, a chunk is generated to hold the value, e.g. the value *3.1415926535* is loaded as the following chunk:
+
+```
+item {value 3.1415926535}
+```
+
+You can then use *@do step* in an action to load the next item into the buffer. If the buffer holds the last item, then *@last* will be defined with the value true. *@index* and  *@list* are used internally for housekeeping.
 
 Use *@do push* to push a chunk derived from this action to the end of the current sequence. Likewise *@do pop* will pop the end of the current sequence to the buffer. Similarly @do unshift and @do shift for the start of the sequence. This uses the same terminology as for JavaScript arrays.
 
