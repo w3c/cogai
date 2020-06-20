@@ -49,7 +49,7 @@ count {@module goal; start ?num; end ?num; state counting}
    =>
      count {@module goal; @do update; state stop}
 ```
-## Operations of sets of chunks
+## Operations on sets of chunks
 
 Whilst the limitation of buffers to single chunks may seem like a drawback when it comes to working with collections of facts, this is easily overcome. The rule language provides direct support for iterating over chunks with a given type and matching properties. Beyond that, modules can support a variety of graph algorithms which can be invoked from rule actions.
 
