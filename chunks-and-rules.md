@@ -233,7 +233,7 @@ Further experience is needed before committing to further built-in capabilities.
 
 ### Iterating over properties
 
-You can iterate over each of the properties in a buffer, e.g. the following iterates over the properties in the facts buffer:
+You can iterate over each of the properties in a buffer, e.g. the following action iterates over the properties in the facts buffer:
 
 ```
 foo {@module facts; @do properties}
