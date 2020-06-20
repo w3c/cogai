@@ -248,7 +248,7 @@ For instance, assuming the facts buffer holds a property *status* whose value is
 foo {name status; value active}
 ```
 
-You can then load the next property with a *do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
+You can then load the next property with a *@do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
 
 ### More complex queries
 
