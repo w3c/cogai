@@ -227,7 +227,9 @@ person {name Wendy} => person {@shift ?friend; @from friends}
 
 will pop the first item in the list of friends to the variable *?friend*.
 
-**Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*? Further experience is needed before committing to further built-in capabilities.
+**Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*?
+
+Further experience is needed before committing to further built-in capabilities.
 
 ### Iterating over properties
 
