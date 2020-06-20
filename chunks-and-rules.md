@@ -172,7 +172,7 @@ These can be used in combination with *@id* to specify the chunk ID, e.g. to rec
 
 The default action is *@do update*. If the chunk type for the action is the same as the chunk currently held in the buffer, then the effect is to update the properties given in the action, leaving existing properties unchanged. If the chunk type for the action is not the same as the chunk currently held in the buffer, a new chunk is created with the properties given in the action.
 
-The *@do recall* action copies the chunk into the buffer. Changing the values of properties in the buffer won't alter the graph until you use *do remember* to save the buffer to the graph.
+The *@do recall* action copies the chunk into the buffer. Changing the values of properties in the buffer won't alter the graph until you use *@do remember* to save the buffer to the graph.
 
 Applications may specify additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.
 
