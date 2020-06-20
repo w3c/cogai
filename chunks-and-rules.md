@@ -19,21 +19,21 @@ Which describes a dog named *fido* that is 4 years old. The chunk name, (i.e. it
 dog dog1 {name "fido"; age 4}
 ```
 
-The chunk ID is optional, and if missing, will be automatically assigned when adding the chunk to a graph. If the graph already has a chunk with the same ID, it will be replaced by this one. You are free to use whitespace as you please, modulo the need for punctuation. String literals must be enclosed in double quote marks.
+The chunk ID is optional, and if missing, will be automatically assigned when adding the chunk to a graph. If the graph already has a chunk with the same ID, it will be replaced by this one. You are free to use whitespace as you please, modulo the need for punctuation. String literals apart from URIs must be enclosed in double quote marks.
 
-Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a common subset of ISO8601 and are translated into a chunk of type *iso8601* with properties for the year, month, day etc., e.g.
+Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a common subset of ISO8601 and are treated as identifiers for read-only chunks of type *iso8601* with properties for the year, month, day etc., e.g.
 
 ```
 # Albert Einstein's birth date
-iso8601 {
+iso8601 1879-03-14 {
    year 1879
    month 3
    day 14
 }
 ```
-which also shows the use of single line comments that start with a #.
+which also illustrates the use of single line comments that start with a #.
 
-Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names are formed as a sequence of letter, digit, period, hyphen, forward slash and colon. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type.
+Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names can include the following character classes: letters, digits, period, and hyphen. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type. 
 
 Sometimes you just want to indicate that a named relationship applies between two concepts. This can expressed conveniently as follows:
 
@@ -99,7 +99,8 @@ Here is an example of a rule with one condition and two actions:
 
 ```
 count {state start; from ?num1; to ?num2}
-   => count {state counting}, increment {@module facts; @do recall; number ?num1}
+   => count {state counting},
+      increment {@module facts; @do recall; number ?num1}
 ```
 The condition matches the goal buffer, as this is the default if you omit the @module declaration to name the module. It matches a chunk of type *count*, with a *state* property whose value must be *start*.  The chunk also needs to define the *from* and *to* properties. The condition binds their values to the variables *?num1* and *?num2* respectively. Variables allow you to copy information from rule conditions to rule actions.
 
@@ -172,15 +173,23 @@ Applications may specify additional operations when initialising a module. This 
 
 ### Operations on comma separated lists
 
-You can iterate over the values in a comma separated list with the *@iterate foo* for a property named *foo* in the current chunk. This has the effect of loading the module's buffer with the first item in the list. An item chunk is generated to hold the value, e.g. the value *3.1415926535* is loaded as the following chunk:
+You can iterate over the values in a comma separated list with the *@for*. This has the effect of loading the module's buffer with the first item in the list. You can optionally specify the index range with *@from* and *@to*, where the first item in the list has index 0, as is common in programming languages like JavaScript.
 
 ```
-@item {value 3.1415926535}
+# a chunk in the facts module
+person {name Wendy; friends Michael, Suzy, Janet, John}
+
+# the following rule is triggered when the facts module buffer holds the person chunk
+person {@module facts; friends ?friends}
+   => action {@module goal; @for ?friends; @from 1; @to 2}
+```
+which will iterate over Suzy and Janet. An item chunk is generated to hold the value, e.g. the value *Suzy* is loaded into the goal buffer as the following chunk:
+
+```
+@item {value Suzy; index 1}
 ```
 
-You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *@last* will be defined with the value true. *@index* and  *@list* are used internally for housekeeping.
-
-Note: if you want to use the buffer for something else, and later resume the iteration, you will need to note the item's ID, e.g. by using *@id ?id* and saving *?id* in the goal. You can then later use an action that combines *@iterate foo* with *@id ?id* to restore where you left off.
+You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *last* will be defined with the value true. 
 
 Use *@do push* to push a chunk derived from this action to the end of the current sequence. Likewise *@do pop* will pop the end of the current sequence to the buffer. Similarly *@do unshift* and *@do shift* for the start of the sequence. This uses the same terminology as for JavaScript arrays.
 
