@@ -142,7 +142,9 @@ increment a2 {
 }
 ```
 
-Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert tilda (~) as a prefix to the condition's property value. You can further test that a property is undefined by using ~ on its own in place of a value. In the following rule, the second condition checks that the *from* and *to* properties in the goal buffer are distinct.
+Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert tilda (`~`) as a prefix to the condition's property value. You can further test that a property is undefined by using `~` on its own in place of a value. In an action you can use `~` on its own to set a property to be undefined.
+
+In the following rule, the second condition checks that the *from* and *to* properties in the goal buffer are distinct.
 
 ```
 # count up one at a time
@@ -167,6 +169,7 @@ Modules must support the following actions:
 * **@do forget** to forget chunks with matching type and properties
 * **@do remember** to save the buffered chunk to the module's graph
 * **@do next** to load the next matching chunk in an implementation dependent order
+* **@do properties** to iterate over the set of properties
 
 These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below.
 
@@ -225,6 +228,24 @@ person {name Wendy} => person {@shift ?friend; @from friends}
 will pop the first item in the list of friends to the variable *?friend*.
 
 **Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*? Further experience is needed before committing to further built-in capabilities.
+
+### Iterating over properties
+
+You can iterate over each of the properties in a buffer, e.g. the following iterates over the properties in the facts buffer:
+
+```
+foo {@module facts; @do properties}
+```
+
+This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property, e.g. assuming the facts buffer holds a property *status* whose value is *active*:
+
+```
+foo {name status; value active}
+```
+
+You can then load the next property with a *do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
+
+**Note** this operation assumes that the properties are written to the goal buffer. If necessary, we could introduce a way to name which buffer the properties should be written to, e.g. using *@to* with the module name.
 
 ### More complex queries
 
