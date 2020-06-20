@@ -169,7 +169,7 @@ Modules must support the following actions:
 * **@do forget** to forget chunks with matching type and properties
 * **@do remember** to save the buffered chunk to the module's graph
 * **@do next** to load the next matching chunk in an implementation dependent order
-* **@do properties** to iterate over the set of properties
+* **@do properties** to iterate over the set of properties in a buffer
 
 These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below.
 
