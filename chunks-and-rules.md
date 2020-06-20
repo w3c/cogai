@@ -184,11 +184,11 @@ You can iterate over the values in a comma separated list with the *@for*. This 
 # a chunk in the facts module
 person {name Wendy; friends Michael, Suzy, Janet, John}
 
-# the following rule is triggered when the facts module buffer holds the person chunk
+# the following rule iterates over the friends
 person {@module facts; friends ?friends}
    => item {@module goal; @for ?friends; @from 1; @to 2}
 ```
-which will iterate over Suzy and Janet, updating the module buffer using the given type, and setting properties for the item's value and its index, e.g. 
+which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g. 
 
 ```
 item {value Suzy; index 1}
