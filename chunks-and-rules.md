@@ -222,9 +222,7 @@ person {name Wendy} => person {@shift ?friend; @from friends}
 
 will pop the first item in the list of friends to the variable *?friend*.
 
-**Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*?
-
-In principle, we could build-in more complex operations, e.g. concatenating a sequence bound by a variable to the current sequence. If the variable is bound to a single item, this is the same a a push. Likewise we could insert the chunk derived from this action prior to the current item in the sequence. However, further experience is needed before any commitment to add these to the specification.
+**Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*? Further experience is needed before committing to further built-in capabilities.
 
 ### More complex queries
 
