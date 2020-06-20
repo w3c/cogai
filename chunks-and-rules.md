@@ -93,7 +93,7 @@ Note: people familiar with JSON-LD would probably suggest using @context instead
 
 Applications can utilise a low level graph API or a high level rule language. The chunk rule language can be used to access and manipulate chunks held in one or more cognitive modules, where each module has a chunk graph and a chunk buffer that holds a single chunk. These modules are equivalent to different regions in the cerebral  cortex, where the buffer corresponds to the bundle of nerve fibres connecting to that region. The concurrent firing pattern across these fibres encodes the chunk as a semantic pointer in a noisy space with a high number of dimensions.
 
-Each rule has one or more conditions and one or more actions. These are all formed from chunks. Each condition specifies which module it matched against. The rule actions can either directly update the module buffers, or they can invoke asynchonous operations exposed by the module. These may in turn update the module's buffer, leading to a fresh wave of rule activation. If multiple rules match the current state of the buffers, a selection process will pick one of them for execution. This is a stochastic process that takes into account previous experience.
+Each rule has one or more conditions and one or more actions. These are all formed from chunks. Each condition specifies which module it matched against, and likewise each rule action specifies which module it effects. The rule actions can either directly update the module buffers, or they can invoke asynchonous operations exposed by the module. These may in turn update the module's buffer, leading to a fresh wave of rule activation. If multiple rules match the current state of the buffers, a selection process will pick one of them for execution. This is a stochastic process that takes into account previous experience.
 
 Here is an example of a rule with one condition and two actions:
 
@@ -102,7 +102,7 @@ count {state start; from ?num1; to ?num2}
    => count {state counting},
       increment {@module facts; @do recall; number ?num1}
 ```
-The condition matches the goal buffer, as this is the default if you omit the @module declaration to name the module. It matches a chunk of type *count*, with a *state* property whose value must be *start*.  The chunk also needs to define the *from* and *to* properties. The condition binds their values to the variables *?num1* and *?num2* respectively. Variables allow you to copy information from rule conditions to rule actions.
+The condition matches the goal buffer, as this is the default if you omit the *@module* declaration to name the module. It matches a chunk of type *count*, with a *state* property whose value must be *start*.  The chunk also needs to define the *from* and *to* properties. The condition binds their values to the variables *?num1* and *?num2* respectively. Variables allow you to copy information from rule conditions to rule actions.
 
 The rule's first action updates the goal buffer so that the *state* property takes the value *counting*. This will allow us to trigger a second rule. The second action applies to the *facts* module, and initiates recall of a chunk of type *increment* with a property named *number* with the value given by the *?num1* variable as bound in the condition. The recall operation directs the facts module to search its graph for a matching chunk and place it in the facts module buffer. This also is a stochastic process that selects from amongst the matching chunks according to statistical weights that indicate the chunk's utility based upon previous experience.
 
@@ -162,6 +162,7 @@ Both conditions and actions can use *@id* to bind to a chunk ID.
 
 Modules must support the following actions:
 
+* **@do update** to directly update the module's buffer
 * **@do recall** to recall a chunk with matching type and properties
 * **@do forget** to forget chunks with matching type and properties
 * **@do remember** to save the buffered chunk to the module's graph
@@ -169,11 +170,15 @@ Modules must support the following actions:
 
 These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below.
 
+The default action is *@do update*. If the chunk type for the action is the same as the chunk currently held in the buffer, then the effect is to update the properties given in the action, leaving existing properties unchanged. If the chunk type for the action is not the same as the chunk currently held in the buffer, a new chunk is created with the properties given in the action.
+
+The *@do recall* action copies the chunk into the buffer. Changing the values of properties in the buffer won't alter the graph until you use *do remember* to save the buffer to the graph.
+
 Applications may specify additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.
 
 ### Operations on comma separated lists
 
-You can iterate over the values in a comma separated list with the *@for*. This has the effect of loading the module's buffer with the first item in the list. You can optionally specify the index range with *@from* and *@to*, where the first item in the list has index 0, as is common in programming languages like JavaScript.
+You can iterate over the values in a comma separated list with the *@for*. This has the effect of loading the module's buffer with the first item in the list. You can optionally specify the index range with *@from* and *@to*, where the first item in the list has index 0, just like JavaScript.
 
 ```
 # a chunk in the facts module
@@ -181,15 +186,15 @@ person {name Wendy; friends Michael, Suzy, Janet, John}
 
 # the following rule is triggered when the facts module buffer holds the person chunk
 person {@module facts; friends ?friends}
-   => action {@module goal; @for ?friends; @from 1; @to 2}
+   => item {@module goal; @for ?friends; @from 1; @to 2}
 ```
-which will iterate over Suzy and Janet. An item chunk is generated to hold the value, e.g. the value *Suzy* is loaded into the goal buffer as the following chunk:
+which will iterate over Suzy and Janet, updating the module buffer using the given type, and setting properties for the item's value and its index, e.g. 
 
 ```
-@item {value Suzy; index 1}
+item {value Suzy; index 1}
 ```
 
-You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *last* will be defined with the value true. 
+You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *last* will be defined with the value true. Action chunks should use either *@do* or *@for*, but both both.
 
 Use *@do push* to push a chunk derived from this action to the end of the current sequence. Likewise *@do pop* will pop the end of the current sequence to the buffer. Similarly *@do unshift* and *@do shift* for the start of the sequence. This uses the same terminology as for JavaScript arrays.
 
