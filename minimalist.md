@@ -15,6 +15,7 @@ Rules can be modelled as a rule chunk that names a chunk for the conditions and 
 * the usual case where the condition chunk's property must be the same as in the buffer
 * use ~ as a prefix for the condition's value when it must be different from the buffer
 * use ~ on its own in place of the condition's value to test that a property is undefined
+* use ~ on its own in an action when you want to undefine a property
 
 The facts for the counting demo can be rewritten without numbers as a data type:
 
@@ -99,6 +100,6 @@ Note if you add to, or remove matching chunks during an iteration, then you are 
 
 ## Summary
 
-A minimalist version of chunks is practical that limits property values to names. There support for testing that a property is not a given name, and to test when a property is undefined. The built-in actions include *recall* to retrieve a chunk from a module to its buffer, *remember* to save a chunk to a module from its buffer, *forget* to expunge matching chunks, and *next* to iterate through matching chunks as explained above.  Applications can register additional actions as needed, e.g. to operate a robot's arm or turn on a light, or to perform complex queries analogous to SPARQL.
+A minimalist version of chunks is practical that limits property values to names. There is support for testing that a property is not a given name, and to test when a property is undefined, and to set a property to be undefined. The built-in actions include *recall* to retrieve a chunk from a module to its buffer, *remember* to save a chunk to a module from its buffer, *forget* to expunge matching chunks, and *next* to iterate through matching chunks as explained above.  Applications can register additional actions as needed, e.g. to operate a robot's arm or turn on a light, or to perform complex queries analogous to SPARQL.
 
 A wider set of data types for property values would be convenient for manual development of declarative and procedural knowledge, but this introduces the challenge of deciding just what features are needed to be built into the rule language and what should be left as module specific operations. See [chunks and rules](chunks-and-rules.md).
