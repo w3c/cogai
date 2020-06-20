@@ -245,9 +245,7 @@ This sets the goal buffer to a chunk of type *foo* with a property *name* whose 
 foo {name status; value active}
 ```
 
-You can then load the next property with a *do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
-
-**Note** this operation assumes that the properties are written to the goal buffer. If necessary, we could introduce a way to name which buffer the properties should be written to, e.g. using *@to* with the module name.
+You can then load the next property with a *do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*. If you want to load the properties to a different module buffer, use *@to* with the module name.
 
 ### More complex queries
 
