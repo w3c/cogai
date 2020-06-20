@@ -242,7 +242,7 @@ foo {@module facts; @do properties; @to goal}
 
 This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property. The use of *@to* to name which module to put this information is optional, and defaults to the goal module.
 
-For instance, assuming the facts buffer holds a property *status* whose value is *active*:
+For instance, assuming the facts buffer holds a property *status* whose value is *active*, the goal buffer would be updated to:
 
 ```
 foo {name status; value active}
