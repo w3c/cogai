@@ -196,7 +196,33 @@ item {value Suzy; index 1}
 
 You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *last* will be defined with the value true. Action chunks should use either *@do* or *@for*, but both both.
 
-Use *@do push* to push a chunk derived from this action to the end of the current sequence. Likewise *@do pop* will pop the end of the current sequence to the buffer. Similarly *@do unshift* and *@do shift* for the start of the sequence. This uses the same terminology as for JavaScript arrays.
+You can append a value to a property using *@push* with the value, and *@to* with the name of the property, e.g.
+
+```
+person {name Wendy} => person {@push Emma; @to friends}
+```
+which will push Emma to the end of the list of friends in the goal buffer. 
+
+```
+person {name Wendy} => person {@pop ?friend; @from friends}
+```
+
+will pop the last item in the list of friends to the variable *?friend*.
+
+Similarly you can prepend a value to a property using *@unshift* with the value, and *@to* with the name of the property, e.g.
+
+```
+person {name Wendy} => person {@unshift Emma; @to friends}
+```
+will push Emma to the start of the list of friends in the goal buffer. 
+
+```
+person {name Wendy} => person {@shift ?friend; @from friends}
+```
+
+will pop the first item in the list of friends to the variable *?friend*.
+
+**Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*?
 
 In principle, we could build-in more complex operations, e.g. concatenating a sequence bound by a variable to the current sequence. If the variable is bound to a single item, this is the same a a push. Likewise we could insert the chunk derived from this action prior to the current item in the sequence. However, further experience is needed before any commitment to add these to the specification.
 
