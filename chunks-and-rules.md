@@ -2,6 +2,22 @@
 
 *This document describes the syntax and semantics for the chunk graph and rules format. A formal specification is in preparation for publication as a Community Group Report.*
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Mapping names to RDF](#mapping-names-to-rdf)
+- [Chunk Rules](#chunk-rules)
+    - [Built-in actions](#built-in-actions)
+    - [Operations on comma separated lists](#operations-on-comma-separated-lists)
+    - [Iterating over properties](#iterating-over-properties)
+    - [More complex queries](#more-complex-queries)
+- [Boosting performance](#boosting-performance)
+- [Relationship to other rule languages](#relationship-to-other-rule-languages)
+    - [Minimalist chunks](#minimalist-chunks)
+    - [OPS5](#ops5)
+    - [N3](#n3)
+
+## Introduction
+
 Each chunk is a named typed collection of properties, whose values are names (e.g. for other chunks), numbers, booleans (true or false), ISO8601 dates, string literals or comma separated lists thereof. This can be contrasted with a [minimal appoach](minimalist.md) in which property values are restricted to names.
 
 Here is an example of a chunk where each property is given on a separate line:
