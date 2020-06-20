@@ -234,19 +234,21 @@ Further experience is needed before committing to further built-in capabilities.
 
 ### Iterating over properties
 
-You can iterate over each of the properties in a buffer, e.g. the following action iterates over the properties in the facts buffer:
+You can iterate over each of the properties in a buffer, e.g. the following action uses the goal buffer to iterates over the properties in the facts buffer:
 
 ```
-foo {@module facts; @do properties}
+foo {@module facts; @do properties; @to goal}
 ```
 
-This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property, e.g. assuming the facts buffer holds a property *status* whose value is *active*:
+This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property. The use of *@to* to name which module to put this information is optional, and defaults to the goal module.
+
+For instance, assuming the facts buffer holds a property *status* whose value is *active*:
 
 ```
 foo {name status; value active}
 ```
 
-You can then load the next property with a *do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*. If you want to load the properties to a different module buffer, use *@to* with the module name.
+You can then load the next property with a *do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
 
 ### More complex queries
 
