@@ -84,6 +84,11 @@ next {}, town {@module facts; @id ?town}
    => 
      action {@do log; message ?town},
      town {@module facts; @do next; county cornwall}
+next {}, town {@module facts; @id ?town; @last true} 
+   => 
+     action {@do log; message ?town},
+     action {@do log; message "That's all!"},
+     town {@module facts; @do clear}
 ```
 The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@last* property is set to *true* in the buffer for the last chunk in the iteration.
 
