@@ -77,7 +77,7 @@ We could list which towns are in Cornwall by setting a start goal to trigger the
 ```
 start {}
    => 
-     town {@module facts; @do recall; county cornwall},
+     town {@module facts; @do next; county cornwall},
      next {}
      
 next {}, town {@module facts; @id ?town} 
@@ -85,7 +85,7 @@ next {}, town {@module facts; @id ?town}
      action {@do log; message ?town},
      town {@module facts; @do next; county cornwall}
 ```
-The start goal initiates a recall on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer.
+The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@last* property is set to *true* in the buffer for the last chunk in the iteration.
 
 A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
 
