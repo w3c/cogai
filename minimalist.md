@@ -80,7 +80,7 @@ start {}
      town {@module facts; @do recall; county cornwall},
      next {}
      
-next {}, town {@module facts; town ?town} 
+next {}, town {@module facts; @id ?town} 
    => 
      action {@do log; message ?town},
      town {@module facts; @do next; county cornwall}
