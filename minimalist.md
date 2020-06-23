@@ -33,7 +33,7 @@ The demo has three rules, one to start counting, a second to proceed one digit a
 count {@module goal; start ?num; state start}
    =>
      count {@module goal; state counting},
-     increment {@module facts; @do recall; number ?num},
+     increment {@module facts; @do get; number ?num},
      console {@module output; @do log; value ?num}
 
 # count up one at a time
@@ -42,7 +42,7 @@ count {@module goal; state counting; start ?num1; end ~?num1},
 increment {@module facts; number ?num1; successor ?num3}
    =>
      count {@module goal; @do update; start ?num3},
-     increment {@module facts; @do recall; number ?num3},
+     increment {@module facts; @do get; number ?num3},
      console {@module output; @do log; value ?num3}
 
 # stop after last one
@@ -80,14 +80,14 @@ start {}
      town {@module facts; @do next; county cornwall},
      next {}
      
-next {}, town {@module facts; @id ?town} 
+next {}, town {@module facts; @id ?town; @last false} 
    => 
-     action {@do log; message ?town},
-     town {@module facts; @do next; county cornwall}
+     console {@do log; message ?town},
+     town {@module facts; @do next}
 next {}, town {@module facts; @id ?town; @last true} 
    => 
-     action {@do log; message ?town},
-     action {@do log; message "That's all!"},
+     console {@do log; message ?town},
+     console {@do log; message "That's all!"},
      town {@module facts; @do clear}
 ```
 The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@last* property is set to *true* in the buffer for the last chunk in the iteration.
@@ -105,6 +105,6 @@ Note if you add to, or remove matching chunks during an iteration, then you are 
 
 ## Summary
 
-A minimalist version of chunks is practical that limits property values to names. There is support for testing that a property is not a given name, and to test when a property is undefined, and to set a property to be undefined. The built-in actions include *recall* to retrieve a chunk from a module to its buffer, *remember* to save a chunk to a module from its buffer, *forget* to expunge matching chunks, and *next* to iterate through matching chunks as explained above.  Applications can register additional actions as needed, e.g. to operate a robot's arm or turn on a light, or to perform complex queries analogous to SPARQL.
+A minimalist version of chunks is practical that limits property values to names. There is support for testing that a property is not a given name, and to test when a property is undefined, and to set a property to be undefined. The built-in actions include *update* to directly update a buffer, *clear* to clear a buffer, *get* to retrieve a chunk from a module to its buffer, *put* to save a chunk to a module from its buffer, *delete* to expunge matching chunks, and *next* to iterate through matching chunks as explained above.  Applications can register additional actions as needed, e.g. to operate a robot's arm or turn on a light, or to perform complex queries analogous to SPARQL.
 
 A wider set of data types for property values would be convenient for manual development of declarative and procedural knowledge, but this introduces the challenge of deciding just what features are needed to be built into the rule language and what should be left as module specific operations. See [chunks and rules](chunks-and-rules.md).
