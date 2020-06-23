@@ -116,11 +116,11 @@ Here is an example of a rule with one condition and two actions:
 ```
 count {state start; from ?num1; to ?num2}
    => count {state counting},
-      increment {@module facts; @do recall; number ?num1}
+      increment {@module facts; @do get; number ?num1}
 ```
 The condition matches the goal buffer, as this is the default if you omit the *@module* declaration to name the module. It matches a chunk of type *count*, with a *state* property whose value must be *start*.  The chunk also needs to define the *from* and *to* properties. The condition binds their values to the variables *?num1* and *?num2* respectively. Variables allow you to copy information from rule conditions to rule actions.
 
-The rule's first action updates the goal buffer so that the *state* property takes the value *counting*. This will allow us to trigger a second rule. The second action applies to the *facts* module, and initiates recall of a chunk of type *increment* with a property named *number* with the value given by the *?num1* variable as bound in the condition. The recall operation directs the facts module to search its graph for a matching chunk and place it in the facts module buffer. This also is a stochastic process that selects from amongst the matching chunks according to statistical weights that indicate the chunk's utility based upon previous experience.
+The rule's first action updates the goal buffer so that the *state* property takes the value *counting*. This will allow us to trigger a second rule. The second action applies to the *facts* module, and initiates recall of a chunk of type *increment* with a property named *number* with the value given by the *?num1* variable as bound in the condition. The *get* operation directs the facts module to search its graph for a matching chunk and place it in the facts module buffer. This also is a stochastic process that selects from amongst the matching chunks according to statistical weights that indicate the chunk's utility based upon previous experience.
 
 The above rule would work with chunks in the facts graph that indicate the successor to a given number:
 
@@ -153,7 +153,7 @@ count a1 {
 
 increment a2 {
    @module facts
-   @do recall
+   @do get
    number ?num1
 }
 ```
@@ -169,7 +169,7 @@ count {@module goal; state counting; from ?num1; to ~?num1},
 increment {@module facts; number ?num1; successor ?num3}
    =>
      count {@module goal; @do update; from ?num3},
-     increment {@module facts; @do recall; number ?num3},
+     increment {@module facts; @do get; number ?num3},
      console {@module output; @do log; value ?num3}
 ```
 For properties whose values are names, numbers or booleans, the values can be matched directly. For ISO8601 dates, the value corresponds to an ID for the iso8601 date chunk, and hence date values are compared in the same way as for names. For values which are comma separated lists, the lists must be the same length and each of their items must match as above.
@@ -181,22 +181,25 @@ Both conditions and actions can use *@id* to bind to a chunk ID.
 Modules must support the following actions:
 
 * **@do update** to directly update the module's buffer
-* **@do recall** to recall a chunk with matching type and properties
-* **@do forget** to forget chunks with matching type and properties
-* **@do remember** to save the buffered chunk to the module's graph
+* **@do get** to recall a chunk with matching type and properties
+* **@do put** to save the buffer as a new chunk to the module's graph
+* **@do patch** to use the buffer to patch a chunk in the module's graph
+* **@do delete** to forget chunks with matching type and properties
 * **@do next** to load the next matching chunk in an implementation dependent order
 * **@do properties** to iterate over the set of properties in a buffer
 * **@for** to iterate over the items in a comma separated list
 
-These can be used in combination with *@id* to specify the chunk ID, e.g. to recall a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below.
+Apart from *update*, all actions are asynchronous, and when complete set the buffer status to reflect their outcome. Rules can query the status using *@status*. The value can be *pending*, *okay*, *forbidden*, *nomatch* and *failed*. This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases.
+
+Actions can be used in combination with *@id* to specify the chunk ID, e.g. to get a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below. 
 
 The default action is *@do update*. If the chunk type for the action is the same as the chunk currently held in the buffer, then the effect is to update the properties given in the action, leaving existing properties unchanged. If the chunk type for the action is not the same as the chunk currently held in the buffer, a new chunk is created with the properties given in the action.
 
 Actions that directly update the buffer do so in the order that the action appears in the rule. In other words, if multiple actions update the same property, the property will have the value set by the last such action.
 
-The *@do recall* action copies the chunk into the buffer. Changing the values of properties in the buffer won't alter the graph until you use *@do remember* to save the buffer to the graph.
+The *@do get* action copies the chunk into the buffer. Changing the values of properties in the buffer won't alter the graph until you use *@do put* or *@do patch* to save the buffer to the graph. Put creates a new chunk, or completely overwrites an existing one with the same ID as set with *@id*. Patch, by contrast will just overwrite the properties designated in the action.
 
-Applications can define additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.
+Applications can define additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning. Applications cannot replace the built-in actions listed above.
 
 ### Operations on comma separated lists
 
