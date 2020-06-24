@@ -174,6 +174,14 @@ increment {@module facts; number ?num1; successor ?num3}
 ```
 For properties whose values are names, numbers or booleans, the values can be matched directly. For ISO8601 dates, the value corresponds to an ID for the iso8601 date chunk, and hence date values are compared in the same way as for names. For values which are comma separated lists, the lists must be the same length and each of their items must match as above.
 
+You can write rules that apply when an action such as retrieving a chunk from memory has failed. To do this place an exclamation mark before the chunk type of the condition chunk, e.g.
+
+```
+!present {@module facts; person Mary; room room1}
+```
+
+which will match the facts module buffer after a failure to *get* a chunk of type *present* with the corresponding properties. See below for details of response status codes.
+
 Both conditions and actions can use *@id* to bind to a chunk ID.
 
 ### Built-in actions
