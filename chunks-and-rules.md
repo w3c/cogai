@@ -280,7 +280,7 @@ Modules may provide support for more complex queries that are specified as chunk
 
 Forward chaining production rules involve testing the conditions for all of the rules against the current state of working memory. This gets increasingly expensive as the number of rules and the number of facts in working memory increases. It would be impractical to scale to really large memories with very large numbers of rules.
 
-The brain solves this by first applying rules to a comparatively small number of chunk buffers, and second, by compiling rule conditions into a discrimination network whose input is the chunk buffers, and whose output is the set of matching rules. This is followed by a second stage that selects which rule to use, and a third stage that applies that rule's actions. This approach was re-invented as the [Rete algorithm](https://en.wikipedia.org/wiki/Rete_algorithm) by Charles Forgy, see below.
+The brain solves this by first applying rules to a comparatively small number of chunk buffers, and second, by compiling rule conditions into a discrimination network *(the Striatum)* whose input is the chunk buffers, and whose output is the set of matching rules. This is followed by a second stage *(the Pallidum)* that selects which rule to use, and a third stage *(the Thalamus)* that applies that rule's actions. This approach was re-invented as the [Rete algorithm](https://en.wikipedia.org/wiki/Rete_algorithm) by Charles Forgy, see below.
 
 n.b. nature also invented the [page rank algorithm](https://en.wikipedia.org/wiki/PageRank) as a basis for ranking memories for recall from the cortex based upon spreading activation from other memories.
 
