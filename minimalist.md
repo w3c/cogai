@@ -58,7 +58,7 @@ For RDF, the SPARQL query language provides for powerful queries over RDF triple
 
 ## Iterating over matching chunks
 
-A simpler means to interate over chunks with a given type and properties is to use *@do next* in a rule action, which has the effect of loading the next matching chunk into the module's buffer in an implementation dependent sequence. To see how this works consider the following list of towns and the counties they are situated in:
+A simpler means to iterate over chunks with a given type and properties is to use *@do next* in a rule action, which has the effect of loading the next matching chunk into the module's buffer in an implementation dependent sequence. To see how this works consider the following list of towns and the counties they are situated in:
 
 ```
 town ascot {county berkshire}
