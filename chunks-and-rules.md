@@ -187,8 +187,9 @@ Both conditions and actions can use *@id* to bind to a chunk ID.
 
 Modules must support the following actions:
 
-* **@do clear** to clear the module's buffer
+* **@do clear** to clear the module's buffer and pop the queue
 * **@do update** to directly update the module's buffer
+* **@do queue** to push a chunk to the queue for the module's buffer
 * **@do get** to recall a chunk with matching type and properties
 * **@do put** to save the buffer as a new chunk to the module's graph
 * **@do patch** to use the buffer to patch a chunk in the module's graph
@@ -197,11 +198,13 @@ Modules must support the following actions:
 * **@do properties** to iterate over the set of properties in a buffer
 * **@for** to iterate over the items in a comma separated list
 
-Apart from *clear* and *update*, all actions are asynchronous, and when complete set the buffer status to reflect their outcome. Rules can query the status using *@status*. The value can be *pending*, *okay*, *forbidden*, *nomatch* and *failed*. This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use *@tag* in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via *@tag* in a rule condition.
+Apart from *clear*, *update* and *push*, all actions are asynchronous, and when complete set the buffer status to reflect their outcome. Rules can query the status using *@status*. The value can be *pending*, *okay*, *forbidden*, *nomatch* and *failed*. This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use *@tag* in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via *@tag* in a rule condition.
 
 Actions can be used in combination with *@id* to specify the chunk ID, e.g. to get a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below. 
 
 The default action is *@do update*. If the chunk type for the action is the same as the chunk currently held in the buffer, then the effect is to update the properties given in the action, leaving existing properties unchanged. If the chunk type for the action is not the same as the chunk currently held in the buffer, a new chunk is created with the properties given in the action.
+
+Whilst *@do update* allows you to switch to a new goal, sometimes you want rules to propose multiple sub-goals. You can set a sub-goal using *@do queue* which pushes the chunk specified by an action to the queue for the module's buffer. You can use *@priority* to specify the priority as an integer in the range 1 to 10 with 10 the highest priority. The default priority is 5. The queue is automatically popped when none of the buffers matched in a rule have been updated by that rule.
 
 Actions that directly update the buffer do so in the order that the action appears in the rule. In other words, if multiple actions update the same property, the property will have the value set by the last such action.
 
