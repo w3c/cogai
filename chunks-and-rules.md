@@ -204,7 +204,7 @@ Actions can be used in combination with *@id* to specify the chunk ID, e.g. to g
 
 The default action is *@do update*. If the chunk type for the action is the same as the chunk currently held in the buffer, then the effect is to update the properties given in the action, leaving existing properties unchanged. If the chunk type for the action is not the same as the chunk currently held in the buffer, a new chunk is created with the properties given in the action.
 
-Whilst *@do update* allows you to switch to a new goal, sometimes you want rules to propose multiple sub-goals. You can set a sub-goal using *@do queue* which pushes the chunk specified by an action to the queue for the module's buffer. You can use *@priority* to specify the priority as an integer in the range 1 to 10 with 10 the highest priority. The default priority is 5. The queue is automatically popped when none of the buffers matched in a rule have been updated by that rule.
+Whilst *@do update* allows you to switch to a new goal, sometimes you want rules to propose multiple sub-goals. You can set a sub-goal using *@do queue* which pushes the chunk specified by an action to the queue for the module's buffer. You can use *@priority* to specify the priority as an integer in the range 1 to 10 with 10 the highest priority. The default priority is 5. The buffer is automatically cleared (*@do clear*) when none of the buffers matched in a rule have been updated by that rule. This pops the queue if it is not already empty.
 
 Actions that directly update the buffer do so in the order that the action appears in the rule. In other words, if multiple actions update the same property, the property will have the value set by the last such action.
 
