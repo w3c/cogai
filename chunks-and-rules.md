@@ -7,8 +7,9 @@
 - [Mapping names to RDF](#mapping-names-to-rdf)
 - [Chunk Rules](#chunk-rules)
     - [Built-in actions](#built-in-actions)
-    - [Operations on comma separated lists](#operations-on-comma-separated-lists)
+    - [Iterating over matching chunks](#iterating-over-matching-chunks)
     - [Iterating over properties](#iterating-over-properties)
+    - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
 - [Boosting performance](#boosting-performance)
 - [Relationship to other rule languages](#relationship-to-other-rule-languages)
@@ -214,6 +215,71 @@ Applications can define additional operations when initialising a module. This i
 
 NOTE: the goal buffer is automatically cleared after executing a rule's actions if those actions have not updated any of the buffers used in that rule's conditions. This avoids the rule being immediately reapplied, but doesn't preclude other kinds of looping behaviours. Future work will look at how to estimate the utility of individual rules via reinforcement learning, and how much time is anticipated to achieve certain tasks. This will be used to detect looping rulesets and to switch to other tasks.
 
+### Interation over matching chunks
+
+A simpler means to interate over chunks with a given type and properties is to use *@do next* in a rule action, which has the effect of loading the next matching chunk into the module's buffer in an implementation dependent sequence. To see how this works consider the following list of towns and the counties they are situated in:
+
+```
+town ascot {county berkshire}
+town earley {county berkshire}
+town newbury {county berkshire}
+town newquay {county cornwall}
+town truro {county cornwall}
+town penzance {county cornwall}
+town bath {county somerset}
+town wells { county somerset}
+town yeovil {county somerset}
+```
+
+We could list which towns are in Cornwall by setting a start goal to trigger the following ruleset:
+
+```
+start {}
+   => 
+     town {@module facts; @do next; county cornwall},
+     next {}
+     
+next {}, town {@module facts; @id ?town; @last false} 
+   => 
+     console {@do log; message ?town},
+     town {@module facts; @do next}
+next {}, town {@module facts; @id ?town; @last true} 
+   => 
+     console {@do log; message ?town},
+     console {@do log; message "That's all!"},
+     town {@module facts; @do clear}
+```
+The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@last* property is set to *true* in the buffer for the last chunk in the iteration.
+
+A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
+
+```
+next {prev ?prev}
+   =>
+     town {@module facts; @do next; @id ?prev; county cornwall}
+```
+which instructs the facts module to set the buffer to the next town chunk where county is cornwall, following the chunk with the given ID.
+
+Note if you add to, or remove matching chunks during an iteration, then you are not guaranteed to visit all matching chunks.  A further consideration is that chunks are associated with statistical weights reflecting their expected utility based upon past experience. Chunks that are very rarely used may become inaccessible.
+
+### Iterating over properties
+
+You can iterate over each of the properties in a buffer, e.g. the following action uses the goal buffer to iterate over the properties in the facts buffer:
+
+```
+foo {@module facts; @do properties; @to goal}
+```
+
+This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property. The use of *@to* to name which module to put this information is optional, and defaults to the goal module.
+
+For instance, assuming the facts buffer holds a property *status* whose value is *active*, the goal buffer would be updated to:
+
+```
+foo {name status; value active}
+```
+
+You can then load the next property with a *@do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
+
 ### Operations on comma separated lists
 
 You can iterate over the values in a comma separated list with the *@for*. This has the effect of loading the module's buffer with the first item in the list. You can optionally specify the index range with *@from* and *@to*, where the first item in the list has index 0, just like JavaScript.
@@ -263,24 +329,6 @@ will pop the first item in the list of friends to the variable *?friend*.
 **Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*?
 
 Further experience is needed before committing to further built-in capabilities.
-
-### Iterating over properties
-
-You can iterate over each of the properties in a buffer, e.g. the following action uses the goal buffer to iterate over the properties in the facts buffer:
-
-```
-foo {@module facts; @do properties; @to goal}
-```
-
-This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property. The use of *@to* to name which module to put this information is optional, and defaults to the goal module.
-
-For instance, assuming the facts buffer holds a property *status* whose value is *active*, the goal buffer would be updated to:
-
-```
-foo {name status; value active}
-```
-
-You can then load the next property with a *@do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
 
 ### More complex queries
 
