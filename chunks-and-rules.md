@@ -7,8 +7,8 @@
 - [Mapping names to RDF](#mapping-names-to-rdf)
 - [Chunk Rules](#chunk-rules)
     - [Built-in actions](#built-in-actions)
-    - [Iterating over matching chunks](#iterating-over-matching-chunks)
-    - [Iterating over properties](#iterating-over-properties)
+    - [Iteration over matching chunks](#iterating-over-matching-chunks)
+    - [Iteration over properties](#iterating-over-properties)
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
 - [Boosting performance](#boosting-performance)
@@ -262,7 +262,7 @@ which instructs the facts module to set the buffer to the next town chunk where 
 
 Note if you add to, or remove matching chunks during an iteration, then you are not guaranteed to visit all matching chunks.  A further consideration is that chunks are associated with statistical weights reflecting their expected utility based upon past experience. Chunks that are very rarely used may become inaccessible.
 
-### Iterating over properties
+### Iteration over properties
 
 You can iterate over each of the properties in a buffer, e.g. the following action uses the goal buffer to iterate over the properties in the facts buffer:
 
