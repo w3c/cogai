@@ -212,7 +212,7 @@ The *@do get* action copies the chunk into the buffer. Changing the values of pr
 
 Applications can define additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning. Applications cannot replace the built-in actions listed above.
 
-NOTE: the goal buffer is automatically cleared after executing a rule's actions if those actions have not updated any of the buffers used in that rule's conditions. This avoids the rule being immediately reapplied, but doesn't preclude other kinds of looping behaviours. 
+NOTE: the goal buffer is automatically cleared after executing a rule's actions if those actions have not updated any of the buffers used in that rule's conditions. This avoids the rule being immediately reapplied, but doesn't preclude other kinds of looping behaviours. Future work will look at how to estimate the utility of individual rules via reinforcement learning, and how much time is anticipated to achieve certain tasks. This will be used to detect looping rulesets and to switch to other tasks.
 
 ### Operations on comma separated lists
 
