@@ -61,7 +61,7 @@ John likes Mary
 which is interpreted as the following chunk:
 
 ```
-loves {
+likes {
   @subject John
   @object Mary
 }
@@ -239,17 +239,17 @@ start {}
      town {@module facts; @do next; county cornwall},
      next {}
      
-next {}, town {@module facts; @id ?town; @last false} 
+next {}, town {@module facts; @id ?town; @more true} 
    => 
      console {@do log; message ?town},
      town {@module facts; @do next}
-next {}, town {@module facts; @id ?town; @last true} 
+next {}, town {@module facts; @id ?town; @more false} 
    => 
      console {@do log; message ?town},
      console {@do log; message "That's all!"},
      town {@module facts; @do clear}
 ```
-The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@last* property is set to *true* in the buffer for the last chunk in the iteration.
+The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last chunk in the iteration.
 
 A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
 
@@ -278,7 +278,7 @@ For instance, assuming the facts buffer holds a property *status* whose value is
 foo {name status; value active}
 ```
 
-You can then load the next property with a *@do next* action. To make it easy to detect that this is the last property, the goal buffer will have *last* set to *true*.
+You can then load the next property with a *@do next* action. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last property in the iteration.
 
 ### Operations on comma separated lists
 
@@ -298,7 +298,7 @@ which will iterate over Suzy and Janet, updating the module buffer by setting pr
 item {value Suzy; index 1}
 ```
 
-You can then use *@do next* in an action to load the next item into the buffer. If the buffer holds the last item, then *last* will be defined with the value true. Action chunks should use either *@do* or *@for*, but both both.
+You can then use *@do next* in an action to load the next item into the buffer. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last property in the iteration. Action chunks should use either *@do* or *@for*, but not both. Neither implies *@do update*.
 
 You can append a value to a property using *@push* with the value, and *@to* with the name of the property, e.g.
 
