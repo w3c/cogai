@@ -264,21 +264,24 @@ Note if you add to, or remove matching chunks during an iteration, then you are 
 
 ### Iteration over properties
 
-You can iterate over each of the properties in a buffer, e.g. the following action uses the goal buffer to iterate over the properties in the facts buffer:
+You can iterate over each of the properties in a buffer by using *@do properties* in an action for that buffer. The following example first sets the facts buffer to *foo {a 1; c 2}* and then initiates an iteration over all of the buffer's properties that don't begin with '@':
 
 ```
-foo {@module facts; @do properties; @to goal}
+run {}
+  =>
+    foo {@module facts; a 1; c 2}, # set facts buffer to foo {a 1; c 2}
+    bar {@module facts; @do properties; step 8; @to goal} # launch iteration
+    
+# this rule is invoked with the name and value for each property
+# note that 'step 8' is copied over from the initiating chunk
+
+bar {step 8; name ?name; value ?value}
+  =>
+    console {@do log; message ?name, is, ?value},
+    bar {@do next}  # to load the next instance from the iteration
 ```
 
-This sets the goal buffer to a chunk of type *foo* with a property *name* whose value is the property name, and a property *value* whose value is the corresponding value of that property. The use of *@to* to name which module to put this information is optional, and defaults to the goal module.
-
-For instance, assuming the facts buffer holds a property *status* whose value is *active*, the goal buffer would be updated to:
-
-```
-foo {name status; value active}
-```
-
-You can then load the next property with a *@do next* action. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last property in the iteration.
+Each property is mapped to a new chunk with the same type as the action (in this case *bar*). The action's properties are copied over (in this example *step 8*), and *name* and *value* properties are used to pass the property name and value respectively. The *@more* property is given the value *true* unless this is the final chunk in the iteration, in which case *@more* is given the value *false*. By default, the iteration is written to the same module's buffer as designated by the action that initiated it. However, you can designate a different module with the *@to* property. In the example, this is used to direct the iteration to the goal buffer. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.
 
 ### Operations on comma separated lists
 
