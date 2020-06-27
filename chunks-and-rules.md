@@ -288,7 +288,8 @@ You can iterate over the values in a comma separated list with the *@for*. This 
 # a chunk in the facts module
 person {name Wendy; friends Michael, Suzy, Janet, John}
 
-# the following rule iterates over the friends
+# after having recalled the person chunk, the
+# following rule iterates over the friends
 person {@module facts; friends ?friends}
    => item {@module goal; @for ?friends; @from 1; @to 2}
 ```
