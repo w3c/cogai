@@ -11,7 +11,7 @@
     - [Iteration over properties](#iteration-over-properties)
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
-- [Statements about statements](@statements-about-statements)
+- [Statements about statements](#statements-about-statements)
 - [Boosting performance](#boosting-performance)
 - [Relationship to other rule languages](#relationship-to-other-rule-languages)
     - [Minimalist chunks](#minimalist-chunks)
