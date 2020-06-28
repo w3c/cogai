@@ -375,6 +375,8 @@ Forward chaining production rules involve testing the conditions for all of the 
 
 The brain solves this by first applying rules to a comparatively small number of chunk buffers, and second, by compiling rule conditions into a discrimination network *(the Striatum)* whose input is the chunk buffers, and whose output is the set of matching rules. This is followed by a second stage *(the Pallidum)* that selects which rule to use, and a third stage *(the Thalamus)* that applies that rule's actions. This approach was re-invented as the [Rete algorithm](https://en.wikipedia.org/wiki/Rete_algorithm) by Charles Forgy, see below.
 
+There are further opportunities for exploiting efficient graph algorithms such as Levinson and Ellis's solution for searching a lattice of graphs in logarithmic time, see John Sowa's [summary of graph algorithms](http://www.jfsowa.com/pubs/arch.htm).
+
 n.b. nature also invented the [page rank algorithm](https://en.wikipedia.org/wiki/PageRank) as a basis for ranking memories for recall from the cortex based upon spreading activation from other memories.
 
 ## Relationship to other rule languages
