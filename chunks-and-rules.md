@@ -358,7 +358,7 @@ The idea to be explored is to use `@context` as a property that names the contex
 Here is one possible way to represent the above example:
 
 ```
-believes s1 {@subject tom; @situation s2}
+believes s1 {@subject tom; situation s2}
 wants s3 {@context s2; person mary; situation s4}
 married-to s5 {@context s4; @subject mary; @object s6}
 for-an s6 {@context s4; isa person; profession sailor}
