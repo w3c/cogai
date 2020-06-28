@@ -353,15 +353,15 @@ This involves talking about things that are only true in some specific context, 
 
 One approach is use separate graphs for each context. This means that a cognitive module would have a set of graphs, and that we will need a means to refer to them individually. Another approach is to provide a way to indicate which context a given chunk belongs to, and to make the context part of the mechanism for retrieving and updating chunks. This would allow chunks for different contexts to be stored as part of the same graph.
 
-The idea to be explored is to use `@context` as a property that names the context and to use this in rules as a basis for reasoning.  In the above example, we need one variable for the sailor, and another variable for the hypothetical situation in which Mary is married to that person.
+The idea to be explored is to use `@context` as a property that names the context and to use this in rules as a basis for reasoning.  In the above example, we need one variable for the sailor, and another pair of variables for the hypothetical situations implicit in the subordinate clauses.
 
 Here is one possible way to represent the above example:
 
 ```
-believes s1 {@subject tom; @object s2}
-wants s2 {person mary; situation s3}
-married s4 {@context s3; @subject mary; @object s5}
-for-an s5 {@context s3; isa person; profession sailor}
+believes s1 {@subject tom; @situation s3}
+wants s2 {@context s3; person mary; situation s4}
+married s5 {@context s4; @subject mary; @object s6}
+for-an s6 {@context s4; isa person; profession sailor}
 ```
 This works with the existing rule language, provided that we assume a default context so that a `@do get` action without `@context` won't match a chunk in a named context other than the default context.
 
