@@ -11,6 +11,7 @@
     - [Iteration over properties](#iteration-over-properties)
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
+- [Statements about statements](@statements-about-statements)
 - [Boosting performance](#boosting-performance)
 - [Relationship to other rule languages](#relationship-to-other-rule-languages)
     - [Minimalist chunks](#minimalist-chunks)
@@ -338,7 +339,37 @@ Further experience is needed before committing to further built-in capabilities.
 
 Modules may provide support for more complex queries that are specified as chunks in the module's graph, and either apply an operation to matching chunks, or generate a result set of chunks in the graph and pass this to the module buffer for rules to iterate over. In this manner, chunk rules can have access to complex queries capable of set operations over many chunks, analogous to RDF's SPARQL query language.  The specification of such a chunk query language is left to future work.
 
-### Boosting performance
+## Statements about statements
+
+Beliefs, stories, abductive reasoning and even search query patterns involve the use of statements about statements. How can these be expressed as chunks and what else is needed?
+
+Here is an example from John Sowa's [Architectures for Intelligent Systems](http://www.jfsowa.com/pubs/arch.htm):
+
+<blockquote>
+Tom believes that Mary wants to marry a sailor
+</blockquote>
+
+This involves talking about things that are only true in some specific context, as well as the means to refer to an unknown person who is a sailor. The latter can be easily handled given the determiner "a" which implies there is someone or something that has certain attributes, i.e. using a name as a variable. The former is a little harder, as we need a way to separate chunks according to the context, so that we don't confuse what's true in general from what's true in a given context.
+
+One approach is use separate graphs for each context. This means that a cognitive module would have a set of graphs, and that we will need a means to refer to them individually. Another approach is to provide a way to indicate which context a given chunk belongs to, and to make the context part of the mechanism for retrieving and updating chunks. This would allow chunks for different contexts to be stored as part of the same graph.
+
+The idea to be explored is to use `@context` as a property that names the context and to use this in rules as a basis for reasoning.  In the above example, we need one variable for the sailor, and another variable for the hypothetical situation in which Mary is married to that person.
+
+Here is one possible way to represent the above example:
+
+```
+believes s1 {@subject tom; @object s2}
+wants s2 {person mary; situation s3}
+married s4 {@context s3; @subject mary; @object s5}
+for-an s5 {@context s3; isa person; profession sailor}
+```
+This works with the existing rule language, provided that we assume a default context so that a `@do get` action without `@context` won't match a chunk in a named context other than the default context.
+
+If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
+
+In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
+
+## Boosting performance
 
 Forward chaining production rules involve testing the conditions for all of the rules against the current state of working memory. This gets increasingly expensive as the number of rules and the number of facts in working memory increases. It would be impractical to scale to really large memories with very large numbers of rules.
 
@@ -346,15 +377,15 @@ The brain solves this by first applying rules to a comparatively small number of
 
 n.b. nature also invented the [page rank algorithm](https://en.wikipedia.org/wiki/PageRank) as a basis for ranking memories for recall from the cortex based upon spreading activation from other memories.
 
-### Relationship to other rule languages
+## Relationship to other rule languages
 
 This relates chunk rules to a few other rule languages:
 
-#### Minimalist chunks
+### Minimalist chunks
 
 A simpler version of chunks that restricts property values to names on the grounds of greater cognitive plausibility, see [minimalist approach to chunks](minimalist.md). It is an open question whether the minimalist approach will be better suited to machine learning of procedural knowledge.
 
-#### OPS5
+### OPS5
 
 OPS5 is a forward chaining rule language developed by Charles Forgy, using his Rete algorithm for efficient application of rules. 
 
