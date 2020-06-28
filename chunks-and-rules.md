@@ -349,7 +349,7 @@ Here is an example from John Sowa's [Architectures for Intelligent Systems](http
 Tom believes that Mary wants to marry a sailor
 </blockquote>
 
-This involves talking about things that are only true in some specific context, as well as the means to refer to an unknown person who is a sailor. The latter can be easily handled given the determiner "a" which implies there is someone or something that has certain attributes, i.e. using a name as a variable. The former is a little harder, as we need a way to separate chunks according to the context, so that we don't confuse what's true in general from what's true in a given context.
+This involves talking about things that are only true in some specific context, as well as the means to refer to an unknown person who is a sailor. The latter can be easily handled given the determiner "a" which implies there is someone or something that has certain attributes, i.e. using a name as a variable for a quantifier. The former is a little harder, as we need a way to separate chunks according to the context, so that we don't confuse what's true in general from what's true in a given context.
 
 One approach is use separate graphs for each context. This means that a cognitive module would have a set of graphs, and that we will need a means to refer to them individually. Another approach is to provide a way to indicate which context a given chunk belongs to, and to make the context part of the mechanism for retrieving and updating chunks. This would allow chunks for different contexts to be stored as part of the same graph.
 
