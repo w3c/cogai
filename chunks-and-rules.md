@@ -300,10 +300,10 @@ person {@module facts; friends ?friends}
 which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g. 
 
 ```
-item {value Suzy; index 1}
+item {value Suzy; @index 1; @more true}
 ```
 
-You can then use *@do next* in an action to load the next item into the buffer. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last property in the iteration. Action chunks should use either *@do* or *@for*, but not both. Neither implies *@do update*.
+The action's properties are copied over apart from those starting with an '@'. The item index in the list is copied into the chunk as *@index*. You can then use *@do next* in an action to load the next item into the buffer. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last property in the iteration. Action chunks should use either *@do* or *@for*, but not both. Neither implies *@do update*.
 
 You can append a value to a property using *@push* with the value, and *@to* with the name of the property, e.g.
 
