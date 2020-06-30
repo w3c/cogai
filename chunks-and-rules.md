@@ -313,7 +313,7 @@ person {name Wendy} => person {@push Emma; @to friends}
 which will push Emma to the end of the list of friends in the goal buffer. 
 
 ```
-person {name Wendy} => person {@pop ?friend; @from friends}
+person {name Wendy} => person {@pop friends; @to ?friend}
 ```
 
 will pop the last item in the list of friends to the variable *?friend*.
@@ -326,7 +326,7 @@ person {name Wendy} => person {@unshift Emma; @to friends}
 will push Emma to the start of the list of friends in the goal buffer. 
 
 ```
-person {name Wendy} => person {@shift ?friend; @from friends}
+person {name Wendy} => person {@shift friends; @to ?friend}
 ```
 
 will pop the first item in the list of friends to the variable *?friend*.
