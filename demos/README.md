@@ -24,6 +24,18 @@ This demo is borrowed from an old tutorial for ID3, and decides whether the weat
 
 This demo was developed for the 2020 [Summer school on AI for Industry 4.0](https://ci.mines-stetienne.fr/ai4industry/2020/). It simulates a bottling plant with a robot, two conveyor belts, filling and capping stations and boxes that hold up to six bottles. The factory is controlled by a cognitive agent that exchanges messages with the various items of machinery. You can see a log of the activity as it happens. The facts graph illustrates how chunks can be used for an ontology, and future work would use this to validate the rules, e.g. to check that actions don't pass wrong values, to check that actions only use declared methods, and to check that action responses are handled correctly.
 
+## [Smart Homes](homes/README.md)
+
+* https://www.w3.org/Data/demos/chunks/home/
+
+A smart home demo developed for the AIOTI WG3 semantic interoperability group. It features Janet and John as home owners who have different preferences for the lighting hue and temperature of a given room. The demo dynamically simulates the heat flow depending on the time of day. The rules implement default reasoning based upon the chunks provided as facts.
+
+## [Test Suite](homes/README.md)
+
+* https://www.w3.org/Data/demos/chunks/testing/
+
+A web-based test suite for the major features of the chunks data and rules format.
+
 ## [Autonomous Driving](driving/README.md) (under construction)
 
 * https://www.w3.org/Data/demos/chunks/driving/
