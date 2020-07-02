@@ -1,0 +1,293 @@
+<!doctype html>
+
+<html>
+
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>Chunks for facts and rules</title>
+<script type="text/javascript" src="chunks.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", function () {test.start(); }, false);
+
+let test = {
+	start: function () {
+		let chunks = new ChunkGraph(
+			'action a3 {\n'+
+			'  module output\n'+
+			'  mode update\n'+
+			'  value ?num1, ?num2\n'+
+			'}\n'+
+			'dog kindof mammal\n'+
+			'cat kindof mammal'
+		);
+		console.log(chunks.toString());
+	}
+};
+</script>
+<style>
+	body {
+		padding: 1em;
+		font-family: sans-serif
+	}
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	p.quote {
+		margin-left: 10%;
+		margin-right: 10%;
+		color: rgb(20,100,200);
+		padding: 0.5em;
+		background-color: rgb(240,240,240);
+	}
+</style>
+</head>
+<body>
+
+<h1>Chunks for facts and rules</h1>
+
+<p>This is part of work on the Sentient Web, which can be defined as:</p>
+
+<p class="quote"><em>Ecosystems of services with <strong>awareness</strong> based upon sensors and information services, and <strong>reasoning</strong> based upon graph data and rules together with graph algorithms and machine learning.</em></p>
+
+<p>This calls for work on rule languages for graph data, especially those that can work with remote databases given the likely need to reason over multiple, local and remote, databases.</p>
+
+<h3>Insights from across different scientific disciplines</h3>
+
+<p>There is a lot we can learn from Cognitive Psychology and Neuroscience in respect to requirements and architecture. To give an example, the hippocampus supports short term memory whilst the cortex focuses on long term memory. You need detailed information of the recent past,  but when it comes to inductive learning in the presence of noise, you don’t want the most recent events to unduly bias learning from past events.</p>
+
+<p>Another example concerns the role of rules and graphs. The basal ganglia and thalamus are widely connected to different parts of the cortex etc. and act as a rule engine transforming inputs to outputs that query / update memories, and invoke motor actions via delegation to the cerebellum. The rules don’t act directly on the cortex, and instead send requests as queries / updates, and act on the responses.</p>
+
+<p>This suggests that we need production rule languages that behave similarly, with rule actions invoking queries / updates in potentially remote graph databases, with the responses used to match rule conditions.  For efficiency in dealing with large datasets, graph algorithms (including graph queries) are executed locally with the graph database. Moreover, declarative descriptions of behaviour are over time compiled into procedural descriptions yielding dramatic speed ups. This suggests the use of graphs for describing rules as a means to facilitate such adaptation.</p>
+
+<p>Machine learning is needed to scale up to large vocabularies and rulesets that would be impractical to maintain manually, given the inevitable evolution of requirements as a consequence of constantly changing business conditions. This is likely to require a synthesis of symbolic approaches with computational statistics, where we can draw upon decades of work in Cognitive Science and related disciplines.</p>
+
+<p>The following owes a huge debt to <a href="https://www.cmu.edu/dietrich/psychology/people/core-training-faculty/anderson-john.html">John R. Anderson</a> and his work on the <a href="http://act-r.psy.cmu.edu/">ACT-R cognitive architecture</a>. This has been developed over many decades of work on Cognitive Science, and has been successfully applied to many aspects of human behaviour, e.g. mental arithmetic, learning basic algebra, and driving a car, along with good predictions for neural activity as measured by brain scans.</p>
+
+<p>For some related work on RDF for expressing queries, see the following demos:</p>
+
+<ul>
+<li><a href="../index.html">queries for basic patterns inspired by SPARQL</a></li>
+<li><a href="../shapes.html">queries based upon graph traversal automata</a></li>
+</ul>
+
+<p>These demos show the potential for richer query languages that can exploit direct integration with database engines for much higher performance compared to a long sequence of rules. This is something to be explored in future work.</p>
+
+<h2>Easy to learn serialisations of facts and rules</h2>
+
+<p>Cognitive Psychology has discovered that human memory is divided into chunks.</p>
+
+<p><a href='https://en.wikipedia.org/wiki/Chunking_(psychology)'>According to wikipedia</a>: </p>
+
+<blockquote>
+<p>A chunk is a collection of basic familiar units that have been grouped together and stored in a person&#39;s memory. These chunks are able to be retrieved more easily due to their coherent familiarity. It is believed that people create higher order cognitive representations of the items within the chunk. The items are more easily remembered as a group than as the individual items themselves.</p>
+</blockquote>
+
+<p>It is therefore interesting to consider how chunks could be used as a core part of the representation of knowledge. Chunks, chunk properties and chunk relationships are essentially the same as Property Graphs.</p>
+
+<p>For the most part, the identifiers for chunks are much less important than their properties. We could use Turtle to represent a chunk as a node that is the subject for triples that declare its properties, e.g.</p>
+
+<pre>@prefix : &lt;http://example.org/&gt; .
+
+_:1
+	a :increment ;
+	:first 1 ;
+	:second 2 .
+_:2
+	a :increment ;
+	:first 2 ;
+	:second 3 .
+...</pre>
+
+<p>However, the need to declare each chunk's identifier is rather tedious. Perhaps another serialisation format might be more convenient?  Maybe we should put RDF to one side for the moment, and consider an alternative data model that is simpler for building a demo? If so, we need to show how this relates to RDF as a means to support integration with Linked Data etc.</p>
+
+<p>The database would be an object that maps chunk types to an array of chunks. Each chunk is an object with a set of properties. Properties values can be one of:  a literal (boolean, number, or string) or a reference to another chunk. Properties can have multiple values when needed.</p>
+
+<p>For facts, we want to avoid the pain of having to declare the chunk id. Here is a possible representation:</p>
+
+<pre>increment {
+  first 1,
+  second 2
+}
+increment {
+  first 2,
+  second 3
+}
+etc.
+</pre>
+
+<p>If you want to reference a specific chunk, you will need a chunk id. This could be implicit by default, so that you only need to declare it if needed, e.g. a chunk with type &quot;friend&quot; and ID &quot;f34&quot;:</p>
+
+<pre>friend f34 {
+  name: Joan
+}
+friend {
+  name Jenny
+  likes f34
+}
+</pre>
+
+<p>The IDs used in a file for declaring facts could be mapped to the internal identifiers as the file is parsed and imported.</p>
+
+<p>What about if we want to express a set of relationships without the need to define chunks? Could we also support a triple syntax, e.g.</p>
+
+<pre>dog kindof mammal
+cat kindof mammal
+</pre>
+
+<p>A line break would be expected as a separator to reduce the likelihood of errors.</p>
+
+<h3>Integration with RDF</h3>
+
+<p>Whilst the above could be implemented independently of RDF, it could be interesting to be able to map to RDF for integration with RDF based systems.  JSON-LD provide some inspiration, namely, to use a means to bind names to URIs where needed. For instance:</p>
+
+<pre>@context http://example.org/mappings
+</pre>
+
+<p>where the bindings are given in a file that is accessed via HTTP.  If you wanted to give some bindings in the current file, you could use the following:</p>
+
+<pre>@context {
+  dog http://example.com/ns/dog
+  cat http://example.com/ns/cat
+}
+</pre>
+
+<h3>Some considerations on expressivity</h3>
+
+<p>When using a chunk to express a relationship between other chunks, you can use the chunk properties to provide annotations on the relationship. This suggests the need for reasoning that can cope with modelling relationships as property values that either reference another chunk directly or which reference a relationship chunk that gives more information about a relationship as well as what it refers to. Chunk properties could themselves be modelled as subsidiary chunks.</p>
+
+<p>An alternative to the above, would be to introduce a means to reference a collection of chunks, something that I have explored as an extension to RDF.</p>
+
+<h2>Goal-Directed Production Rules</h2>
+
+<p>I would like to express rules in the same way as facts so that rules can easily manipulate other rules when it comes to expressing heuristics for behaviours. We thus introduce chunk types: rule, condition and action.  In addition, we need a way to identify the rule&#39;s variables. One idea is for variables to start with a &quot;?&quot;.  This has the implication of having variables as an underlying type along with literals and chunk references. </p>
+
+<pre>rule {
+  condition g2
+  action a4
+}
+count g2 {
+  module goal
+  start ?num
+  end ?num
+  state counting
+}
+action a4 {
+  module goal
+  mode update
+  state stop
+}
+</pre>
+
+<p>Rules may have several conditions and actions, and for this, it convenient to be able to allow chunk properties to have a comma separated list of values. Here is a longer example:</p>
+
+<pre>rule {
+  condition g1
+  action a1, a2, a3
+}
+count g1 {
+  module goal
+  start ?num
+  state start
+}
+action a1 {
+  module goal
+  action update
+  state start
+}
+action a2 {
+  module facts
+  action recall
+  type increment
+  first ?num
+}
+action a3 {
+  module output
+  action update
+  value ?num
+}
+</pre>
+
+<p>It is tempting to introduce goal as a chunk type, and assume defaults for the module and mode properties. At the same time we could differentiate the rule&#39;s goal from other conditions. The above rule becomes:</p>
+
+<pre>rule {
+  goal g1
+  action a1, a2, a3
+}
+goal g1 {
+  type count
+  start ?num
+  state start
+}
+goal a1 {
+  state start
+}
+action a2 {
+  module facts
+  mode query
+  type increment
+  first ?num
+}
+action a3 {
+  module output
+  mode update
+  value ?num
+}</pre>
+
+<p><strike><strong>Issue:</strong> In ACT-R, some examples involve tests that a given property doesn&#39;t match the value in a given variable. How could this be expressed in the above chunk syntax? One idea is to change the prefix that identifies variables from a question mark to an exclamation mark, and to make this an attribute on the underlying model for variables. [Implemented]</strike></p>
+
+<p><strike><strong>Issue:</strong> The case where you want to match any value can be expressed by the absence of the given property. This is therefore a non-issue!</strike></p>
+
+<p><strong>Issue:</strong> How can we annotate a relationship between chunks? This can be done by expressing the relationship as a chunk, e.g. a "link" or subclass thereof.</p>
+
+<p><strong>Issue:</strong> How can we annotate a particular property of a given chunk? One idea is that when this is likely we make the value of the property into a chunk.</p>
+
+<p><strong>Issue:</strong> How can we query for chunks with a type that is a subtype of a given type? One idea is to add a property to the query that indicates that subtypes are acceptable. We then have the challenge for potential name clashes between properties used for controlling queries from regular chunk properties. This is already the case for module and action, and would prevent storing chunks with these properties, which would be a problem for saving rules.</p>
+
+<p>Is there a better way? This would seem to be an example of a more general issue of how to make compound queries involving multiple chunks. This could use a distinct action name where the chunk properties act as parameters to the query, and may include references to other chunks. This would seem to require the means to refer to working memory given that the buffers are currently limited to a single chunk.</p>
+
+<p><strong>Issue:</strong> We may also want to have conditions that hold true when a given property in a retrieved chunk is undefined. This could be done using a special symbol in place of the value, e.g. a question mark on its own or perhaps the name <em>undefined</em>.</p>
+
+<p><strong>Issue:</strong> How can we arrange for rules to apply to all values for properties with multiple values? One idea is to annotate conditions, so that the rule's actions are invoked for each matching value.</p>
+
+<p><strong>Issue:</strong> What about the case where the property is expected to have one of set of values?  One answer is to use a separate rule for each value. Another way would be store the alternatives in memory and require a match. For instance, here are some facts for this:</p>
+
+<pre>range {
+  strength low
+}
+range {
+  strength medium
+}
+range {
+  strength high
+}
+</pre>
+
+<p>This could then be used to match a give property value. The approach could also be extended to express the ordering of the values in the range e.g.</p>
+
+<pre>range r1 {
+  strength low
+  next r2
+}
+range r2 {
+  strength medium
+  next r3
+  previous r1
+}
+range r3 {
+  strength high
+  previous r2
+}
+</pre>
+
+<p>Another idea is to annotate a query action with a reference to the model the chunk should conform to. This could then be checked by the database query engine. The selected chunk could be required to be valid or could be marked as being invalid.</p>
+
+</body>
+</html>

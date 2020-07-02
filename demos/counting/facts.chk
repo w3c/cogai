@@ -1,9 +1,11 @@
-increment {first 1; second 2}
-increment {first 2; second 3}
-increment {first 3; second 4}
-increment {first 4; second 5}
-increment {first 5; second 6}
-increment {first 6; second 7}
-increment {first 7; second 8}
-increment {first 8; second 9}
-increment {first 9; second 10}
+# Declarative knowledge for counting demo
+
+increment {number 1; successor 2}
+increment {number 2; successor 3}
+increment {number 3; successor 4}
+increment {number 4; successor 5}
+increment {number 5; successor 6}
+increment {number 6; successor 7}
+increment {number 7; successor 8}
+increment {number 8; successor 9}
+increment {number 9; successor 10}

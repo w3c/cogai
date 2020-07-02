@@ -29,7 +29,7 @@ function count () {
 	let outputView = document.getElementById("output");
 	let ruleView = document.getElementById("rule");
 	let ruleEngine = new RuleEngine(log);
-	let goal, facts, rules, output;
+	let goal, facts, rules;
 	
 	startButton.disabled = true;
 	nextButton.disabled = true;
@@ -37,6 +37,20 @@ function count () {
 	function viewButton (buttonID, viewID) {
 		let button = document.getElementById(buttonID);
 		let view = document.getElementById(viewID);
+		button.innerText = "►";
+		view.style.height = "20px";
+		
+		view.show = function (text) {
+			view.textContent = text;
+			text = view.innerHTML;
+			text = text.replace(/=\&gt;/ig, "<span class='implies'>=&gt;</span>");
+			text = text.replace(/@[\w|\.|\-|\/|:]+/ig, function replace(match) {
+				return "<span class='operator'>"+match+"</span>";
+			});
+			view.innerHTML = text.replace(/#.*/ig, function replace(match) {
+				return "<span class='comment'>"+match+"</span>";
+			});
+		};
 		
 		button.parentElement.addEventListener("click", () => {
 			if (button.innerText === "►") {
@@ -60,8 +74,8 @@ function count () {
 	startButton.onclick = function () {
 		nextButton.disabled = false;
 		ruleView.innerText = outputView.innerText = logView.innerText = "";
-		ruleEngine.setGoal('count {\n state start\nstart 3\n end 5\n }');
-		ruleEngine.getModule('facts').clearBuffer();
+		ruleEngine.setGoal('count {\n state start\nstart 2\n end 5\n }');
+		ruleEngine.getModuleByName('facts').clearBuffer();
 		showBuffers();
 		return false;
 	}
@@ -83,27 +97,35 @@ function count () {
 		return false;
 	}
 	
-	output = ruleEngine.addModule('output', new ChunkGraph(), {
-		log: function (action, bindings) {
-			outputView.innerText = JSON.stringify(bindings.value);
+	goal = ruleEngine.addModule('goal', new ChunkGraph(), {
+		show: function (action, bindings) {
+			let value = bindings.value;
+			let text = value;
+			
+			if (Array.isArray(value)) {
+				text = value.join(', ');
+			}
+			
+			outputView.innerText = text;
 		}
 	});
-	
-	goal = ruleEngine.addModule('goal', new ChunkGraph());
 
 	fetch("facts.chk")
 	.then((response) => response.text())
 	.then(function (source) {
 		facts = ruleEngine.addModule('facts', new ChunkGraph(source));
-		document.getElementById("facts").innerText = source;
+		document.getElementById("facts").show(source);
+		console.log('Facts\n=====');
+		console.log('' + facts.graph);
 		
 		fetch("rules.chk")
 		.then((response) => response.text())
 		.then(function (source) {
 			rules = ruleEngine.addModule('rules', new ChunkGraph(source));
-			document.getElementById("rules").innerText = source;
+			document.getElementById("rules").show(source);
 			startButton.disabled = false;
-			console.log('' + ruleEngine.getModule('rules').graph);
+			console.log('Rules\n=====');
+			console.log('' + rules.graph);
 		});
 	});
 }
