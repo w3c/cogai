@@ -30,7 +30,7 @@ This demo was developed for the 2020 [Summer school on AI for Industry 4.0](http
 
 A smart home demo developed for the AIOTI WG3 semantic interoperability group. It features Janet and John as home owners who have different preferences for the lighting hue and temperature of a given room. The demo dynamically simulates the heat flow depending on the time of day. The rules implement default reasoning based upon the chunks provided as facts.
 
-## [Test Suite](homes/README.md)
+## [Test Suite](testing/README.md)
 
 * https://www.w3.org/Data/demos/chunks/testing/
 
