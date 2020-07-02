@@ -12,6 +12,7 @@
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
 - [Statements about statements](#statements-about-statements)
+- [Test Suite](#test-suite)
 - [Boosting performance](#boosting-performance)
 - [Relationship to other rule languages](#relationship-to-other-rule-languages)
     - [Minimalist chunks](#minimalist-chunks)
@@ -368,6 +369,12 @@ This works with the existing rule language, provided that we assume a default co
 If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
 
 In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
+
+## [Test Suite](demos/testing/README.md)
+
+* https://www.w3.org/Data/demos/chunks/testing/
+
+A web-based test suite for the major features of the chunks and rules format.
 
 ## Boosting performance
 
