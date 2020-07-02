@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Test suite for chunks</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="test-suite.js"></script>
+<style>
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	#log {
+		height: 10em;
+		max-height: 60em;
+		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
+	}
+	button {
+		font-style: italic;
+		font-weight: bold;
+	}
+	#tests span.good {
+		color: green;
+		font-weight: bold;
+	}
+	#tests span.bad {
+		color: red;
+		font-weight: bold;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: top;
+		margin-right: 1em;
+		float: left;
+	}
+</style>
+</head>
+<body>
+<h1>Test suite for chunks</h1>
+
+<p>This page is a preliminary test suite for the <a href="https://github.com/w3c/cogai/blob/master/chunks-and-rules.md">chunk rules language</a> and far from exhaustive. Additional tests are planned to cover parsing with a suite of valid and invalid examples.</p>
+
+<div id="tests">
+<p><button id="test1">Test 1</button> Updating goal buffer</p>
+<p><button id="test2">Test 2</button> Checking one value doesn’t equal another</p>
+<p><button id="test3">Test 3</button> Undefining a property in a buffer</p>
+<p><button id="test4">Test 4</button> Put followed by get</p>
+<p><button id="test5">Test 5</button> Delete followed by get</p>
+<p><button id="test6">Test 6</button> Greater than and Less than or equal</p>
+<p><button id="test7">Test 7</button> Iteration over a set of chunks</p>
+<p><button id="test8">Test 8</button> Iteration over module buffer properties</p>
+<p><button id="test9">Test 9</button> Iteration over properties with item lists</p>
+<p><button id="test10">Test 10</button> Accessing @status in a condition</p>
+<p><button id="test11">Test 11</button> Handling get with no matching chunks</p>
+<p><button id="test12">Test 12</button> Queuing sub-goals</p>
+<p><button id="test13">Test 13</button> Handling @context matching</p>
+<p><button id="test14">Test 14</button> Handling @subject matching</p>
+<p><button id="test15">Test 15</button> Handling @object matching</p>
+<p><button id="test16">Test 16</button> Handling @push</p>
+<p><button id="test17">Test 17</button> Handling @unshift</p>
+<p><button id="test18">Test 18</button> Handling @pop</p>
+<p><button id="test19">Test 19</button> Handling @shift</p>
+</div>
+
+<p>Log: <button id="clear">clear</button></p>
+<pre id='log'>
+</pre>
+
+<p><button id="factsButton">&#x25BC;</button> Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p><button id="rulesButton">&#x25BC;</button> Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<hr>
+<p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
+</div>
+
+</body>
+</html>

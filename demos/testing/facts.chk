@@ -1,0 +1,22 @@
+# Declarative knowledge for test suite
+
+town ascot {county berkshire}
+town earley {county berkshire}
+town newbury {county berkshire}
+town newquay {county cornwall}
+town truro {county cornwall}
+town penzance {county cornwall}
+town bath {county somerset}
+town wells { county somerset}
+town yeovil {county somerset}
+
+# for iteration over lists
+person {name Wendy; friends Michael, Suzy, Janet, John}
+
+john likes janet
+
+believes s1 {@subject tom; proposition s2}
+wants s3 {@context s2; person mary; situation s4}
+married-to s5 {@context s4; @subject mary; @object s6}
+an s6 {@context s4; isa person; profession sailor}
+
