@@ -1,0 +1,150 @@
+# Procedural knowledge for smart home
+
+# regulate room temperature with the heating by responding 
+
+# when room is hotter than target temperature + 2°C
+room {state tooHot} => action {@do thermostat; heating off}
+
+# when room is cooler than target temperature - 2°C
+room {state tooCold} => action {@do thermostat; heating on}
+
+lights1 {turn ?lights; hue ?hue}
+=>
+  room {@module facts; @do get; @id room1},
+  lights2 {}
+  
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time morning}
+=>
+  action {@do lights; turn off; hue ?hue}
+
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time afternoon}
+=>
+  action {@do lights; turn off; hue ?hue}
+  
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time evening}
+=>
+  action {@do lights; turn ?lights; hue ?hue}
+
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time night}
+=>
+  action {@do lights; turn ?lights; hue ?hue}
+
+# when the time of day changes
+clock {} => state {step 1}
+
+# when someone enters
+enter {} => state {step 1}
+
+# when someone leaves, if nobody is left then ensure lights are off
+leave {} =>  state {step 1}
+
+# start be asking for default preferences
+state {step 1}
+=>
+  preferences {@module facts; @do get; defaults room1},
+  state {step 2}
+  
+# apply defaults and ask if John is present
+state {step 2},
+  preferences {@module facts; lights ?lights; temperature  ?temp}
+=>
+  action {@do lights; turn ?lights},
+  console {@do log; message defaults,turn,lights,?lights},
+  action {@do thermostat; targetTemperature ?temp},
+  person {@module facts; @do get; @id John},
+  state {step 3}
+  
+# if John is present get his preferences
+state {step 3}, person {@module facts; @id John}
+=>
+  preferences {@module facts; @do get; person John},
+  state {step 4}
+
+# if John isn't present continue to step 5
+state {step 3}, !person {@module facts; @id John}
+=>
+  present{@module facts; @do get; @id Janet},
+  state {step 5}
+
+# John is present and we have his preferences
+# apply them and then ask if Janet is present
+state {step 4; time ?time},
+preferences {@module facts; person John; lights ?lights; hue ?hue; temperature ?temp}
+=>
+  action {@do lights; turn ?lights; hue ?hue},
+  lights1 {@do queue; time ?time; turn ?lights; hue ?hue},
+  console {@do log; message John,turn,lights,?lights},
+  action {@do thermostat; targetTemperature ?temp},
+  person{@module facts; @do get; @id Janet},
+  state {step 5; John present}
+
+# if Janet is present get her preferences
+state {step 5}, person {@module facts; @id Janet}
+=>
+  preferences {@module facts; @do get; person Janet},
+  state {step 6}
+
+# Janet is present, so apply her preferences
+state {step 6; time ?time},
+preferences {@module facts; person Janet; lights ?lights; hue ?hue; temperature ?temp}
+=>
+  lights1 {@do queue; time ?time; turn ?lights; hue ?hue},
+  console {@do log; message Janet,turn,lights,?lights},
+  action {@do thermostat; targetTemperature ?temp},
+  state {step 7; Janet present}
+
+# Janet is not present
+state {step 5}, !preferences {@module facts; person Janet}
+=>
+  state {step 7}
+
+# now get precedence info for hue
+state {step 7}
+=>
+  precedence {@module facts; @do get; property hue},
+  state {step 8}
+  
+# If it's John get his preferences
+state {step 8; John present},
+precedence {@module facts; person John; property hue}
+=>
+  preferences {@module facts; @do get; person John},
+  state {step 9}
+  
+# If it's Janet get her preferences
+state {step 8; Janet present},
+precedence {@module facts; person Janet; property hue}
+=>
+  preferences {@module facts; @do get; person Janet},
+  state {step 9}
+
+state {step 9},
+preferences {@module facts; hue ?hue}
+=>
+  action {@do lights; hue ?hue},
+  precedence {@module facts; @do get; property temperature},
+  state {step 10}
+  
+state {step 10; Janet present},
+precedence {@module facts; person Janet; property temperature},
+=>
+  preferences {@module facts; @do get; person Janet},
+  state {step 11}
+
+state {step 10; John present},
+precedence {@module facts; person John; property temperature},
+=>
+  preferences {@module facts; @do get; person John},
+  state {step 11}
+
+state {step 11},
+preferences {@module facts; temperature ?temp}
+=>
+	action {@do thermostat; targetTemperature ?temp}
+	
+# now we're all done!
+

@@ -1,0 +1,10 @@
+# Factual knowledge for smart home
+
+# static knowledge
+
+preferences {defaults room1; lights off; temperature 16}
+preferences {person Janet; lights on; hue warm; temperature 22}
+preferences {person John; lights on; hue cool; temperature 18}
+
+precedence {person John; property temperature}
+precedence {person Janet; property hue}

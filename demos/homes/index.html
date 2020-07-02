@@ -1,0 +1,168 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Demo for smart homes</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="home.js"></script>
+<style>
+	body {
+		background-color: rgb(250,250,255);
+		max-width: 80em;
+	}
+	#command {
+		width: 40ex;
+		font-size: large;
+	}
+	canvas {
+		border: 1px solid black;
+		perspective: 400px;
+		transform-style: preserve-3d;
+		background-color: #EEE;
+	}
+	pre {
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(240,240,240);
+		border-style: solid;
+	}
+	#log {
+		height: 10em;
+		max-height: 60em;
+		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
+	}
+
+	#model {
+	    text-align: center
+	}
+	#model img {
+		width: 50%;
+		max-width: 50em;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: top;
+		margin-right: 1em;
+		float: left;
+	}
+	span {
+		font-weight: bold;
+	}
+	blockquote {
+		font-style: italic;
+	}
+</style>
+</head>
+<body>
+<h1>Demo for smart homes</h1>
+
+<p>This page uses <a href="https://github.com/w3c/cogai/blob/master/README.md">Cognitive AI</a> for a demo on smart homes. See <a href="#explanation">explanation below</a>.</p>
+
+<canvas id="room" width="800" height="350"></canvas>
+
+<p>
+<label><input type="checkbox" id="man">John</label>
+<label><input type="checkbox" id="woman">Janet</label>
+<label><input type="checkbox" id="lights">lights</label>
+<label><input type="radio" name="hue">warm hue</label>
+<label><input type="radio" name="hue">cool hue</label>
+<label><input type="checkbox" id="heating">heating</label>
+<label><input type="radio" name="timeOfDay">morning</label>
+<label><input type="radio" name="timeOfDay">afternoon</label>
+<label><input type="radio" name="timeOfDay">evening</label>
+<label><input type="radio" name="timeOfDay">night</label>
+<br><br>
+<label>target temperature: <input id="thermostat"
+	type="text" size="2" value="0"> °C</label>
+</p>
+
+<p>Log: <button id="clear">clear</button></p>
+<pre id='log'>
+</pre>
+
+<p><button id="factsButton">►</button> Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p><button id="rulesButton">►</button> Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<h2 id="explanation">Explanation</h2>
+
+<p>See also <a href="../chunks.html">information on chunks and rules</a>.</p>
+
+<p>This demo was prepared for the <a href="https://aioti.eu/">AIOTI</a> WG 3 task force on semantic interoperability, and features a room with sensors for temperature, luminance and presence, and actuators for lighting and heating.</p>
+
+<p>The home's owners Janet and John have different preferences for the lighting hue and the desired room temperature, see the facts graph for details.</p>
+
+<p>The rules are triggered when someone enters or leaves the room, and when the time of day changes. The reasoning process is bottom up, first applying the defaults, then the preferences of whoever is in the room, and finally, to apply the precedences for the lighting hue and room temperature.  To save energy, the lights turn off in the morning or afternoon, unless you manually override them. See the rule graph for details.</p>
+
+<p>The room temperature rises and falls according to the difference with the external temperature and whether the heating is on. The external temperature varies according to the time of day, see the value in the window.</p>
+
+<p>The heating and cooling of the room is modelled as a pair of resistors and a capacitor, where the radiator temperature and the external temperature are modelled as voltage sources, leading to current flows into and out of the capacitor.</p>
+
+<div id="model"><img src="images/thermal-model.png" alt="thermal model of room as an electrical circuit"><br>
+i.e. δ T<sub>R</sub> = δ t (a (T<sub>H</sub>-T<sub>R</sub>) + b (T<sub>E</sub>-T<sub>R</sub>))
+</div>
+
+<p>The demo uses requestAnimationFrame to call a function to compute the changes based upon the time since the last frame was rendered. When changes are made in the simulated room these are signalled by setting goals to trigger rules representing procedural knowledge. The facts module is regularly updated to reflect the current values for the room state when the facts are changed. That also needs to happen before setting goals to ensure that the triggered rules are using accurate information.</p> 
+
+<p>The state of the room is modelled as the following chunks, which are updated to reflect the physical values, simulating the process of perception, which updates the cortex to reflect a model of sensory input:</p>
+
+<p><em>
+room room1 {occupancy 1; heating on; temperature 16; thermostat 20; lights off; hue warm; time evening}<br><br>
+person John {room room1}
+</em></p>
+
+<p>Note that the <em>person</em> facts are added and removed as Janet and John enter or leave the room, respectively.</p>
+
+<p>The log shows the sequence of goals and rule firing, and discards older entries when it gets full. Goals are pushed when:</p>
+
+<ul>
+<li>when temperature rises above target plus 2°C: <em>room room1 {state tooHot}</em></li>
+<li>when temperature drops below target less 2°C: <em>room room1 {state tooCold}</em></li>
+<li>when someone enters or leaves the room, e.g. <em>enter {person Janet}</em>, or <em>leave {person John}</em></li>
+<li>when the time of day changes, e.g. <em>clock {time evening}</em> or <em>clock {time night}</em></li>
+</ul>
+
+<p>The demo implementation provides for the following chunks for rule conditions:</p>
+
+<ul>
+<li><em>action {@do thermostat; heating on; targetTemperature 22}</em> where heating can be set to <em>on</em>, or <em>off</em>.</li>
+<li><em>action {@do lights; turn on; hue warm}</em> where you can turn the lights <em>on</em>, or <em>off</em>, and set the hue to either <em>warm</em>, or <em>cool</em></li>
+</ul>
+
+<p>Note that you don't have to provide all of the properties in given rule, as the properties you omit will be left unchanged, e.g. <em>action {@do thermostat; heating on}</em> turns the heating off without changing the target temperature. The radiator struggles to warm the room at night if thermostat is set high, although it is fine at a lower temperature.</p>
+
+<p>An open question is what to do when the lights, hue, heating and target temperature are manually adjusted from the form fields. At the moment, these just update the facts and don't push any goals.</p>
+
+<p>n.b. the images of the seated man and woman are courtesy of <a href="https://www.freepik.com/">Freepik</a>. The empty chairs were crudely derived from them using the Gimp graphics editor. The table is courtesy of <a href="https://www.iconsdb.com/orange-icons/table-icon.html">iconsdb</a></p>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<hr>
+<p><img id="ec-logo" src="../../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
+</div>
+
+</body>
+</html>
