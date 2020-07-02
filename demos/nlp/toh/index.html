@@ -35,9 +35,10 @@
 	}
 	#log {
 		height: 10em;
-		max-height: 10em;
+		max-height: 60em;
 		overflow-y: scroll;
 		border-style: solid;
+		resize: vertical;
 	}
 	button {
 		font-style: italic;
@@ -68,11 +69,11 @@
 
 <p><button id="listen">&#x1F3A4;</button>
 <label>Command: <input id="command" value="move the red disc to the right peg"></label>
-<button id="clear">clear</button></p>
+<button id="clearText">clear</button></p>
 
 <canvas id="toh" width="800" height="350"></canvas>
 
-<p>Log:</p>
+<p>Log: <button id="clear">clear</button></p>
 <pre id='log'>
 </pre>
 

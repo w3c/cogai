@@ -1,6 +1,6 @@
 # Procedural knowledge for Towers of Hanoi demo
 
-# want to generate:
+# we want to generate:
 #
 #    move m1 {disc disc3; to peg3}
 #
@@ -15,7 +15,7 @@
 # request the utterance to the facts buffer
 interpret {utterance ?id}
 =>
-	chunk {@module facts; @do recall; @id ?id},
+	chunk {@module facts; @do get; @id ?id},
 	for {step 2}
 	
 # save the info in the goal buffer
@@ -27,14 +27,14 @@ for {step 2},
 # request the subject phrase that identifies the disc
 for {step 3; subject ?subj}
 =>
-	np {@module facts; @do recall; @id ?subj},
+	np {@module facts; @do get; @id ?subj},
 	for {step 4}
 	
 # use the colour to request the corresponding disc
 for {step 4},
 	np {@module facts; adj ?colour}
 =>
-	disc {@module facts; @do recall; colour ?colour},
+	disc {@module facts; @do get; colour ?colour},
 	for {step 5}
 
 # save the disc chunk ID in the goal buffer
@@ -46,14 +46,14 @@ for {step 5},
 # request the phrase that identifies the peg
 for {step 6; to ?dest}
 =>
-	np {@module facts; @do recall; @id ?dest},
+	np {@module facts; @do get; @id ?dest},
 	for {step 7}
 	
 # use the location to request the corresponding peg
 for {step 7},
 	np {@module facts; adj ?location},
 =>
-	peg {@module facts; @do recall; location ?location},
+	peg {@module facts; @do get; location ?location},
 	for {step 8}
 
 # after getting the peg ID, execute the command

@@ -7,9 +7,10 @@ window.addEventListener("load", test, false);
 function test () {
 	const canvas = document.getElementById('toh');
 	const logElement = document.getElementById('log');
+	const clearLog = document.getElementById("clear");
 	const commandElement = document.getElementById('command');
 	const listenElement = document.getElementById('listen');
-	const clearElement = document.getElementById('clear');
+	const clearElement = document.getElementById('clearText');
 	const ctx = canvas.getContext('2d');
 	const width = canvas.width;
 	const height = canvas.height;
@@ -30,6 +31,14 @@ function test () {
 			logElement.scrollTop = logElement.scrollHeight;
 	}
 	
+	function clear () {
+		logElement.innerText = "";
+	}
+	
+	clearLog.addEventListener("click", () =>  {
+		clear();
+	});
+
 	function say (message) {
 		log(message);
 		let t2s = new SpeechSynthesisUtterance(message);
@@ -39,13 +48,13 @@ function test () {
 	function viewButton (buttonID, viewID) {
 		let button = document.getElementById(buttonID);
 		let view = document.getElementById(viewID);
-		button.innerText = "▼";
-		view.style.height = "auto";
+		button.innerText = "►";
+		view.style.height = "20px";
 		
 		view.show = function (text) {
 			view.textContent = text;
 			text = view.innerHTML;
-			text = text.replace(/=>/ig, "<span class='implies'>=&gt;</span>");
+			text = text.replace(/=\&gt;/ig, "<span class='implies'>=&gt;</span>");
 			text = text.replace(/@[\w|\.|\-|\/|:]+/ig, function replace(match) {
 				return "<span class='operator'>"+match+"</span>";
 			});
