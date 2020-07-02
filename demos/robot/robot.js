@@ -7,6 +7,7 @@ window.addEventListener("load", function () {test(); }, false);
 function test () {
 	const canvas = document.getElementById('factory');
 	const logElement = document.getElementById('log');
+	const clearLog = document.getElementById("clear");
 	const ctx = canvas.getContext('2d');
 	const width = canvas.width;
 	const height = canvas.height;
@@ -43,6 +44,14 @@ function test () {
 			logElement.scrollTop = logElement.scrollHeight;
 	}
 	
+	function clear () {
+		logElement.innerText = "";
+	}
+	
+	clearLog.addEventListener("click", () =>  {
+		clear();
+	});
+
 	let connect = function (sound) {
 		let source = audioCtx.createMediaElementSource(sound);
 		source.connect(audioCtx.destination);
@@ -51,6 +60,20 @@ function test () {
 	function viewButton (buttonID, viewID) {
 		let button = document.getElementById(buttonID);
 		let view = document.getElementById(viewID);
+		button.innerText = "►";
+		view.style.height = "20px";
+		
+		view.show = function (text) {
+			view.textContent = text;
+			text = view.innerHTML;
+			text = text.replace(/=\&gt;/ig, "<span class='implies'>=&gt;</span>");
+			text = text.replace(/@[\w|\.|\-|\/|:]+/ig, function replace(match) {
+				return "<span class='operator'>"+match+"</span>";
+			});
+			view.innerHTML = text.replace(/#.*/ig, function replace(match) {
+				return "<span class='comment'>"+match+"</span>";
+			});
+		};
 		
 		button.parentElement.addEventListener("click", () => {
 			if (button.innerText === "►") {
@@ -78,7 +101,7 @@ function test () {
 				.then((response) => response.text())
 				.then(function (source) {
 						factGraph = new ChunkGraph(source);
-						document.getElementById("facts").innerText = source;
+						document.getElementById("facts").show(source);
 						log("loaded " + factGraph.chunkCount() + " facts");
 						resolve(true);
 				});
@@ -91,7 +114,7 @@ function test () {
 				.then((response) => response.text())
 				.then(function (source) {
 						ruleGraph = new ChunkGraph(source);
-						document.getElementById("rules").innerText = source;
+						document.getElementById("rules").show(source);
 						log("loaded " + ruleGraph.typeCount('rule') + " rules");
 						console.log(ruleGraph.toString(true));
 						resolve(true);
@@ -966,6 +989,15 @@ function test () {
 	// action is rule's action chunk that includes @do
 	// properties are its properties after binding variables
 	let actions = {
+		show: function (action, bindings) {
+			let value = bindings.value;
+			let text = value;
+			
+			if (Array.isArray(value)) {
+				text = value.join(', ');
+			}
+			console.log(text);
+		},
 		start: function (action, properties) {
 			let thing = properties.thing;
 			if (thing) {
@@ -1025,7 +1057,6 @@ function test () {
 			// defer action until wait on capped
 		},
 		shipBox: function (action, properties) {
-			// discard box at end of belt2
 			belt2.releaseItem();
 		},
 		wait: function (action, properties) {
@@ -1036,6 +1067,7 @@ function test () {
 				log('wait on ' + action.type);
 						
 			let notify = function (priority) {
+				log("notify: " + (thing ? thing + " " : "") + action.type);
 				let chunk = new Chunk(action.type);
 				
 				if (priority === undefined)

@@ -2,12 +2,13 @@
 
 # start goal used to initialise the conveyor belts
 start {} =>
+	console {@do show; value start},
 	action {@do start; thing belt1},
 	space {@do wait; thing belt1; space 30},
 	full {@do wait; thing belt1},
 	space {@do wait; thing belt2; space 95},
 	full {@do wait; thing belt2},
-	action {@do move; x -120; y -75; angle -180; gap 40; step 0}
+	robot {@do move; x -120; y -75; angle -180; gap 40; step 0}
 
 # add bottle when belt1 has space and wait afresh
 space {thing belt1} =>
@@ -23,7 +24,7 @@ space {thing belt2} =>
 # stop belt when it is full and move arm
 full {thing belt1} =>
 	action {@do stop; thing belt1},
-	action {@do move; x -120; y -75; angle -180; gap 40; step 1}
+	robot {@do move; x -120; y -75; angle -180; gap 40; step 1}
 	
 # ship box at end of belt2 and wait afresh
 full {thing belt2} =>
@@ -31,11 +32,11 @@ full {thing belt2} =>
 	full {@do wait; thing belt2}
 	
 after {step 1} =>
-	action {@do move; x -170; y -75; angle -180; gap 30; step 2}
+	robot {@do move; x -170; y -75; angle -180; gap 30; step 2}
 
-after {step 2} =>
-	action {@do grasp},	
-	action {@do move; x -80; y -240; angle -90; gap 30; step 3}
+after {step 2} =>	goal {@do clear},
+	robot {@do grasp},	
+	robot {@do move; x -80; y -240; angle -90; gap 30; step 3}
 
 after {step 3} =>
 	action {@do start; thing belt1},
@@ -65,12 +66,12 @@ after {step 9} =>
 	packingSpace {@do wait}
 	
 packingSpace {x ?x; y ?y} =>
-	action {@do move; x ?x; y ?y; angle 0; gap 30; step 10}
+	robot {@do move; x ?x; y ?y; angle 0; gap 30; step 10}
 	
 after {step 10} =>
 	action {@do release},
 	boxFull {@do wait},
-	action {@do move; x 100; y -70; angle 0; gap 30; step 11}
+	robot {@do move; x 100; y -70; angle 0; gap 30; step 11}
 	
 after {step 11} =>
 	full {@do wait; thing belt1}

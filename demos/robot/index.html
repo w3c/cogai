@@ -30,12 +30,23 @@
 	}
 	#log {
 		height: 10em;
-		max-height: 10em;
+		max-height: 60em;
 		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
 	}
 	button {
 		background-color: rgb(230,230,230);
 		border-width: 0;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
 	}
 	#footnote {
 		font-style: italic;
@@ -59,7 +70,7 @@
 
 <p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
 
-<p>Log:</p>
+<p>Log: <button id="clear">clear</button></p>
 <pre id='log'>
 </pre>
 
