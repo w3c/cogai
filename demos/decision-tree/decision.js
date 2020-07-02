@@ -15,6 +15,37 @@ function test () {
 		return range[i];
 	}
 
+	function viewButton (buttonID, viewID) {
+		let button = document.getElementById(buttonID);
+		let view = document.getElementById(viewID);
+		button.innerText = "►";
+		view.style.height = "20px";
+		
+		view.show = function (text) {
+			view.textContent = text;
+			text = view.innerHTML;
+			text = text.replace(/=\&gt;/ig, "<span class='implies'>=&gt;</span>");
+			text = text.replace(/@[\w|\.|\-|\/|:]+/ig, function replace(match) {
+				return "<span class='operator'>"+match+"</span>";
+			});
+			view.innerHTML = text.replace(/#.*/ig, function replace(match) {
+				return "<span class='comment'>"+match+"</span>";
+			});
+		};
+		
+		button.parentElement.addEventListener("click", () => {
+			if (button.innerText === "►") {
+				button.innerText = "▼"
+				view.style.height = "auto";
+			} else {
+				button.innerText = "►"
+				view.style.height = "20px";
+			}
+		});
+	}
+	
+	viewButton("rulesButton", "rules");
+
 	let logView = document.getElementById("log");
 
 	function log (message) {
@@ -39,15 +70,20 @@ function test () {
 	let startButton = document.getElementById("start");
 	let nextButton = document.getElementById("next");
 	let ruleEngine = new RuleEngine(log);
-	let goal, rules, output;
+	let goal, rules;
 	
-	output = ruleEngine.addModule('output', new ChunkGraph(), {
-		log: function (action, bindings) {
-			outputView.innerText = bindings.value;
+	goal = ruleEngine.addModule('goal', new ChunkGraph(), {
+		show: function (action, bindings) {
+			let value = bindings.value;
+			let text = value;
+			
+			if (Array.isArray(value)) {
+				text = value.join(', ');
+			}
+			
+			outputView.innerText = text;
 		}
 	});
-	
-	goal = ruleEngine.addModule('goal', new ChunkGraph());
 
 	startButton.disabled = true;
 	nextButton.disabled = true;
@@ -90,8 +126,7 @@ function test () {
 	.then((response) => response.text())
 	.then(function (source) {
 		rules = ruleEngine.addModule('rules', new ChunkGraph(source));
-		let pre = document.getElementById("rules");
-		pre.innerText = source;
+		document.getElementById("rules").show(source);
 		startButton.disabled = false;
 		console.log('' + ruleEngine.getModule('rules').graph);
 	});	

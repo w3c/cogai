@@ -26,13 +26,24 @@
 	}
 	#log {
 		height: 10em;
-		max-height: 10em;
+		max-height: 60em;
 		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
 	}
 	button {
 		font-style: italic;
 		font-weight: bold;
 		font-size: larger;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
 	}
 	#footnote img {
 		height: 3em;
@@ -75,7 +86,7 @@
 <pre id='log'>
 </pre>
 
-<p>Rules graph:</p>
+<p><button id="rulesButton">►</button> Rules graph:</p>
 <pre id='rules'>
 </pre>
 

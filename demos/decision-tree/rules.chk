@@ -1,25 +1,27 @@
-golf {@module goal; state start; outlook sunny} =>
-	golf {@module goal; state humidity}
+# Procedural knowledge for the decision tree demo
 
-golf {@module goal; state humidity; humidity ?num; @lteq ?num, 75} =>
+golf {state start; outlook sunny} =>
+	golf {state humidity}
+
+golf {state humidity; humidity ?num; @lteq ?num, 75} =>
+	golf {state done},
+	console {@do show; value "play"}
+
+golf {state humidity; humidity ?num; @gt ?num, 75} =>
+	golf {state done},
+	console {@do show; value "don't play"}
+
+golf {state start; outlook cloudy} =>
 	golf {@module goal; state done},
-	console {@module output; @do log; value "play"}
+	console {@do show; value "play"}
 
-golf g3 {@module goal; state humidity; humidity ?num; @gt ?num, 75} =>
-	golf a4 {@module goal; state done},
-	console a5 {@module output; @do log; value "don't play"}
+golf {state start; outlook rainy} =>
+	golf {state windy}
 
-golf {@module goal; state start; outlook cloudy} =>
-	golf {@module goal; state done},
-	console {@module output; @do log; value "play"}
+golf {state windy; windy true} =>
+	golf {state done},
+	console {@do show; value "don't play"}
 
-golf {@module goal; state start; outlook rainy} =>
-	golf {@module goal; state windy}
-
-golf {@module goal; state windy; windy true} =>
-	golf {@module goal; state done},
-	console {@module output; @do log; value "don't play"}
-
-golf {@module goal; state windy; windy false} =>
-	golf {@module goal; state done},
-	console {@module output; @do log; value "play"}
+golf {state windy; windy false} =>
+	golf {state done},
+	console {@do show; value "play"}
