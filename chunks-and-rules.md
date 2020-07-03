@@ -453,6 +453,10 @@ Here is an example:
 ```
 * See [OPS5 User's Manual](https://apps.dtic.mil/dtic/tr/fulltext/u2/a106558.pdf), Charles Forgy, 1981
 
+*Comment:*
+
+OPS5 marks goals as being active or satisfied, allowing multiple active goals at any one time. In chunks rules are triggered when they match the current state of the buffers. Chunks can be queued to the buffers for deferred processing when current thread of rule execution ends. The queue helps the cognitive system to avoid losing track when several things happen close together in time, e.g. two alerts from the sensory system. A more flexible approach is to keep explicit track of tasks in a graph, and reason about when and how to handle them.
+
 #### N3
 
 Notation3 (N3) is a rule language for RDF that can be used to express rules based upon first order logic that operate over RDF triples. N3 supports quantifiers (@forAll and @forSome) and variables.
@@ -481,3 +485,19 @@ Here is an example that deduces if someone has an uncle:
 * [Notation3 (N3): A readable RDF syntax](https://www.w3.org/TeamSubmission/n3/) 28 March 2011
 * [Notation3 as the Unifying Logic for the Semantic Web](https://www.researchgate.net/publication/337101990_Notation3_as_the_Unifying_Logic_for_the_Semantic_Web) Dörthe Arndt's Ph.D thesis, 2019.
 
+*Comment:*
+
+One way to express first example in chunks as follows:
+
+```
+says {@subject John; @object s1}
+knows s1 {@subject Albert; @object Kurt}
+```
+
+The second example could be rewritten as an inference rule, e.g.
+
+```
+knows {@subject ?s; @object o} => knows {@subject o; @object s}
+```
+
+The third example involves the logical join of two facts and would be harder to express as chunk rules. One solution would involve iterating over the *hasParent* facts and then iterating over the corresponding *hasBrother* facts. This is where it would be easier to express the rule declaratively and invoke a graph algorithm to search over all matching facts, see [more complex queries](#more-complex-queries).
