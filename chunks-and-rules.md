@@ -115,6 +115,20 @@ If there are multiple conflicting definitions, the most recent will override ear
 
 Note: people familiar with JSON-LD would probably suggest using @context instead of @rdfmap, however, that would be confusing given that the term @context is needed in respect to reasoning in multiple contexts and modelling the theory of mind.
 
+RDFis based upon a formal theory which relates expressions to interpretations. In particular:
+
+<blockquote>    
+A model-theoretic semantics for a language assumes that the language refers to a 'world', and describes the minimal conditions that a world must satisfy in order to assign an appropriate meaning for every expression in the language. A particular world is called an interpretation, so that model theory might be better called 'interpretation theory'. The idea is to provide an abstract, mathematical account of the properties that any such interpretation must have, making as few assumptions as possible about its actual nature or intrinsic structure. Model theory tries to be metaphysically and ontologically neutral. It is typically couched in the language of set theory simply because that is the normal language of mathematics - for example, this semantics assumes that names denote things in a set called the 'universe' - but the use of set-theoretic language here is not supposed to imply that the things in the universe are set-theoretic in nature.
+
+The chief utility of such a semantic theory is not to suggest any particular processing model, or to provide any deep analysis of the nature of the things being described by the language (in our case, the nature of resources), but rather to provide a technical tool to analyze the semantic properties of proposed operations on the language; in particular, to provide a way to determine when they preserve meaning. Model theory is usually most relevant to implementation via the notion of entailment, described later, and by making it possible to define valid inference rules.
+</blockquote>
+
+For more details see the [RDF 1.1 Semantics](https://www.w3.org/TR/rdf11-mt/).
+
+Formal semantics seeks to understand meaning by constructing precise mathematical models that can determine which statements are true or false in respect to the assumptions and inference rules given in any particular example. The Web Ontology Language (OWL) is formalised in terms of description logic, which is midway between propositional logic and first order logic in its expressive power. OWL can be used to describe a domain in terms of classes, individuals and properties, along with formal entailment, and well understood complexity and decidability. See, e.g. Ian Horrock's [Description Logic: A Formal Foundation for Ontology Languages and Tools](http://www.cs.ox.ac.uk/people/ian.horrocks/Seminars/download/Horrocks_Ian_pt1.pdf).
+
+Chunks, by contrast, makes no claims to formal semantics, reflecting the lack of certainty and incomplete knowledge found in many everyday situations. Instead of logical entailment, the facts are updated by rules in ways that have practical value for specific tasks, e.g. turning the heating on when a room is observed to be too cold, or directing a robot to pick up an empty bottle, fill it, cap it and place it into a box. Rules are designed or learnt to carry out tasks on the basis of what is found to be effective in practice.
+
 ## Chunk Rules
 
 Applications can utilise a low level graph API or a high level rule language. The chunk rule language can be used to access and manipulate chunks held in one or more cognitive modules, where each module has a chunk graph and a chunk buffer that holds a single chunk. These modules are equivalent to different regions in the cerebral  cortex, where the buffer corresponds to the bundle of nerve fibres connecting to that region. The concurrent firing pattern across these fibres encodes the chunk as a semantic pointer in a noisy space with a high number of dimensions.
