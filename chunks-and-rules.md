@@ -12,6 +12,7 @@
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
 - [Statements about statements](#statements-about-statements)
+- [Ebbinghaus forgetting curve](#ebbinghaus-forgetting-curve)
 - [Test Suite](#test-suite)
 - [Boosting performance](#boosting-performance)
 - [Relationship to other rule languages](#relationship-to-other-rule-languages)
@@ -20,6 +21,12 @@
     - [N3](#n3)
 
 ## Introduction
+
+The chunks and rules format is designed for use in mimicking the cortico-basal ganglia circuit, which functions as a sequential rule engine:
+
+![Image of cognitive architecture for cognition](https://www.w3.org/Data/demos/chunks/arch.png)
+
+Each buffer holds a single chunk and represents the current state of a bundle of nerve fibres connecting to a particular cortical region. The rule conditions and actions operate over this buffers. This architecture originates in John Anderson's work on [ACT-R](http://act-r.psy.cmu.edu/about/).
 
 Each chunk is a named typed collection of properties, whose values are names (e.g. for other chunks), numbers, booleans (true or false), ISO8601 dates, string literals or comma separated lists thereof. This can be contrasted with a [minimal appoach](minimalist.md) in which property values are restricted to names.
 
@@ -371,6 +378,20 @@ This works with the existing rule language, provided that we assume a default co
 If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
 
 In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
+
+## Ebbinghaus forgetting curve
+
+In any large knowledgebase we only want to recall what is relevant to the current situation based upon past experience.
+
+* Our ability to recall information drops off over time unless boosted by repetition
+* Closely spaced repetitions have less effect (the so called *spacing effect*)
+* Spreading activation – concepts are easier to recall on account of their relationship with other concepts
+
+![forgetting curve](https://www.w3.org/Data/demos/chunks/forgetting.jpg)
+
+This is modelled by using a chunk strength parameter which is boosted whenever a chunk is recalled or updated, and decays exponentially over time. This decay process only operates when the cognitive system is active. Spreading activation is modelled by a wave initiated when accessing or updating a chunk. The wave spreads through the chunk's properties to related chunks. The more such properties the weaker the wave energy given to each property. This energy boosts the chunk's strength as it passes them. Chunk retrieval is stochastic with respect to chunk strengths, thus most of the time the strongest matching chunks is retrieved, but occasionally a weaker matching chunk will be returned instead.
+
+*ACT-R uses a more complex model, and further exploration is needed to evaluate the trade off between the complexity of the model, the computational cost, and the effect on machine learning, see [Said et al.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0158832).*
 
 ## [Test Suite](demos/testing/README.md)
 
