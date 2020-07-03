@@ -180,12 +180,18 @@ function test () {
 			let chunk = new Chunk("person", "John");
 			chunk.properties.room = "room1";
 			factGraph.add(chunk);
+			let goal = new Chunk("enter");
+			goal.properties.person = "John";
+			goalModule.pushBuffer(goal);
 		}		
 
 		if (woman) {
 			let chunk = new Chunk("person", "Janet");
 			chunk.properties.room = "room1";
 			factGraph.add(chunk);
+			let goal = new Chunk("enter");
+			goal.properties.person = "John";
+			goalModule.pushBuffer(goal);
 		}		
 
 		manElement.onclick = function  () {
