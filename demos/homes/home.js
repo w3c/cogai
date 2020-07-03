@@ -503,7 +503,7 @@ function test () {
 		const threshold = 2;
 		const radiatorTemperature = 60;
 		
-		let timeLast = lastTemperature = null;
+		let timeLast = null;
 		
 		let step = function (timeNow) {
 			if (timeLast === null) {
@@ -524,29 +524,28 @@ function test () {
 			
 			if (roomTemperature < 5)
 				roomTemperature = 5;
-			
-			if (roomTemperature < targetTemperature - threshold &&
-				lastTemperature >= targetTemperature - threshold) {
-				//setHeating(true);
-				let goal = new Chunk("room", "room1");
-				goal.properties.state = "tooCold"
-				log("alert: " + goal);
-				goalModule.pushBuffer(goal);
-			} else if (roomTemperature >= targetTemperature + threshold &&
-				lastTemperature < targetTemperature + threshold) {
-				//setHeating(false);
-				let goal = new Chunk("room", "room1");
-				goal.properties.state = "tooHot"
-				log("alert: " + goal);
-				goalModule.pushBuffer(goal);
-			}
-			
+						
 			timeLast = timeNow;
-			lastTemperature = roomTemperature;
 			draw();
 			window.requestAnimationFrame(step);
 		}
 		window.requestAnimationFrame(step);
+	};
+	
+	let monitorTemperature = function () {
+		const threshold = 0.5;
+		
+		if (roomTemperature < targetTemperature - threshold) {
+			let goal = new Chunk("room", "room1");
+			goal.properties.state = "tooCold"
+			log("alert: " + goal);
+			goalModule.pushBuffer(goal);
+		} else if (roomTemperature >= targetTemperature + threshold) {
+			let goal = new Chunk("room", "room1");
+			goal.properties.state = "tooHot"
+			log("alert: " + goal);
+			goalModule.pushBuffer(goal);
+		}		
 	};
 	
 	let syncState = function () {
@@ -629,6 +628,7 @@ function test () {
 		initFields();
 		ruleEngine.run();
 		
+		setInterval(monitorTemperature, 2000);
 		animate();
 	});
 }
