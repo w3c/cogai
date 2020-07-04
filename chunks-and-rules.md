@@ -401,7 +401,9 @@ In any large knowledgebase we only want to recall what is relevant to the curren
 
 ![forgetting curve](https://www.w3.org/Data/demos/chunks/forgetting.jpg)
 
-This is modelled by using a chunk strength parameter which is boosted whenever a chunk is recalled or updated, and decays exponentially over time. This decay process only operates when the cognitive system is active. Spreading activation is modelled by a wave initiated when accessing or updating a chunk. The wave spreads through the chunk's properties to related chunks. The more such properties the weaker the wave energy given to each property. This energy boosts the chunk's strength as it passes them. Chunk retrieval is stochastic with respect to chunk strengths, thus most of the time the strongest matching chunk is retrieved, but occasionally a weaker matching chunk will be returned instead.
+This is modelled by using a chunk strength parameter which is boosted whenever a chunk is recalled or updated, and decays exponentially over time. This decay process only operates when the cognitive system is active. Spreading activation is modelled by a wave initiated when accessing or updating a chunk. The wave spreads through the chunk's properties to related chunks. The more such properties the weaker the wave energy given to each property. This energy boosts the chunk's strength as it passes them.
+
+Chunk retrieval is stochastic with respect to chunk strengths, thus most of the time the strongest matching chunk is retrieved, but occasionally a weaker matching chunk will be returned instead. If two chunks have equal strengths they will have equal chances of being recalled.
 
 The above figure shows a sigmoidal curve for learning and exponential decay for forgetting. ACT-R uses a more complex model, and further exploration is needed to evaluate the trade off between the complexity of the model, the computational cost, and the effect on machine learning, see [Said et al.](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0158832).
 
