@@ -44,7 +44,7 @@ To enable cognitive agents that:
 
 * Are general purpose, collaborative, empathic and trustworthy
 * Can apply metacognition and past experience to reason about new situations
-* Support continuous learning based upon curiousity about the unexpected 
+* Support continuous learning based upon curiosity about the unexpected 
 * Have a level of self awareness in respect to current state, goals and actions
 * Have an awareness of others in respect to their beliefs, desires and intents
 
