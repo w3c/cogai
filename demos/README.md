@@ -76,6 +76,14 @@ A suite of demos that apply statistical approaches to identify potential causal 
 
 A suite of demos exploring different kinds of reasoning, e.g. deductive, inductive, abductive, causal, reasoning from analogies, reasoning from multiple perspectives, reasoning about stories, and so forth. In some cases, this will involve the use of context chains where some things only hold in a particular context, whilst others hold more generally.
 
+### Graph Algorithms for Unconscious Processing
+
+A suite of demos that will explore the potential for:
+
+* Queries and rules based upon augmented transition networks expressed as chunks, see: [SHRL](https://www.w3.org/WoT/demos/shrl/test.html)
+* Distributed graph algorithms that span multiple cognitive modules using efficient module to module message passing
+* Continuous learning in the background based upon the role of the brain as a prediction machine seeking order out of chaos
+
 ### Emotions and Cognition
 
 A series of demos that explore the interplay of emotions and cognition, in terms of example dialogues involving a small number of cognitive agents.
