@@ -1509,6 +1509,26 @@ function RuleEngine (log){
 	let randomIntFromInterval = function (min, max) {
   		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
+		
+	// the logistic function is used for the spacing effect
+	// see https://en.wikipedia.org/wiki/Logistic_function
+	engine.logisticFunction = function () {
+		return (1 + Math.tanh(x/2))/2;
+	};
+	
+	// used as part of stochastic recall of chunks where
+	// where stronger chunks are more likely to be selected
+	// This implementation uses the Box–Muller algorithm
+	engine.gaussian = function (stdev) {
+		const epsilon = 1E-20;
+		const TwoPI = 2 * Math.PI;
+		let u1, u2;
+		do {
+			u1 = Math.random();
+			u2 = Math.random();
+		} while (u1 < epsilon);
+		return stdev*Math.sqrt(-2*Math.log(u1))*Math.cos(TwoPI*u2);
+	};
 	
 	// these three functions are used to detect when the buffers
 	// used in a rule's conditions are unchanged by that rule
