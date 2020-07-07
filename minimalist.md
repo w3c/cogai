@@ -10,12 +10,13 @@ A minimalist specification for chunks is that a chunk is a typed set of properti
 * String literals as a list of chunks that denote individual characters
 * Dates as a chunk with properties for the year, month, day, etc. which in turn are modelled as for numbers
 
-Rules can be modelled as a rule chunk that names a chunk for the list of conditions and another for the list of actions (see above). The properties for those chunks name the condition chunks and the action chunks respectively. Without the means to use lists in conditions, we need a means to write rules that apply in the following cases:
+Rules can be modelled as a rule chunk that names a chunk for the list of conditions and another for the list of actions (see above). We also need a means to express conditions and actions that apply in the following cases:
 
 * the usual case where the condition chunk's property must be the same as in the buffer
 * use ~ as a prefix for the condition's value when it must be different from the buffer
 * use ~ on its own in place of the condition's value to test that a property is undefined
 * use ~ on its own in an action when you want to undefine a property
+* use ! before a condition when you want the rule to apply when the condition does not
 
 The facts for the counting demo can be rewritten without numbers as a data type:
 
@@ -50,6 +51,30 @@ count {@module goal; start ?num; end ?num; state counting}
    =>
      count {@module goal; @do update; state stop}
 ```
+
+Note: you could also express the counting facts as follows:
+
+```
+number one {successor two}
+number two {successor three}
+number three {successor four}
+...
+```
+
+The second rule above would then become:
+
+```
+# count up one at a time
+count {@module goal; state counting; start ?num1; end ?num2},
+count {@module goal; state counting; start ?num1; end ~?num1},
+number {@module facts; @id ?num1; successor ?num3}
+   =>
+     count {@module goal; @do update; start ?num3},
+     number {@module facts; @do get; @id ?num3},
+     console {@module output; @do log; value ?num3}
+```
+where the `@id` property is used to bind to the chunks ID.
+
 ## Operations on sets of chunks
 
 Whilst the limitation of buffers to single chunks may seem like a drawback when it comes to working with collections of facts, this is easily overcome. The rule language provides direct support for iterating over chunks with a given type and matching properties. Beyond that, modules can support a variety of graph algorithms which can be invoked from rule actions.
