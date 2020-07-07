@@ -31,22 +31,22 @@ The demo has three rules, one to start counting, a second to proceed one digit a
 
 ```
 # prepare to count up
-count {@module goal; start ?num; state start}
+count {@module goal; from ?num1; to ?num2; state start}
    =>
      count {@module goal; state counting},
-     increment {@module facts; @do get; number ?num},
-     console {@module output; @do log; value ?num}
+     increment {@module facts; @do get; number ?num1},
+     console {@module output; @do log; value ?num1}
 
 # count up one at a time
-count {@module goal; state counting; start ?num1; end ~?num1},
+count {@module goal; from ?num1; to ~?num1; state counting},
 increment {@module facts; number ?num1; successor ?num2}
    =>
-     count {@module goal; @do update; start ?num2},
+     count {@module goal; @do update; from ?num2},
      increment {@module facts; @do get; number ?num2},
      console {@module output; @do log; value ?num2}
 
 # stop after last one
-count {@module goal; start ?num; end ?num; state counting}
+count {@module goal; from ?num; to ?num; state counting}
    =>
      count {@module goal; @do update; state stop}
 ```
@@ -64,10 +64,10 @@ The second rule above would then become:
 
 ```
 # count up one at a time
-count {@module goal; state counting; start ?num1; end ~?num1},
+count {@module goal; from ?num1; to ~?num1; state counting},
 number {@module facts; @id ?num1; successor ?num2}
    =>
-     count {@module goal; @do update; start ?num2},
+     count {@module goal; @do update; from ?num2},
      number {@module facts; @do get; @id ?num2},
      console {@module output; @do log; value ?num2}
 ```
