@@ -73,7 +73,7 @@ number {@module facts; @id ?num1; successor ?num3}
      number {@module facts; @do get; @id ?num3},
      console {@module output; @do log; value ?num3}
 ```
-where the `@id` property is used to bind to the chunks ID.
+where the `@id` property is used to bind to the buffered chunk's ID.
 
 ## Operations on sets of chunks
 
