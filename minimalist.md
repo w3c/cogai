@@ -33,7 +33,7 @@ The demo has three rules, one to start counting, a second to proceed one digit a
 # prepare to count up
 count {@module goal; from ?num1; to ?num2; state start}
    =>
-     count {@module goal; state counting},
+     count {@module goal; @do update; state counting},
      increment {@module facts; @do get; number ?num1},
      console {@module output; @do log; value ?num1}
 
