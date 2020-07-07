@@ -51,7 +51,7 @@ count {@module goal; from ?num; to ?num; state counting}
      count {@module goal; @do update; state stop}
 ```
 
-Note: you could also express the counting facts as follows:
+Note that `@module goal` and `@do update` could be omitted as these are the default module and action respectively. You could alternatively express the counting facts as follows:
 
 ```
 number one {successor two}
@@ -64,10 +64,10 @@ The second rule above would then become:
 
 ```
 # count up one at a time
-count {@module goal; from ?num1; to ~?num1; state counting},
+count {from ?num1; to ~?num1; state counting},
 number {@module facts; @id ?num1; successor ?num2}
    =>
-     count {@module goal; @do update; from ?num2},
+     count {from ?num2},
      number {@module facts; @do get; @id ?num2},
      console {@module output; @do log; value ?num2}
 ```
