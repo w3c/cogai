@@ -47,7 +47,7 @@ dog dog1 {name "fido"; age 4}
 
 The chunk ID is optional, and if missing, will be automatically assigned when adding the chunk to a graph. If the graph already has a chunk with the same ID, it will be replaced by this one. You are free to use whitespace as you please, modulo the need for punctuation. String literals apart from URIs must be enclosed in double quote marks.
 
-Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a common subset of ISO8601 and are treated as identifiers for read-only chunks of type *iso8601* with properties for the year, month, day etc., e.g.
+Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a [common subset of ISO8601](https://www.w3.org/TR/NOTE-datetime) and are treated as identifiers for read-only chunks of type *iso8601* with properties for the year, month, day etc., e.g.
 
 ```
 # Albert Einstein's birth date
