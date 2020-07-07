@@ -4,13 +4,13 @@ This is an analysis of what a minimalist approach to chunks would involve, and i
 
 A minimalist specification for chunks is that a chunk is a typed set of properties whose values are names that reference other chunks.  In other words we dispense with numbers, booleans, string literals, dates and lists as built-in data types for values.  All of these can be instead modelled as chunks:
 
-* Lists as a sequence of chunks with a property for the list item and anothe property for the successor chunk
+* Lists as a sequence of chunks with a property for the list item and the @next property for the successor chunk
 * Booleans as chunks that denote true or false
-* Numbers as a sequence of chunks where each chunk has a single digit and a successor chunk
-* String literals as a similar sequence of characters
+* Numbers as a sequence of chunks where each chunk has a single digit and a successor chunk, or as a chunk with properties for units, tens, hundreds and so forth
+* String literals as a list of chunks that denote individual characters
 * Dates as a chunk with properties for the year, month, day, etc. which in turn are modelled as for numbers
 
-Rules can be modelled as a rule chunk that names a chunk for the conditions and another for the actions. The properties for those chunks name the condition chunks and the action chunks respectively. Without the means to use lists in conditions, we need a means to write rules that apply in the following cases:
+Rules can be modelled as a rule chunk that names a chunk for the list of conditions and another for the list of actions (see above). The properties for those chunks name the condition chunks and the action chunks respectively. Without the means to use lists in conditions, we need a means to write rules that apply in the following cases:
 
 * the usual case where the condition chunk's property must be the same as in the buffer
 * use ~ as a prefix for the condition's value when it must be different from the buffer
