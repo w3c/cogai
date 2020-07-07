@@ -79,7 +79,7 @@ where the `@id` property is used to bind to the buffered chunk's ID.
 
 Whilst the limitation of buffers to single chunks may seem like a drawback when it comes to working with collections of facts, this is easily overcome. The rule language provides direct support for iterating over chunks with a given type and matching properties. Beyond that, modules can support a variety of graph algorithms which can be invoked from rule actions.
 
-For RDF, the SPARQL query language provides for powerful queries over RDF triples. This includes the ability to carry out set operations over collections of triples. In principle, similar queries can be expressed using chunks and interpreted by a graph algorithm exposed by the module. The query can be pre-built or constructed dynamically, one chunk at a time. It could further express an operation to be performed over selected chunks. A further possibility is store the results as a set of chunks for iteration using rules.
+For RDF, the SPARQL query language provides for powerful queries over RDF triples. This includes the ability to carry out set operations over collections of triples. In principle, similar queries can be expressed using chunks and interpreted by a graph algorithm exposed by the module. The query can be pre-built or constructed dynamically, one chunk at a time. It could further express an operation to be performed over selected chunks. A further possibility is store the results as a set of chunks for iteration using rules. Whilst SPARQL operates over sets of triples, a further idea is to use chunks to describe transition networks that operate over sub-graphs, analogous to SHACL.
 
 ## Iterating over matching chunks
 
@@ -105,17 +105,17 @@ start {}
      town {@module facts; @do next; county cornwall},
      next {}
      
-next {}, town {@module facts; @id ?town; @last false} 
+next {}, town {@module facts; @id ?town; @more true} 
    => 
      console {@do log; message ?town},
      town {@module facts; @do next}
-next {}, town {@module facts; @id ?town; @last true} 
+next {}, town {@module facts; @id ?town; @more false} 
    => 
      console {@do log; message ?town},
      console {@do log; message "That's all!"},
      town {@module facts; @do clear}
 ```
-The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@last* property is set to *true* in the buffer for the last chunk in the iteration.
+The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@more* property is set to *true* in the buffer when there another chunk to follow, and *false* for the last chunk in the iteration.
 
 A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
 
