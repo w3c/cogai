@@ -38,13 +38,12 @@ count {@module goal; start ?num; state start}
      console {@module output; @do log; value ?num}
 
 # count up one at a time
-count {@module goal; state counting; start ?num1; end ?num2},
 count {@module goal; state counting; start ?num1; end ~?num1},
-increment {@module facts; number ?num1; successor ?num3}
+increment {@module facts; number ?num1; successor ?num2}
    =>
-     count {@module goal; @do update; start ?num3},
-     increment {@module facts; @do get; number ?num3},
-     console {@module output; @do log; value ?num3}
+     count {@module goal; @do update; start ?num2},
+     increment {@module facts; @do get; number ?num2},
+     console {@module output; @do log; value ?num2}
 
 # stop after last one
 count {@module goal; start ?num; end ?num; state counting}
@@ -65,13 +64,12 @@ The second rule above would then become:
 
 ```
 # count up one at a time
-count {@module goal; state counting; start ?num1; end ?num2},
 count {@module goal; state counting; start ?num1; end ~?num1},
-number {@module facts; @id ?num1; successor ?num3}
+number {@module facts; @id ?num1; successor ?num2}
    =>
-     count {@module goal; @do update; start ?num3},
-     number {@module facts; @do get; @id ?num3},
-     console {@module output; @do log; value ?num3}
+     count {@module goal; @do update; start ?num2},
+     number {@module facts; @do get; @id ?num2},
+     console {@module output; @do log; value ?num2}
 ```
 where the `@id` property is used to bind to the buffered chunk's ID.
 
