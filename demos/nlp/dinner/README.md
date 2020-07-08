@@ -24,10 +24,19 @@ The demo involves a separate cognitive agent for the customer and for the waiter
 
 To model the knowledge some mindmaps were prepared as incomplete illustrations of what needs to be represented.
 
+The following diagram describes some of the concepts needed to express a plan for a restaurant dinner.
+
 ![dinner plan](https://www.w3.org/Data/demos/chunks/nlp/dinner/images/dinner-plan.png)
+
+The following diagram describes some of the concepts used in the dialogue between the customer and the waiter,
 
 ![dialogues](https://www.w3.org/Data/demos/chunks/nlp/dinner/images/dialogues.png)
 
+The following diagram describes some of the concepts needed to describe choices of drinks:
+
 ![drinks](https://www.w3.org/Data/demos/chunks/nlp/dinner/images/drinks.png)
+
+The following diagram describes some of the concepts needed to describe choices of food:
+
 
 ![food](https://www.w3.org/Data/demos/chunks/nlp/dinner/images/food.png)
