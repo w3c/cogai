@@ -22,7 +22,7 @@ C: Yes, a bottle of red wine please.
 
 *From the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
 
-The demo involves a separate cognitive agent for the customer and for the waiter, that are executed within a web page, and the dialogue shown as a text chat. The demo combines declarative and procedural knowledge about typical behaviour for having dinner at a restaurant. The natural language is handled word by word, avoiding backtracking, and using concurrent syntactic and semantic processing. The dialogue text is preprocessed to replace "I'll" with "I will" and "I'm" with "I am", etc., before being coerced to lower case, stripping out punctuation and splitting into an array of words. This mimics hearing as compared to reading, along with common abbreviations.
+The demo involves separate cognitive agents for the customer and for the waiter, that run within a web page, and the dialogue shown as a text chat. The demo combines declarative and procedural knowledge about typical behaviour for having dinner at a restaurant. The natural language is handled word by word, avoiding backtracking, and using concurrent syntactic and semantic processing. The dialogue text is preprocessed to replace "I'll" with "I will" and "I'm" with "I am", etc., before being coerced to lower case, stripping out punctuation and splitting into an array of words. This mimics hearing as compared to reading, along with common abbreviations.
 
 Each agent takes its turn to speak, mapping a model of its communication intent into text, and when listening, mapping the text it hears back into an internal model of the meaning. The communication intent is determined by the current state of execution of the dinner plan. This corresponds to:
 
@@ -35,7 +35,7 @@ Each agent takes its turn to speak, mapping a model of its communication intent 
 7. Paying the bill
 8. Farewells and please come again
 
-Each step supports sub-plans with variations, e.g. when a window table or a specific dish is unavailable. In principle, a random number generator could be used to select between the variations. The plan is based upon a causal model, and future work could explore how an agent can revise the plan to suit changing circumstances.
+Each step supports sub-plans with variations, e.g. when a window table or a specific dish is unavailable. In principle, a random number generator could be used to select between the variations when executing the dinner plan. The plan is based upon a causal model, and future work could explore how an agent can revise the plan to suit changing circumstances.
 
 ## Syntactic Processing
 
@@ -45,7 +45,15 @@ A shift-reduce parser is used to process the syntactic structure of an utterance
 
 Prepositions can in principle attach to the subject, the verb, the object or another preposition. The syntactic processor identifiers potential attachment points for evaluation by the semantic processor via queueing goals that trigger rules to invoke graph algorithms. Each choice is given a score, and the best choice is found asynchronously as the thread for each choice completes and reports back to the syntactic processor.
 
-The semantic interpretation is built incrementally as the utterance is processed.
+The semantic interpretation is built incrementally as the utterance is processed, culiminating in queuing a goal to decide what action to take.
+
+## Semantic Processing
+
+This can take two forms: the first is the direct invocation of graph algorithms, e.g. to select the best word sense in the current context. The second is where the rule engine is invoked by queuing a goal. The rules this triggers can access and update declarative knowledge, as well as invoking graph algorithms that are designed for natural language understanding or natural language generation.
+
+## Natural Language Generation
+
+Each cognitive agent will have a communication intent based upon the current state of the dinner plan according to that agent. This intent is mapped progressively into a syntactic structure and then into a sequence of words to be spoken.
 
 ## Declarative Knowledge
 
