@@ -30,7 +30,7 @@ The following diagram describes some of the concepts needed to express a plan fo
 
 The following diagram describes some of the concepts used in the dialogue between the customer and the waiter,
 
-![dialogues](https://www.w3.org/Data/demos/chunks/nlp/dinner/images/dialogues.png)  <!-- .element width="50%" -->
+![dialogues](https://www.w3.org/Data/demos/chunks/nlp/dinner/images/dialogues.png)  <!-- .element style="max-width: 400px" -->
 
 The following diagram describes some of the concepts needed to describe choices of drinks:
 
