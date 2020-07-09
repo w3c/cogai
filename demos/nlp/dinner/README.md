@@ -18,8 +18,8 @@ C: Oh dear. What do you recommend?<br>
 W: The steak pie is very good.<br>
 C: OK I'll have that.<br>
 W: Would you like anything to drink?<br>
-C: Yes, a glass of red wine.
-W: Is that all?
+C: Yes, a glass of red wine.<br>
+W: Is that all?<br>
 C: Yes, thanks.
 </blockquote>
 
