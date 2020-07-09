@@ -50,7 +50,7 @@ Each word is mapped to a word sense and part of speech. In most cases in the dem
 
 A shift-reduce parser is used to process the syntactic structure of an utterance. This uses a queue as a working memory, together with functions that deal with common structures, e.g. noun phrases consisting of a determiner, adjectives and nouns. Queue entries are reduced when building the chunks that describe the word dependencies in the utterance. Syntactic Processing goes hand in hand with semantic processing, e.g. resolving the meaning of a noun phrase when it is completed. Verbs may have multiple slots as well as the subject and object. These are filled by prepositional phrases. 
 
-Prepositions can in principle attach to the subject, the verb, the object or another preposition. The syntactic processor identifiers potential attachment points for evaluation by the semantic processor via queueing goals that trigger rules to invoke graph algorithms. Each choice is given a score, and the best choice is found asynchronously as the thread for each choice completes and reports back to the syntactic processor.
+Prepositions can in principle attach to the subject, the verb, the object or another preposition. The syntactic processor identifies potential attachment points for evaluation by the semantic processor via queueing goals that trigger rules to invoke graph algorithms. Each choice is given a score, and the best choice is found asynchronously as the thread for each choice completes and reports back to the syntactic processor.
 
 The semantic interpretation is built incrementally as the utterance is processed, culiminating in queuing a goal to decide what action to take.
 
