@@ -10,7 +10,7 @@ C: Could I sit by the window?<br>
 W: I'm sorry. The window tables are all reserved.<br>
 W: Are you ready to order?<br>
 C: Yes. I'll have tomato soup for starters.<br>
-W: One tomato soup and one prawn cocktail. What would you like for the main course?<br>
+W: A tomato soup. What would you like for the main course?<br>
 C: I'll have the plaice.<br>
 W: I'm afraid the plaice is off.<br>
 C: Oh dear. What do you recommend?<br>
