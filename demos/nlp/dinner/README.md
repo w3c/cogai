@@ -23,7 +23,7 @@ W: Is that all?<br>
 C: Yes, thanks.
 </blockquote>
 
-*Adapted from the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
+*Adapted from the [Just Good English](https://justgoodenglish.com/eating-out/) website.*
 
 The demo involves separate cognitive agents for the customer and for the waiter, that run within a web page, where the dialogue is shown as a text chat. The demo combines declarative and procedural knowledge about typical behaviour for having dinner at a restaurant. The natural language is handled word by word, avoiding backtracking, and using concurrent syntactic and semantic processing. The dialogue text is preprocessed to replace "I'll" with "I will" and "I'm" with "I am", etc., before being coerced to lower case, stripping out punctuation and splitting into an array of words. This mimics hearing as compared to reading, along with common abbreviations.
 
