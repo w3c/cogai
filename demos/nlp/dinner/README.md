@@ -8,6 +8,7 @@ C: A table for one please.<br>
 W: Certainly. Just here?<br>
 C: Could I sit by the window?<br>
 W: I'm sorry. The window tables are all reserved.<br>
+C: This table will be fine.<br>
 W: Are you ready to order?<br>
 C: Yes. I'll have tomato soup for starters.<br>
 W: A tomato soup. What would you like for the main course?<br>
