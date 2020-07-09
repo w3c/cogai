@@ -17,7 +17,9 @@ C: Oh dear. What do you recommend?<br>
 W: The steak pie is very good.<br>
 C: OK I'll have that.<br>
 W: Would you like anything to drink?<br>
-C: Yes, a glass of red wine please.
+C: Yes, a glass of red wine.
+W: Is that all?
+C: Yes, thanks.
 </blockquote>
 
 *Adapted from the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
@@ -36,6 +38,10 @@ Each agent takes its turn to speak, mapping a model of its communication intent 
 8. Farewells and please come again
 
 Each step supports sub-plans with variations, e.g. when a window table or a specific dish is unavailable. In principle, a random number generator could be used to select between the variations when executing the dinner plan. The plan is based upon a causal model, and future work could explore how an agent can revise the plan to suit changing circumstances.
+
+Apart from greetings and farewells, the dialogue consists of requests and responses that deal with each stage of the dinner plan. Negative responses trigger the search for an alternative, e.g. to accept the table the waiter originally suggested, or to pick a different dish if your first choice isn't available. The menu lists different dishes for each course. The demo could involve the customer reading through the menu, or that could be made implicit with the choices already placed into declarative memory. The customer could mentally review the choices to rank them based upon some preferences, and make a random selection if the top choices are equally ranked. This process updates the facts in the declarative memory. The act of having dinner is a situation associated with a particular context in episodic memory.
+
+Social etiquette needs to be adhered to during the dialogue. The customer and the waiter are peers in social standing. This should be acknowledged at the start and end of the dialogue, e.g. by adding a "please", through the use of conditional verbs that signify that you realise that a request may be declined, and through the addition of "thanks" to a yes/no question. In the middle of the dialogue you can be more direct, e.g. "I'll have" rather than "I would like". When declining a request, the waiter apologises and offers an explanation, e.g. "the tables are all reserved" or "the plaice is off" (as in off the menu). The customer should acknowledge the discomfort this brings to the waiter when having to give bad news, e.g. "oh dear" or "that's a pity". The example dialogue goes further, as the customer asks the waiter for advice, which is a way of making the waiter feel to be of greater value in the dialogue. However that isn't needed if the customer already has a second choice in mind.
 
 ## Syntactic Processing
 
