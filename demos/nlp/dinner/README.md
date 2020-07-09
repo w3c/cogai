@@ -17,7 +17,7 @@ C: Oh dear. What do you recommend?<br>
 W: The steak pie is very good.<br>
 C: OK I'll have that.<br>
 W: Would you like anything to drink?<br>
-C: Yes, a bottle of red wine please.
+C: Yes, a glass of red wine please.
 </blockquote>
 
 *Adapted from the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
