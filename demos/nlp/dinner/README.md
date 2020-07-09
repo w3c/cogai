@@ -4,14 +4,14 @@ This is a natural language demo for a dialogue between a customer and a waiter a
 
 <blockquote>
 W: Good evening.<br>
-C: A table for two please.<br>
-W: Certainly. Just here, sir.<br>
-C: Could we sit by the window?<br>
+C: A table for one please.<br>
+W: Certainly. Just here?<br>
+C: Could I sit by the window?<br>
 W: I'm sorry. The window tables are all reserved.<br>
-W: Are you ready to order, sir?<br>
-C: Yes. I'll have tomato soup for starters and my wife would like prawn cocktail.<br>
+W: Are you ready to order?<br>
+C: Yes. I'll have tomato soup for starters.<br>
 W: One tomato soup and one prawn cocktail. What would you like for the main course?<br>
-C: I'll have the plaice and my wife would like the shepherd's pie.<br>
+C: I'll have the plaice.<br>
 W: I'm afraid the plaice is off.<br>
 C: Oh dear. What do you recommend?<br>
 W: The steak pie is very good.<br>
@@ -20,7 +20,7 @@ W: Would you like anything to drink?<br>
 C: Yes, a bottle of red wine please.
 </blockquote>
 
-*From the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
+*Adapted from the [English, the international language](https://www.english-the-international-language.com/edrst.php) website.*
 
 The demo involves separate cognitive agents for the customer and for the waiter, that run within a web page, and the dialogue shown as a text chat. The demo combines declarative and procedural knowledge about typical behaviour for having dinner at a restaurant. The natural language is handled word by word, avoiding backtracking, and using concurrent syntactic and semantic processing. The dialogue text is preprocessed to replace "I'll" with "I will" and "I'm" with "I am", etc., before being coerced to lower case, stripping out punctuation and splitting into an array of words. This mimics hearing as compared to reading, along with common abbreviations.
 
