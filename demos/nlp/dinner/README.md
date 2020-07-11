@@ -40,7 +40,37 @@ Each agent takes its turn to speak, mapping a model of its communication intent 
 
 Each step supports sub-plans with variations, e.g. when a window table or a specific dish is unavailable. In principle, a random number generator could be used to select between the variations when executing the dinner plan. The plan is based upon a causal model, and future work could explore how an agent can revise the plan to suit changing circumstances.
 
+One way to represent plans is as a sequence of goals:
+
+```
+# plan with info on when it is applicable
+plan p1 {purpose dinner; at restaurant, start s1}
+dinner-plan s1 {goal greetings; next s2}
+dinner-plan s2 {goal find-table; next s3}
+dinner-plan s3 {goal review-menu; next s4}
+dinner-plan s4 {goal place-order; next s5}
+dinner-plan s5 {goal thank-waiter; next s6}
+dinner-plan s6 {goal ask-for-bill; next s7}
+dinner-plan s7 {goal pay-bill; next s8}
+dinner-plan s8 {goal farewells; finished p1}
+```
+
+### Speech acts
+
 Apart from greetings and farewells, the dialogue consists of requests and responses that deal with each stage of the dinner plan. Negative responses trigger the search for an alternative, e.g. to accept the table the waiter originally suggested, or to pick a different dish if your first choice isn't available. The menu lists different dishes for each course. The demo could involve the customer reading through the menu, or that could be made implicit with the choices already placed into declarative memory. The customer could mentally review the choices to rank them based upon some preferences, and make a random selection if the top choices are equally ranked. This process updates the facts in the declarative memory. The act of having dinner is a situation associated with a particular context in episodic memory.
+
+The literature uses terms such as locutionary, illocutionary and perlocutionary, which are rather inscruitable. I prefer the following terms:
+
+* *Assertion* - that something is the case, e.g. apples are a kind of fruit
+* *Question* - a request for information, e.g. are you ready to order?
+* *Answer* - a response to a question, e.g. yes, I would like tomato soup for starters
+* *Command* - an instruction to do something, e.g. to a child: don't chew with your mouth open
+
+Questions can either ask if something is true or not, e.g. can I pay with a credit card, or to ask for further information, e.g. what would you like for starters? Yes/no questions are often answered with additional information on the assumption that for a positive response, that is what the questioner is seeking, or to provide some alternatives when giving a negative response.
+
+A dialogue can be represented as a sequence of speech acts where each utterance refers to the previous one, as well as to the dialogue plan. This allows semantic processing to access the dialogue history and its context in respect to the plan. Each utterance can be modelled in terms of its overt meaning, and other aspects relating to the context and social etiquette.
+
+### Social etiquette and pragmatics
 
 Social etiquette needs to be adhered to during the dialogue. The customer and the waiter are peers in social standing. This should be acknowledged at the start and end of the dialogue, e.g. by adding a "please", through the use of conditional verbs that signify that you realise that a request may be declined, and when answering a yes/no question with "yes please" or "no thanks". In the middle of the dialogue you can be more direct, e.g. "I'll have" rather than "I would like". When declining a request, the waiter apologises and offers an explanation, e.g. "the tables are all reserved" or "the plaice is off" (as in off the menu). The customer should acknowledge the discomfort this brings to the waiter when having to give bad news, e.g. "oh dear" or "that's a pity". The example dialogue goes further, as the customer asks the waiter for advice, which is a way of making the waiter feel to be of greater value in the dialogue. However that isn't needed if the customer already has a second choice in mind.
 
