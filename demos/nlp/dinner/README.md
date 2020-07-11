@@ -54,11 +54,16 @@ dinner-plan s6 {goal ask-for-bill; next s7}
 dinner-plan s7 {goal pay-bill; next s8}
 dinner-plan s8 {goal farewells; finished p1}
 ```
-Each goal may have subgoals, e.g. to find a table, indicating that you have a reservation and giving your name, or stating the number of places you need and your preferences for the table location. This can be handled via either a sub-plan or a set of rules that can adapt to the variations.
+Each goal may have subgoals, e.g. to find a table, indicating that you have a reservation and giving your name, or stating the number of places you need and your preferences for the table location. This can be handled via either a sub-plan or a set of rules that can adapt to the variations. The act of having dinner is a situation associated with a particular context in episodic memory. The reservation, number of people and the table preferences will depend on that context, e.g.
+
+```
+# 7pm reservation under the name "Smith" for a party of 2 at the Rose and Crown
+dinner {@context c1; where rose-and-crown; party-size 2; reservation smith; time 7pm}
+```
 
 ### Speech acts
 
-Apart from greetings and farewells, the dialogue consists of requests and responses that deal with each stage of the dinner plan. Negative responses trigger the search for an alternative, e.g. to accept the table the waiter originally suggested, or to pick a different dish if your first choice isn't available. The menu lists different dishes for each course. The demo could involve the customer reading through the menu, or that could be made implicit with the choices already placed into declarative memory. The customer could mentally review the choices to rank them based upon some preferences, and make a random selection if the top choices are equally ranked. This process updates the facts in the declarative memory. The act of having dinner is a situation associated with a particular context in episodic memory.
+Apart from greetings and farewells, the dialogue consists of requests and responses that deal with each stage of the dinner plan. Negative responses trigger the search for an alternative, e.g. to accept the table the waiter originally suggested, or to pick a different dish if your first choice isn't available. The menu lists different dishes for each course. The demo could involve the customer reading through the menu, or that could be made implicit with the choices already placed into declarative memory. The customer could mentally review the choices to rank them based upon some preferences, and make a random selection if the top choices are equally ranked. This process updates the facts in the declarative memory.
 
 The literature uses terms such as locutionary, illocutionary and perlocutionary, which are rather inscruitable. I prefer the following terms:
 
