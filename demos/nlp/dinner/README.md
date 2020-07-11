@@ -54,6 +54,7 @@ dinner-plan s6 {goal ask-for-bill; next s7}
 dinner-plan s7 {goal pay-bill; next s8}
 dinner-plan s8 {goal farewells; finished p1}
 ```
+Each goal may have subgoals, e.g. to find a table, indicating that you have a reservation and giving your name, or stating the number of places you need and your preferences for the table location. This can be handled via either a sub-plan or a set of rules that can adapt to the variations.
 
 ### Speech acts
 
