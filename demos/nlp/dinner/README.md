@@ -98,7 +98,7 @@ np np2 {adj reserved}
 
 If we have a restaurant with a set of tables, some of which are at the window, the we can identify which subset are referred to from the subject noun phrase. However, we don't need to do that in the dialogue!  The dialogue further implies that if you want a window table, then you will need to reserve one in advance, but that goes well beyond what this particular demo needs to deal with.
 
-A choice of dish for a given course, of a choice of drink could be represented as follows:
+A choice of dish for a given course, or a choice of drink could be represented as follows:
 
 ```
 course {@context c1; starter tomato-soup}
