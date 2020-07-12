@@ -80,6 +80,37 @@ A dialogue can be represented as a sequence of speech acts where each utterance 
 
 Social etiquette needs to be adhered to during the dialogue. The customer and the waiter are peers in social standing. This should be acknowledged at the start and end of the dialogue, e.g. by adding a "please", through the use of conditional verbs that signify that you realise that a request may be declined, and when answering a yes/no question with "yes please" or "no thanks". In the middle of the dialogue you can be more direct, e.g. "I'll have" rather than "I would like". When declining a request, the waiter apologises and offers an explanation, e.g. "the tables are all reserved" or "the plaice is off" (as in off the menu). The customer should acknowledge the discomfort this brings to the waiter when having to give bad news, e.g. "oh dear" or "that's a pity". The example dialogue goes further, as the customer asks the waiter for advice, which is a way of making the waiter feel to be of greater value in the dialogue. However that isn't needed if the customer already has a second choice in mind.
 
+## Knowledge representation
+
+What is a good enough way to represent statements like *The window tables are all reserved*?  From a logical point of view this is equivalent to:
+
+```
+for all x such that table(x) and by-window(x) then reserved(x)
+```
+
+One way to do that would be to devise a means for using chunks for expressions in first order logic, but not every English utterance has a natural interpretation in first order logic. A more flexible and perhaps simpler option is to use a chunk representation of English, e.g.
+
+```
+verb v1 {word are; subject np1; object np2}
+np np1 {noun table, window; det all}
+np np2 {adj reserved}
+```
+
+If we have a restaurant with a set of tables, some of which are at the window, the we can identify which subset are referred to from the subject noun phrase. However, we don't need to do that in the dialogue!  The dialogue further implies that if you want a window table, then you will need to reserve one in advance, but that goes well beyond what this particular demo needs to deal with.
+
+A choice of dish for a given course, of a choice of drink could be represented as follows:
+
+```
+course {@context c1; starter tomato-soup}
+course {@context c1; main plaice}
+course {@context c1; main steak-pie}
+drink {@context c1; wine red; quantity glass}
+```
+
+where @context is used to declare the context in which these particular facts are true, i.e. a particular dinner at a particular restaurant on a particular day.
+
+The next challenge is to identify a way to represent speech acts, their semantics and pragmatics.
+
 ## Syntactic Processing
 
 Each word is mapped to a word sense and part of speech. In most cases in the demo, this is unambiguous, where the lexicon provides multiple possibilities, a graph algorithm is invoked to find the one that best fits the context.
