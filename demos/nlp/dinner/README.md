@@ -91,7 +91,7 @@ for all x such that table(x) and by-window(x) then reserved(x)
 One way to do that would be to devise a means for using chunks for expressions in first order logic, but not every English utterance has a natural interpretation in first order logic. A more flexible and perhaps simpler option is to use a chunk representation of English, e.g.
 
 ```
-verb v1 {word are; subject np1; object np2}
+vp v1 {verb be; subject np1; object np2}
 np np1 {noun table, window; det all}
 np np2 {adj reserved}
 ```
