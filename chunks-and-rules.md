@@ -470,7 +470,7 @@ OPS5 marks goals as being active or satisfied, allowing multiple active goals at
 
 Notation3 (N3) is a rule language for RDF that can be used to express rules based upon first order logic that operate over RDF triples. N3 supports quantifiers (@forAll and @forSome) and variables.
 
-Here is an example:
+Here is an example involving cited graphs:
 
 ```
 :John :says {:Kurt :knows :Albert.}.
@@ -478,7 +478,11 @@ Here is an example:
 {:Kurt :knows :Albert.} => {:Albert :knows :Kurt.}.
 ```
 
-The first statement signifies that *John says that Kurt knows Albert*. The second statement is a rule that says that if Kurt knows Albert then we can infer that Albert knows Kurt. 
+The first statement signifies that *John says that Kurt knows Albert*. The second statement is a rule that says that if Kurt knows Albert then we can infer that Albert knows Kurt.  Whilst we know from the above that John says that Kurt knows Albert, we can't be sure of whether Kurt does in fact know Albert.  We could add a rule to the effect that John only speaks the truth, e.g.
+
+```
+{:John :says ?x.} => ?x.
+```
 
 Here is an example that deduces if someone has an uncle:
 
@@ -500,8 +504,10 @@ One way to express first example in chunks as follows:
 
 ```
 says {@subject John; @object s1}
-knows s1 {@subject Albert; @object Kurt}
+knows s1 {@context c1; @subject Albert; @object Kurt}
 ```
+
+which places what John says in a named context to keep what he says distinct from what is generally true.
 
 The second example could be rewritten as an inference rule, e.g.
 
