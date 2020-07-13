@@ -363,7 +363,7 @@ A further opportunity would be to explore queries and rules where the conditions
 
 ## Statements about statements
 
-Beliefs, stories, abductive reasoning and even search query patterns involve the use of statements about statements. How can these be expressed as chunks and what else is needed?
+Beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns involve the use of statements about statements. How can these be expressed as chunks and what else is needed?
 
 Here is an example from John Sowa's [Architectures for Intelligent Systems](http://www.jfsowa.com/pubs/arch.htm):
 
