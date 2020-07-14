@@ -139,7 +139,7 @@ request r1 {who customer; syntax np2; prev g2; plan s2}
 np np2 {det a; noun table; for np3}
 np np3 {number one; adv please}
 
-# w: certainly
+# w: certainly (positive response to request)
 ack r2 {who waiter; syntax a1; prev r1; plan s2}
 ap a1 {word certainly}
 
@@ -153,19 +153,19 @@ vp vp1 {verb could, sit; subject np4; by np5}
 np np4 {pron i}
 np np5 {det the; noun window}
 
-# w: I'm sorry
+# w: I'm sorry (negative response to request)
 nak r5 {who waiter; syntax vp2; prev r4; plan s2}
 vp vp2 {verb am; subject np6; object np7}
 np np6 {pron i}
 np np7 {adj sorry}
 
-# w: the window tables are all reserved
+# w: the window tables are all reserved (explanation)
 response r6 {who waiter; syntax vp3; prev r5; plan s2}
 vp vp3 {verb are; subject np8; object np9}
 np np8 {det the; noun window, tables}
 np np9 {det all; adj reserved}
 
-# c: that table will be fine
+# c: that table will be fine (the table the waiter pointed to)
 response r7 {who customer; syntax vp4; prev r6; plan s2}
 vp vp4 {verb will, be; subject np10; object np11}
 np np10 {det that; noun table}
