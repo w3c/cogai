@@ -123,6 +123,8 @@ The next challenge is to identify a way to represent speech acts, their semantic
 
 Here is a sketch of the chunks used to represent the sequence of utterances. Each utterance identifies who spoke it, gives the syntactic structure used, the previous utterance, and the associated stage in the dinner plan. The verbs are left as is for now. In future, we would expect to use the infinitive form of the verb along with properties for the tense and related parameters, and similarly for the number and gender properties for nouns.
 
+<details>
+  <summary>Click to expand!</summary>
 ```
 # c: good evening
 greeting g1 {who customer; syntax np1; plan s1}
@@ -171,6 +173,7 @@ vp vp4 {verb will, be; subject np10; object np11}
 np np10 {det that; noun table}
 np np11 {adj fine}
 ```
+</details>
 
 ## Syntactic Processing
 
