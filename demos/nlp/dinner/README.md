@@ -21,15 +21,15 @@ C: OK I'll have that.<br>
 W: Would you like anything to drink?<br>
 C: Yes, a glass of red wine.<br>
 W: Is that all?<br>
-C: Yes, thanks.
-W: Here you are.
-C: Thanks, that looks great!
-W: You're welcome!
-C: The bill please.
-W: Here you are.
-C: Can I pay with a credit card?
-W: Certainly.
-C: Thank you and good bye.
+C: Yes, thanks.<br>
+W: Here you are.<br>
+C: Thanks, that looks great!<br>
+W: You're welcome!<br>
+C: The bill please.<br>
+W: Here you are.<br>
+C: Can I pay with a credit card?<br>
+W: Certainly.<br>
+C: Thank you and good bye.<br>
 W: Good bye, hope to see you soon.
 </blockquote>
 
