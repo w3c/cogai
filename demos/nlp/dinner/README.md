@@ -130,7 +130,7 @@ np np1 {adj good; noun evening}
 
 # w: good evening and welcome
 greeting g2 {who waiter; syntax c1; prev g1; plan s1}
-conj c1 {left np2; right ex1}
+conj c1 {word and; left np2; right ex1}
 np np2 {adj good; noun evening}
 excl ex1 {word welcome}
 
