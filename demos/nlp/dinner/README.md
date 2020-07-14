@@ -3,7 +3,8 @@
 This is a natural language demo for a dialogue between a customer and a waiter at a restaurant. The demo is based around the following sample dialogue:
 
 <blockquote>
-W: Good evening.<br>
+C: Good evening.<br>
+W: Good evening and welcome.<br>
 C: A table for one please.<br>
 W: Certainly. Just here?<br>
 C: Could I sit by the window?<br>
@@ -21,6 +22,15 @@ W: Would you like anything to drink?<br>
 C: Yes, a glass of red wine.<br>
 W: Is that all?<br>
 C: Yes, thanks.
+W: Here you are.
+C: Thanks, that looks great!
+W: You're welcome!
+C: The bill please.
+W: Here you are.
+C: Can I pay with a credit card?
+W: Certainly.
+C: Thank you and good bye.
+W: Good bye, hope to see you soon.
 </blockquote>
 
 *Adapted from the [Just Good English](https://justgoodenglish.com/eating-out/) website.*
