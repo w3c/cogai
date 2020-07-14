@@ -121,6 +121,57 @@ where @context is used to declare the context in which these particular facts ar
 
 The next challenge is to identify a way to represent speech acts, their semantics and pragmatics.
 
+Here is a sketch of the chunks used to represent the sequence of utterances. Each utterance identifies who spoke it, gives the syntactic structure used, the previous utterance, and the associated stage in the dinner plan. The verbs are left as is for now. In future, we would expect to use the infinitive form of the verb along with propeties for the tense and related parameters, and similarly for the number and gender properties for nouns.
+
+```
+# c: good evening
+greeting g1 {who customer; syntax np1; plan s1}
+np np1 {adj good; noun evening}
+
+# w: good evening and welcome
+greeting g2 {who waiter; syntax c1; prev g1; plan s1}
+conj c1 {left np2; right ex1}
+np np2 {adj good; noun evening}
+excl ex1 {word welcome}
+
+# c: a table for one please
+request r1 {who customer; syntax np2; prev g2; plan s2}
+np np2 {det a; noun table; for np3}
+np np3 {number one; adv please}
+
+# w: certainly
+ack r2 {who waiter; syntax a1; prev r1; plan s2}
+ap a1 {word certainly}
+
+# just here (points to nearby table)
+response r3 {who waiter; syntax ap1; prev r2; plan s2}
+ap ap1 {adv just, here}
+
+# c: could I sit by the window
+request r4 {who customer; syntax vp1; prev r3; plan s2}
+vp vp1 {verb could, sit; subject np4; by np5}
+np np4 {pron i}
+np np5 {det the; noun window}
+
+# w: I'm sorry
+nak r5 {who waiter; syntax vp2; prev r4; plan s2}
+vp vp2 {verb am; subject np6; object np7}
+np np6 {pron i}
+np np7 {adj sorry}
+
+# w: the window tables are all reserved
+response r6 {who waiter; syntax vp3; prev r5; plan s2}
+vp vp3 {verb are; subject np8; object np9}
+np np8 {det the; noun window, tables}
+np np9 {det all; adj reserved}
+
+# c: that table will be fine
+response r7 {who customer; syntax vp4; prev r6; plan s2}
+vp vp4 {verb will, be; subject np10; object np11}
+np np10 {det that; noun table}
+np np11 {adj fine}
+```
+
 ## Syntactic Processing
 
 Each word is mapped to a word sense and part of speech. In most cases in the demo, this is unambiguous, where the lexicon provides multiple possibilities, a graph algorithm is invoked to find the one that best fits the context.
