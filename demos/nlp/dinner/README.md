@@ -125,6 +125,7 @@ Here is a sketch of the chunks used to represent the sequence of utterances. Eac
 
 <details>
   <summary>Click to expand!</summary>
+  
 ```
 # c: good evening
 greeting g1 {who customer; syntax np1; plan s1}
@@ -173,6 +174,7 @@ vp vp4 {verb will, be; subject np10; object np11}
 np np10 {det that; noun table}
 np np11 {adj fine}
 ```
+
 </details>
 
 ## Syntactic Processing
