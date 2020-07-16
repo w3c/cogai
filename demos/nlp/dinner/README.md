@@ -201,7 +201,9 @@ np np17 {pron you}
 np np18 {det the; adj main; noun course}
 
 ```
+Notes: the British Council provide a [nice summary of English grammar for questions](https://learnenglish.britishcouncil.org/english-grammar-reference/questions-and-negatives). Verbs can be annotated with *mode* to signal that they are being used for a question rather than an assertion. I am a little unsure of how to handle *like* in "what would you like for the main course". According to Google, "like" is a preposition as is *for*, so we have two prepositions in succession. However, "would like" feels more like a compound verb rather than an identifier for a verb slot.
 
+The examples are missing the semantics and the pragmatics. I will explore those as a following exercise, along with other syntactic modifiers.
 </details>
 
 ## Syntactic Processing
