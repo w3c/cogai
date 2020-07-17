@@ -265,7 +265,7 @@ np np40 {excl yes; noun thanks}
 # w: here's your order (putting down the food and drink)
 assertion u26 {who waiter; syntax vp16; prev u25; plan s6}
 vp vp16 {verb is; subject np41; object np42}
-np np41 {excl here}
+np np41 {adv here}
 np np42 {det your; noun order}
 
 # c: thanks that looks great
@@ -280,6 +280,39 @@ vp vp18 {verb are; subject np45; object np46}
 np np45 {pron you}
 np np46 {adj welcome}
 
+# c: the bill please
+question u29 {who customer; syntax np47; prev u28; plan s7}
+np np47 {det the; noun bill, thanks}
+
+# w: here it is (handing the bill over)
+answer u30 {who waiter; syntax vp19; prev u29; plan s7}
+vp vp19 {verb is; subject np48; object np49}
+np np48 {adv here}
+np np49 {pron it}
+
+# c: can I pay with a credit card
+question u31 {who customer; syntax vp20; prev u30; plan s8}
+vp vp20 {verb can, pay; subject np50; with np51}
+np np50 {pron i}
+np np51 {det a; noun credit, card}
+
+# w: certainly
+ack u32 {who waiter; syntax np52; prev u31; plam s8}
+np np52 {excl certainly}
+
+# c: thank you and goodbye
+farewell u33 {who customer; syntax c2; prev u31; plan s9}
+conj c2 {word and; left np53; right ex2}
+np np53 {noun thank; pron you}
+excl ex2 {word goodbye} 
+
+# w: goodbye and hope to see you soon
+farewell u34 {who waiter; syntax c3; prev u32; plan s9}
+conj c3 {word and; left ex3; right vp21}
+excl ex3 {word goodbye}
+vp vp21 {verb hope; to vp22}
+vp vp22 {verb see; object np54}
+np np54 {pron you; adj soon}
 ```
 Notes:
 
