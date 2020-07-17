@@ -168,10 +168,10 @@ vp vp3 {verb are; subject np8; object np9}
 np np8 {det the; noun window, tables}
 np np9 {det all; adj reserved}
 
-# c: that table will be fine (the table the waiter pointed to)
+# c: this table will be fine (the table the waiter pointed to)
 answer u9 {who customer; syntax vp4; prev u8; plan s2}
 vp vp4 {verb will, be; subject np10; object np11}
-np np10 {det that; noun table}
+np np10 {det this; noun table}
 np np11 {adj fine}
 
 # w: are you ready to order
@@ -180,7 +180,7 @@ vp vp5 {verb are; mode question; subject np12; to order}
 np np12 {pron you; adj ready}
 
 # c: yes (positive response to request)
-answer u11 {who customer; syntax np13; prev u10; plan s4}
+ack u11 {who customer; syntax np13; prev u10; plan s4}
 np np13 {excl yes}
 
 # c: I'll have tomato soup for starters
@@ -244,7 +244,7 @@ np np33 {pron you}
 np np34 {noun drink}
 
 # c: yes
-answer u22 {who customer; syntax np35; prev u21; plan s5}
+ack u22 {who customer; syntax np35; prev u21; plan s5}
 np np35 {excl yes}
 
 # c: a glass of red wine
@@ -259,7 +259,7 @@ np np38 {pron that}
 np np39 {det all}
 
 # c: yes thanks
-answer u25 {who customer; syntax np40; prev u24; plan s5}
+ack u25 {who customer; syntax np40; prev u24; plan s5}
 np np40 {excl yes; noun thanks}
 
 # w: here's your order (putting down the food and drink)
