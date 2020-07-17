@@ -17,7 +17,7 @@ C: I'll have the plaice.<br>
 W: I'm afraid the plaice is off.<br>
 C: Oh dear. What do you recommend?<br>
 W: The steak pie is very good.<br>
-C: OK I'll have that.<br>
+C: That will be fine.<br>
 W: Would you like anything to drink?<br>
 C: Yes, a glass of red wine.<br>
 W: Is that all?<br>
@@ -231,11 +231,11 @@ vp vp12 {verb is; subject np29; object np30}
 np np29 {det the; noun steak, pie}
 np np30 {adj very; adj good}
 
-# c: ok I'll have that
+# c: that will be fine
 assertion u20 {who customer; syntax vp13; prev u19; plan s5}
-vp vp13 {verb will, have; subject np31; object np32}
-np np31 {pron i}
-np np32 {pron that}
+vp vp13 {verb will, be; subject np31; object np32}
+np np31 {pron than}
+np np32 {adj fine}
 
 # w: would you like anything to drink
 question u21 {who waiter; syntax vp14; prev u20; plan s5}
