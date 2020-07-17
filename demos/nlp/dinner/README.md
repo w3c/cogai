@@ -316,12 +316,12 @@ np np54 {pron you; adj soon}
 ```
 Notes:
 
-* The British Council provide a [nice summary of English grammar for questions](https://learnenglish.britishcouncil.org/english-grammar-reference/questions-and-negatives). 
-* Verbs can be annotated with *mode* to signal that they are being used for a question rather than an assertion, and hence had subject in a different position
-* Verbs need a way to indicate the tense, e.g. the future tense as in "I will bring flowers" vs the future conditional tense as in "I would bring flowers".
-* I am not quite sure whether to handle exclamations separately or as part of noun phrases. It depends on whether the exclamation is considered to a separate sentence (e.g. "Yes. I would like tomato soup") or part of a following phrase (e.g. "Yes thanks").
-* The next step will be to include syntactic parameters such as number and gender
-* The examples are missing the semantics and the pragmatics. I will explore those as a further exercise.
+* The British Council provide a [nice summary of English grammar](https://learnenglish.britishcouncil.org/english-grammar-reference/). 
+* Verbs can be annotated with *mode* to signal that they are being used for a question rather than an assertion, and hence have the subject in a different position
+* Verbs need a way to indicate the tense, e.g. the future tense as in "I will bring flowers" vs the future conditional tense as in "I would bring flowers". However this is implicit given the presence of modal verbs such as "would".
+* I am not quite sure whether to handle exclamations separately or as part of noun phrases. It depends on whether the exclamation is considered to be a separate sentence (e.g. "Yes. I would like tomato soup") or part of a following phrase (e.g. "Yes thanks").
+* The next step will be to include syntactic parameters such as tense, number and gender
+* The examples are missing the semantics and the pragmatics. I will explore those as a further exercise. An open question is whether reasoning operates off the natural language directly or whether we need a rich way to represent natural language semantics including quantifiers. This probably depends on the context. 
 </details>
 
 ## Syntactic Processing
