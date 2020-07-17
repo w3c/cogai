@@ -185,25 +185,107 @@ np np13 {excl yes}
 
 # c: I'll have tomato soup for starters
 answer u12 {who customer; syntax vp6; prev u11; plan s4}
-vp vp6 {verb will, have; subject np14; object np15; for starters}
+vp vp6 {verb will, have; subject np14; object np15; for np16}
 np np14 {pron i}
 np np15 {noun tomato, soup}
+np np16 {noun starters}
 
 # w: one tomato soup
-assertion u13 {who waiter; syntax np15; prev u12; plan s4}
-np np15 {number one; noun tomato, soup}
+assertion u13 {who waiter; syntax np17; prev u12; plan s4}
+np np17 {number one; noun tomato, soup}
 
 # w: what would you like for the main course
 question u14 {who waiter; syntax vp7; prev u13; plan s5}
-vp vp7 {verb would, like; mode question; subject np16; object np17; for np18}
-np np16 {pron what}
-np np17 {pron you}
-np np18 {det the; adj main; noun course}
+vp vp7 {verb would, like; mode question; subject np18; object np19; for np20}
+np np18 {pron what}
+np np19 {pron you}
+np np20 {det the; adj main; noun course}
+
+# c: I'll have the plaice
+answer u15 {who customer; syntax vp8; prev u14; plan s5}
+vp vp8 {verb will, have; subject np21; object np22}
+np np21 {pron i}
+np np22 {det the; noun plaice}
+
+# w: I'm afraid the place is off
+nak u16 {who waiter; syntax vp9; prev u15; plan s5}
+vp vp9 {verb am, afraid; subject np23; that vp10}
+np np23 {pron i}
+vp vp10 {verb is; subject np24; object np25}
+np np24 {det the; noun plaice}
+np np25 {adv off}
+
+# c: oh dear
+answer u17 {who customer; syntax np26; prev u16; plan s5}
+np np26 {excl oh; adj dear}
+
+# c: what do you recommend
+question u18 {who customer; syntax vp11; prev u17; plan s5}
+vp vp11 {verb do, recommend; mode question; subject np27; object np28}
+np np27 {pron what}
+np np28 {pron you}
+
+# w: the steak pie is very good
+answer u19 {who waiter; syntax vp12; prev u18; plan s5}
+vp vp12 {verb is; subject np29; object np30}
+np np29 {det the; noun steak, pie}
+np np30 {adj very; adj good}
+
+# c: ok I'll have that
+assertion u20 {who customer; syntax vp13; prev u19; plan s5}
+vp vp13 {verb will, have; subject np31; object np32}
+np np31 {pron i}
+np np32 {pron that}
+
+# w: would you like anything to drink
+question u21 {who waiter; syntax vp14; prev u20; plan s5}
+vp vp14 {verb would, like; mode question, subject np33; to np34}
+np np33 {pron you}
+np np34 {noun drink}
+
+# c: yes
+answer u22 {who customer; syntax np35; prev u21; plan s5}
+np np35 {excl yes}
+
+# c: a glass of red wine
+answer u23 {who customer; syntax np36; prev u22; plan s5}
+np np36 {det a; noun glass; of np37}
+np np37 {adj red; noun wine}
+
+# w: is that all
+question u24 {who waiter; syntax vp15; prev u23; plan s5}
+vp vp15 {verb is; mode question; subject np38; object np39}
+np np38 {pron that}
+np np39 {det all}
+
+# c: yes thanks
+answer u25 {who customer; syntax np40; prev u24; plan s5}
+np np40 {excl yes; noun thanks}
+
+# w: here's your order (putting down the food and drink)
+assertion u26 {who waiter; syntax vp16; prev u25; plan s6}
+vp vp16 {verb is; subject np41; object np42}
+np np41 {excl here}
+np np42 {det your; noun order}
+
+# c: thanks that looks great
+answer u27 {who customer; syntax np43; prev u26; plan s6}
+np np43 {excl thanks; that vp17}
+vp vp17 {verb looks; object np44}
+np np44 {adv great}
+
+# w: you're welcome
+assertion u28 {who waiter; syntax vp18; prev u27; plan s6}
+vp vp18 {verb are; subject np45; object np46}
+np np45 {pron you}
+np np46 {adj welcome}
 
 ```
-Notes: the British Council provide a [nice summary of English grammar for questions](https://learnenglish.britishcouncil.org/english-grammar-reference/questions-and-negatives). Verbs can be annotated with *mode* to signal that they are being used for a question rather than an assertion. I am a little unsure of how to handle *like* in "what would you like for the main course". According to Google, "like" is a preposition as is *for*, so we have two prepositions in succession. However, "would like" feels more like a compound verb rather than an identifier for a verb slot.
+Notes:
 
-The examples are missing the semantics and the pragmatics. I will explore those as a following exercise, along with other syntactic modifiers.
+* The British Council provide a [nice summary of English grammar for questions](https://learnenglish.britishcouncil.org/english-grammar-reference/questions-and-negatives). 
+* Verbs can be annotated with *mode* to signal that they are being used for a question rather than an assertion. 
+* The examples are missing the semantics and the pragmatics. I will explore those as a following exercise, along with other syntactic modifiers.
 </details>
 
 ## Syntactic Processing
