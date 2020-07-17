@@ -92,6 +92,8 @@ Social etiquette needs to be adhered to during the dialogue. The customer and th
 
 ## Knowledge representation
 
+The customer will have preferences, e.g. for a window table, and for specific dishes on the menu. Ideally, this would be expressed declaratively and used to make requests, and to make a choice from the options on the menu. That suggests the demo also needs a way to model the menu and a means for the customer to review the options and make a choice. Each utterance in the dialogue will be chosen based upon the current stage in the dinner plan and the information in the dialogue history. This involves mini-plans to cater for variations, e.g. whether not a window table is available, and whether a given dish is off the menu.  I need to wok on how to represent such mini-plans in terms of declarative and procedural knowledge.
+
 What is a good enough way to represent statements like *The window tables are all reserved*?  From a logical point of view this is equivalent to:
 
 ```
