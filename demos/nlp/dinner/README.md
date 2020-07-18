@@ -100,15 +100,15 @@ What is a good enough way to represent statements like *The window tables are al
 for all x such that table(x) and by-window(x) then reserved(x)
 ```
 
-One way to do that would be to devise a means for using chunks for expressions in first order logic, but not every English utterance has a natural interpretation in first order logic. A more flexible and perhaps simpler option is to use a chunk representation of English, e.g.
+One way to do that would be to devise a means for using chunks for expressions in first order logic, but not every English utterance has a natural interpretation in first order logic. Another option is to use a chunk representation of the natural language statement, for instance:
 
 ```
-vp v1 {verb be; subject np1; object np2}
-np np1 {noun table, window; det all}
-np np2 {adj reserved}
+vp v1 {verb be; tense present; subject np1; object np2}
+np np1 {det the; noun window, table; number plural}
+np np2 {det all; adj reserved}
 ```
 
-If we have a restaurant with a set of tables, some of which are at the window, we can then identify which subset is being referred to from the subject noun phrase. However, we don't need to do that in the dialogue!  The dialogue further implies that if you want a window table, then you will need to reserve one in advance, but that goes well beyond what this particular demo needs to deal with.
+If we have a restaurant with a set of tables, some of which are at the window, we can then identify which subset is being referred to from the subject noun phrase. However, we don't need to do that in the dialogue!  The dialogue implies that if you want a window table in future, then you will need to reserve one in advance, but that goes well beyond what this particular demo needs to deal with.
 
 A choice of dish for a given course, or a choice of drink could be represented as follows:
 
