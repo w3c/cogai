@@ -44,6 +44,12 @@
       }
     };
   </script>
+  <style>
+    .railroad {
+      margin-top: 1em;
+      margin-bottom: 2em;
+    }
+  </style>
 </head>
 <body>
   <section id="abstract">
@@ -168,14 +174,15 @@
       <h3>Chunk properties</h3>
       <p>A chunk <dfn>property</dfn> is a <a>name</a>/<a>value</a> pair that describes a chunk across the particular dimension identified by the property name.</p>
 
-      <p>The <dfn>value</dfn> is either:</p>
+      <p>A <dfn>value</dfn> is either an <a>atomic value</a> or a list of <a>atomic values</a> (values are comma-separated in serialized form).</p>
+
+      <p>An <dfn>atomic value</dfn> is either:</p>
       <ul>
         <li>a <a>name</a>, which can for instance be used to reference other chunks</li>
         <li>a <a>number</a></li>
         <li>a <a>boolean</a> (<code>true</code> or <code>false</code>)</li>
         <li>a <a>date</a></li>
         <li>a <a>string literal</a></li>
-        <li>or a list of <a>values</a> (values are comma-separated in serialized form)</li>
       </ul>
     </section>
 
@@ -484,91 +491,13 @@ bar {loop prop18; name ?name; value ?value}
       <h3>Chunks grammar</h3>
       <p>A <a>chunks document</a> MUST follow the grammar defined below.</p>
 
-<pre><code class="abnf">; A graph is composed of a series of concept declarations that are
-; either chunks or compact notations for rules or links.
-; There needs to be at least one space after compact link notations.
-; Space between concepts is not mandatory in other cases.
-graph = ws [list-of-concepts]
-list-of-concepts = ws (
-  comment *list-of-concepts /
-  chunk *list-of-concepts /
-  compact-rule *list-of-concepts /
-  compact-link *(sp list-of-concepts))
+<pre><code class="abnf" data-include="grammar/chunks.abnf" data-include-format="text"></code></pre>
+    </section>
 
-; Comments start with "#" and last until the end of the line
-comment = "#" ws *char ws %x0A
-
-; A chunk has a type, an optional ID and a set of properties.
-; The set of properties may be empty.
-chunk = type [sp id] begin-properties [properties] end-properties
-
-; Compact rules associate a condition chunk with action chunks
-compact-rule = chunk "=>" chunk *("," chunk)
-
-; Compact links (subject predicate object)
-compact-link = id sp property-name sp id
-
-; Chunk type
-type = ws ("*" / name)
-
-; Chunk IDs are regular names
-id = name
-
-; Chunk properties
-properties = property *(sep property)
-property = property-name sp property-value
-property-name = name
-property-value = value *("," value)
-
-; Property values
-value = ws (false / true / name / number / string) ws
-
-; Names
-name = ws ["@"] 1*(ALPHA / DIGIT / "." / "_" / "-" / "/" / ":") ws
-
-; Numbers (same as in JSON)
-number = [ minus ] int [ frac ] [ exp ]
-decimal-point = %x2E
-digit1-9 = %x31-39
-e = %x65 / %x45
-exp = e [ minus / plus ] 1*DIGIT
-frac = decimal-point 1*DIGIT
-int = zero / ( digit1-9 *DIGIT )
-minus = %x2D
-plus = %x2B
-zero = %x30
-
-; Strings (same as in JSON)
-string = quotation-mark *char quotation-mark
-char = unescaped /
-escape (
-  %x22 /          ; "    quotation mark  U+0022
-  %x5C /          ; \    reverse solidus U+005C
-  %x2F /          ; /    solidus         U+002F
-  %x62 /          ; b    backspace       U+0008
-  %x66 /          ; f    form feed       U+000C
-  %x6E /          ; n    line feed       U+000A
-  %x72 /          ; r    carriage return U+000D
-  %x74 /          ; t    tab             U+0009
-  %x75 4HEXDIG )  ; uXXXX                U+XXXX
-escape = %x5C              ; \
-quotation-mark = %x22      ; "
-unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
-
-; White space characters:
-; space, horizontal tab, line feed, carriage return
-spacechar = %x20 / %x09 / %x0A / %x0D
-
-; Mandatory space and optional white space
-sp = 1*spacechar
-ws = *spacechar
-
-; Semi-colon or new line to separate chunk properties
-sep = ws (";" / %x0A) ws
-
-; Curly braces to enclose chunk properties
-begin-properties = ws %x7B ws
-end-properties = ws %x7D ws</code></pre>
+    <section class="informative">
+      <h3>Railroad diagrams</h3>
+      <p>This section presents an informative view of the tokens that the grammar defines, in the form of railroad diagrams. These diagrams are provided solely to make it easier to get an intuitive grasp of the syntax of each token.</p>
+      <div data-include="grammar/rr.html" data-include-replace="true"></div>
     </section>
   </section>
 

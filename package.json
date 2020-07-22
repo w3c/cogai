@@ -1,0 +1,25 @@
+{
+  "name": "cogai",
+  "version": "0.0.1",
+  "description": "Chunks and rules, a cognitive database model based on graphs, rules that operate on them in conjunction with highly scalable graph algorithms, suitable for handling big data, and a format to serialize graphs.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/w3c/cogai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/w3c/cogai/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "apg": "^3.1.1",
+    "apg-lib": "^3.2.0",
+    "jsdom": "^16.3.0"
+  },
+  "scripts": {
+    "apg": "apg -i grammar/chunks.abnf -o grammar/apg-chunks.js",
+    "ebnf": "node grammar/abnf2ebnf.js > grammar/chunks.ebnf",
+    "rr": "java -jar grammar/rr.war -keeprecursion -suppressebnf -out:grammar/rr.xhtml grammar/chunks.ebnf",
+    "rr2html": "node grammar/rr2html.js grammar/rr.xhtml > grammar/rr.html",
+    "update-grammar": "npm run apg && npm run ebnf && npm run rr && npm run rr2html"
+  }
+}
