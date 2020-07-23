@@ -1,0 +1,86 @@
+; A chunks document is composed of a series of statements that are
+; either chunks, compact notations for rules or links, or comments.
+; Spaces can be inserted about anywhere, but are only mandatory to separate
+; tokens. In particular, spaces between statements are not mandatory, except
+; after a compact link statement.
+chunksDoc = *ws [statements] *ws
+statements = *ws (
+  comment [%x0A statements] /
+  chunk [statements] /
+  compact-rule [statements] /
+  compact-link [ws statements])
+
+; Comments start with "#" and last until the end of the line or file
+comment = "#" *char
+
+; A chunk has a type, an optional ID and a set of properties.
+; The set of properties may be empty.
+chunk = type [ws id] begin-properties [properties] end-properties
+
+; Compact rules associate a condition chunk with action chunks
+compact-rule = chunk "=>" chunk *("," chunk)
+
+; Compact links (subject predicate object)
+compact-link = id ws property-name ws id
+
+; Chunk type
+type = *ws ("*" / name)
+
+; Chunk IDs are regular names
+id = name
+
+; Chunk properties
+properties = property *(sep property)
+property = property-name ws property-value
+property-name = name
+property-value = value *("," value)
+
+; Property values
+value = *ws ("false" / "true" / name / number / string) *ws
+
+; Names
+name = *ws ["@"] 1*(ALPHA / DIGIT / "." / "_" / "-" / "/" / ":") *ws
+
+; Numbers (same as in JSON)
+number = [ minus ] int [ frac ] [ exp ]
+decimal-point = "."
+digit1-9 = %x31-39
+e = %x65 / %x45
+exp = e [ minus / plus ] 1*DIGIT
+frac = decimal-point 1*DIGIT
+int = zero / ( digit1-9 *DIGIT )
+minus = "-"
+plus = "+"
+zero = "0"
+
+; Strings (same as in JSON)
+string = quotation-mark *char quotation-mark
+char = unescaped / escape (
+  %x22 /          ; "    quotation mark
+  %x5C /          ; \    reverse solidus
+  %x2F /          ; /    solidus
+  %x62 /          ; b    backspace
+  %x66 /          ; f    form feed
+  %x6E /          ; n    line feed
+  %x72 /          ; r    carriage return
+  %x74 /          ; t    tab
+  %x75 4HEXDIG )  ; uXXXX
+escape = %x5C
+quotation-mark = %x22      ; "
+unescaped = %x20-21 / %x23-5B / %x5D-10FFFF
+
+; White space characters:
+; space, horizontal tab, line feed, carriage return
+ws = %x20 / %x09 / %x0A / %x0D
+
+; Semi-colon or new line to separate chunk properties
+sep = *ws (";" / %x0A) *ws
+
+; Curly braces to enclose chunk properties
+begin-properties = *ws "{" *ws
+end-properties = *ws "}" *ws
+
+; Core definitions from the original RFC
+ALPHA = %x41-5A / %x61-7A   ; A-Z / a-z
+DIGIT = %x30-39             ; 0-9
+HEXDIG = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"

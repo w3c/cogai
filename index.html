@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chunks and Rules</title>
+  <script async class="remove" src="https://www.w3.org/Tools/respec/respec-w3c-common"></script>
+  <script class="remove">
+    var respecConfig = {
+      shortName: "chunks",
+      specStatus: "CG-DRAFT",
+      noRecTrack: true,
+      edDraftURI: "https://w3c.github.io/cogai/",
+      editors:  [
+        {
+          name: "François Daoust",
+          company: "W3C",
+          companyURL: "https://www.w3.org/",
+          w3cid: "41989"
+        },
+        {
+          name: "Dave Raggett",
+          company: "W3C",
+          companyURL: "https://www.w3.org/",
+          w3cid: "2682"
+        }
+      ],
+      wg: "Cognitive AI Community Group",
+      wgURI: "https://www.w3.org/community/cogai/",
+      github: {
+        repoURL: "https://github.com/w3c/cogai/",
+        branch: "master"
+      },
+      localBiblio: {
+        "CHUNKS-INTRO": {
+          title: "Introduction to chunks and rules",
+          href: "https://www.w3.org/Data/demos/chunks/chunks.html",
+          authors: [
+            "Dave Raggett"
+          ]
+        },
+        "IEEE-754-2019": {
+          title: "IEEE 754-2019: IEEE Standard for Floating-Point Arithmetic. Institute of Electrical and Electronic Engineers, New York (2019)"
+        }
+      }
+    };
+  </script>
+  <style>
+    .railroad {
+      margin-top: 1em;
+      margin-bottom: 2em;
+    }
+  </style>
+</head>
+<body>
+  <section id="abstract">
+    <p>This specification defines a cognitive database model based on graphs, rules that operate on them in conjunction with highly scalable graph algorithms, suitable for handling big data, and a format to serialize graphs. The model is designed with the aim of facilitating machine learning for vocabularies and rules, and inspired by advances in the cognitive sciences on the organisation of the mammalian brain.</p>
+  </section>
+
+  <section id="sotd">
+    <p>This document is at early stages of development. Feedback is welcome through <a href="https://github.com/w3c/cogai/issues">GitHub issues</a> or on the <a href="mailto:public-cogai@w3.org">public-cogai@w3.org</a> mailing-list (with <a href="https://lists.w3.org/Archives/Public/public-cogai/">public archives</a>).</p>
+  </section>
+
+  <section class="informative">
+    <h2>Introduction</h2>
+    <p>This specification defines a cognitive database model based on graphs and rules that operate on them, modeled after the organisation of the mammalian brain, as described by cognitive sciences, with the aim of facilitating machine learning processing of big data.</p>
+
+    <figure id="cog-arch">
+      <img src="demos/chunks/arch.png" alt="" />
+      <figcaption>Architecture of the cognitive database model</figcaption>
+    </figure>
+
+    <p>At its heart, the model is based on <a>graphs of chunks</a> composed of a collection of <a>chunks</a>, where each <a>chunk</a> represents a collection of basic familiar units that have been grouped together and stored in memory. To ease manipulation of procedural knowledge as declarative knowledge, <a>chunks</a> are used to model both declarative knowledge (i.e. data) as well as procedural knowledge (i.e. rules). See [[CHUNKS-INTRO]] for details.</p>
+
+    <p>The <a>rule engine</a> operates on a set of <a>modules</a>, where each <a>module</a> has a <a>graph of chunks</a> and supports a <a data-lt="built-in operations">common set of operations</a> on chunks. Each module also has a single <a>module buffer</a> that the <a>rule engine</a> can process and that can hold one and only one <a>chunk</a> at a time.</p>
+
+    <p>This specification also defines a <a href="#chunks-documents">serialization format</a> for graphs of chunks, used in examples throughout this specification.</p>
+  </section>
+
+  <section id="conformance">
+    <p>The grammatical rules in this document are to be interpreted as described in [[[RFC5234]]] [[RFC5234]].</p>
+    <section>
+      <h3>Conformance classes</h3>
+      <p>Conformance to this specification is defined for four conformance classes:</p>
+      <dl>
+        <dt><dfn>Chunks document</dfn></dt>
+        <dd>A serialization of a <a>graph of chunks</a> as a file. A <a>chunks document</a> is conformant to this specification if it follows the grammar described in <a href="#chunks-grammar"></a>.</dd>
+        <dt><dfn>Authoring tool</dfn></dt>
+        <dd>An application that writes a <a>chunks document</a>. An <a>authoring tool</a> is conformant to this specification if it writes conforming <a>chunks documents</a>.</dd>
+        <dt><dfn>Parser</dfn></dt>
+        <dd>A <a>parser</a> transforms a <a>chunks document</a> into another representation. A <a>parser</a> is conformant to this specification if it accepts any conforming <a>chunks document</a>.</dd>
+        <dt><dfn>Rule engine</dfn></dt>
+        <dd>A processing application that operates on graphs of chunks and rules, organized following the cognitive agent architecture described in this specification. A <a>rule engine</a> is conformant to this specification if it follows the algorithms defined in <a href="#rule-engine-execution"></a>.</dd>
+      </dl>
+    </section>
+  </section>
+
+  <section>
+    <h2>Data types</h2>
+    <p>This document uses the following restricted set of data types to describe <a>chunks</a>. See <a href="#chunks-grammar"></a> for a formal definition of their serialization.</p>
+
+    <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a href="https://tools.ietf.org/html/rfc8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
+
+    <p>A <dfn>boolean</dfn> represents a logical entity having two values. It is serialized as either the literal name <code>true</code>, which gets interpreted as a truthy value, or the literal name <code>false</code>, which gets interpreted as a falsy value.</p>
+
+    <p>A <dfn>date</dfn> is an [[ISO8601]] string that represents a date. A <a>date</a> value implicitly creates a read-only chunk whose type is <code>iso8601</code> with properties that match actual date components.</p>
+
+    <aside class="example" title="Date example">
+      <p>Here is an example of a chunk that describes Albert Einstein's birth date:</p>
+<pre><code>person Albert_Einstein {
+  birthdate 1879-03-14
+}</code></pre>
+      <p>This chunk implicitly creates the following chunk definition:</p>
+<pre><code>iso8601 1879-03-14 {
+  year 1879
+  month 3
+  day 14
+}
+</code></pre>
+    </aside>
+
+    <p class="issue">Clarify that only a subset of ISO8601 is supported (see <a href="https://github.com/w3c/cogai/issues/8">issue #8</a>).</p>
+
+    <p class="issue">To prepend <code>iso8601</code> and related properties with <code>@</code> or not to prepend with <code>@</code>, that is the question (see <a href="https://github.com/w3c/cogai/issues/2">issue #2</a>).</p>
+
+    <p>A <dfn>string literal</dfn> is an arbitrary set of characters. It is serialized enclosed in double quotes, following the same grammar as <a href="https://tools.ietf.org/html/rfc8259#section-7">strings in JSON</a> [[RFC8259]].</p>
+
+    <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a <a>number</a>, a <a>boolean</a>. Additionally, a <a>name</a> may start with:</p>
+    <ul>
+      <li><code>@</code> to denote a <em>reserved</em> term with specific meaning (defined in this specification). Such <a>names</a> may only appear as <a>property</a> names.</li>
+      <li><code>?</code> to denote a <a>variable</a>. Such <a>names</a> may only appear as <a>property</a> values.</li>
+      <li><code>~</code> to denote a negative match. Such <a>names</a> may only appear in property <a>values</a> of a rule <a>condition</a>. The <code>~</code> prefix may be followed by <code>?</code> to reference a <a>variable</a>. Also, the <a>name</a> may actually equal <code>~</code> to test that a <a>property</a> is undefined.</li>
+    </ul>
+  </section>
+</section>
+
+  <section>
+    <h2>Chunks and graphs</h2>
+    <p>A <dfn>chunk</dfn> is a named typed collection of <a>properties</a>. A <a>chunk</a> is used to model both declarative knowledge and procedural knowledge as a collection of basic familiar units that have been grouped together and stored in memory.</p>
+    <p>A <a>chunk</a> has a <a>type</a> and an optional <a>identifier</a>.</p>
+
+    <aside class="note" title="Serialization of a chunk">
+      <p>When serialized in a <a>chunks document</a>, the declaration of a <a>chunk</a> always starts with a chunk <a>type</a>, followed by an optional chunk <a>identifier</a>, and a set of <a>properties</a> enclosed in braces (<code>{}</code>). Lists are represented as comma separated values. Whitespaces may appear anywhere between constructs. See <a href="#chunks-grammar"></a> for details.</p>
+    </aside>
+    <aside class="example" title="A chunk to describe a dog">
+<pre><code>dog dog1 {
+  name "Fido"
+  age 4
+}</code></pre>
+      <p>This <a>chunk</a> describes a dog named "Fido" that is 4 years old. The chunk <a>type</a> is <code>dog</code>. Its <a>identifier</a> is <code>dog1</code> and uniquely identifies this chunk within the graph it is defined in. The chunk has two <a>properties</a>:</p>
+      <ul>
+        <li><code>name</code> whose value is the <a>string literal</a> <code>"Fido"</code></li>
+        <li><code>age</code> whose value is the <a>number</a> <code>4</code></li>
+      </ul>
+    </aside>
+
+    <section>
+      <h3>Chunk type</h3>
+      <p>A chunk <dfn>type</dfn> is a <a>name</a> that documents the nature of a chunk. The <a>type</a> is used to group and index chunks. <a>Rules</a> typically apply to chunks of a given <a>type</a>.</p>
+      <aside class="example" title="A chunk of type &quot;person&quot;">
+<pre><code>person Dave {
+  knows Francois
+}</code></pre>
+      </aside>
+      <p>As a special case, the <a>type</a> may be formed by a single asterisk (<code>*</code>), which is used to describe a <a>condition</a> or <a>action</a> that matches any chunk <a>type</a>.</p>
+    </section>
+
+    <section>
+      <h3>Chunk identifier</h3>
+      <p>The chunk <dfn>identifier</dfn> is a <a>name</a> that uniquely identifies a chunk within the graph it is defined in.</p>
+      <p>The chunk <a>identifier</a> is optional.</p>
+    </section>
+
+    <section>
+      <h3>Chunk properties</h3>
+      <p>A chunk <dfn>property</dfn> is a <a>name</a>/<a>value</a> pair that describes a chunk across the particular dimension identified by the property name.</p>
+
+      <p>A <dfn>value</dfn> is either an <a>atomic value</a> or a list of <a>atomic values</a> (values are comma-separated in serialized form).</p>
+
+      <p>An <dfn>atomic value</dfn> is either:</p>
+      <ul>
+        <li>a <a>name</a>, which can for instance be used to reference other chunks</li>
+        <li>a <a>number</a></li>
+        <li>a <a>boolean</a> (<code>true</code> or <code>false</code>)</li>
+        <li>a <a>date</a></li>
+        <li>a <a>string literal</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Links between chunks</h3>
+      <p>In this document, a <dfn>link</dfn> is a directed and labeled connection between two <a>chunks</a>. A <a>link</a> is automatically created whenever a chunk property <a>value</a> is a <a>name</a> that references an existing chunk <a>identifier</a>.</p>
+      <p>The <dfn>subject</dfn> of the <a>link</a> identifies the <a>chunk</a> at the origin of the connection. The <dfn>object</dfn> of the <a>link</a> identifies the <a>chunk</a> targeted by the connection. The <dfn>label</dfn> of the <a>link</a> is the property <a>name</a>.</p>
+      <aside class="example" title="A link between two chunks">
+<pre><code>friend f34 {
+  name Joan
+}
+friend f35 {
+  name Jenny
+  likes f34
+}</code></pre>
+        <p>The above definition creates a link between <code>f35</code> and <code>f34</code> with the relationship <code>likes</code>.</p>
+      </aside>
+
+      <p>When a <a>chunk</a> links to another <a>chunk</a>, this implicitly creates a third <a>chunk</a> whose <a>type</a> is the name of the <a>property</a> that creates the <a>link</a>, and that has two <a>properties</a>:</p>
+      <ul>
+        <li><dfn><code>@subject</code></dfn>: references the <a>subject</a> of a <a>link</a></li>
+        <li><dfn><code>@object</code></dfn>: references the <a>object</a> of a <a>link</a></li>
+      </ul>
+
+      <aside class="example" title="Links as chunks">
+<pre><code>animal dog {
+  kindof mammal
+}</code></pre>
+
+<p>The previous definition implicitly creates the following <a>chunk</a>:</p>
+
+<pre><code>kindof {
+  @subject dog
+  @object mammal
+}</code></pre>
+      </aside>
+
+      <aside class="note" title="Compact format for links">
+        <p>The <a href="#chunks-grammar">grammar</a> allows to express <a>links</a> in a compact format in a <a>chunks document</a>, e.g.:</p>
+<pre><code>dog kindof mammal
+cat kindof mammal</code></pre>
+        <p>This is equivalent to:</p>
+        <pre><code>kindof {
+  @subject dog
+  @object mammal
+}
+kindof {
+  @subject cat
+  @object mammal
+}</code></pre>
+      </aside>
+    </section>
+
+    <section>
+      <h3>Graph of chunks</h3>
+      <p>A <dfn data-lt="graphs of chunk">graph of chunks</dfn> is simply a collection of <a>chunks</a>. The vertices of the graph are the <a>chunks</a>. The edges of the graph are the <a>links</a> between the chunks.</p>
+      <p>Since <a>links</a> are directed, a <a>graph of chunks</a> is a directed graph.</p>
+    </section>
+  </section>
+
+  <section>
+    <h2>Rules and modules</h2>
+    <section>
+      <h3>Rules</h3>
+      <p>A <dfn>rule</dfn> is a <a>chunk</a> whose <a>type</a> is <code>rule</code> and that has:</p>
+      <ul>
+        <li>an <dfn><code>@condition</code></dfn> <a>property</a>, whose value is a chunk <a>identifier</a> or a list thereof, and which is used to reference the rule's <a>conditions</a>.</li>
+        <li>an <dfn><code>@action</code></dfn> <a>property</a>, whose value is a chunk <a>identifier</a> or a list thereof, and which is used to reference the rule's <a>actions</a>.</li>
+      </ul>
+
+      <p>A <a>rule</a> represents a unit of procedural knowledge. Rules consist of <a>conditions</a> and <a>actions</a>.</p>
+
+      <aside class="example" title="Basic rule definition">
+        <p>The following <a>rule</a> has one <a>condition</a> (that holds true when the <code>goal</code> <a>module buffer</a> contains a <a>chunk</a> whose <a>type</a> is <code>remember</code>), and two <a>actions</a> that clears the <code>goal</code> <a>module buffer</a> and that loads a <a>chunk</a> whose type is <code>memory</code> in the <code>facts</code> <a>module</a>:</p>
+        <pre><code>rule r1 {
+  @condition c1
+  @action a1, a2
+}
+
+remember c1 {}
+next a1 { @do clear }
+memory a2 { @module facts }</code></pre>
+      </aside>
+
+      <aside class="note" title="Compact format for rules">
+        <p>The <a href="#chunks-grammar">grammar</a> allows to express <a>rules</a> in a compact format in a <a>chunks document</a>. For instance, the previous example may be written as:</p>
+<pre><code>remember {}
+  => next { @do clear },
+     memory { @module facts }</code></pre>
+        <p>This compact format makes the link between <a>conditions</a> and <a>actions</a> more explicit and avoids the need to provide chunk <a>identifiers</a>.</p>
+      </aside>
+
+      <section>
+        <h4>Conditions</h4>
+        <p>A <dfn>condition</dfn> is a <a>chunk</a> that describes the premises that must hold true for a <a>rule</a> to apply. A <a>condition</a> identifies which <a>module</a> it relates to through an <a>@module</a> property, defaulting to the <code>goal</code> module. A <a>condition</a> holds true when the <a>chunk</a> in the related <a>module buffer</a> is a <a>matching chunk</a> for the <a>condition</a>.</p>
+      </section>
+
+      <section>
+        <h4>Actions</h4>
+        <p>An <dfn>action</dfn> is a <a>chunk</a> that can directly update <a>module buffers</a>, or can do so indirectly, e.g. by sending messages to the <a>module</a> to invoke graph algorithms, such as graph queries and updates, or to carry out operations, e.g. instructing a robot to move its arm. When the algorithm or operation is complete, a response can be sent back to update the module's buffer. This in turn can trigger further rules as needed.</p>
+        <p>In many cases, the actual operation that an <a>action</a> will carry out will appear as an <a>@do</a> property. Built-in operations are always supported (see <a href="#built-in-operations"></a>). Additional actions may be supported.</p>
+      </section>
+
+      <section>
+        <h4>Variables</h4>
+
+        <p>A <dfn>variable</dfn> is a <a>name</a> that starts with <code>?</code> that represents a symbolic name to a <a>value</a>. A <a>value</a> gets bound to a <a>variable</a> in <a>conditions</a>. The <a>value</a> can then be referenced in <a>actions</a> using the <a>variable</a>'s name. Effectively, <a>variables</a> allow applications to copy information from rule <a>conditions</a> to rule <a>actions</a>.</p>
+
+        <p><a>Variables</a> are scoped to the <a>rule</a> where they appear. They may represent any type of <a>value</a>.</p>
+
+        <aside class="example" title="Variable binding and referencing">
+          <pre><code>count { state start; from ?num1; to ?num2 }
+   => increment { @module facts; @do get; number ?num1 }</code></pre>
+          <p>The above <a>rule</a> defines a <a>condition</a> that matches a <a>chunk</a> in the <code>goal</code> <a>module buffer</a> whose <a>type</a> is <code>count</code>, that has a <code>state</code> <a>property</a> whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> <a>properties</a>. The <a>condition</a> binds the value of the <a>variable</a> <code>?num1</code> to the <a>value</a> of the <code>from</code> <a>property</a> in the matching chunk, and the value of the <a>variable</a> <code>?num2</code> to the <a>value</a> of the <code>to</code> <a>property</a>.</p>
+          <p>The <a>rule</a> defines an <a>action</a> that looks for a <a>chunk</a> in the <code>facts</code> <a>module</a> whose <a>type</a> is <code>increment</code> and that has a <a>property</a> named <code>number</code> and whose <a>value</a> equals the value of the <code>?num1</code> <a>variable</a>.</p>
+        </aside>
+      </section>
+
+      <section>
+        <h4>@-properties</h4>
+        <p>The following reserved <a>names</a> may be used in <a>conditions</a> and <a>actions</a> to control their behavior:</p>
+
+        <dl>
+          <dt><dfn><code>@do</code></dfn></dt>
+          <dd>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</dd>
+
+          <dt><dfn><code>@for</code></dfn></dt>
+          <dd>Iterates over a set of items in a comma separated list. The <a>@from</a> and <a>@to</a> properties may be used to restrict the iteration range.</dd>
+
+          <dt><dfn><code>@from</code></dfn></dt>
+          <dd>Specifies the zero-based starting index of an <a>@for</a> iteration. Value must be an integer.</dd>
+
+          <dt><dfn><code>@id</code></dfn></dt>
+          <dd>Matches a <a>chunk</a>'s <a>identifier</a>, or binds a variable to the <a>chunk</a>'s <a>identifier</a>.</dd>
+
+          <dt><dfn><code>@kindof</code></dfn></dt>
+          <dd>Matches a <a>chunk</a>'s <a>type</a> when that <a>type</a> is linked to the value of the <a>@kindof</a> property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</dd>
+          <dd><aside class="example" title="Matching subclasses in a taxonomy">
+            <p>Given the following facts in a <code>facts</code> <a>module</a>:</p>
+            <pre><code>penguin kindof bird
+eagle kindof bird
+penguin p6 { name Pingou }</code></pre>
+
+            <p>The following <a>condition</a> would match the <a>chunk</a> <code>p6</code> if it was in the <a>module buffer</a> of the <code>facts</code> <a>module</a>:</p>
+            <pre><code>* cond1 {
+  @module facts
+  @kindof bird
+}</code></pre>
+          </aside></dd>
+
+          <dt><dfn><code>@module</code></dfn></dt>
+          <dd>References the <a>module</a> a <a>condition</a> or <a>action</a> relates to. Value must be the <a data-link-for="module">name</a> of the targeted <a>module</a>. In the absence of an <a>@module</a> property, <a>conditions</a> and <a>actions</a> apply to the <code>goal</code> module.</dd>
+
+          <dt><dfn><code>@more</code></dfn></dt>
+          <dd>Queries the <a>boolean</a> flag set to <code>true</code> by the <a>rule engine</a> on the current <a>chunk</a> in <a>@for</a> and <a>@do properties</a> iterations when there are remaining <a>chunks</a> to iterate over.</dd>
+
+          <dt><dfn><code>@status</code></dfn></dt>
+          <dd>Queries the <a data-link-for="module buffer">status</a> of a <a>module buffer</a>. The <a>rule engine</a> sets the status of a <a>module buffer</a> with the outcome of the <a>rule</a>'s execution. Most operations are asynchronous, except <a>@do clear</a>, <a>@do update</a> and <a>@do queue</a>.</dd>
+
+          <dt><dfn><code>@to</code></dfn></dt>
+          <dd>When used in a <a>@for</a> operation, specifies the zero-based ending index of the iteration. Value must be an integer. When used in a <a>@do properties</a> operation, specifies the name of the <a>module buffer</a> onto which to write the current <a>chunk</a>.</dd>
+
+          <dt><dfn><code>@type</code></dfn></dt>
+          <dd>Matches a <a>chunk</a>'s <a>type</a>, or binds a variable to the <a>chunk</a>'s <a>type</a>.</dd>
+        </dl>
+
+        <p class="ednote">TODO: Complete list with additional reserved names: <code>@distinct</code>, <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@pop</code>, <code>@priority</code>, <code>@push</code>, <code>@shift</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>, <code>@unshift</code>.</p>
+      </section>
+
+      <section>
+        <h4>Matching chunks</h4>
+
+        <p>A <a>chunk</a> <var>B</var> is said to be a <dfn>matching chunk</dfn> for a <a>chunk</a> <var>A</var> if:</p>
+        <ul>
+          <li><var>A</var>'s <a>type</a> is <code>*</code>, or <var>B</var>'s <a>type</a> equals <var>A</var>'s <a>type</a>.</li>
+          <li><var>A</var> does not have an <a>@kindof</a> <a>property</a>, or <var>A</var>'s <a>type</a> is <code>*</code> and <var>B</var>'s <a>type</a> is a subclass of the <a>@kindof</a> <a>property</a> value <var>V</var>, meaning that <var>B</var>'s <a>type</a> equals <var>V</var> or there exists a chain of <code>kindof</code> links between <var>V</var> and <var>B</var>'s <a>type</a>.</li>
+          <li><var>A</var> does not have an <a>@id</a> <a>property</a>, or its value equals <var>B</var>'s <a>identifier</a>.</li>
+          <li>For all <a>properties</a> in <var>A</var> whose <a>names</a> do not start with <code>@</code>, there is a corresponding <a>property</a> in <var>B</var> with the same <a>name</a> and value.</li>
+        </ul>
+
+        <p class="ednote">TODO: Rewrite and complete to integrate <a>variables</a> (which impose presence but not a specific value) and <code>~</code> which match when values are not equal or, if <code>~</code> is used alone, when the property is undefined.</p>
+      </section>
+    </section>
+
+    <section>
+      <h3>Modules</h3>
+      <p>A <dfn>module</dfn> is a <a>graph of chunks</a> associated with one and only one <a>module buffer</a>. A <a>module</a> has a <dfn data-dfn-for="module">name</dfn> that follows the <a>name</a> data type, and that is typically used to target the <a>module</a> in <a>@module</a> properties.</p>
+
+      <p>A <a>module</a> supports <a>built-in operations</a>, and may support additional operations defined by the application when the <a>module</a> is initialized.</p>
+      <p>A <a>module</a> represents a cognitive database on which the <a>rule engine</a> may operate. It may be viewed as a region in the cerebral cortex, where the <a>module buffer</a> corresponds to the bundle of nerve fibres connecting to that region.</p>
+
+      <p>The <a>rule engine</a> automatically creates a module named <code>goal</code>, which will therefore always exist in a rule execution context.</p>
+
+      <p>The <a>@module</a> property allows <a>conditions</a> and <a>actions</a> to reference the <a data-link-for="module">name</a> of the <a>module</a> they relate to. In the absence of an <a>@module</a> property, <a>conditions</a> and <a>actions</a> apply to the <code>goal</code> module.</p>
+
+      <section>
+        <h4>Module buffers</h4>
+        <p>A <dfn>module buffer</dfn> is a container for at most one <a>chunk</a>. The mammalian brain is richly connected locally, and weakly remotely. A <a>module buffer</a> mimics the constrained communication capacity of the mammalian brains for such long range communication.</p>
+
+        <p>The <a>rule engine</a> operates on a module's <a>graph of chunks</a> through its <a>module buffer</a>.</p>
+
+        <p>A <a>module buffer</a> has a <dfn data-dfn-for="module buffer">status</dfn>, whose value is initially <a data-link-for="status">okay</a>, and which reflects the outcome of the last <a>action</a> helf and performed by the <a>module buffer</a>. Values can be:</p>
+        <dl data-link-for="module buffer">
+          <dt><dfn><code>pending</code></dfn></dt>
+          <dd>The operation is still pending.</dd>
+          <dt><dfn><code>okay</code></dfn></dt>
+          <dd>The operation completed successfully.</dd>
+          <dd><p class="issue">Switch to <code>ok</code>? This seems more common in technologies (e.g. HTTP) than <code>okay</code>.</p></dd>
+          <dt><dfn><code>forbidden</code></dfn></dt>
+          <dd>The operation was not allowed.</dd>
+          <dt><dfn><code>nomatch</code></dfn></dt>
+          <dd>The operation failed because there was no <a>matching chunk</a> for the <a>action</a> in the targeted <a>module</a>.</dd>
+          <dt><dfn><code>failed</code></dfn></dt>
+          <dd>The operation failed.</dd>
+        </dl>
+
+        <p>A <a>module buffer</a> has a <dfn>queue</dfn>, which is a set of <a>chunks</a>, initially empty. Each chunk in the <a>queue</a> has a <dfn>priority</dfn>, represented by an integer from 1 to 10, with 10 the highest priority. The default <a>priority</a> is 5. <a>Chunks</a> are ordered by descending <a>priority</a> in a <a>queue</a>. When <a>priorities</a> match, <a>chunks</a> are ordered by insertion order (first in, first out).</p>
+
+        <p>The <dfn><code>@priority</code></dfn> property lets <a>actions</a> set the <a>priority</a> of a <a>chunk</a> when they add it to a <a>queue</a>.</p>
+
+        <aside class="note" title="Queue and sub-goals">
+          <p>A <a>queue</a> may be useful to create sub-goals. For instance, whilst <a>@do update</a> operations allow applications to switch to a new goal, they may prefer <a>rules</a> to propose multiple sub-goals instead. <a>Queues</a> enable this through <a>@do queue</a> operations which push the <a>chunk</a> specified by an <a>action</a> to the <a>queue</a> of a <a>module buffer</a>.</p>
+        </aside>
+
+        <p>A <a>module buffer</a> is automatically cleared when the <a>actions</a> associated with the <a>rule</a> it contained did not update the contents of targeted <a>module buffers</a>. This pops the <a>queue</a> if it is not already empty.</p>
+      </section>
+
+      <section>
+        <h4>Built-in operations</h4>
+        <p>The <a>@do</a> property lets an <a>action</a> specify the graph algorithm or operation to execute. The default operation is to update the <a>module buffer</a>, similar to calling <a>@do update</a>.</p>
+
+        <p>All <a>modules</a> support the following <dfn>built-in operations</dfn>:</p>
+
+        <dl>
+          <dt><dfn><code>@do clear</code></dfn></dt>
+          <dd>Clear the <a>module buffer</a> and pop the <a>queue</a>.</dd>
+
+          <dt><dfn><code>@do delete</code></dfn></dt>
+          <dd>Forget <a>matching chunks</a> in the <a>graph of chunks</a>.</dd>
+
+          <dt><dfn><code>@do get</code></dfn></dt>
+          <dd>Look for a <a>matching chunk</a> in the module's <a>graph of chunks</a> and put a copy of it in the <a>module buffer</a> if found. Modifying the <a>properties</a> of a <a>chunk</a> copied from a <a>graph of chunks</a> (e.g. through a <a>@do update</a> operation) will not alter the underlying <a>graph of chunks</a>. To save an updated <a>chunk</a>, a <a>@do put</a> or <a>@do patch</a> command needs to be issued.</dd>
+
+          <dt><dfn><code>@do next</code></dfn></dt>
+          <dd>Load the next <a>matching chunk</a> to the targeted <a>module buffer</a> in an implementation dependent order.</dd>
+
+          <dt><dfn><code>@do patch</code></dfn></dt>
+          <dd>If the <a>chunk</a> in the targeted <a>module buffer</a> has the same <a>identifier</a> as a <a>chunk</a> in the underlying <a>graph of chunks</a>, patch the <a>chunk</a> in the <a>graph of chunks</a> with the <a>properties</a> that appear in the <a>module buffer</a>, excluding <a>properties</a> prefixed with an <code>@</code> character.</dd>
+          <dd><p class="issue">What is the expected behavior when the action has an <code>@id</code> property?</p></dd>
+
+          <dt><dfn><code>@do properties</code></dfn></dt>
+          <dd>Initiates an iteration over the <a>properties</a> of the <a>matching chunk</a> that do not begin with <code>@</code>. Each <a>property</a> is mapped to a new <a>chunk</a> with the same <a>type</a> as the <a>action</a>. The action's properties are copied over, and <code>name</code> and <code>value</code> properties are used to pass the <a>property</a> name and value respectively. The <a>@more</a> property is given the value <code>true</code> unless this is the final <a>chunk</a> in the iteration, in which case <a>@more</a> is given the value false. By default, the iteration is written to the same <a>module buffer</a> as designated by the <a>action</a> that initiated it. However, you can designate a different <a>module buffer</a> with the <a>@to</a> property. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.</dd>
+          <dd><aside class="example" title="Iterate over properties">
+            <p>The following example first sets the <code>facts</code> <a>module buffer</a> to a <a>chunk</a> of <a>type</a> <code>foo</code>, and then initiates an iteration over all of the <a>chunk</a>'s properties:</p>
+            <pre><code>run {}
+  =>
+    foo {@module facts; a 1; c 2}, # set facts buffer to foo {a 1; c 2}
+    bar {@module facts; @do properties; loop prop18; @to goal} # launch iteration
+    
+# this rule is invoked with the name and value for each property
+# note that 'loop prop18' is copied over from the initiating chunk
+# (also note that "@do log" is an hypothetical operation to log a message)
+bar {loop prop18; name ?name; value ?value}
+  =>
+    console {@do log; message ?name, is, ?value},
+    bar {@do next}  # to load the next instance from the iteration</code></pre>
+          </aside></dd>
+
+          <dt><dfn><code>@do put</code></dfn></dt>
+          <dd>Save the contents of the <a>module buffer</a> as a <a>chunk</a> to the module's <a>graph of chunks</a>. If the <a>action</a> has an <a>@id</a> property, this operation will overwrite the <a>chunk</a> with the same <a>identifier</a> or will create a new <a>chunk</a> with the given <a>identifier</a> if it does not exist already. This operation will also create a new <a>chunk</a> in the absence of an <a>@id</a> property.</dd>
+          <dd><p class="issue">If a chunk was loaded with <code>@do get</code>, then updated with <code>@do update</code>, would a call to <code>@do patch</code> create a new chunk if <code>@id</code> is not set? Or would it rather update the chunk in the graph?</p></dd>
+
+          <dt><dfn><code>@do queue</code></dfn></dt>
+          <dd>Push a <a>chunk</a> to the <a>queue</a> for the <a>module buffer</a>. If a <a>@priority</a> property is set to an integer value between 1 and 10, the <a>priority</a> of the <a>chunk</a> in the <a>queue</a> is set to that value.</dd>
+
+          <dt><dfn><code>@do update</code></dfn></dt>
+          <dd>Directly update the <a>module buffer</a> if the chunk <a>type</a> for the <a>action</a> is the same as the <a>chunk</a> currently held in the <a>module buffer</a>. The operation updates the properties given in the <a>action</a>, leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk <a>type</a> for the action is not the same as the <a>chunk</a> currently held in the <a>module buffer</a>, a new <a>chunk</a> is created with the properties given in the <a>action</a>, excluding properties prefixed with an <code>@</code> character. This is the default action when an <a>action</a> has neither an <a>@do</a> property nor an <a>@for</a> property.</dd>
+        </dl>
+
+        <p>All <a>modules</a> also support the <a>@for</a> property to iterate over a set of items in a comma separated list. This has the effect of loading the <a>module buffer</a> with the first item in the list. The index range can optionally be specified with <a>@from</a> and <a>@to</a>, where the first item in the list has index <code>0</code>.</p>
+
+        <aside class="note" title="Application-defined operations">
+          <p>Applications can define additional operations when initialising a <a>module</a>. This can be used to perform a variety of operations, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.</p>
+
+          <p>Applications cannot replace the <a>built-in operations</a>.</p>
+        </aside>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <h2>Rule engine execution</h2>
+    <p class="ednote">TODO: Describe algorithms for the <a>rule engine</a>.</p>
+  </section>
+
+  <section>
+    <h2>Chunks documents</h2>
+
+    <section>
+      <h3>Parsing a chunks document</h3>
+      <p class="ednote">TODO: Formally describe parsing algorithm</p>
+      <p>If multiple chunk definitions share the same <a>identifier</a> in a set of chunks, the last definition overrides former definitions.</p>
+    </section>
+
+    <section>
+      <h3>Chunks grammar</h3>
+      <p>A <a>chunks document</a> MUST follow the grammar defined below.</p>
+
+<pre><code class="abnf" data-include="grammar/chunks.abnf" data-include-format="text"></code></pre>
+    </section>
+
+    <section class="informative">
+      <h3>Railroad diagrams</h3>
+      <p>This section presents an informative view of the tokens that the grammar defines, in the form of railroad diagrams. These diagrams are provided solely to make it easier to get an intuitive grasp of the syntax of each token.</p>
+      <div data-include="grammar/rr.html" data-include-replace="true"></div>
+    </section>
+  </section>
+
+  <section>
+    <h2>Mapping to RDF</h2>
+    <p class="ednote">TODO: document <code>@rdfmap</code>, <code>@base</code>, <code>@prefix</code>.</p>
+  </section>
+</body>
+</html>
