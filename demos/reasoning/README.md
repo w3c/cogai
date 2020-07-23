@@ -44,15 +44,20 @@ To call a child state:
 ```
 enter {@do call; @state name} # name is the name of the child state
 ```
+
+The action type and chunk properties are used to construct and throw an event at the child state similarly to `@do goto`.
+
 To return from a child state
 ```
 success {@do return; @state name} # name is the state to return from
 ```
 That returns to the parent state and throws the success event at it along with the action's properties that don't start with an @. You can use different events to signal different kinds of failures as appropriate. Note that @state is only needed if more than one state is currently active.
 
-Sometimes you want to invoke several tasks and only continue when they are all done:
+Sometimes you want to invoke several sub-plans and only continue when they are all done. This is a generalisation of calling a child state.
 ```
-foo {@do all; @state state1.1, state1.2, state1.3; @next state2}
+foo {@do call; @state state1.1, state1.2, state1.3; @next state2}
 ```
+The *@next* property is used to name the next state to change to when all of the listed child states have finished.
+
 
 We also want a way to express a statechart with facts and interpret it. I will leave that to future work as it relates to the challenges of learning behaviour and reasoning about plans.
