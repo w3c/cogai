@@ -16,28 +16,25 @@ For an introduction to informal reasoning see [Philip Johnson-Laird](https://www
 
 ## Hierarchical State Transition Networks
 
-To implement the dinner demo, I am exploring how to support hierarchical plans in terms of hierarchical state transition machines. As you can see below, this extends the chunks rules format with a few new terms.
+The dinner demo will use a hierarchical plan expressed as a hierarchical state transition machine. As you can see below, this extends the chunks rules format with a few new terms.
 
-I am inspired by David Harel’s [statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have sub-states and so forth. 
+The following is inspired by David Harel’s [statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have sub-states and so forth. 
 
-The following explores how to extend the rule engine to allow multiple states to be active at any one time.
+The following proposes an extension to the rule engine to enable to keep track of the currently active states. Exiting a parent state automatically exits all of its descendant states.
 
-Rules can match an event when the agent is in a given state, e.g. for an event foo
+Rules can match an event when the agent is in a given state, e.g. here is a rule that matches the event *foo* when state1.1 is active.
 
 ```
 foo {@state state1.1} => do something in state 1.1
 ```
-
-The @state property is treated specially and matched against the set of currently active states as maintained by the rule engine.
-
-If an event is not caught by a state, it will be thrown at the parent state. This is done when the rule engine can't find a matching rule for the current active states. An open question is whether the event is thrown at all of the active states or just one of them.
+If the module chunk buffer specifies a value for *@state* it will only match rule conditions with that explicit state. If the chunk buffer doesn't define *@state* then the buffer will match any rule that names a currently active state. If an event matches a rule for an active parent state as well as an active child state, the rule for the child state takes precedence.
 
 To change to another state:
 ```
 enter {@do goto; @state name} # name is the name of the new state
 ```
 
-The action type and chunk properties  are used to construct and throw an event at the new state. That event can be used to initialise the state.
+The action type and chunk properties  are used to construct and throw an event at the new state which can be used to initialise the state. In more detail, the module chunk buffer is updated to a chunk with the same type as the action (*enter* in the above example) and the same properties, apart from those starting with @ with the exception of *@state* which is copied explicitly.
 
 To call a child state:
 
@@ -51,7 +48,7 @@ To return from a child state
 ```
 success {@do return; @state name} # name is the state to return from
 ```
-That returns to the parent state and throws the success event at it along with the action's properties that don't start with an @. You can use different events to signal different kinds of failures as appropriate. Note that @state is only needed if more than one state is currently active.
+That returns to the parent state and throws the success event at it along with the action's properties that don't start with an @. You can use different events to signal different kinds of failures as appropriate. Note that @state is only needed if more than one state is currently active. Exiting a state also exits its child states and so forth.
 
 Sometimes you want to invoke several sub-plans and only continue when they are all done. This is a generalisation of calling a child state.
 ```
