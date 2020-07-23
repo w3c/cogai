@@ -18,7 +18,7 @@ For an introduction to informal reasoning see [Philip Johnson-Laird](https://www
 
 The dinner demo will use a hierarchical plan expressed as a state transition machine. As you can see below, this extends the chunks rules format with a few new terms, inspired by David Harel’s [statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have sub-states and so forth. 
 
-The following proposes an extension to the rule engine to enable it to keep track of the currently active states and their parent-child relationships. Exiting a parent state automatically exits all of its descendant states. State names are scoped to their parent state and module. For any rule that changes the state, the current state must be identified by the rule condition for that module.
+The following proposes an extension to the rule engine to enable it to keep track of the currently active states and their parent-child relationships. Exiting a parent state automatically exits all of its descendant states. State names are scoped to their parent state and module. The current state is identified by the module's buffer after the rule's conditions have been matched and the rule is selected for execution.
 
 Rules can match an event when the agent is in a given state, e.g. here is a rule that matches the event *foo* when state1.1 is active.
 
