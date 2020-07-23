@@ -1,6 +1,6 @@
 # Reasoning and Plans
 
-Following the Aristotelian tradition, AI researchers have for the most part modelled reasoning by a reduction to logic and deductive inference: *what is provably true given the set of assumptions and inference rules.*. Cognitive Science is the experimental study of the organizing principles of the mind, and by contrast with Aristotle, focuses on *what is useful based upon prior knowledge and past experience in the presence of uncertainty.*
+Following the Aristotelian tradition, AI researchers have for the most part modelled reasoning by a reduction to logic and deductive inference: *what is provably true given the set of assumptions and inference rules.* Cognitive Science is the experimental study of the organizing principles of the mind, and by contrast with Aristotle, focuses on *what is useful based upon prior knowledge and past experience in the presence of uncertainty.*
 
 Plans describe a sequence of steps that need to be taken in order to achieve the desired goals. One way to express plans is as event driven transitions between states. Such transitions can update information associated with the plan (the mental model of the world) and invoke actions, e.g. to say something. To make plans more manageable, it is convenient to structure them hierarchically into sub-plans.
 
@@ -28,7 +28,7 @@ Rules can match an event when the agent is in a given state, e.g. for an event f
 foo {@state state1.1} => do something in state 1.1
 ```
 
-The @state property is treated specially and matched against the currently active states as maintained by the rule engine.
+The @state property is treated specially and matched against the set of currently active states as maintained by the rule engine.
 
 If an event is not caught by a state, it will be thrown at the parent state. This is done when the rule engine can't find a matching rule for the current active states. An open question is whether the event is thrown at all of the active states or just one of them.
 
