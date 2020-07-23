@@ -27,12 +27,16 @@ foo {@state state1.1} => do something in state 1.1
 ```
 If the module chunk buffer specifies a value for *@state* it will only match rule conditions with that explicit state. If the chunk buffer doesn't define *@state* then the buffer will match any rule that names a currently active state. If an event matches a rule for an active parent state as well as an active child state, the rule for the child state takes precedence.
 
+***Note:** how do we identify and sort the matching rules by their parent-child relationships?*
+
 To change to another state:
 ```
 enter {@do goto; @state name} # name is the name of the new state
 ```
 
 The action type and chunk properties  are used to construct and throw an event at the new state which can be used to initialise the state. In more detail, the module chunk buffer is updated to a chunk with the same type as the action (*enter* in the above example) and the same properties, apart from those starting with @ with the exception of *@state* which is copied explicitly.
+
+***Note:** how do we identify the state we've leaving when we change to another state?*
 
 To call a child state:
 
@@ -41,6 +45,8 @@ enter {@do call; @state name} # name is the name of the child state
 ```
 
 The action type and chunk properties are used to construct and throw an event at the child state similarly to `@do goto`.
+
+***Note:** how do we identify the parent state when we call to a child state?*
 
 To return from a child state
 ```
