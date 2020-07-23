@@ -32,7 +32,7 @@ The @state property is treated specially and matched against the set of currentl
 
 If an event is not caught by a state, it will be thrown at the parent state. This is done when the rule engine can't find a matching rule for the current active states. An open question is whether the event is thrown at all of the active states or just one of them.
 
-To goto to another state:
+To change to another state:
 ```
 enter {@do goto; @state name} # name is the name of the new state
 ```
