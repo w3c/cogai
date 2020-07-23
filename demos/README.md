@@ -50,6 +50,10 @@ An extended version of this demo could include multiple road users, including pe
 
 Natural language is key to simplifying communication between humans and cognitive agents. It is also critical for teaching cognitive agents every day (common sense) skills. A series of demos are planned to evolve richer support for natural language understanding, generation, dialogues, reasoning and learning.
 
+## [Reasoning and Plans](reasoning/README.md)
+
+This is an exploration of how cognitive agents can utilise and adapt plans to new circumstances. It includes support for hierarchical state transitions, inspired by David Harel's [statecharts](https://statecharts.github.io/what-is-a-statechart.html). Future work will seek to implement Philip Johnson-Laird's ideas about mental models and human reasoning.
+
 ### Learning from examples
 
 This will be a series of demos focusing on techniques for learning knowledge graphs and decision trees from potentially noisy examples, using strongly supervised, weakly supervised, and unsupervised learning algorithms based on metrics for parsimonious representations. Humans are able to learn from small numbers of examples in contrast to today’s deep learning techniques which need very large numbers of examples. This is possible through effective use of statistics and prior knowledge. We're looking for help with surveying the literature for relevant algorithms and datasets. Here are just a few pointers:
