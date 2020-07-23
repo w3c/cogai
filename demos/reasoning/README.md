@@ -18,7 +18,7 @@ For an introduction to informal reasoning see [Philip Johnson-Laird](https://www
 
 To implement the dinner demo, I am exploring how to support hierarchical plans in terms of hierarchical state transition machines. As you can see below, this extends the chunks rules format with a few new terms.
 
-I am inspired by [David Harel’s statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have sub-states and so forth. 
+I am inspired by David Harel’s [statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have sub-states and so forth. 
 
 The following explores how to extend the rule engine to allow multiple states to be active at any one time.
 
