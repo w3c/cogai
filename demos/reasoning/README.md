@@ -46,10 +46,9 @@ enter {@do call; @state name} # name is the name of the child state
 ```
 To return from a child state
 ```
-# @state is only needed if more than one state is currently active
 success {@do return; @state name} # name is the state to return from
 ```
-That returns to the parent state and throws the success event at it along with the action's properties that don't start with an @. You can use different events to signal different kinds of failures as appropriate.
+That returns to the parent state and throws the success event at it along with the action's properties that don't start with an @. You can use different events to signal different kinds of failures as appropriate. Note that @state is only needed if more than one state is currently active.
 
 Sometimes you want to invoke several tasks and only continue when they are all done:
 ```
