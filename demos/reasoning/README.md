@@ -8,7 +8,7 @@ To generate a plan, you can either use or adapt an existing plan, or you can dev
 
 We also need to be able to interpret what we see others doing to infer their goals and plans. This is a form of abductive reasoning.
 
-Further work is needed to identify some scenarios for demos to explore reasoning about plans. In the short term, the dinner demo will be used to illustrate how an existing plan can be used to model the behaviour of cognitive agents representing a customer and a waiter at a restaurant in a stereotypical dialogue about ordering a meal. The [dinner demo](https://www.w3.org/Data/demos/chunks/nlp/dinner/) plan consists of a sequence of stages that divide into small tasks, where rules are used in deciding how respond to what an agent hears. The rules provide for limited flexibility to cope with variations.
+Further work is needed to identify some scenarios for demos to explore reasoning about plans. In the short term, the dinner demo will be used to illustrate how an existing plan can be used to model the behaviour of cognitive agents representing a customer and a waiter at a restaurant in a stereotypical dialogue about ordering a meal. The [dinner demo](https://www.w3.org/Data/demos/chunks/nlp/dinner/) plan consists of a sequence of stages that divide into small tasks, where rules are used in deciding how to respond to what an agent hears. The rules provide for limited flexibility to cope with variations.
 
 Each task is associated with rules that progress the task and determine when to switch to the next task.  Tasks are expected to play an important role when it comes to reinforcement learning of rules. Tasks are associated with modules, and there can be zero, one or more active tasks for each module.
 
