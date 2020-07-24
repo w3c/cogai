@@ -20,7 +20,7 @@ The `@task` property is used to name a task. If a rule condition names a task an
 
 When a rule update action sets the task, this updates the module's chunk buffer as well as adding the task to the module's set of active tasks. Before that happens, the rule's conditions are scanned to find which task the rule is associated with. That task is removed from the module's set of active tasks. In principle, a rule's conditions may have more than one condition for the same module. The old task is determined by the first condition for the given module that identifies the task.
 
-**Note**: this is a bit of a hack, but is more convenient than having to explicitly name the old task, either through a `@do` operation to switch tasks, or through special properties such as `@enter` and `@exit`.  This will be something to review when we have further experience.
+**Note**: this is a bit of a hack, but is more convenient than having to explicitly name the old task, either through an `@do` operation to switch tasks, or through special properties such as `@enter` and `@exit`.  This will be something to review when we have further experience.
 
 
 ```
