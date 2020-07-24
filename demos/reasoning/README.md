@@ -14,10 +14,6 @@ Each task is associated with rules that progress the task and determine when to 
 
 Future demos will address situations where greater flexibility is needed that exceeds what's possible with the current plan. This will involve the means to apply metacognition and past experience to reason about new situations.
 
-## Informal Reasoning
-
-For an introduction to informal reasoning see [Philip Johnson-Laird](https://www.pnas.org/content/108/50/19862)'s paper on [Mental models and human reasoning](https://www.pnas.org/content/107/43/18243).  He states that we don't rely on the laws of logic or probability - we reason by thinking about what's possible, we reason by seeing what is common to the possibilities.
-
 ## Concurrent Tasks
 
 The `@task` property is used to name a task. If a rule condition names a task and the chunk buffer does not, the task from the condition must match one of the active tasks for that module. 
@@ -30,3 +26,8 @@ When a rule update action sets the task, this updates the module's chunk buffer 
 ```
 The chunks support for tasks is in part inspired by inspired by David Harel’s [statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have child-states. A state can launch multiple child states and wait for them all to complete. Statecharts are not a direct fit to chunk rules, so tasks work a little differently.
 ```
+
+## Informal Reasoning
+
+For an introduction to informal reasoning see [Philip Johnson-Laird](https://www.pnas.org/content/108/50/19862)'s paper on [Mental models and human reasoning](https://www.pnas.org/content/107/43/18243).  He states that we don't rely on the laws of logic or probability - we reason by thinking about what's possible, we reason by seeing what is common to the possibilities.
+
