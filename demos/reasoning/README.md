@@ -24,6 +24,11 @@ When a rule update action sets the task, this updates the module's chunk buffer 
 
 The chunk rules support for tasks is in part inspired by inspired by David Harel’s [statecharts](https://statecharts.github.io/what-is-a-statechart.html). He proposes a model in which states can have sub-states. A state can launch multiple sub-states and wait for them all to complete. Statecharts are not a direct fit to chunk rules, so inevitably tasks work a little differently.
 
+I have yet to implement support for:
+
+* **sub-tasks** with a means to invoke a sub-task and to return when done to the parent task
+* **waiting on tasks** with a means to queue a chunk to the module buffer to signal when one or more tasks have all finished
+
 ## Informal Reasoning
 
 For an introduction to informal reasoning see [Philip Johnson-Laird](https://www.pnas.org/content/108/50/19862)'s paper on [Mental models and human reasoning](https://www.pnas.org/content/107/43/18243).  He states that we don't rely on the laws of logic or probability - we reason by thinking about what's possible, we reason by seeing what is common to the possibilities.
