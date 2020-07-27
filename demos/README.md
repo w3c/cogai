@@ -2,6 +2,12 @@
 
 This page documents plans for developing a sequence of demonstrators that focus on different technical challenges, and together highlight the potential for Cognitive AI. The demos should be based upon cognitively plausible techniques involving graph data, graph rules and graph algorithms. Further demos will seek to apply these techniques to specific application areas.
 
+## Sandbox
+
+* https://www.w3.org/Data/demos/chunks/sandbox/
+
+A web page that allows you to edit and single step through the application of rules to chunks, with support for saving your work across browser sessions using your browser's local storage.
+
 ## [Counting](counting/README.md)
 
 * https://www.w3.org/Data/demos/chunks/counting/
