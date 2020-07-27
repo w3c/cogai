@@ -129,6 +129,8 @@ Chunks, by contrast, makes no claims to formal semantics, reflecting the lack of
 
 ## Chunk Rules
 
+*  [Web based sandbox for editing and single stepping through rules, using local storage for persistence](https://www.w3.org/Data/demos/chunks/sandbox/)
+
 Applications can utilise a low level graph API or a high level rule language. The chunk rule language can be used to access and manipulate chunks held in one or more cognitive modules, where each module has a chunk graph and a chunk buffer that holds a single chunk. These modules are equivalent to different regions in the cerebral  cortex, where the buffer corresponds to the bundle of nerve fibres connecting to that region. The concurrent firing pattern across these fibres encodes the chunk as a semantic pointer in a noisy space with a high number of dimensions.
 
 Each rule has one or more conditions and one or more actions. These are all formed from chunks. Each condition specifies which module it matched against, and likewise each rule action specifies which module it effects. The rule actions can either directly update the module buffers, or they can invoke asynchonous operations exposed by the module. These may in turn update the module's buffer, leading to a fresh wave of rule activation. If multiple rules match the current state of the buffers, a selection process will pick one of them for execution. This is a stochastic process that takes into account previous experience.
