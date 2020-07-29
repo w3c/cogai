@@ -4,6 +4,7 @@
 
 ## Table of Contents
 - [Introduction](#introduction)
+- [Sandbox for learning Chunks and Rules](#sandbox-for-learning-chunks-and-rules)
 - [Mapping names to RDF](#mapping-names-to-rdf)
 - [Chunk Rules](#chunk-rules)
     - [Built-in actions](#built-in-actions)
@@ -75,6 +76,13 @@ likes {
   @object Mary
 }
 ```
+## Sandbox for learning Chunks and Rules
+
+You can experiment with chunks and rules in your web browser, with the means to single step rule execution, to explore several tutorials and to edit the initial goal, facts and rules, and to save them across browser sessions.
+
+* https://www.w3.org/Data/demos/chunks/sandbox/
+
+
 ## Mapping names to RDF
 
 To relate names used in chunks to RDF, you should use @rdfmap. For instance:
