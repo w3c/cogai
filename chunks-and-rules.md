@@ -1,10 +1,11 @@
 # Chunks and Rules
 
-*This document describes the syntax and semantics for the chunk graph and rules format. A formal specification is in preparation for publication as a Community Group Report.*
+*This document describes the syntax and semantics for the chunk graph and rules format. A [formal specification](#formal-specification) is in preparation for publication as a Community Group Report.*
 
 ## Table of Contents
 - [Introduction](#introduction)
 - [Sandbox for learning Chunks and Rules](#sandbox-for-learning-chunks-and-rules)
+- [Formal specification](#formal-specification)
 - [Mapping names to RDF](#mapping-names-to-rdf)
 - [Chunk Rules](#chunk-rules)
     - [Built-in actions](#built-in-actions)
@@ -81,6 +82,15 @@ likes {
 You can experiment with chunks and rules in your web browser, with the means to single step rule execution, to explore several tutorials and to edit the initial goal, facts and rules, and to save them across browser sessions.
 
 * https://www.w3.org/Data/demos/chunks/sandbox/
+
+## Formal Specification
+
+This page provides an informal introduction. We're also working on a formal specification with a view to publishing it as a Community Group report.
+
+* [Raw markup](https://github.com/w3c/cogai/blob/master/index.html)
+* [Viewable page](https://w3c.github.io/cogai/)
+
+The specification is at early stages of development. Feedback is welcome through [GitHub issues](https://github.com/w3c/cogai/issues) or on the [public-cogai@w3.org](public-cogai@w3.org) mailing-list (with [public archives](https://lists.w3.org/Archives/Public/public-cogai/)).
 
 
 ## Mapping names to RDF
