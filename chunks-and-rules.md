@@ -426,7 +426,7 @@ Children’s Acquisition and Generalization of Science Concepts](https://www.ncb
 
 ## [Test Suite](demos/testing/README.md)
 
-* https://www.w3.org/Data/demos/chunks/testing/
+* https://www.w3.org/Data/demos/chunks/test-suite/
 
 A web-based test suite for the major features of the chunks and rules format.
 
