@@ -407,6 +407,8 @@ an s6 {@context s4; isa person; profession sailor}
 ```
 This works with the existing rule language, provided that we assume a default context so that a `@do get` action without `@context` won't match a chunk in a named context other than the default context.
 
+Contexts are also useful for episodic memory when you want to describe facts that are true in a given situation, e.g. when visiting restaurant for lunch, you sat by the window, you had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.
+
 If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
 
 In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
