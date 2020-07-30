@@ -14,6 +14,7 @@
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
 - [Statements about statements](#statements-about-statements)
+- [Tasks](#tasks)
 - [Ebbinghaus forgetting curve](#ebbinghaus-forgetting-curve)
 - [Test Suite](#test-suite)
 - [Boosting performance](#boosting-performance)
@@ -412,6 +413,12 @@ Contexts are also useful for episodic memory when you want to describe facts tha
 If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
 
 In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
+
+## Tasks
+
+Tasks allow you to write rules that are only applicable to specific tasks. Tasks are associated with modules, and a given module can have multiple active tasks at the same time. You can use *@task* to name a task in a rule condition. This will succeed if the named task is currently active for associated module. The set of active tasks are held independently of the module's buffer. Clearing the buffer doesn't clear the tasks. In rule actions you can use *@enter* with the name of a task to enter, and *@leave* with the name of a task to leave. You can enter or leave multiple tasks by using comma separated lists of task names.
+
+Tasks and contexts are complementary. You use *@context* to name a particular event/situation, e.g. having dinner at a restaurant, and *@task* to segregate rules for different tasks within the overall plan for having dinner (finding a table, reviewing the menu, ordering, paying the bill).
 
 ## Ebbinghaus forgetting curve
 
