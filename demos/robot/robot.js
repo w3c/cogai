@@ -978,6 +978,13 @@ function test () {
 			resolvePackingSpace = resolve;
 		});
 	};
+	
+	let copyBindings = function (chunk, bindings) {
+		for (let name in bindings) {
+			if (bindings.hasOwnProperty(name))
+				chunk.properties[name] = bindings[name];
+		}
+	};
 
 	let robot = new Robot(x, y);
 	robot.setPosition (x, y-170, -Math.PI/2);
@@ -1029,12 +1036,13 @@ function test () {
 				resolvePackingSpace = null;
 			}
 		},
-		move: function (action, properties) {
+		move: function (action, properties, bindings) {
 			let angle = properties.angle * Math.PI / 180.0;
 			let x = properties.x, y = properties.y, gap = properties.gap;
 			robot.move(x, y, angle, gap).then(() => {
 				let chunk = new Chunk('after');
 				chunk.priority = MEDIUM_PRIORITY;
+				copyBindings(chunk, bindings);
 				chunk.properties.step = properties.step;
 				goalModule.pushBuffer(chunk);
 			})

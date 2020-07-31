@@ -34,7 +34,8 @@ full {thing belt2} =>
 after {step 1} =>
 	robot {@do move; x -170; y -75; angle -180; gap 30; step 2}
 
-after {step 2} =>	goal {@do clear},
+after {step 2} =>
+	goal {@do clear},
 	robot {@do grasp},	
 	robot {@do move; x -80; y -240; angle -90; gap 30; step 3}
 
@@ -66,14 +67,17 @@ after {step 9} =>
 	packingSpace {@do wait}
 	
 packingSpace {x ?x; y ?y} =>
-	robot {@do move; x ?x; y ?y; angle 0; gap 30; step 10}
+	robot {@do move; x 100; y ?y; angle 0; gap 30; step 10}
 	
-after {step 10} =>
+after {step 10; x ?x; y ?y} =>
+	robot {@do move; x ?x; y ?y; angle 0; gap 30; step 11}
+	
+after {step 11; x ?x; y ?y} =>
 	action {@do release},
 	boxFull {@do wait},
-	robot {@do move; x 100; y -70; angle 0; gap 30; step 11}
-	
-after {step 11} =>
+	robot {@do move; x 100; y ?y; angle 0; gap 30; step 12}	
+
+after {step 12} =>
 	full {@do wait; thing belt1}
 	
 boxFull {} =>

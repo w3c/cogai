@@ -48,6 +48,7 @@ thing fillingStation {
 
 # example of a method
 method fill {
+	applies-to fillingStation
 	operation fill
 	input thing
 	response filled
@@ -61,4 +62,4 @@ thing cappingStation {properties x, y}
 
 # boxes which can hold up to 6 bottles
 thing box {properties bottles}
-type properties {isa list; contains bottle; max 6}
+type bottles {isa list; contains bottle; max 6}
