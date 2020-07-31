@@ -17,12 +17,14 @@ const mime_types = {
     "png": "image/png",
     "gif": "image/gif",
     "ico": "image/x-icon",
+    "mp3": "audio/mpeg",
 	"pdf": "application/pdf",
     "ttl": "text/turtle",
     "rdf": "text/turtle",
     "crl": "text/crl",
     "chk": "text/chunks",
-	"csv": "text/plain"
+	"csv": "text/plain",
+	"md": "text/plain"
 };
 
 const port = 8000;
