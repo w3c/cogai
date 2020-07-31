@@ -1,0 +1,9 @@
+start {} => state {@enter task3}, order {main sea-bass; message "I will have the sea bass"}
+
+order {@task task3; starter ?starter} =>
+	acknowledge {@do log; message ?starter, "for starters"},
+	order {@do clear},  # clear starter property in buffer
+	order {main question; @do log; message "what would you like for the main course"}
+	
+order {@task task3; main sea-bass} =>
+	sorry {about main; @do log; message "sorry the sea bass is all gone"}
