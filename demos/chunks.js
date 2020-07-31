@@ -239,7 +239,7 @@ function ChunkGraph (source) {
 	let graph = this;
 	
 	const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-	const re_name = /^(\*|(@)?[\w|\.|\-]+)$/;
+	const re_name = /^(\*|(@)?[\w|\.|\-|\:]+)$/;
 	const re_value = /^(~[\w|\.|\-|]*|~\?[\w|\.|\-|]+|\?[\w|\.|\-|]+)$/;
 	const re_uri = /(http:\/\/|https:\/\/|www\.)([^ '"]*)/;
 	const re_iso8601 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/;
@@ -366,7 +366,8 @@ function ChunkGraph (source) {
 	// match the corresponding properties in the buffer
 	// using the variable bindings and any @ constraints
 	
-	graph.test_constraints = function (chunk, condition, bindings) {
+	graph.test_constraints = function (chunk, condition, bindings, engine) {
+		// these are not matched as normal properties
 		const skip = {
 			"@module": true,
 			"@do" : true,
@@ -380,13 +381,24 @@ function ChunkGraph (source) {
 			"@clear" : true
 		};
 		
+		// these are matched like normal properties
+		const normal = {
+			"@subject": true,
+			"@object": true,
+			"@task": true,
+			"@context": true,
+			"@more": true,
+			"@index": true
+		};
+		
 		let properties = condition.properties;
 		
 		for (let name in properties) {
 			let negate = false;
 			
 			// apply @ constraint
-			if (name[0] === '@' && name !== "@subject" && name !== "@object" && name !== "@context") {
+			if (name[0] === '@' && !normal[name]) {
+					
 				if (skip[name])
 					continue;
 
@@ -435,7 +447,7 @@ function ChunkGraph (source) {
 						if (typeof args[0] !== "string")
 							return false;
 							
-						let module = condition.graph.module;
+						let module = engine.getModule(condition);
 						
 						if (module && args[0] != module.getStatus())
 							return false;
@@ -574,6 +586,7 @@ function ChunkGraph (source) {
 			}
 				
 			// properties that don't start with @
+			// except for @subject, @object and @task
 			if (properties.hasOwnProperty(name)) {
 				let cond = properties[name];
 				let negate = false
@@ -591,13 +604,20 @@ function ChunkGraph (source) {
 					cond = bindings[cond.substr(1)];
 					
 				if (cond === undefined)
-					continue;
-								
+					return false; //continue;
+												
 				let target = chunk.properties[name];
 				
-				if (target === undefined)
-					return false
-					
+				if (target === undefined) {
+					if (name !== "@task")
+						return false;
+						
+					let module = engine.getModule(condition);
+						
+					if (module.tasks[cond])
+						target = cond;
+				}
+									
 				// for lists we compare each item
 				if (Array.isArray(target)) {
 					if (Array.isArray(cond)) {
@@ -690,7 +710,7 @@ function ChunkGraph (source) {
 		if (id) {
 			return graph.chunks[id];
 		}
-
+		
 		let chunks = this.types[type];
 		let matched = matching_values(chunks, values);
 		
@@ -740,7 +760,7 @@ function ChunkGraph (source) {
 	
 	// used for @do get using same matching algorithm as for rule conditions
 	// *** needs updating for stochastic recall according to expected utility
-	graph.doGet = function (action, bindings, doNext) {
+	graph.doGet = function (action, bindings, engine, doNext) {
 		let id = action.properties["@id"];
 		
 		if (id) {
@@ -773,7 +793,7 @@ function ChunkGraph (source) {
 		
 			for (let i = 0; i < chunks.length; ++i) {
 				let chunk = chunks[i];
-				if (graph.test_constraints(chunk, action, bindings))
+				if (graph.test_constraints(chunk, action, bindings, engine))
 					matched.push(chunk);
 			}
 			
@@ -790,7 +810,7 @@ function ChunkGraph (source) {
 	};
 	
 	// used for @do forget using same matching algorithm as for rule conditions
-	graph.doDelete = function (action, bindings) {
+	graph.doDelete = function (action, bindings, engine) {
 		let id = action.properties["@id"];
 		
 		if (id) {
@@ -817,7 +837,7 @@ function ChunkGraph (source) {
 		
 				for (let i = 0; i < chunks.length; ++i) {
 					let chunk = chunks[i];
-					if (graph.test_constraints(chunk, action, bindings))
+					if (graph.test_constraints(chunk, action, bindings, engine))
 						matched.push(chunk);
 				}
 		
@@ -832,7 +852,7 @@ function ChunkGraph (source) {
 	// if the ID is left unspecified we search for a matching chunk to update
 	// using a stochastic selection from amongst matching chunks 
 	// *** fix me to to use statistics of chunk utility from past experience
-	graph.doPut = function (action, bindings) {
+	graph.doPut = function (action, bindings, engine) {
 		let update = function (chunk) {
 			for (let name in action.properties) {
 				if (name[0] === '@')
@@ -857,7 +877,7 @@ function ChunkGraph (source) {
 			}
 		};
 	
-		let chunk = graph.doGet(action, bindings);
+		let chunk = graph.doGet(action, bindings, engine);
 		
 		if (!chunk) {
 			let type = action.properties["@type"];
@@ -888,8 +908,8 @@ function ChunkGraph (source) {
 		
 		for (let i = 0; i < children.length; ++i) {
 			let child = children[i];
-			if (child.properties.object === kind) {
-				let type = child.properties.subject;
+			if (child.properties["@object"] === kind) {
+				let type = child.properties["@subject"];
 				this.forall(type, handler, context);
 				let chunks = this.types[type];
 				for (let j = 0; j < chunks.length; ++j)
@@ -1529,7 +1549,7 @@ function RuleEngine (log){
 		} while (u1 < epsilon);
 		return stdev*Math.sqrt(-2*Math.log(u1))*Math.cos(TwoPI*u2);
 	};
-	
+		
 	// these three functions are used to detect when the buffers
 	// used in a rule's conditions are unchanged by that rule
 	// so that the same rule risks being pointlessly reapplied
@@ -1576,6 +1596,8 @@ function RuleEngine (log){
 		module.algorithms = (algorithms !== undefined ? algorithms : {});
 		graph.module = module;
 		
+		module.tasks = {};  // for tasks
+		
 		// Every module has a single chunk buffer
 	
 		let chunkBuffer;		// chunk buffer
@@ -1584,7 +1606,7 @@ function RuleEngine (log){
 		
 		// actions change the status of the module's buffer
 		let bufferStatus = "okay";  // pending, okay, nomatch, failed, or forbidden
-			
+					
 		module.queueLength = function () {
 			return chunkQueue.length;
 		};
@@ -1739,6 +1761,10 @@ function RuleEngine (log){
 		log("unknown module: " + name);
 	};
 	
+	engine.getGoal = function () {
+		return engine.getBuffer('goal');
+	};
+	
 	engine.setGoal = function (source) {
 		let goals = modules.goal;
 		
@@ -1759,8 +1785,47 @@ function RuleEngine (log){
 		return modules.rules.graph.chunks[id];
 	};
 	
+	// find which task the conditions selected for a given module
+	// we use the first condition that explicitly names a task
+	let find_task = function (rule, module, bindings) {
+		let conditions = rule.properties["@condition"];
+		if (Array.isArray(conditions)) {
+			for (let i = 0; i < conditions.length; ++i) {
+				let id = conditions[i]; // chunk id
+				let condition = getCondition(id); // chunk for condition
+				if (engine.getModule(condition) === module) {
+					let task = condition.properties["@task"];
+					if (typeof(task) === "string") {
+						if (task[0] === '?') {
+							task = bindings[task.substr(1)];
+							if (typeof(task) === "string")
+								return task;
+						} else {
+							return task;
+						}						
+					}
+				}
+			}
+		} else {
+			// single condition
+			let condition = getCondition(conditions);
+			if (engine.getModule(condition) === module) {
+				let task = condition.properties["@task"];
+				if (typeof(task) === "string") {
+					if (task[0] === '?') {
+						task = bindings[task.substr(1)];
+						if (typeof(task) === "string")
+							return task;
+					} else {
+						return task;
+					}
+				}
+			}
+		}
+	};
+	
 	// action is a chunk
-	let apply_action = function (action, bindings) {
+	let apply_action = function (rule, action, bindings) {
 		let module_name = "goal";
 		let operation = "update";
 		let properties = action.properties;
@@ -1808,7 +1873,12 @@ function RuleEngine (log){
 			"@push": true,
 			"@pop": true,
 			"@unshift": true,
-			"@shift": true
+			"@shift": true,
+			"@state": true,
+			"@subject": true,
+			"@object": true,
+			"@enter": true,
+			"@leave" : true
 		};
 			
 		for (let name in properties) {	
@@ -1818,9 +1888,11 @@ function RuleEngine (log){
 			let value = properties[name];
 			
 			if (Array.isArray(value)) {
+				let list = [];
 				for (let i = 0; i < value.length; ++i) {
-					value[i] = mapValue(name, value[i]);
+					list[i] = mapValue(name, value[i]);
 				}
+				value = list;
 			}
 			values[name] = mapValue(name, value);
 		}
@@ -1969,14 +2041,42 @@ function RuleEngine (log){
 			}
 			
 			for (let name in values) {
-				if (name[0] === "@")
+				if (name[0] === "@" && name !== "@enter"  && name !== "@leave"
+					 && name !== "@subject" && name !== "@object")
 					continue;
 					
 				if (values.hasOwnProperty(name)) {
-					if (values[name] === "~")
+					if (values[name] === "~") {
 						delete buffer.properties[name];
-					else	
+					} else if (name === "@enter") {
+						let value = values[name];
+						if (Array.isArray(value)) {
+							for (let i = 0; i < value.length; ++i) {
+								log("entering " + value[i]);
+								module.tasks[value[i]] = true;
+							}
+						} else {
+							log("entering " + value);
+							module.tasks[value] = true;
+						}
+						delete buffer.properties["@enter"];
+						delete buffer.properties["@task"];
+					} else if (name === "@leave") {
+						let value = values[name];
+						if (Array.isArray(value)) {
+							for (let i = 0; i < value.length; ++i) {
+								log("exiting " + value[i]);
+								delete module.tasks[value[i]];
+							}
+						} else {
+							log("exiting " + value);
+							delete module.tasks[value];
+						}
+						delete buffer.properties["@leave"];
+						delete buffer.properties["@task"];
+					} else {
 						buffer.properties[name] = values[name];
+					}
 				}
 			}
 						
@@ -1988,7 +2088,7 @@ function RuleEngine (log){
 		} else if (operation === "get") {
 			module.setStatus("pending");
 			log("@do get");
-			let chunk = module.graph.doGet(action, bindings, false);
+			let chunk = module.graph.doGet(action, bindings, engine, false);
 			
 			if (chunk) {
 				module.setStatus("okay");
@@ -2004,12 +2104,12 @@ function RuleEngine (log){
 			let chunk = module.next();
 			
 			// if the next chunk doesn't match the action, we start afresh
-			if (chunk && !module.graph.test_constraints(chunk, action, bindings)) {
+			if (chunk && !module.graph.test_constraints(chunk, action, bindings, engine)) {
 				chunk = undefined;
 			}
 			
 			if (!chunk)
-				chunk = module.first(module.graph.doGet(action, bindings, true))
+				chunk = module.first(module.graph.doGet(action, bindings, engine, true))
 
 			if (chunk)
 				module.writeBuffer(chunk);
@@ -2045,11 +2145,11 @@ function RuleEngine (log){
 		} else if (operation === "put") {
 			log("@do put");
 			module.setStatus("okay");
-			module.graph.doPut(action, bindings);
+			module.graph.doPut(action, bindings, engine);
 		} else if (operation === "delete") {
 			log("@do delete");
 			module.setStatus("okay");
-			module.graph.doDelete(action, bindings);
+			module.graph.doDelete(action, bindings, engine);
 		} else if (operation === "queue") {
 			log("@do queue");
 			module.setStatus("okay");
@@ -2072,9 +2172,8 @@ function RuleEngine (log){
 			module.pushBuffer(chunk);
 		} else if (module && module.algorithms[operation]) {
 			module.setStatus("okay");
-			module.algorithms[operation](action, values);
+			module.algorithms[operation](action, values, bindings);
  		} else {
-			// *** need to implement @do next and @do properties
 			log("unrecognised action: " + operation);
 			module.setStatus("failed");
 		}
@@ -2099,16 +2198,16 @@ function RuleEngine (log){
 					throw (new Error("rule " + rule.id + " is missing action " + actions[i]));
 					
 				if (operation === null)	
-					operation = apply_action(action, bindings);
+					operation = apply_action(rule, action, bindings);
 				else
-					apply_action(action, bindings);
+					apply_action(rule, action, bindings);
 			}
 		} else { // single action
 			let action = getAction(actions);
-			operation = apply_action(action, bindings);
+			operation = apply_action(rule, action, bindings);
 		}
 		
-		log("executed rule " + rule.id + " " + operation);
+		//log("executed rule " + rule.id + " " + operation);
 	};
 	
 	
@@ -2246,7 +2345,8 @@ function RuleEngine (log){
 							}
 						}
 					}
-				} else if (name === "@context" || name === "@subject" || name === "@object") {
+				} else if (name === "@context" || name === "@subject"
+							 || name === "@object" || name === "@task") {
 					let cond = properties[name];
 				
 					if (cond[0] === "~")
@@ -2258,9 +2358,8 @@ function RuleEngine (log){
 							bindings[v] = chunk.properties[name];
 						}
 					}
-				}
-				
-				continue;
+				} else if (name !== "@index" && name !== "@more")
+					continue;
 			}
 				
 			// properties that don't start with @
@@ -2294,7 +2393,7 @@ function RuleEngine (log){
 			for (let i = 0; i < conditions.length; ++i) {
 				let id = conditions[i]; // chunk id
 				let condition = getCondition(id); // chunk for condition
-				
+								
 				if (!bind_variables(condition, bindings))
 					return false;
 			}
@@ -2318,7 +2417,7 @@ function RuleEngine (log){
 					if (status === undefined || (status !== "nomatch"
 							&& status !== "failed" && status !== "forbidden"))
 						return false;
-				} else if (!rule.graph.test_constraints(chunk, condition, bindings))
+				} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
 					return false;
 			}
 		} else { // single id
@@ -2330,12 +2429,39 @@ function RuleEngine (log){
 				if (status === undefined || (status !== "nomatch"
 						&& status !== "failed" && status !== "forbidden"))
 					return false;
-			} else if (!rule.graph.test_constraints(chunk, condition, bindings))
+			} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
 				return false;
 		}
 		
 		return bindings;
 	};
+	
+	function ppBindings (bindings) {
+		let s = "";
+		for (let name in bindings) {
+			if (bindings.hasOwnProperty(name)) {
+				if (s === "")
+					s = " ";
+				else
+					s += "; ";
+					
+				s += name + " = ";
+				
+				let value = bindings[name];
+				if (Array.isArray(value)) {
+					for (let i = 0; i < value.length - 1; ++i) {
+						s += value[i] + ", ";
+					}
+					
+					s += value[value.length - 1];
+				} else {
+					s += value;
+				}
+			}
+		}
+		
+		return s;
+	}
 	
 	// returns array of matching rules
 	
@@ -2372,7 +2498,12 @@ function RuleEngine (log){
 		if (matches && matches.length > 0) {
 			let i = (matches.length === 1 ? 0 : randomIntFromInterval(0, matches.length - 1));
 			let match = matches[i];
+			let rule = match[0];
+			let bindings = match[1];
+			log("applying rule with:" + ppBindings(bindings) + "\n" 
+				+ modules.rules.graph.ruleToString(rule));
 			apply_actions(match);
+			clearStatus(); // to avoid pointless looping on same rule
 			return match
 		}
 		
@@ -2394,7 +2525,7 @@ function RuleEngine (log){
 			let i = (matches.length === 1 ? 0 : randomIntFromInterval(0, matches.length - 1));
 			let rule = matches[i][0];
 			let bindings = matches[i][1];
-			log("applying rule: " + rule.id + " " + JSON.stringify(bindings)+ "\n" 
+			log("applying rule with:" + ppBindings(bindings) + "\n" 
 				+ modules.rules.graph.ruleToString(rule));
 			apply_actions(matches[i]);
 			clearStatus(); // to avoid pointless looping on same rule
