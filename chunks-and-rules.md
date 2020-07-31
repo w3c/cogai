@@ -50,6 +50,8 @@ dog dog1 {name "fido"; age 4}
 
 The chunk ID is optional, and if missing, will be automatically assigned when adding the chunk to a graph. If the graph already has a chunk with the same ID, it will be replaced by this one. You are free to use whitespace as you please, modulo the need for punctuation. String literals apart from URIs must be enclosed in double quote marks.
 
+The notion of type is a loose one and provides a way to name a collection of chunks that have something in common. It may be the case that all such chunks must satisfy some ontological constraint, on the other hand, it could be an informal grouping. This corresponds to the distinction between an intensional definition and an extensional definition. Inductive reasoning provides a way to learn models that describe regularities across members of groups. 
+
 Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a [common subset of ISO8601](https://www.w3.org/TR/NOTE-datetime) and are treated as identifiers for read-only chunks of type *iso8601* with properties for the year, month, day etc., e.g.
 
 ```
