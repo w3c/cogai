@@ -1,0 +1,18 @@
+# Procedural knowledge for counting demo
+
+# prepare to count up
+count {start ?num; state start} =>
+	count {state counting},
+	increment {@module facts; @do get; number ?num},
+	console {@do show; value ?num}
+
+# count up one at a time
+count {state counting; start ?num1; end ~?num1},
+increment {@module facts; number ?num1; successor ?num3} =>
+	count {start ?num3},
+	increment {@module facts; @do get; number ?num3},
+	console {@do show; value ?num3}
+
+# stop after last one
+count {start ?num; end ?num; state counting} =>
+	count {@do update; state stop}

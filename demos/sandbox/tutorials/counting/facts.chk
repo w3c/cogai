@@ -1,0 +1,11 @@
+# Declarative knowledge for counting demo
+
+increment {number 1; successor 2}
+increment {number 2; successor 3}
+increment {number 3; successor 4}
+increment {number 4; successor 5}
+increment {number 5; successor 6}
+increment {number 6; successor 7}
+increment {number 7; successor 8}
+increment {number 8; successor 9}
+increment {number 9; successor 10}
