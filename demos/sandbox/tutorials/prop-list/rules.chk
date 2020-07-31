@@ -1,0 +1,17 @@
+# iteration over comma separated lists
+run {test test9}
+  =>
+    person {@module facts; @do get; name Wendy},
+	test9 {}
+test9 {}, person {@module facts; name Wendy; friends ?friends}
+  =>
+    item {@for ?friends; @from 1; @to 2; test test9}
+item {test test9; value ?value; @index ?index; @more true}
+  =>
+    console {@do log; message item, ?index, is, ?value},
+    item {@do next}
+item {test test9; value ?value; @index ?index; @more false}
+  =>
+    console {@do log; message item, ?index, is, ?value},
+    action {@do show; value test9,succeeded}
+
