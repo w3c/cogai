@@ -1,5 +1,5 @@
 /*
-	Decision tree demo for Chunks rule language
+	autonomous driving demo for Chunks rule language
 */
 
 window.addEventListener("load", function () { test.init(); }, false);
@@ -34,12 +34,47 @@ let test = {
 			})
     	);
     
+    	promises.push(
+    		new Promise((resolve, reject) => {
+				fetch("rules.chk")
+				.then((response) => response.text())
+				.then(function (source) {
+						test.rules = new ChunkGraph(source);
+						resolve(true);
+				});
+			})
+    	);
+    
     	Promise.all(promises).then(result => {
 			log_element = document.getElementById("log");  // for smart logging
 			log.write("successfully loaded map as " + test.map.count + " chunks");
 			test.clip = new Clip(test.map);
 			test.root = test.index(test.clip);
 			log.write("finished spatially indexing the paths");
+			
+			test.engine = new RuleEngine();
+			test.engine.addModule('rules', test.rules);
+			test.engine.addModule('map', test.map);
+			test.engine.addModule('goal', new ChunkGraph(), {
+				search: function (bindings) {
+					// find route and place it in goal graph
+					// then set goal buffer to route chunk
+				}
+			});
+			test.engine.addModule('car', new ChunkGraph(), {
+				brake: function (bindings) {
+					// brake to a stop at given junction
+				},
+				signal: function (bindings) {
+					// signal left, right or none
+				},
+				steer: function (bindings) {
+					// set steering mode to turn or cruise
+				},
+				cruise: function (bindings) {
+					// accelerate to given speed
+				},
+			});
 			test.start();
     	})
     },
@@ -449,13 +484,13 @@ let test = {
 				let index = findPointIndex(entry.point, entry.path);
 				let turn = {
 					name: name(entry),
-						path: entry.path,
-						point: entry.point,
-						index: index,
-						sense: entry.index > index ? +1 : -1,
-						dturn: 0,
-						delta: 0,
-						stop: true
+					path: entry.path,
+					point: entry.point,
+					index: index,
+					sense: entry.index > index ? +1 : -1,
+					dturn: 0,
+					delta: 0,
+					stop: true
 				};
 				let turns = [turn];
 				let distance = entry.dstart;
@@ -1280,7 +1315,7 @@ let test = {
 		// hold the paths that are clipped to their bounds
 		// we thus need quad chunks and quadpath chunks
 		let graph = test.map;
-		let bounds = graph.recall("bounds"); 
+		let bounds = graph.get("bounds"); 
 		
 		// note location of the map's centre
 		test.lat = (bounds.properties.minlat + bounds.properties.maxlat)/2.0;
@@ -1791,7 +1826,7 @@ let test = {
 				pos = m2s(car.gazePoint);
 			
 				ctx.beginPath();
-				ctx.fillStyle = 'cyan';
+				ctx.fillScanvastyle = 'cyan';
 				ctx.arc(pos.x, pos.y, 10, 0, 2 * Math.PI);
 				ctx.fill();
 			}

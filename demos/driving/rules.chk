@@ -11,10 +11,12 @@ navigate c1 {
 }
 search a1 {
    @module goal
-   @invoke search
+   @invoke findRoute
    origin ?origin
    destination ?destination
 }
+
+# task for starting on a given route
 
 rule {
    @condition c2
