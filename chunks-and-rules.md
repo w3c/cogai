@@ -31,7 +31,7 @@ The chunks and rules format is designed for use in mimicking the cortico-basal g
 
 The cortex consists of a set of modules that hold collections of chunks and are accessed via buffers. Each buffer holds a single chunk and represents the current state of a bundle of nerve fibres connecting to a particular cortical region. The rule engine matches rule conditions to the current state of the buffers, and the rule actions can either directly update the buffers or invoke module operations that indirectly update the buffers. The module buffers can be likened to HTTP clients while the cortical modules can be likened to HTTP servers. This architecture originates in John Anderson's work on [ACT-R](http://act-r.psy.cmu.edu/about/).
 
-Each chunk is a named typed collection of properties, whose values are names (e.g. for other chunks), numbers, booleans (true or false), ISO8601 dates, string literals or comma separated lists thereof. This can be contrasted with a [minimal appoach](minimalist.md) in which property values are restricted to names.
+Each chunk is a named typed collection of properties, whose values are names (e.g. for other chunks), numbers, booleans (true or false), ISO8601 dates, string literals or comma separated lists thereof. This can be contrasted with a [minimal approach](minimalist.md) in which property values are restricted to names.
 
 Here is an example of a chunk where each property is given on a separate line:
 
