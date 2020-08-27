@@ -303,9 +303,34 @@ memory a2 { @module facts }</code></pre>
 
       <section>
         <h4>@-properties</h4>
-        <p>The following reserved <a>names</a> may be used in <a>conditions</a> and <a>actions</a> to control their behavior:</p>
+        <p>The following reserved property <a>names</a> may be used in <a>conditions</a> and <a>actions</a> to control their behavior:</p>
 
         <dl>
+          <dt><dfn><code>@distinct</code></dfn></dt>
+          <dd>When used in a <a>condition</a>, holds true when the property <a>values</a> are all different.</dd>
+          <dd><aside class="example" title="Using @distinct to make sure values are different">
+            <p>The following <a>condition</a> only holds true when the <code>start</code> and <code>end</code> properties of the <a>chunk</a> in the <code>goal</code> module have different <a>values</a>:</p>
+            <pre><code>goal {
+  @module goal
+  state counting
+  start ?num1
+  end ?num2
+  @distinct ?num1, ?num2
+}</code></pre>
+            <p>The above <a>condition</a> matches the following <a>chunk</a>:</p>
+            <pre><code>goal {
+  state counting
+  start 3
+  end 4
+}</code></pre>
+            <p>However, it does not match the following <a>chunk</a>:</p>
+            <pre><code>goal {
+  state counting
+  start 4
+  end 4
+}</code></pre>
+          </aside></dd>
+
           <dt><dfn><code>@do</code></dfn></dt>
           <dd>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</dd>
 
@@ -349,7 +374,7 @@ penguin p6 { name Pingou }</code></pre>
           <dd>Matches a <a>chunk</a>'s <a>type</a>, or binds a variable to the <a>chunk</a>'s <a>type</a>.</dd>
         </dl>
 
-        <p class="ednote">TODO: Complete list with additional reserved names: <code>@distinct</code>, <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@pop</code>, <code>@priority</code>, <code>@push</code>, <code>@shift</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>, <code>@unshift</code>.</p>
+        <p class="ednote">TODO: Complete list with additional reserved names: <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@pop</code>, <code>@priority</code>, <code>@push</code>, <code>@shift</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>, <code>@unshift</code>.</p>
       </section>
 
       <section>
