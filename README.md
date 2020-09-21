@@ -38,17 +38,6 @@ We are using GitHub for documents, issue tracking and open source components. We
 
 The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. We also are working on a formal specification of the chunk data and rules format with a view to its standardisation.
 
-## Technical Aims
-
-To enable cognitive agents that:
-
-* Are general purpose, collaborative, empathic and trustworthy
-* Can apply metacognition and past experience to reason about new situations
-* Support continuous learning based upon curiosity about the unexpected 
-* Have a level of self awareness in respect to current state, goals and actions
-* Have an awareness of others in respect to their beliefs, desires and intents
-* Are multilingual and can interact with people using their own language
-
 ## Historical context
 
 AI lacks a precise agreed definition, but loosely speaking, it is about replicating intelligent behaviour, including perception, reasoning and action. There are many sub-fields of AI, e.g. logic and formal semantics, artificial neural networks, rule-based approaches including expert systems, statistical approaches including Bayesian networks and Markov chains, and a wide variety of approaches to search, pattern recognition and machine learning. Cognitive AI seeks to exploit work across the cognitive sciences on the organising principles of the human mind.
