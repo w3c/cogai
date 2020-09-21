@@ -71,4 +71,15 @@ Zooming in on cognition and the role of the basal ganglia as a sequential rule e
 
 This has been implemented as an open source JavaScript library and used as the basis for an [evolving suite of demos](demos/README.md).
 
+## Long Term Aims
+
+In the long run, the mission of the Cognitive AI Community Group is to enable cognitive agents that:
+
+* Are knowledgeable, general purpose, collaborative, empathic and trustworthy
+* Can apply metacognition and past experience to reason about new situations
+* Support continuous learning based upon curiosity about the unexpected
+* Have an awareness of others in respect to their beliefs, desires and intents
+* Are multilingual and can interact with people using their own language
+
+These topics can be divided into areas for study and exploration with an emphasis on identifying use cases and building demonstrators that advance the overall mission. There is plenty to exploit along the way, with many opportunities to spin off practical applications as work proceeds.
 p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
