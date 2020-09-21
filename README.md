@@ -82,4 +82,5 @@ In the long run, the mission of the Cognitive AI Community Group is to enable co
 * Are multilingual and can interact with people using their own language
 
 These topics can be divided into areas for study and exploration with an emphasis on identifying use cases and building demonstrators that advance the overall mission. There is plenty to exploit along the way, with many opportunities to spin off practical applications as work proceeds.
+
 p.s. [useful tips on using GitHub for W3C projects](https://w3c.github.io/)
