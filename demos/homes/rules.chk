@@ -8,39 +8,23 @@ room {state tooHot} => action {@do thermostat; heating off}
 # when room is cooler than target temperature - 2°C
 room {state tooCold} => action {@do thermostat; heating on}
 
-lights1 {turn ?lights; hue ?hue}
-=>
-  room {@module facts; @do get; @id room1},
-  lights2 {}
-  
-lights2 {turn ?lights; hue ?hue},
-room {@module facts; time morning}
-=>
-  action {@do lights; turn off; hue ?hue}
-
-lights2 {turn ?lights; hue ?hue},
-room {@module facts; time afternoon}
-=>
-  action {@do lights; turn off; hue ?hue}
-  
-lights2 {turn ?lights; hue ?hue},
-room {@module facts; time evening}
-=>
-  action {@do lights; turn ?lights; hue ?hue}
-
-lights2 {turn ?lights; hue ?hue},
-room {@module facts; time night}
-=>
-  action {@do lights; turn ?lights; hue ?hue}
-
 # when the time of day changes
-clock {} => state {step 1}
+clock {time ?time} => 
+  time {@module facts; @do put; @id time-of-day; time ?time},
+  state {step 1}
 
 # when someone enters
-enter {} => state {step 1}
-
+enter {} =>
+  time {@module facts; @do get},
+  state {step 0}
+  
 # when someone leaves, if nobody is left then ensure lights are off
-leave {} =>  state {step 1}
+leave {} => 
+  time {@module facts; @do get},
+  state {step 0}
+
+state {step 0}, time {@module facts; time ?time} =>
+  state {step 1; time ?time}
 
 # start be asking for default preferences
 state {step 1}
@@ -147,4 +131,32 @@ preferences {@module facts; temperature ?temp}
 	action {@do thermostat; targetTemperature ?temp}
 	
 # now we're all done!
+
+# the following rules are used to avoid turning
+# the lights on in the morning and afternoon
+
+lights1 {turn ?lights; hue ?hue}
+=>
+  room {@module facts; @do get; @id room1},
+  lights2 {}
+  
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time morning}
+=>
+  action {@do lights; turn off; hue ?hue}
+
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time afternoon}
+=>
+  action {@do lights; turn off; hue ?hue}
+  
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time evening}
+=>
+  action {@do lights; turn ?lights; hue ?hue}
+
+lights2 {turn ?lights; hue ?hue},
+room {@module facts; time night}
+=>
+  action {@do lights; turn ?lights; hue ?hue}
 
