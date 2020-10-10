@@ -23,10 +23,11 @@ leave {} =>
   time {@module facts; @do get},
   state {step 0}
 
+# copy time of day from facts buffer to goal buffer
 state {step 0}, time {@module facts; time ?time} =>
   state {step 1; time ?time}
 
-# start be asking for default preferences
+# recall the default preferences
 state {step 1}
 =>
   preferences {@module facts; @do get; defaults room1},
