@@ -31,55 +31,70 @@ full {thing belt2} =>
 	action {@do shipBox},
 	full {@do wait; thing belt2}
 	
+# move robot arm into position to grasp empty bottle
 after {step 1} =>
 	robot {@do move; x -170; y -75; angle -180; gap 30; step 2}
 
+# grasp bottle and move it to the filling station
 after {step 2} =>
 	goal {@do clear},
 	robot {@do grasp},	
 	robot {@do move; x -80; y -240; angle -90; gap 30; step 3}
 
+# fill the bottle
 after {step 3} =>
 	action {@do start; thing belt1},
 	action {@do fill},
 	filled {@do wait}
 
+# move the filled bottle to the capping station in three steps
 filled {} =>
 	action {@do move; x -80; y -140; angle -90; gap 30; step 4}
 	
+# second step for move
 after {step 4} =>
 	action {@do move; x 90; y -160; angle -90; gap 30; step 5}
 	
+# third step for move
 after {step 5} =>
 	action {@do move; x 90; y -240; angle -90; gap 30; step 7}
 	
+# apply cap to bottle
 after {step 7} =>
 	action {@do cap},
 	capped {@do wait}
 
+# move capped bottle to box on belt 2 in two steps
 capped {} =>
 	action {@do move; x 90; y -160; angle -90; gap 30; step 8}
 	
+# second step for move
 after {step 8} =>
 	action {@do move; x 100; y -70; angle 0; gap 30; step 9}
 
+# determine when to pack bottle in the box
 after {step 9} =>
 	packingSpace {@do wait}
 	
+# move the bottle to the target space in two steps
 packingSpace {x ?x; y ?y} =>
 	robot {@do move; x 100; y ?y; angle 0; gap 30; step 10}
 	
+# second step for move
 after {step 10; x ?x; y ?y} =>
 	robot {@do move; x ?x; y ?y; angle 0; gap 30; step 11}
 	
+# release the bottle at the target position in the box
 after {step 11; x ?x; y ?y} =>
 	action {@do release},
 	boxFull {@do wait},
 	robot {@do move; x 100; y ?y; angle 0; gap 30; step 12}	
 
+# continue to get next empty bottle
 after {step 12} =>
 	full {@do wait; thing belt1}
 	
+# when the box is fill start belt2
 boxFull {} =>
 	action {@do start; thing belt2}
 	
