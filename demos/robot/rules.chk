@@ -72,7 +72,7 @@ capped {} =>
 after {step 8} =>
 	action {@do move; x 100; y -70; angle 0; gap 30; step 9}
 
-# determine when to pack bottle in the box
+# determine where to pack bottle in the box
 after {step 9} =>
 	packingSpace {@do wait}
 	
