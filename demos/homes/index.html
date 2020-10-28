@@ -50,10 +50,10 @@
 		color: maroon;
 	}
 
-	#model {
+	.figure {
 	    text-align: center
 	}
-	#model img {
+	.figure img {
 		width: 50%;
 		max-width: 50em;
 	}
@@ -110,7 +110,11 @@
 
 <p>See also <a href="../chunks.html">information on chunks and rules</a>.</p>
 
-<p>This demo was prepared for the <a href="https://aioti.eu/">AIOTI</a> WG 3 task force on semantic interoperability, and features a room with sensors for temperature, luminance and presence, and actuators for lighting and heating.</p>
+<p>This demo was prepared for the <a href="https://aioti.eu/">AIOTI</a> WG 3 task force on semantic interoperability, and features a room with sensors for temperature, luminance and presence, and actuators for lighting and heating.  A starting point was to devise a mindmap for the concepts involved as a precursor to designing the knowledge graph:</p>
+
+<div class="figure">
+<img src="images/smart-room.png" alt="mindmap of smart room concepts">
+</div>
 
 <p>The home's owners Janet and John have different preferences for the lighting hue and the desired room temperature, see the facts graph for details.</p>
 
@@ -120,7 +124,7 @@
 
 <p>The heating and cooling of the room is modelled as a pair of resistors and a capacitor, where the radiator temperature and the external temperature are modelled as voltage sources, leading to current flows into and out of the capacitor.</p>
 
-<div id="model"><img src="images/thermal-model.png" alt="thermal model of room as an electrical circuit"><br>
+<div class="figure"><img src="images/thermal-model.png" alt="thermal model of room as an electrical circuit"><br>
 i.e. δ T<sub>R</sub> = δ t (a (T<sub>H</sub>-T<sub>R</sub>) + b (T<sub>E</sub>-T<sub>R</sub>))
 </div>
 
@@ -161,7 +165,7 @@ person John {room room1}
 
 <div id="footnote">
 <hr>
-<p><img id="ec-logo" src="../../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
+<p><img id="ec-logo" src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
 </div>
 
 </body>
