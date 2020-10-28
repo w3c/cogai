@@ -142,8 +142,8 @@ person John {room room1}
 <p>The log shows the sequence of goals and rule firing, and discards older entries when it gets full. Goals are pushed when:</p>
 
 <ul>
-<li>when temperature rises above target plus 2°C: <em>room room1 {state tooHot}</em></li>
-<li>when temperature drops below target less 2°C: <em>room room1 {state tooCold}</em></li>
+<li>when temperature rises above target plus δ: <em>room room1 {state tooHot}</em></li>
+<li>when temperature drops below target less δ: <em>room room1 {state tooCold}</em></li>
 <li>when someone enters or leaves the room, e.g. <em>enter {person Janet}</em>, or <em>leave {person John}</em></li>
 <li>when the time of day changes, e.g. <em>clock {time evening}</em> or <em>clock {time night}</em></li>
 </ul>
@@ -155,7 +155,7 @@ person John {room room1}
 <li><em>action {@do lights; turn on; hue warm}</em> where you can turn the lights <em>on</em>, or <em>off</em>, and set the hue to either <em>warm</em>, or <em>cool</em></li>
 </ul>
 
-<p>Note that you don't have to provide all of the properties in given rule, as the properties you omit will be left unchanged, e.g. <em>action {@do thermostat; heating on}</em> turns the heating off without changing the target temperature. The radiator struggles to warm the room at night if thermostat is set high, although it is fine at a lower temperature.</p>
+<p>Note that you don't have to provide all of the properties in given rule, as the properties you omit will be left unchanged, e.g. <em>action {@do thermostat; heating on}</em> turns the heating on without changing the target temperature. The radiator struggles to warm the room at night if thermostat is set high, although it is fine at a lower temperature.</p>
 
 <p>An open question is what to do when the lights, hue, heating and target temperature are manually adjusted from the form fields. At the moment, these just update the facts and don't push any goals.</p>
 
