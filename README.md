@@ -33,6 +33,7 @@ We have a weekly zoom teleconference every Monday at 2pm Paris local time. This 
 * [Cognitive AI and the Sentient Web](https://www.w3.org/2020/sentient-web-20200608.pdf)
 * [Chunks format for declarative and procedural knowledge](chunks-and-rules.md)
 * [Demonstrators](demos/README.md)
+* [Frequently asked questions](faq.md)
 * [Longer treatise on Cognitive AI](https://www.w3.org/Data/demos/chunks/chunks.html)
 * [Contributing to the Cognitive AI Community Group](Contributing.md)
 
