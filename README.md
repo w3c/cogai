@@ -30,6 +30,7 @@ We have a weekly zoom teleconference every Monday at 2pm Paris local time. This 
 
 ## Background materials
 
+* [06 November 2020 Seminar on Cognitive AI to KMi](http://kmi.open.ac.uk/seminars/3552) -  [video](https://github.com/w3c/cogai/blob/master/faq.md) and [slides](https://www.w3.org/2020/CogAI-2020-11-06.pdf)
 * [Cognitive AI and the Sentient Web](https://www.w3.org/2020/sentient-web-20200608.pdf)
 * [Chunks format for declarative and procedural knowledge](chunks-and-rules.md)
 * [Demonstrators](demos/README.md)
