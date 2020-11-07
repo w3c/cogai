@@ -48,6 +48,10 @@ One the one hand, there has been decades of work in the cognitive sciences, e.g.
 
 Yes, and just like people, this is a matter of training. A well trained cognitive agent will do well with respect to the tasks it was designed for. Unlike people, trained cognitive agents can be trivially cloned as needed! Systems based upon logical deduction and formal semantics offer mathematic proof given assumptions and inference rules, but are intolerant of inconsistencies and unable to exploit the statistics of past experience. Cognitive AI, inspired by human reasoning, and a combination of graphs and statistics, focuses on what is useful based upon prior knowledge past experience in the face of uncertainty and inconsistency.
 
+## Will Cognitive AI put people out of work?
+
+In principle, Cognitive AI could be developed to replace both white collar and blue collar jobs. Taken to the extreme, this could cause massive unemployment with much of the population reliant on government welfare. Companies could evade the need by goverments to raise taxes by relocating to different jurisdictions. The economy would risk collapse as fewer and fewer people are available to pay for goods and services. To avoid this dystopian future, successful societies will need to introduce policies and regulations that focus on applying Cognitive AI for human computer collaboration, to boost productivity, and enable new kinds of products and services. This is very promising in relation to the likelihood of falling population numbers over the next 50 years, in combination with the need to preserve and enhance the quality of life as humankind moves to a sustainable approach to natural resources and enriching the natural environment.
+
 ## Is there a course on Cognitive AI?
 
 Sadly, not as yet, but you would be welcome to help with developing one. For now there are the talks, the introductory materials on GitHub, the web-based demos, including a sandbox for editing and executing chunks and rules in a web browser.
