@@ -54,7 +54,7 @@ In principle, Cognitive AI could be developed to replace both white collar and b
 
 ## Is there a course on Cognitive AI?
 
-Sadly, not as yet, but you would be welcome to help with developing one. For now there are the talks, the introductory materials on GitHub, the web-based demos, including a sandbox for editing and executing chunks and rules in a web browser.
+Sadly, not as yet, but you would be welcome to help with developing one. For now there are the talks, the introductory materials on GitHub, and the web-based demos, including a sandbox for editing and executing chunks and rules in a web browser.
 
 ## How can I get involved?
 
