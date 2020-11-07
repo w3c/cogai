@@ -46,7 +46,7 @@ One the one hand, there has been decades of work in the cognitive sciences, e.g.
 
 ## If Cognitive AI mimics human thought, does it make the same kinds of mistakes as humans?
 
-Yes, and just like people, this is a matter of training. A well trained cognitive agent will do well with respect to the tasks it was designed for. Unlike people, trained cognitive agents can be trivially cloned as needed! Systems based upon logical deduction and formal semantics offer mathematic proof given assumptions and inference rules, but are intolerant of inconsistencies and unable to exploit the statistics of past experience. Cognitive AI, inspired by human reasoning, and a combination of graphs and statistics, focuses on what is useful based upon prior knowledge past experience in the face of uncertainty and inconsistency.
+Yes, and just like people, this is a matter of training. A well trained cognitive agent will do well with respect to the tasks it was designed for. Unlike people, trained cognitive agents can be trivially cloned as needed! Systems based upon logical deduction and formal semantics offer mathematic proof given assumptions and inference rules, but are intolerant of inconsistencies and unable to exploit the statistics of past experience. Cognitive AI, inspired by human reasoning, and a combination of graphs and statistics, focuses on what is useful based upon prior knowledge and past experience in the face of uncertainty and inconsistency.
 
 ## Will Cognitive AI put people out of work?
 
