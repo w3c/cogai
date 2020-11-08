@@ -2,6 +2,20 @@
 
 This is a compilation of questions that have been asked after talks on Cognitive AI or through the public mailing list. Feel free to propose further questions via email to public-cogai@w3.org
 
+- [How does Cognitive AI relate to other approaches to AI?](#how-does-cognitive-ai-relate-to-other-approaches-to-ai)
+- [What is the type in each chunk?](#what-is-the-type-in-each-chunk)
+- [How does Cognitive AI cope with uncertainty in input?](#how-does-cognitive-ai-cope-with-uncertainty-in-input)
+- [How does Cognitive AI learn from examples?](#how-does-cognitive-ai-learn-from-examples)
+- [How are rules learned in Cognitive AI?](#how-are-rules-learned-in-cognitive-ai)
+- [How does Cognitive AI compare to Computational Linguistics and to BERT in respect to NLP?](#how-does-cognitive-ai-compare-to-computational-linguistics-and-to-bert-in-respect-to-nlp)
+- [Are there any benchmarks for Cognitive AI?](#are-there-any-benchmarks-for-cognitive-ai)
+- [How can performance be scaled up?](#how-can-performance-be-scaled-up)
+- [How mature is Cognitive AI?](#how-mature-is-cognitive-ai)
+- [If Cognitive AI mimics human thought, does it make the same kinds of mistakes as humans?](#if-cognitive-ai-mimics-human-thought-does-it-make-the-same-kinds-of-mistakes-as-humans)
+- [Will Cognitive AI put people out of work?](#will-cognitive-ai-put-people-out-of-work)
+- [Is there a course on Cognitive AI?](#is-there-a-course-on-cognitive-ai)
+- [How can I get involved?](#how-can-i-get-involved)
+
 ## How does Cognitive AI relate to other approaches to AI?
 
 Good old fashioned AI (e.g. expert systems and the semantic web) is based upon symbolic representations, but not statistics. Deep Learning embodies statistics, but not symbols, where statistics act as a weak surrogate for semantics. Cognitive AI embodies both symbols and statistics with explicit representation of semantics, and furthermore seeks inspiration from across the disciplines of the cognitive sciences, as there is a lot to gain from over 500 million years of neural evolution.
