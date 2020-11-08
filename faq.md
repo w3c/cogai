@@ -8,11 +8,11 @@ Good old fashioned AI (e.g. expert systems and the semantic web) is based upon s
 
 Old fashioned AI requires manual development of knowledge which acts as a straitjacket when it comes to scaling up. In addition, it has difficulties with uncertainties and inconsistencies. Deep Learning has been very successful, and is good for scaling, but learns very slowly compared to humans, requiring  large training sets, and suffers from a lack of explainability, a lack of understanding of salience, a lack of generality and an inability to support higher level reasoning. Cognitive AI, by contrast, seeks to mimic human abilities, using prior knowledge and past experience to speed learning, symbolic representations for reasoning and explanations, and metacognition for generality.
 
+The different approaches to AI are largely complementary. Deep Learning is useful for processing raw sensory data, e.g. images, video and speech. Symbolic AI is useful for agreements on interoperability where communities need standard vocabularies and models for conducting business. In the long run, the boundaries between the different approaches are likely to blur, for instance, a new generation of Deep Learning that more closely mimics human perception for its generality. The blending of symbols and statistics will be needed for scaling up AI systems in the transition to general purpose AI.
+
 ## What is the type in each chunk?
 
 The notion of the chunk type is a loose one and provides a way to name a collection of chunks that have something in common. It may be the case that all such chunks must satisfy some ontological constraint, on the other hand, it could be an informal grouping. This corresponds to the distinction between an intensional definition and an extensional definition. Inductive reasoning provides a way to learn models that describe regularities across members of groups.
-
-The different approaches to AI are largely complementary. Deep Learning is useful for processing raw sensory data, e.g. images, video and speech. Symbolic AI is useful for agreements on interoperability where communities need standard vocabularies and models for conducting business. In the long run, the boundaries between the different approaches are likely to blur, for instance, a new generation of Deep Learning that more closely mimics human perception for its generality. The blending of symbols and statistics will be needed for scaling up AI systems in the transition to general purpose AI.
 
 ## How does Cognitive AI cope with uncertainty in input?
 
