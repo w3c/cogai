@@ -2,6 +2,10 @@
 
 This is a compilation of questions that have been asked after talks on Cognitive AI or through the public mailing list. Feel free to propose further questions via email to public-cogai@w3.org
 
+## How does Cognitive AI relate to other approaches to AI?
+
+Good old fashioned AI (e.g. expert systems and the semantic web) is based upon symbolic representations but not statistics. Deep Learning embodies statistics but not symbols, where statistics act as a weak surogate for semantics. Cognitive AI embodies both symbols and statistics with explicit representation of semantics, and furthermore seeks inspiration from across the disciplines of the cognitive sciences, as there is a lot to gain from over 500 million years of neural evolution. Old fashioned AI requires manual development of knowledge which acts as a straitjacket when it comes to scaling up. In addition, it has difficulties with uncertainties and inconsistencies. Deep Learning has been very successful, and is good for scaling, but learns very slowly compared to humans, requiring  large training sets, and suffers from a lack of explainability, a lack of understanding of salience, a lack of generality and an inability to support higher level reasoning. Cognitive AI, by contrast, seeks to mimic human abilities, using prior knowledge and past experience to speed learning, symbolic representations for reasoning and explanations, and metacognition for generality.
+
 ## What is the type in each chunk?
 
 The notion of the chunk type is a loose one and provides a way to name a collection of chunks that have something in common. It may be the case that all such chunks must satisfy some ontological constraint, on the other hand, it could be an informal grouping. This corresponds to the distinction between an intensional definition and an extensional definition. Inductive reasoning provides a way to learn models that describe regularities across members of groups.
