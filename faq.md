@@ -54,6 +54,18 @@ Cognitive AI, by contrast seeks to mimic what is known about how people process 
 
 Pronouns usually refer to something introduced earlier in the utterance. However, the correct binding of a pronoun to its referent may depend on the words that occur following the pronoun. This can be addressed by associating the pronoun with a superposition of states that is resolved upon encountering subsequent words that constrain the likely meaning. A similar process is used to resolve the bindings of prepositions in terms of concurrent asynchronous search at both the syntactic and semantic layers, using continuation based threaded execution. The syntactic phrase structure is generated through simple robust shift-reduce parsing. The mapping between syntax and semantics is accounted for using paired if-then rules at the syntactic and semantic layers, with shared statistics for natural language understanding and generation. The ability to learn language involves generalisation from examples and figuring out which generalisations are useful given subsequent experience.
 
+## How can large data sets be processed if buffers hold single chunks?
+
+The rule engine for the cortico-basal ganglia circuit operates on module buffers that hold single chunks corresponding to the concurrent firing patterns of bundles of nerves connecting to particular cortical regions. The rule engine directly supports queries for single chunks according to its identifier or its property values, along with the means to iterate over matching chunks, or over the properties of the chunk in a module buffer.
+
+Modules may provide support for more complex queries that are specified as chunks in the module's graph, and either apply an operation to matching chunks, or generate a result set of chunks in the graph and pass this to the module buffer for rules to iterate over. In this manner, chunk rules can have access to complex queries capable of set operations over many chunks, analogous to RDF's SPARQL query language. The specification of such a chunk query language is left to future work, and could build upon existing work on [representing SPARQL queries directly in RDF](https://www.w3.org/Data/demos/chunks/patterns.html).
+
+A further opportunity would be to explore queries and rules where the conditions are expressed in terms of augmented transition networks (ATNs), which loosely speaking are analogous to RDF's SHACL graph constraint language. ATNs were developed in the 1970's for use with natural language and lend themselves to simple graphical representations. This has potential for rules that apply transformations to sets of sub-graphs rather than individual chunks, and could build upon existing work on the [RDF shape rules language](https://www.w3.org/WoT/demos/shrl/test.html) (SHRL).
+
+There are further opportunities for exploiting efficient graph algorithms such as Levinson and Ellis's solution for searching a lattice of graphs in logarithmic time, see John Sowa's [summary of graph algorithms](http://www.jfsowa.com/pubs/arch.htm). A further consideration is how to support distributed graph algorithms across multiple cognitive modules that may be remote from one another. This relates to work by Sharon Thompson-Schill on a hub and spoke model for how the anterior temporal lobe integrates unimodal information from different cortical regions.
+
+n.b. nature also invented the [page rank algorithm](https://en.wikipedia.org/wiki/PageRank) as a basis for ranking memories for recall from the cortex based upon spreading activation from other memories.
+
 ## Are there any benchmarks for Cognitive AI?
 
 Not as yet. These could be qualitative benchmarks that demonstrate particular capabilities, or quantitive benchmarks in respect to performance. Benchmarks are related to roadmaps, and play a role in prioritising research and development goals.
@@ -76,7 +88,7 @@ In principle, Cognitive AI could be developed to replace both white collar and b
 
 ## Is there a course on Cognitive AI?
 
-Sadly, not as yet, but you would be welcome to help with developing one. For now there are the talks, the introductory materials on GitHub, and the web-based demos, including a sandbox for editing and executing chunks and rules in a web browser.
+Sadly, not as yet, but you would be welcome to help with developing one. For now there are the talks, the introductory materials on GitHub, and the web-based demos, including a test suite and a sandbox for editing and executing chunks and rules in a web browser, along with local storage.
 
 ## How can I get involved?
 
