@@ -2,6 +2,7 @@
 
 This is a compilation of questions that have been asked after talks on Cognitive AI or through the public mailing list. Feel free to propose further questions via email to public-cogai@w3.org
 
+- [Is Cognitive AI a comprehensive model of the brain?](#is-cognitive-ai-a-comprehensive-model-of-the-brain)
 - [How does Cognitive AI relate to other approaches to AI?](#how-does-cognitive-ai-relate-to-other-approaches-to-ai)
 - [What is the type in each chunk?](#what-is-the-type-in-each-chunk)
 - [How does Cognitive AI cope with uncertainty in input?](#how-does-cognitive-ai-cope-with-uncertainty-in-input)
@@ -17,6 +18,10 @@ This is a compilation of questions that have been asked after talks on Cognitive
 - [Will Cognitive AI put people out of work?](#will-cognitive-ai-put-people-out-of-work)
 - [Is there a course on Cognitive AI?](#is-there-a-course-on-cognitive-ai)
 - [How can I get involved?](#how-can-i-get-involved)
+
+## Is Cognitive AI a comprehensive model of the brain?
+
+No, Cognitive AI is not trying to model the brain completely, as for one thing, the brain is very complex and there is lots more to learn. Instead, the idea is to exploit progress in the cognitive sciences to mimic key capabilities, e.g. memory, reasoning and learning, and to refine this over time as more is learned. Given this, Cognitive AI only needs to model the functional characteristics of major systems from a computational perspective, rather than trying to emulate the brain at the level of individual nerve cells and synapses.
 
 ## How does Cognitive AI relate to other approaches to AI?
 
