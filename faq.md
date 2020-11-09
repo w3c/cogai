@@ -8,6 +8,7 @@ This is a compilation of questions that have been asked after talks on Cognitive
 - [How does Cognitive AI learn from examples?](#how-does-cognitive-ai-learn-from-examples)
 - [How are rules learned in Cognitive AI?](#how-are-rules-learned-in-cognitive-ai)
 - [How does Cognitive AI compare to Computational Linguistics and to BERT in respect to NLP?](#how-does-cognitive-ai-compare-to-computational-linguistics-and-to-bert-in-respect-to-nlp)
+- [How can large data sets be processed if buffers hold single chunks?](#how-can-large-data-sets-be-processed-if-buffers-hold-single-chunks)
 - [Are there any benchmarks for Cognitive AI?](#are-there-any-benchmarks-for-cognitive-ai)
 - [How can performance be scaled up?](#how-can-performance-be-scaled-up)
 - [How mature is Cognitive AI?](#how-mature-is-cognitive-ai)
