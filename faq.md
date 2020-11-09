@@ -7,6 +7,7 @@ This is a compilation of questions that have been asked after talks on Cognitive
 - [How does Cognitive AI cope with uncertainty in input?](#how-does-cognitive-ai-cope-with-uncertainty-in-input)
 - [How does Cognitive AI learn from examples?](#how-does-cognitive-ai-learn-from-examples)
 - [How are rules learned in Cognitive AI?](#how-are-rules-learned-in-cognitive-ai)
+- [How can Cognitive AI reason about contexts?](#how-can-cognitive-ai-reason-about-contexts)
 - [How does Cognitive AI compare to Computational Linguistics and to BERT in respect to NLP?](#how-does-cognitive-ai-compare-to-computational-linguistics-and-to-bert-in-respect-to-nlp)
 - [How can large data sets be processed if buffers hold single chunks?](#how-can-large-data-sets-be-processed-if-buffers-hold-single-chunks)
 - [Are there any benchmarks for Cognitive AI?](#are-there-any-benchmarks-for-cognitive-ai)
@@ -42,6 +43,10 @@ This is essentially explanation based, i.e. where the cognitive agent seeks to e
 ## How are rules learned in Cognitive AI?
 
 Rule sets can be acquired in two ways: through manual development or through hierarchical reinforcement learning. The latter involves heuristics for proposing new rules or updates to existing rules. The success or failure of a rule set on a given task can then be used to update the expected utility of a particular rule for that task.  Task repetition then propagates these corrections back through the chain of rules used to execute that task. Case based reasoning, including reasoning by analogy and metacognition can be used to break tasks into sub-tasks and to make better use of prior knowledge and past experience, avoiding the need to learn from scratch. The chunks rule language includes native support for segregating rules by tasks.
+
+## How can Cognitive AI reason about contexts?
+
+Beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns involve the use of statements about statements. Moreover, a common need is to be able to able to express things that are true in a specific context rather than holding generally. The solution is to use named contexts in both chunks and rules for reasoning about contexts. For example, you define a context to record what is true for a particular episode, e.g. when visiting a restaurant for lunch, you sat by the window, you had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can be then modelled as relationships between contexts, and used for inductive learning. Another usage is to describe the beliefs of people in a novel or TV drama, e.g. Jane believes that John lied to her about where he was last night.
 
 ## How does Cognitive AI compare to Computational Linguistics and to BERT in respect to NLP?
 
