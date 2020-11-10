@@ -2,6 +2,7 @@
 
 This is a compilation of questions that have been asked after talks on Cognitive AI or through the public mailing list. Feel free to propose further questions via email to public-cogai@w3.org
 
+- [How does Cognitive AI relate to Cognitive Computing?](#how-does-cognitive-ai-relate-to-cognitive-computing)
 - [Is Cognitive AI a comprehensive model of the brain?](#is-cognitive-ai-a-comprehensive-model-of-the-brain)
 - [How does Cognitive AI relate to other approaches to AI?](#how-does-cognitive-ai-relate-to-other-approaches-to-ai)
 - [What is the type in each chunk?](#what-is-the-type-in-each-chunk)
@@ -18,6 +19,13 @@ This is a compilation of questions that have been asked after talks on Cognitive
 - [Will Cognitive AI put people out of work?](#will-cognitive-ai-put-people-out-of-work)
 - [Is there a course on Cognitive AI?](#is-there-a-course-on-cognitive-ai)
 - [How can I get involved?](#how-can-i-get-involved)
+
+
+## How does Cognitive AI relate to Cognitive Computing?
+
+The term Cognitive Computing has been popularised by IBM in respect to their cognitive computer system, "Watson". They define Cognitive Computing as systems that learn at scale, reason with purpose and interact with humans naturally. It is a mixture of computer science and cognitive science – that is, the understanding of the human brain and how it works. By means of self-teaching algorithms that use data mining, visual recognition, and natural language processing, the computer is able to solve problems and thereby optimize human processes. Quoted from Peter Sommer's 2017 blog post on [Artificial Intelligence, Machine Learning and Cognitive Computing](https://www.ibm.com/blogs/nordic-msp/artificial-intelligence-machine-learning-cognitive-computing/).
+
+Cognitive AI aims to mimic human memory, reasoning and learning, inspired by advances in the cognitive sciences and over 500 million years of neural evolution. This involves a mix of symbolic and sub-symbolic approaches, i.e. graphs, statistics, rules and graph algorithms. We can mimic the brain at a functional level using conventional computer technology rather than explicitly using artificial neurons. Whilst both terms Cognitive AI and Cognitive Computing overlap in meaning, the emphasis in Cognitive AI is on functionally modelling human thought as a means to realise practical systems for artificial intelligence.
 
 ## Is Cognitive AI a comprehensive model of the brain?
 
@@ -99,7 +107,7 @@ In principle, Cognitive AI could be developed to replace both white collar and b
 
 ## Is there a course on Cognitive AI?
 
-Sadly, not as yet, but you would be welcome to help with developing one. For now there are the talks, the introductory materials on GitHub, and the web-based demos, including a test suite and a sandbox for editing and executing chunks and rules in a web browser, along with local storage.
+There are plenty of courses on Cognitive Science and its associated disciplines, but none as yet for Cognitive AI as described in these pages. Your help would be welcome for developing one. For now, there are the talks, the introductory materials on GitHub, and the web-based demos, including a test suite and a sandbox for editing and executing chunks and rules in a web browser, along with local storage.
 
 ## How can I get involved?
 
