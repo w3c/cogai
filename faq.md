@@ -95,7 +95,7 @@ Cortical operations on graph databases can be executed in parallel. The cortico-
 
 ## How mature is Cognitive AI?
 
-One the one hand, there has been decades of work in the cognitive sciences, e.g. on cognitive architectures such as ACT-R. On the other hand, most of that work has focused on research goals specific to particular disciplines. Cognitive AI seeks to build upon the insights gained over the decades in the cognitive sciences, and to apply it to AI.  This is relatively new and consequently still immature, but rapid progress is possible through incremental work on an expanding suite of capabilities.  See the discussion of the roadmap in the GitHub pages for the W3C Cognitive AI Community Group.
+On the one hand, there has been decades of work in the cognitive sciences, e.g. on cognitive architectures such as ACT-R. On the other hand, most of that work has focused on research goals specific to particular disciplines. Cognitive AI seeks to build upon the insights gained over the decades in the cognitive sciences, and to apply it to AI.  This is relatively new and consequently still immature, but rapid progress is possible through incremental work on an expanding suite of capabilities.  See the discussion of the roadmap in the GitHub pages for the W3C Cognitive AI Community Group.
 
 ## If Cognitive AI mimics human thought, does it make the same kinds of mistakes as humans?
 
