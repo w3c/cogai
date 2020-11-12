@@ -29,7 +29,7 @@ Cognitive AI aims to mimic human memory, reasoning and learning, inspired by adv
 
 ## Is Cognitive AI a comprehensive model of the brain?
 
-No, Cognitive AI is not trying to model the brain completely, as for one thing, the brain is very complex and there is lots more to learn. Instead, the idea is to exploit progress in the cognitive sciences to mimic key capabilities, e.g. memory, reasoning and learning, and to refine this over time as more is learned. Given this, Cognitive AI only needs to model the functional characteristics of major systems from a computational perspective, rather than trying to emulate the brain at the level of individual nerve cells and synapses.
+No, Cognitive AI is not trying to model the brain completely, as for one thing, the brain is very complex and there is lots more to learn. Instead, the idea is to exploit progress in the cognitive sciences to mimic key capabilities, e.g. memory, reasoning and learning, and to refine this over time from further advances in the cognitive sciences. Given this, Cognitive AI only needs to model the functional characteristics of major systems from a computational perspective, rather than trying to emulate the brain at the level of individual nerve cells and synapses.
 
 ## How does Cognitive AI relate to other approaches to AI?
 
