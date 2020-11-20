@@ -5,6 +5,7 @@ This is a compilation of questions that have been asked after talks on Cognitive
 - [How does Cognitive AI relate to Cognitive Computing?](#how-does-cognitive-ai-relate-to-cognitive-computing)
 - [Is Cognitive AI a comprehensive model of the brain?](#is-cognitive-ai-a-comprehensive-model-of-the-brain)
 - [How does Cognitive AI relate to other approaches to AI?](#how-does-cognitive-ai-relate-to-other-approaches-to-ai)
+- [How do Chunks relate to RDF and Property Graphs?](#how-do-chunks-relate-to-rdf-and-property-graphs)
 - [What is the type in each chunk?](#what-is-the-type-in-each-chunk)
 - [How does Cognitive AI cope with uncertainty in input?](#how-does-cognitive-ai-cope-with-uncertainty-in-input)
 - [How does Cognitive AI learn from examples?](#how-does-cognitive-ai-learn-from-examples)
@@ -40,6 +41,16 @@ Old fashioned AI requires manual development of knowledge which acts as a strait
 Traditional approaches to meaning have been based on the Aristotelian tradition of logic, formal semantics and model theory. This deals with what is provably true given a set of assumptions and inference rules. This approach underpins the Semantic Web and ontologies based upon OWL. It can be contrasted with studies of human reasoning. Philip Johnson-Laird for instance, notes that humans don't rely on the laws of logic and probability, but rather by thinking about what is possible. In other words, rather than reasoning based on mathematical proof, we consider examples and how they fit the problem under consideration. As work in cognitive linguistics has shown, we often use metaphors and analogies as a basis for thought. We also use simple rules of inference in situations where such rules have been found to be appropriate. Such rules are part of the mix of declarative and procedural knowledge we bring to bear on particular tasks.
 
 The different approaches to AI are largely complementary. Deep Learning is useful for processing raw sensory data, e.g. images, video and speech. Symbolic AI is useful for agreements on interoperability where communities need standard vocabularies and models for conducting business. In the long run, the boundaries between the different approaches are likely to blur, for instance, a new generation of Deep Learning that more closely mimics human perception for its generality. The blending of symbols and statistics will be needed for machine learning for scaling up AI systems in the transition to general purpose AI.
+
+## How do Chunks relate to RDF and Property Graphs?
+
+The Resource Description Framework (RDF) provides a means to define graphs in terms of directed links between nodes. Each link is a triple with the subject, predicate (i.e. link type) and object. RDF databases are thus known as *triple stores*. By contrast, Property Graphs are formed from nodes, links and properties. Nodes and links can have properties, and properties can have sub-properties, but properties can’t act as links.
+
+Chunks can link to other chunks via properties, but you are also free to express links as separate chunks that reference the subject and object of that link as properties. This is a representational choice in whether links are treated as part of objects or independently as objects in their own right. In either case, you can use additional properties as needed to annotate a link.
+
+Sometimes you want to annotate links, e.g. for a link denoting a relationship between an employer and an employee, you could add the state date for employment, and later add the end date when the employee leaves that company. Adding such annotations is simple enough for Chunks and Property Graphs, but a little more complicated for RDF, as there is no direct means to reference a triple. Instead, you need to introduce a node in its place with links to the subject, predicate and object, in a process referred to *reification*. 
+
+RDF nodes and link types are named with either URIs (web addresses) or locally scoped identifiers for what are called blank nodes. An advantage of URIs is that they provide globally unique names which can help with interoperability. The Chunks graph data and rules language provides a means to map names to URIs for easier integration with RDF based systems.
 
 ## What is the type in each chunk?
 
