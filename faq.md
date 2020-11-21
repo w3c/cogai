@@ -124,6 +124,8 @@ In principle, Cognitive AI could be developed to replace both white collar and b
 
 There are plenty of courses on Cognitive Science and its associated disciplines, but none as yet for Cognitive AI as described in these pages. Your help would be welcome for developing one. For now, there are the talks, the introductory materials on GitHub, and the web-based demos, including a test suite and a sandbox for editing and executing chunks and rules in a web browser, along with local storage.
 
+* [25 November 2020 Seminar on Cognitive AI](https://www.w3.org/2020/CogAI-2020-11-25.pdf) for the Centre for Artificial Intelligence, Robotics and Human-Machine Systems, Cardiff University
+
 ## How can I get involved?
 
 Please join the W3C Cognitive AI Community Group where your help will be welcomed, see [guidelines for contributors](Contributing.md). Participation is open to all, free of charge: [join group](https://www.w3.org/community/cogai/join).
