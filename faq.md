@@ -12,9 +12,9 @@ This is a compilation of questions that have been asked after talks on Cognitive
 - [How are rules learned in Cognitive AI?](#how-are-rules-learned-in-cognitive-ai)
 - [How can Cognitive AI reason about contexts?](#how-can-cognitive-ai-reason-about-contexts)
 - [How does Cognitive AI compare to Computational Linguistics and to BERT in respect to NLP?](#how-does-cognitive-ai-compare-to-computational-linguistics-and-to-bert-in-respect-to-nlp)
-- [How can large data sets be processed if buffers hold single chunks?](#how-can-large-data-sets-be-processed-if-buffers-hold-single-chunks)
 - [Are there any benchmarks for Cognitive AI?](#are-there-any-benchmarks-for-cognitive-ai)
 - [How can performance be scaled up?](#how-can-performance-be-scaled-up)
+- [How can large data sets be processed efficiently if buffers hold single chunks?](#how-can-large-data-sets-be-processed-efficiently-if-buffers-hold-single-chunks)
 - [How mature is Cognitive AI?](#how-mature-is-cognitive-ai)
 - [If Cognitive AI mimics human thought, does it make the same kinds of mistakes as humans?](#if-cognitive-ai-mimics-human-thought-does-it-make-the-same-kinds-of-mistakes-as-humans)
 - [Will Cognitive AI put people out of work?](#will-cognitive-ai-put-people-out-of-work)
@@ -72,7 +72,7 @@ Rule sets can be acquired in two ways: through manual development or through hie
 
 ## How can Cognitive AI reason about contexts?
 
-Beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns involve the use of statements about statements. Moreover, a common need is to be able to able to express things that are true in a specific context rather than holding generally. The solution is to use named contexts in both chunks and rules for reasoning about contexts. For example, you can define a context to record what is true for a particular episode/situation, e.g. when visiting a restaurant for lunch, you sat by the window, you had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can be then modelled as relationships between contexts, and used for inductive learning. Another usage is to describe the beliefs of people in a novel or TV drama, e.g. Jane believes that John lied to her about where he was last night. This is important in respect to being able to implement a [theory of mind](https://en.wikipedia.org/wiki/Theory_of_mind).
+Beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns involve the use of statements about statements. Moreover, a common need is to be able to able to express things that are true in a specific context rather than being true generally. The solution is to use named contexts in both chunks and rules for reasoning about contexts. For example, you can define a context to record what is true for a particular episode/situation, e.g. when visiting a restaurant for lunch, you sat by the window, you had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can be then modelled as relationships between contexts, and used for inductive learning. Another usage is to describe the beliefs of people in a novel or TV drama, e.g. Jane believes that John lied to her about where he was last night. This is important in respect to being able to implement a [theory of mind](https://en.wikipedia.org/wiki/Theory_of_mind).
 
 ## How does Cognitive AI compare to Computational Linguistics and to BERT in respect to NLP?
 
@@ -88,7 +88,15 @@ Pronouns usually refer to something introduced earlier in the utterance. However
 
 Cognitive Linguistics is a theoretical framework combining knowledge and research from cognitive psychology, neuropsychology and linguistics. Words are interpreted in context to construct semantic models of communication acts, based upon the shared knowledge of both speaker and listener. The meanings of words are often fuzzy, and to be interpreted in context, in terms of conceptual metaphors that allow complex ideas to be understood in terms of simpler and more concrete ideas. Common patterns of speech embody metaphors, but don't rely on abstract reasoning, as over time, the meaning becomes directly associated with the speech pattern, akin to compiling declarative knowledge into procedural knowledge.
 
-## How can large data sets be processed if buffers hold single chunks?
+## Are there any benchmarks for Cognitive AI?
+
+Not as yet. These could be qualitative benchmarks that demonstrate particular capabilities, or quantitive benchmarks in respect to performance. Benchmarks are related to roadmaps, and play a role in prioritising research and development goals.
+
+## How can performance be scaled up?
+
+Cortical operations on graph databases can be executed in parallel. The cortico-basal ganglia circuit corresponds to a sequential rule engine. Simple implementations slow down with increasing number of facts and rules. It would be impractically slow if the rules were to operate directly on a large database. The solution is to have the rules operate on a relatively small number of cortical buffers that each hold a single chunk, and to compile rule conditions into a discrimination network that efficiently maps the buffer states to the set of rules with matching conditions. This is analogous to Charles Forgy's [Rete algorithm](https://en.wikipedia.org/wiki/Rete_algorithm) which can be further accelerated with massively parallel hardware using GPUs, see [Peters 2014](https://www.semanticscholar.org/paper/Scaling-Parallel-Rule-Based-Reasoning-Peters-Brink/b7634bf30d60fef3d8b04929d570ff949221e5ee). The next step is to determine the best matching rule, and then to execute its actions. This is a stochastic process influenced by past experience. In the human brain it is thought that the discrimination network corresponds to the Striatum, the rule selection stage to the Pallidum, and rule execution to the Thalamus. The cycle of rule execution is estimated to be approximately 50 milliseconds.  Cortical operations are executed asynchronously and can take considerably longer.
+
+## How can large data sets be processed efficiently if buffers hold single chunks?
 
 The rule engine for the cortico-basal ganglia circuit operates on module buffers that hold single chunks corresponding to the concurrent firing patterns of bundles of nerves connecting to particular cortical regions. The rule engine directly supports queries for single chunks according to its identifier or its property values, along with the means to iterate over matching chunks, or over the properties of the chunk in a module buffer.
 
@@ -100,17 +108,9 @@ There are further opportunities for exploiting efficient graph algorithms such a
 
 n.b. nature also invented the [page rank algorithm](https://en.wikipedia.org/wiki/PageRank) as a basis for ranking memories for recall from the cortex based upon spreading activation from other memories.
 
-## Are there any benchmarks for Cognitive AI?
-
-Not as yet. These could be qualitative benchmarks that demonstrate particular capabilities, or quantitive benchmarks in respect to performance. Benchmarks are related to roadmaps, and play a role in prioritising research and development goals.
-
-## How can performance be scaled up?
-
-Cortical operations on graph databases can be executed in parallel. The cortico-basal ganglia circuit corresponds to a sequential rule engine. Simple implementations slow down with increasing number of facts and rules. It would be impractically slow if the rules were to operate directly on a large database. The solution is to have the rules operate on a relatively small number of cortical buffers that each hold a single chunk, and to compile rule conditions into a discrimination network that efficiently maps the buffer states to the set of rules with matching conditions. This is analogous to Charles Forgy's [Rete algorithm](https://en.wikipedia.org/wiki/Rete_algorithm) which can be further accelerated with massively parallel hardware using GPUs, see [Peters 2014](https://www.semanticscholar.org/paper/Scaling-Parallel-Rule-Based-Reasoning-Peters-Brink/b7634bf30d60fef3d8b04929d570ff949221e5ee). The next step is to determine the best matching rule, and then to execute its actions. This is a stochastic process influenced by past experience. In the human brain it is thought that the discrimination network corresponds to the Striatum, the rule selection stage to the Pallidum, and rule execution to the Thalamus. The cycle of rule execution is estimated to be approximately 50 milliseconds.  Cortical operations are executed asynchronously and can take considerably longer.
-
 ## How mature is Cognitive AI?
 
-On the one hand, there has been decades of work in the cognitive sciences, e.g. on cognitive architectures such as [ACT-R](http://act-r.psy.cmu.edu/about/). On the other hand, most of that work has focused on research goals specific to particular disciplines. Cognitive AI seeks to build upon the insights gained over the decades in the cognitive sciences, and to apply it to AI.  This is relatively new and consequently still immature, but rapid progress is possible through incremental work on an expanding suite of capabilities.  See the discussion of the roadmap in the GitHub pages for the W3C Cognitive AI Community Group.
+On the one hand, there has been decades of work in the cognitive sciences, e.g. on cognitive architectures such as [ACT-R](http://act-r.psy.cmu.edu/about/). On the other hand, most of that work has focused on research goals specific to particular disciplines. Cognitive AI seeks to build upon the insights gained over the decades in the cognitive sciences, and to apply it to AI.  This is relatively new and consequently still immature, but rapid progress is possible through incremental work on an expanding suite of capabilities.  See the discussion of the roadmap for [work on demonstrators](demos/README.md) in the GitHub pages for the W3C Cognitive AI Community Group.
 
 ## If Cognitive AI mimics human thought, does it make the same kinds of mistakes as humans?
 
