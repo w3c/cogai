@@ -44,7 +44,7 @@ The different approaches to AI are largely complementary. Deep Learning is usefu
 
 ## How do Chunks relate to RDF and Property Graphs?
 
-The Resource Description Framework (RDF) provides a means to define graphs in terms of directed links between nodes. Each link is a triple with the subject, predicate (i.e. link type) and object. RDF databases are thus known as *triple stores*. By contrast, Property Graphs are formed from nodes, links and properties. Nodes and links can have properties, and properties can have sub-properties, but properties can’t act as links.
+The Resource Description Framework (RDF) provides a means to define graphs in terms of directed links between nodes. Each link is a triple with the subject, predicate (i.e. link type) and object. RDF databases are thus known as *triple stores*. By contrast, Property Graphs are formed from nodes, links and properties. Nodes and links can have properties, but properties can’t act as links.
 
 Chunks can link to other chunks via properties, but you are also free to express links as separate chunks that reference the subject and object of that link as properties. This is a representational choice in whether links are treated as part of objects or independently as objects in their own right. In either case, you can use additional properties as needed to annotate a link.
 
