@@ -126,4 +126,4 @@ There are plenty of courses on Cognitive Science and its associated disciplines,
 
 ## How can I get involved?
 
-Please join the W3C Cognitive AI Community Group where your help will be welcomed. Participation is open to all, free of charge: [join group](https://www.w3.org/community/cogai/join).
+Please join the W3C Cognitive AI Community Group where your help will be welcomed, see [guidelines for contributors](Contributing.md). Participation is open to all, free of charge: [join group](https://www.w3.org/community/cogai/join).
