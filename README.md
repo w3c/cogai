@@ -31,7 +31,7 @@ We have a weekly zoom teleconference every Monday at 2pm Paris local time. This 
 ## Background materials
 
 * Talks
-  * [25 November 2020 - Seminar on Cognitive AI for Centre for Artificial Intelligence, Robotics and Human-Machine Systems, Cardiff University](https://www.w3.org/2020/CogAI-2020-11-25.pdf)
+  * 25 November 2020 - Seminar on Cognitive AI for Centre for Artificial Intelligence, Robotics and Human-Machine Systems, Cardiff University: [slides](https://www.w3.org/2020/CogAI-2020-11-25.pdf), [video](https://www.youtube.com/watch?v=gJiDi3lqwcA&feature=youtu.be)
   * [06 November 2020 - Seminar on Cognitive AI for Knowledge Media Institute, Open University](http://kmi.open.ac.uk/seminars/3552) -  [video](https://github.com/w3c/cogai/blob/master/faq.md) and [slides](https://www.w3.org/2020/CogAI-2020-11-06.pdf)
   * [08 June 2020 - Cognitive AI and the Sentient Web for ISO/TC 211 50th Plenary meeting, WG4 Geospatial Services](https://www.w3.org/2020/sentient-web-20200608.pdf)
 * [Chunks format for declarative and procedural knowledge](chunks-and-rules.md)
