@@ -1,6 +1,18 @@
 # W3C Cognitive AI Community Group
 This repository is for work by the [W3C Cognitive AI Community Group](https://www.w3.org/community/cogai/).
 
+## Table of contents
+
+ - [Introduction](#introduction)
+ - [Background materials](#background-materials)
+ - [Program of work](#program-of-work)
+ - [Positioning relative to existing approaches to AI](#positioning-relative-to-existing-approaches-to-ai)
+ - [Historical context](#historical-context)
+ - [Cognitive Architecture](#cognitive-architecture)
+ - [Long Term Aims](#long-term-aims)
+  
+## Introduction
+
 According to [wikipedia](https://en.wikipedia.org/wiki/Cognitive_science):
 
 <blockquote>
