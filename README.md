@@ -42,7 +42,7 @@ We have a weekly zoom teleconference slot every Monday at 2pm Paris local time. 
 
 ## Program of work
 
-The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. We also are working on a formal specification of the chunk data and rules format with a view to its standardisation.
+The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. We also are working on a [formal specification of the chunk data and rules format](https://w3c.github.io/cogai/) with a view to its standardisation.
 
 ## Positioning relative to existing approaches to AI
 
