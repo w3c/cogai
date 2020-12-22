@@ -44,6 +44,14 @@ We have a weekly zoom teleconference every Monday at 2pm Paris local time. This 
 
 The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. We also are working on a formal specification of the chunk data and rules format with a view to its standardisation.
 
+## Positioning relative to existing approaches to AI
+
+Traditional AI focuses on symbolic representations of knowledge and on mathematical logic, e.g. Expert Systems and the Semantic Web. Deep Learning, by contrast, focuses on statistical models implemented as multi-layer neural networks. Both approaches have their weaknesses. Symbolic AI has difficulties with the uncertainties and inconsistencies commonplace in everyday situations. The reliance on manual knowledge engineering is a big bottleneck.  Deep Learning has problems with recognising what’s salient, the need for very large data sets for training, and difficulties with generalisation. Symbolic AI and Deep Learning are associated with siloed communities that typify modern science in which researchers are discouraged from interdisciplinary studies.
+
+Cognitive AI attempts to address these weaknesses through mimicking human thought, taking inspiration from over 500 million years of neural evolution and decades of work across the cognitive sciences. This involves the combination of symbolic and statistical approaches using functional models of the human brain, including the cortex, basal ganglia, cerebellum and limbic system. Human memory is modelled in terms of symbolic graphs with embedded statistics reflecting prior knowledge and past experience. Human reasoning is not based upon logic, nor on the laws of probability, but rather on mental models of what is possible, along with the use of metaphors and analogies.
+
+Research challenges include mimicry, emotional intelligence and natural language. Mimicry is key to social interaction, e.g. a baby learning to smile at its mother, and young children learning to speak. Emotional control of cognition determines what is important, and plays a key role in how we learn, reason and act. Natural language is important for both communication and for learning and the means to break free from the manual programming bottleneck.
+
 ## Historical context
 
 AI lacks a precise agreed definition, but loosely speaking, it is about replicating intelligent behaviour, including perception, reasoning and action. There are many sub-fields of AI, e.g. logic and formal semantics, artificial neural networks, rule-based approaches including expert systems, statistical approaches including Bayesian networks and Markov chains, and a wide variety of approaches to search, pattern recognition and machine learning. Cognitive AI seeks to exploit work across the cognitive sciences on the organising principles of the human mind.
