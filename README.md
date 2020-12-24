@@ -98,6 +98,7 @@ In the long run, the mission of the Cognitive AI Community Group is to enable co
 * Are knowledgeable, general purpose, collaborative, empathic and trustworthy
 * Can apply metacognition and past experience to reason about new situations
 * Support continuous learning based upon curiosity about the unexpected
+* Have a level of self awareness in respect to current state, goals and actions
 * Have an awareness of others in respect to their beliefs, desires and intents
 * Are multilingual and can interact with people using their own language
 
