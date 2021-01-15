@@ -97,7 +97,7 @@ This has been implemented as an open source JavaScript library and used as the b
 
 In the long run, the mission of the Cognitive AI Community Group is to enable cognitive agents that:
 
-* Are knowledgeable, general purpose, collaborative, empathic and trustworthy
+* Are knowledgeable, general purpose, collaborative, empathic, sociable and trustworthy
 * Can apply metacognition and past experience to reason about new situations
 * Support continuous learning based upon curiosity about the unexpected
 * Have a level of self awareness in respect to current state, goals and actions
