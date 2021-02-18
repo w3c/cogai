@@ -339,17 +339,68 @@ penguin p6 { name Pingou }</code></pre>
           <dt><dfn><code>@more</code></dfn></dt>
           <dd>Queries the <a>boolean</a> flag set to <code>true</code> by the <a>rule engine</a> on the current <a>chunk</a> in <a>@for</a> and <a>@do properties</a> iterations when there are remaining <a>chunks</a> to iterate over.</dd>
 
+          <dt><dfn><code>@pop</code></dfn></dt>
+          <dd>An <a>action</a> property that removes the last <a>atomic value</a> from a <a>value</a>. If the <a>value</a> to process is already an <a>atomic value</a>, the underlying property is removed.</dd>
+          <dd>If a <a>@to</a> property is also present, the removed <a>atomic value</a> is assigned to the <a>property</a> identified by the <a>@to</a> property. In the absence of a <a>@to</a> property, the removed <a>atomic value</a> is discarded.</dd>
+          <dd><aside class="example" title="Remove the last element from a list">
+            <p>Given the following <a>chunk</a> and <a>action</a>:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+digits { @pop list, @to item }</code></pre>
+            <p>The <a>action</a> will update the <a>chunk</a> to:</p>
+            <pre><code>digits {
+  list 0, 1, 2, 3, 4, 5, 6, 7, 8
+  item 9
+}</code></pre>
+          </aside></dd>
+
+          <dt><dfn><code>@push</code></dfn></dt>
+          <dd>An <a>action</a> property that pushes an <a>atomic value</a> to the end of the <a>value</a> of the property identified by a companion <a>@to</a> property. If the targeted property does not exist yet, it is created.</dd>
+          <dd>In the absence of a <a>@to</a> property, this operation has no effect.</dd>
+          <dd><aside class="example" title="Add an element to the end of a list">
+            <p>Given the following <a>chunk</a> and <a>action</a>:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
+digits { @push 9, @to list }</code></pre>
+            <p>The <a>action</a> will update the <a>chunk</a> to:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
+          </aside></dd>
+
+          <dt><dfn><code>@shift</code></dfn></dt>
+          <dd>An <a>action</a> property that removes the first <a>atomic value</a> from a <a>value</a>. If the <a>value</a> to process is already an <a>atomic value</a>, the underlying property is removed.</dd>
+          <dd>If a <a>@to</a> property is also present, the removed <a>atomic value</a> is assigned to the <a>property</a> identified by the <a>@to</a> property. In the absence of a <a>@to</a> property, the removed <a>atomic value</a> is discarded.</dd>
+          <dd><aside class="example" title="Remove the first element from a list">
+            <p>Given the following <a>chunk</a> and <a>action</a>:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+digits { @shift list, @to item }</code></pre>
+            <p>The <a>action</a> will update the <a>chunk</a> to:</p>
+            <pre><code>digits {
+  list 1, 2, 3, 4, 5, 6, 7, 8, 9
+  item 0
+}</code></pre>
+          </aside></dd>
+
           <dt><dfn><code>@status</code></dfn></dt>
           <dd>Queries the <a data-link-for="module buffer">status</a> of a <a>module buffer</a>. The <a>rule engine</a> sets the status of a <a>module buffer</a> with the outcome of the <a>rule</a>'s execution. Most operations are asynchronous, except <a>@do clear</a>, <a>@do update</a> and <a>@do queue</a>.</dd>
 
           <dt><dfn><code>@to</code></dfn></dt>
-          <dd>When used in a <a>@for</a> operation, specifies the zero-based ending index of the iteration. Value must be an integer. When used in a <a>@do properties</a> operation, specifies the name of the <a>module buffer</a> onto which to write the current <a>chunk</a>.</dd>
+          <dd>Companion <a>action</a> property used in <a>@do properties</a>, <a>@for</a>, <a>@pop</a>, <a>@push</a>, <a>@shift</a>, <a>@unshift</a> operations.</dd>
+          <dd>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a <a>@for</a> operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a <a>@do properties</a> operation, the property specifies the name of the <a>module buffer</a> onto which to write the current <a>chunk</a>.</dd>
 
           <dt><dfn><code>@type</code></dfn></dt>
           <dd>Matches a <a>chunk</a>'s <a>type</a>, or binds a variable to the <a>chunk</a>'s <a>type</a>.</dd>
+
+          <dt><dfn><code>@unshift</code></dfn></dt>
+          <dd>An <a>action</a> property that pushes an <a>atomic value</a> to the beginning of the <a>value</a> of the property identified by a companion <a>@to</a> property. If the targeted property does not exist yet, it is created.</dd>
+          <dd>In the absence of a <a>@to</a> property, this operation has no effect.</dd>
+          <dd><aside class="example" title="Add an element to the beginning of a list">
+            <p>Given the following <a>chunk</a> and <a>action</a>:</p>
+            <pre><code>digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
+digits { @shift 0, @to list }</code></pre>
+            <p>The <a>action</a> will update the <a>chunk</a> to:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
+          </aside></dd>
         </dl>
 
-        <p class="ednote">TODO: Complete list with additional reserved names: <code>@distinct</code>, <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@pop</code>, <code>@priority</code>, <code>@push</code>, <code>@shift</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>, <code>@unshift</code>.</p>
+        <p class="ednote">TODO: Complete list with additional reserved names: <code>@distinct</code>, <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>.</p>
       </section>
 
       <section>
