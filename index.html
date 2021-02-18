@@ -125,7 +125,7 @@
 
     <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=], a [=boolean=]. Additionally, a [=name=] may start with:</p>
     <ul>
-      <li><code>@</code> to denote a <em>reserved</em> term with specific meaning (defined in this specification). Such [=names=] may only appear as [=property=] names.</li>
+      <li><code>@</code> to denote a <dfn>reserved name</dfn> with specific meaning (defined in this specification). Such [=names=] may only appear as [=property=] names.</li>
       <li><code>?</code> to denote a [=variable=]. Such [=names=] may only appear as [=property=] values.</li>
       <li><code>~</code> to denote a negative match. Such [=names=] may only appear in property [=values=] of a rule [=condition=]. The <code>~</code> prefix may be followed by <code>?</code> to reference a [=variable=]. Also, the [=name=] may actually equal <code>~</code> to test that a [=property=] is undefined.</li>
     </ul>
@@ -302,24 +302,32 @@ memory a2 { @module facts }</code></pre>
 
       <section>
         <h4>@-properties</h4>
-        <p>The following reserved [=names=] may be used in [=conditions=] and [=actions=] to control their behavior:</p>
+        <p>The [=reserved names=] defined in this section may be used in [=conditions=] and [=actions=] to control their behavior.</p>
 
-        <dl>
-          <dt><dfn><code>@do</code></dfn></dt>
-          <dd>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</dd>
+        <section>
+          <h5>The <dfn><code>@do</code></dfn> property</h5>
+          <p>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</p>
+        </section>
 
-          <dt><dfn><code>@for</code></dfn></dt>
-          <dd>Iterates over a set of items in a comma separated list. The [=@from=] and [=@to=] properties may be used to restrict the iteration range.</dd>
+        <section>
+          <h5>The <dfn><code>@for</code></dfn> property</h5>
+          <p>Iterates over a set of items in a comma separated list. The [=@from=] and [=@to=] properties may be used to restrict the iteration range.</p>
+        </section>
 
-          <dt><dfn><code>@from</code></dfn></dt>
-          <dd>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</dd>
+        <section>
+          <h5>The <dfn><code>@from</code></dfn> property</h5>
+          <p>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</p>
+        </section>
 
-          <dt><dfn><code>@id</code></dfn></dt>
-          <dd>Matches a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</dd>
+        <section>
+          <h5>The <dfn><code>@id</code></dfn> property</h5>
+          <p>Matches a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</p>
+        </section>
 
-          <dt><dfn><code>@kindof</code></dfn></dt>
-          <dd>Matches a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</dd>
-          <dd><aside class="example" title="Matching subclasses in a taxonomy">
+        <section>
+          <h5>The <dfn><code>@kindof</code></dfn> property</h5>
+          <p>Matches a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
+          <aside class="example" title="Matching subclasses in a taxonomy">
             <p>Given the following facts in a <code>facts</code> [=module=]:</p>
             <pre><code>penguin kindof bird
 eagle kindof bird
@@ -330,18 +338,24 @@ penguin p6 { name Pingou }</code></pre>
   @module facts
   @kindof bird
 }</code></pre>
-          </aside></dd>
+          </aside>
+        </section>
 
-          <dt><dfn><code>@module</code></dfn></dt>
-          <dd>References the [=module=] a [=condition=] or [=action=] relates to. Value must be the [=module name=] of the targeted [=module=]. In the absence of an [=@module=] property, [=conditions=] and [=actions=] apply to the <code>goal</code> module.</dd>
+        <section>
+          <h5>The <dfn><code>@module</code></dfn> property</h5>
+          <p>References the [=module=] a [=condition=] or [=action=] relates to. Value must be the [=module name=] of the targeted [=module=]. In the absence of an [=@module=] property, [=conditions=] and [=actions=] apply to the <code>goal</code> module.</p>
+        </section>
 
-          <dt><dfn><code>@more</code></dfn></dt>
-          <dd>Queries the [=boolean=] flag set to <code>true</code> by the [=rule engine=] on the current [=chunk=] in [=@for=] and [=@do properties=] iterations when there are remaining [=chunks=] to iterate over.</dd>
+        <section>
+          <h5>The <dfn><code>@more</code></dfn> property</h5>
+          <p>Queries the [=boolean=] flag set to <code>true</code> by the [=rule engine=] on the current [=chunk=] in [=@for=] and [=@do properties=] iterations when there are remaining [=chunks=] to iterate over.</p>
+        </section>
 
-          <dt><dfn><code>@pop</code></dfn></dt>
-          <dd>An [=action=] property that removes the last [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</dd>
-          <dd>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</dd>
-          <dd><aside class="example" title="Remove the last element from a list">
+        <section>
+          <h5>The <dfn><code>@pop</code></dfn> property</h5>
+          <p>An [=action=] property that removes the last [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
+          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
+          <aside class="example" title="Remove the last element from a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
             <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
 digits { @pop list, @to item }</code></pre>
@@ -350,23 +364,27 @@ digits { @pop list, @to item }</code></pre>
   list 0, 1, 2, 3, 4, 5, 6, 7, 8
   item 9
 }</code></pre>
-          </aside></dd>
+          </aside>
+        </section>
 
-          <dt><dfn><code>@push</code></dfn></dt>
-          <dd>An [=action=] property that pushes an [=atomic value=] to the end of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</dd>
-          <dd>In the absence of a [=@to=] property, this operation has no effect.</dd>
-          <dd><aside class="example" title="Add an element to the end of a list">
+        <section>
+          <h5>The <dfn><code>@push</code></dfn> property</h5>
+          <p>An [=action=] property that pushes an [=atomic value=] to the end of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
+          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
+          <aside class="example" title="Add an element to the end of a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
             <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
 digits { @push 9, @to list }</code></pre>
             <p>The [=action=] will update the [=chunk=] to:</p>
             <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
-          </aside></dd>
+          </aside>
+        </section>
 
-          <dt><dfn><code>@shift</code></dfn></dt>
-          <dd>An [=action=] property that removes the first [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</dd>
-          <dd>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</dd>
-          <dd><aside class="example" title="Remove the first element from a list">
+        <section>
+          <h5>The <dfn><code>@shift</code></dfn> property</h5>
+          <p>An [=action=] property that removes the first [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
+          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
+          <aside class="example" title="Remove the first element from a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
             <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
 digits { @shift list, @to item }</code></pre>
@@ -375,29 +393,37 @@ digits { @shift list, @to item }</code></pre>
   list 1, 2, 3, 4, 5, 6, 7, 8, 9
   item 0
 }</code></pre>
-          </aside></dd>
+          </aside>
+        </section>
 
-          <dt><dfn><code>@status</code></dfn></dt>
-          <dd>Queries the [=module buffer/status=] of a [=module buffer=]. The [=rule engine=] sets the status of a [=module buffer=] with the outcome of the [=rule=]'s execution. Most operations are asynchronous, except [=@do clear=], [=@do update=] and [=@do queue=].</dd>
+        <section>
+          <h5>The <dfn><code>@status</code></dfn> property</h5>
+          <p>Queries the [=module buffer/status=] of a [=module buffer=]. The [=rule engine=] sets the status of a [=module buffer=] with the outcome of the [=rule=]'s execution. Most operations are asynchronous, except [=@do clear=], [=@do update=] and [=@do queue=].</p>
+        </section>
 
-          <dt><dfn><code>@to</code></dfn></dt>
-          <dd>Companion [=action=] property used in [=@do properties=], [=@for=], [=@pop=], [=@push=], [=@shift=], [=@unshift=] operations.</dd>
-          <dd>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a [=@for=] operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a [=@do properties=] operation, the property specifies the name of the [=module buffer=] onto which to write the current [=chunk=].</dd>
+        <section>
+          <h5>The <dfn><code>@to</code></dfn> property</h5>
+          <p>Companion [=action=] property used in [=@do properties=], [=@for=], [=@pop=], [=@push=], [=@shift=], [=@unshift=] operations.</p>
+          <p>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a [=@for=] operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a [=@do properties=] operation, the property specifies the name of the [=module buffer=] onto which to write the current [=chunk=].</p>
+        </section>
 
-          <dt><dfn><code>@type</code></dfn></dt>
-          <dd>Matches a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</dd>
+        <section>
+          <h5>The <dfn><code>@type</code></dfn> property</h5>
+          <p>Matches a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
+        </section>
 
-          <dt><dfn><code>@unshift</code></dfn></dt>
-          <dd>An [=action=] property that pushes an [=atomic value=] to the beginning of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</dd>
-          <dd>In the absence of a [=@to=] property, this operation has no effect.</dd>
-          <dd><aside class="example" title="Add an element to the beginning of a list">
+        <section>
+          <h5>The <dfn><code>@unshift</code></dfn> property</h5>
+          <p>An [=action=] property that pushes an [=atomic value=] to the beginning of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
+          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
+          <aside class="example" title="Add an element to the beginning of a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
             <pre><code>digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
 digits { @shift 0, @to list }</code></pre>
             <p>The [=action=] will update the [=chunk=] to:</p>
             <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
-          </aside></dd>
-        </dl>
+          </aside>
+        </section>
 
         <p class="ednote">TODO: Complete list with additional reserved names: <code>@distinct</code>, <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>.</p>
       </section>
@@ -464,28 +490,46 @@ digits { @shift 0, @to list }</code></pre>
         <h4>Built-in operations</h4>
         <p>The [=@do=] property lets an [=action=] specify the graph algorithm or operation to execute. The default operation is to update the [=module buffer=], similar to calling [=@do update=].</p>
 
-        <p>All [=modules=] support the following <dfn>built-in operations</dfn>:</p>
+        <p>All [=modules=] support the <dfn>built-in operations</dfn> defined in this section.</p>
 
-        <dl>
-          <dt><dfn><code>@do clear</code></dfn></dt>
-          <dd>Clear the [=module buffer=] and pop the [=queue=].</dd>
+        <p>All [=modules=] also support the [=@for=] property to iterate over a set of items in a comma separated list. This has the effect of loading the [=module buffer=] with the first item in the list. The index range can optionally be specified with [=@from=] and [=@to=], where the first item in the list has index <code>0</code>.</p>
 
-          <dt><dfn><code>@do delete</code></dfn></dt>
-          <dd>Forget [=matching chunks=] in the [=graph of chunks=].</dd>
+        <aside class="note" title="Application-defined operations">
+          <p>Applications can define additional operations when initialising a [=module=]. This can be used to perform a variety of operations, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.</p>
 
-          <dt><dfn><code>@do get</code></dfn></dt>
-          <dd>Look for a [=matching chunk=] in the module's [=graph of chunks=] and put a copy of it in the [=module buffer=] if found. Modifying the [=properties=] of a [=chunk=] copied from a [=graph of chunks=] (e.g. through a [=@do update=] operation) will not alter the underlying [=graph of chunks=]. To save an updated [=chunk=], a [=@do put=] or [=@do patch=] command needs to be issued.</dd>
+          <p>Applications cannot replace the [=built-in operations=].</p>
+        </aside>
+        
+        <section>
+          <h5>The <dfn><code>@do clear</code></dfn> operation</h5>
+          <p>Clears the [=module buffer=] and pops the [=queue=].</p>
+        </section>
 
-          <dt><dfn><code>@do next</code></dfn></dt>
-          <dd>Load the next [=matching chunk=] to the targeted [=module buffer=] in an implementation dependent order.</dd>
+        <section>
+          <h5>The <dfn><code>@do delete</code></dfn> operation</h5>
+          <p>Forgets [=matching chunks=] in the [=graph of chunks=].</p>
+        </section>
 
-          <dt><dfn><code>@do patch</code></dfn></dt>
-          <dd>If the [=chunk=] in the targeted [=module buffer=] has the same [=identifier=] as a [=chunk=] in the underlying [=graph of chunks=], patch the [=chunk=] in the [=graph of chunks=] with the [=properties=] that appear in the [=module buffer=], excluding [=properties=] prefixed with an <code>@</code> character.</dd>
-          <dd><p class="issue">What is the expected behavior when the action has an <code>@id</code> property?</p></dd>
+        <section>
+          <h5>The <dfn><code>@do get</code></dfn> operation</h5>
+          <p>Looks for a [=matching chunk=] in the module's [=graph of chunks=] and puts a copy of it in the [=module buffer=] if found. Modifying the [=properties=] of a [=chunk=] copied from a [=graph of chunks=] (e.g. through a [=@do update=] operation) will not alter the underlying [=graph of chunks=]. To save an updated [=chunk=], a [=@do put=] or [=@do patch=] command needs to be issued.</p>
+        </section>
 
-          <dt><dfn><code>@do properties</code></dfn></dt>
-          <dd>Initiates an iteration over the [=properties=] of the [=matching chunk=] that do not begin with <code>@</code>. Each [=property=] is mapped to a new [=chunk=] with the same [=type=] as the [=action=]. The action's properties are copied over, and <code>name</code> and <code>value</code> properties are used to pass the [=property=] name and value respectively. The [=@more=] property is given the value <code>true</code> unless this is the final [=chunk=] in the iteration, in which case [=@more=] is given the value false. By default, the iteration is written to the same [=module buffer=] as designated by the [=action=] that initiated it. However, you can designate a different [=module buffer=] with the [=@to=] property. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.</dd>
-          <dd><aside class="example" title="Iterate over properties">
+        <section>
+          <h5>The <dfn><code>@do next</code></dfn> operation</h5>
+          <p>Loads the next [=matching chunk=] to the targeted [=module buffer=] in an implementation dependent order.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@do patch</code></dfn> operation</h5>
+          <p>If the [=chunk=] in the targeted [=module buffer=] has the same [=identifier=] as a [=chunk=] in the underlying [=graph of chunks=], patches the [=chunk=] in the [=graph of chunks=] with the [=properties=] that appear in the [=module buffer=], excluding [=properties=] prefixed with an <code>@</code> character.</p>
+          <p class="issue">What is the expected behavior when the action has an <code>@id</code> property?</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@do properties</code></dfn> operation</h5>
+          <p>Initiates an iteration over the [=properties=] of the [=matching chunk=] that do not begin with <code>@</code>. Each [=property=] is mapped to a new [=chunk=] with the same [=type=] as the [=action=]. The action's properties are copied over, and <code>name</code> and <code>value</code> properties are used to pass the [=property=] name and value respectively. The [=@more=] property is given the value <code>true</code> unless this is the final [=chunk=] in the iteration, in which case [=@more=] is given the value false. By default, the iteration is written to the same [=module buffer=] as designated by the [=action=] that initiated it. However, you can designate a different [=module buffer=] with the [=@to=] property. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.</p>
+          <aside class="example" title="Iterate over properties">
             <p>The following example first sets the <code>facts</code> [=module buffer=] to a [=chunk=] of [=type=] <code>foo</code>, and then initiates an iteration over all of the [=chunk=]'s properties:</p>
             <pre><code>run {}
   =>
@@ -499,26 +543,24 @@ bar {loop prop18; name ?name; value ?value}
   =>
     console {@do log; message ?name, is, ?value},
     bar {@do next}  # to load the next instance from the iteration</code></pre>
-          </aside></dd>
+          </aside>
+        </section>
 
-          <dt><dfn><code>@do put</code></dfn></dt>
-          <dd>Save the contents of the [=module buffer=] as a [=chunk=] to the module's [=graph of chunks=]. If the [=action=] has an [=@id=] property, this operation will overwrite the [=chunk=] with the same [=identifier=] or will create a new [=chunk=] with the given [=identifier=] if it does not exist already. This operation will also create a new [=chunk=] in the absence of an [=@id=] property.</dd>
-          <dd><p class="issue">If a chunk was loaded with <code>@do get</code>, then updated with <code>@do update</code>, would a call to <code>@do patch</code> create a new chunk if <code>@id</code> is not set? Or would it rather update the chunk in the graph?</p></dd>
+        <section>
+          <h5>The <dfn><code>@do put</code></dfn> operation</h5>
+          <p>Saves the contents of the [=module buffer=] as a [=chunk=] to the module's [=graph of chunks=]. If the [=action=] has an [=@id=] property, this operation will overwrite the [=chunk=] with the same [=identifier=] or will create a new [=chunk=] with the given [=identifier=] if it does not exist already. This operation will also create a new [=chunk=] in the absence of an [=@id=] property.</p>
+          <p class="issue">If a chunk was loaded with <code>@do get</code>, then updated with <code>@do update</code>, would a call to <code>@do patch</code> create a new chunk if <code>@id</code> is not set? Or would it rather update the chunk in the graph?</p>
+        </section>
 
-          <dt><dfn><code>@do queue</code></dfn></dt>
-          <dd>Push a [=chunk=] to the [=queue=] for the [=module buffer=]. If a [=@priority=] property is set to an integer value between 1 and 10, the [=priority=] of the [=chunk=] in the [=queue=] is set to that value.</dd>
+        <section>
+          <h5>The <dfn><code>@do queue</code></dfn> operation</h5>
+          <p>Pushes a [=chunk=] to the [=queue=] for the [=module buffer=]. If a [=@priority=] property is set to an integer value between 1 and 10, the [=priority=] of the [=chunk=] in the [=queue=] is set to that value.</p>
+        </section>
 
-          <dt><dfn><code>@do update</code></dfn></dt>
-          <dd>Directly update the [=module buffer=] if the chunk [=type=] for the [=action=] is the same as the [=chunk=] currently held in the [=module buffer=]. The operation updates the properties given in the [=action=], leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk [=type=] for the action is not the same as the [=chunk=] currently held in the [=module buffer=], a new [=chunk=] is created with the properties given in the [=action=], excluding properties prefixed with an <code>@</code> character. This is the default action when an [=action=] has neither an [=@do=] property nor an [=@for=] property.</dd>
-        </dl>
-
-        <p>All [=modules=] also support the [=@for=] property to iterate over a set of items in a comma separated list. This has the effect of loading the [=module buffer=] with the first item in the list. The index range can optionally be specified with [=@from=] and [=@to=], where the first item in the list has index <code>0</code>.</p>
-
-        <aside class="note" title="Application-defined operations">
-          <p>Applications can define additional operations when initialising a [=module=]. This can be used to perform a variety of operations, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.</p>
-
-          <p>Applications cannot replace the [=built-in operations=].</p>
-        </aside>
+        <section>
+          <h5>The <dfn><code>@do update</code></dfn> operation</h5>
+          <p>Directly updates the [=module buffer=] if the chunk [=type=] for the [=action=] is the same as the [=chunk=] currently held in the [=module buffer=]. The operation updates the properties given in the [=action=], leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk [=type=] for the action is not the same as the [=chunk=] currently held in the [=module buffer=], a new [=chunk=] is created with the properties given in the [=action=], excluding properties prefixed with an <code>@</code> character. This is the default action when an [=action=] has neither an [=@do=] property nor an [=@for=] property.</p>
+        </section>
       </section>
     </section>
   </section>
