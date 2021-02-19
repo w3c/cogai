@@ -21,15 +21,15 @@ space {thing belt2} =>
 	action {@do stop; thing belt2},
 	space {@do wait; thing belt2; space 95}
 
-# stop belt when it is full and move arm
+# move arm when belt1 is full
 full {thing belt1} =>
-	action {@do stop; thing belt1},
 	robot {@do move; x -120; y -75; angle -180; gap 40; step 1}
 	
 # ship box at end of belt2 and wait afresh
 full {thing belt2} =>
 	action {@do shipBox},
-	full {@do wait; thing belt2}
+	full {@do wait; thing belt2},
+	action {@do start; thing belt2}
 	
 # move robot arm into position to grasp empty bottle
 after {step 1} =>

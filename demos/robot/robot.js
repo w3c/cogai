@@ -778,13 +778,6 @@ function test () {
 				prev = now;
 							
 			if (moving) {
-				if (resolveSpace && requestedSpace != null) {
-					if (hasSpace(requestedSpace)) {
-						resolveSpace();
-						resolveSpace = null;
-					}
-				}
-
 				let delta = (now-prev)/100;
 				offset = (offset + delta) % w;
 				
@@ -792,15 +785,25 @@ function test () {
 					let place = items[i];
 					place.x += delta;
 				}
+
+				// prioritise full event over space event
 				
 				if (isFull()) {
+					// stop belt when item reaches end
+					belt.stop();
+					
 					if (resolveFull) {
 						resolveFull();
 						resolveFull = null;
-					} else {
-						belt.stop();
 					}
 				}	
+
+				if (resolveSpace && requestedSpace != null) {
+					if (hasSpace(requestedSpace)) {
+						resolveSpace();
+						resolveSpace = null;
+					}
+				}
 			}
 				
 			belt.draw();
