@@ -186,6 +186,46 @@
     </section>
 
     <section>
+      <h3>Chunk context</h3>
+      <p>A [=chunk=] may be scoped to a <dfn>context</dfn>, which identifies the specific situation under which the [=chunk=] should be considered to be true. This mechanism allows [=chunks=] to describe things that are only true in hypothetical situations.</p>
+
+      <p>A [=chunk=] can be associated with a specific [=context=] through an [=@context=] [=property=].</p>
+
+      <p>A [=chunk=] that does not belong to an explicit context belongs to the <dfn>default context</dfn>.</p>
+
+      <aside class="example" title="Expressing a belief">
+        <p>Here is an example from John Sowa's <a href="http://www.jfsowa.com/pubs/arch.htm">Architectures for Intelligent Systems</a>:</p>
+        <p><cite>Tom believes that Mary wants to marry a sailor.</cite></p>
+        <p>This example involves talking about a statement <cite>Mary wants to marry a sailor</cite> that is only known to be true according to Tom's belief. When represented as [=chunks=], the statement needs to be associated with a [=context=] that identifies Tom's belief, so that we cannot directly assert that the statement is true in general.</p>
+        <p>Similarly, the statement <cite>to marry a sailor</cite> is only known to be true according to Mary's desire. When represented as [=chunks=], the statement also needs to be associated with a [=context=] that identifies Mary's desire.</p>
+
+        <p>Here is one possible way to represent the overall statement with [=chunks=]:</p>
+        <pre><code>believes {
+  @subject tom
+  proposition tom-belief-1
+}
+wants {
+  @context tom-belief-1
+  @subject mary
+  situation mary-desire-1
+}
+married-to {
+  @context mary-desire-1
+  @subject mary
+  @object s1
+}
+a s1 {
+  @context mary-desire-1
+  profession sailor
+}</code></pre>
+      </aside>
+
+      <p>As illustrated in the previous example, [=contexts=] can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, thus creating a tree of [=contexts=].</p>
+
+      <p>[=Contexts=] can be used to express situations that involve the use of statements about statements, including beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns. They are also useful for episodic memory when one wants to describe facts that are true in a given situation, for instance an even when a peson visited a restaurant for lunch, sat by the window, and had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.</p>
+    </section>
+
+    <section>
       <h3>Links between chunks</h3>
       <p>In this document, a <dfn>link</dfn> is a directed and labeled connection between two [=chunks=]. A [=link=] is automatically created whenever a chunk property [=value=] is a [=name=] that references an existing chunk [=identifier=].</p>
       <p>The <dfn>subject</dfn> of the [=link=] identifies the [=chunk=] at the origin of the connection. The <dfn>object</dfn> of the [=link=] identifies the [=chunk=] targeted by the connection. The <dfn>label</dfn> of the [=link=] is the property [=name=].</p>
@@ -295,14 +335,24 @@ memory a2 { @module facts }</code></pre>
         <aside class="example" title="Variable binding and referencing">
           <pre><code>count { state start; from ?num1; to ?num2 }
    => increment { @module facts; @do get; number ?num1 }</code></pre>
-          <p>The above [=rule=] defines a [=condition=] that matches a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=]. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk, and the value of the [=variable=] <code>?num2</code> to the [=value=] of the <code>to</code> [=property=].</p>
+          <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=]. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk, and the value of the [=variable=] <code>?num2</code> to the [=value=] of the <code>to</code> [=property=].</p>
           <p>The [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>increment</code> and that has a [=property=] named <code>number</code> and whose [=value=] equals the value of the <code>?num1</code> [=variable=].</p>
         </aside>
       </section>
 
       <section>
-        <h4>@-properties</h4>
+        <h4>@-properties for conditions and actions</h4>
         <p>The [=reserved names=] defined in this section may be used in [=conditions=] and [=actions=] to control their behavior.</p>
+
+        <section>
+          <h5>The <dfn><code>@context</code></dfn> property</h5>
+          <p>When used in a regular [=chunk=], identifies a chunk's [=context=]. When used in a [=condition=] or in an [=action=], [=matches=] a [=chunk=]'s [=context=].</p>
+          <aside class="example" title="Looks for a chunk in a given context">
+            <pre><code>recall { lunch ?restaurant }
+     => lookup { @module facts; @do get; @type lunch; @context ?restaurant }</code></pre>
+            <p>The above [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>lunch</code> and whose [=context=] is the identifier of the lunch matched by the <code>recall</code> [=condition=].</p>
+          </aside>
+        </section>
 
         <section>
           <h5>The <dfn><code>@do</code></dfn> property</h5>
@@ -321,12 +371,12 @@ memory a2 { @module facts }</code></pre>
 
         <section>
           <h5>The <dfn><code>@id</code></dfn> property</h5>
-          <p>Matches a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</p>
+          <p>[=Matches=] a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</p>
         </section>
 
         <section>
           <h5>The <dfn><code>@kindof</code></dfn> property</h5>
-          <p>Matches a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
+          <p>[=Matches=] a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
           <aside class="example" title="Matching subclasses in a taxonomy">
             <p>Given the following facts in a <code>facts</code> [=module=]:</p>
             <pre><code>penguin kindof bird
@@ -409,7 +459,7 @@ digits { @shift list, @to item }</code></pre>
 
         <section>
           <h5>The <dfn><code>@type</code></dfn> property</h5>
-          <p>Matches a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
+          <p>[=Matches=] a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
         </section>
 
         <section>
@@ -425,21 +475,44 @@ digits { @shift 0, @to list }</code></pre>
           </aside>
         </section>
 
-        <p class="ednote">TODO: Complete list with additional reserved names: <code>@distinct</code>, <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@context</code>, <code>@index</code>, <code>@map</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>.</p>
+        <p class="ednote">TODO: Complete list with additional reserved names: <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@index</code>, <code>@map</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>.</p>
       </section>
 
       <section>
         <h4>Matching chunks</h4>
 
-        <p>A [=chunk=] <var>B</var> is said to be a <dfn>matching chunk</dfn> for a [=chunk=] <var>A</var> if:</p>
+        <p>A [=chunk=] |B| is said to be a <dfn data-lt="matches">matching chunk</dfn> for a [=chunk=] |A| if the conditions below are all met:</p>
         <ul>
-          <li><var>A</var>'s [=type=] is <code>*</code>, or <var>B</var>'s [=type=] equals <var>A</var>'s [=type=].</li>
-          <li><var>A</var> does not have an [=@kindof=] [=property=], or <var>A</var>'s [=type=] is <code>*</code> and <var>B</var>'s [=type=] is a subclass of the [=@kindof=] [=property=] value <var>V</var>, meaning that <var>B</var>'s [=type=] equals <var>V</var> or there exists a chain of <code>kindof</code> links between <var>V</var> and <var>B</var>'s [=type=].</li>
-          <li><var>A</var> does not have an [=@id=] [=property=], or its value equals <var>B</var>'s [=identifier=].</li>
-          <li>For all [=properties=] in <var>A</var> whose [=names=] do not start with <code>@</code>, there is a corresponding [=property=] in <var>B</var> with the same [=name=] and value.</li>
+          <li><i>Context</i>. One of the following conditions holds true:
+            <ul>
+              <li>Neither |A| nor |B| have [=@context=] properties.</li>
+              <li>Both |A| and |B| have [=@context=] properties and |A|'s [=@context=] property [=value=] equals |B|'s [=@context=] property [=value=].</li>
+            </ul>
+          </li>
+          <li><i>Identifier</i>. One of the following conditions holds true:
+            <ul>
+              <li>|A| has an [=@id=] property whose [=value=] equals |B|'s [=identifier=].</li>
+              <li>|A| does not have an [=@id=] property.</li>
+            </ul>
+          </li>
+          <li><i>Inheritance</i>. One of the following conditions holds true:
+            <ul>
+              <li>|A| has an [=@kindof=] property whose [=value=] is |V|, and |B|'s [=type=] is a subclass of |V|, meaning that |B|'s [=type=] equals |V| or there exists a chain of <code>kindof</code> links between |V| and |B|'s [=type=].</li>
+              <li>|A| does not have an [=@kindof=] property.</li>
+            </ul>
+          </li>
+          <li><i>Properties</i>. For all [=properties=] in |A| whose [=names=] do not start with <code>@</code>, there is a corresponding [=property=] in |B| with the same [=name=] and [=value=].</li>
+          <li><i>Type</i>. One of the following conditions holds true:
+            <ul>
+              <li>|A| has an [=@type=] property whose [=value=] equals |B|'s [=type=].</li>
+              <li>|A| does not have an [=@type=] property, and |A|'s [=type=] is <code>*</code>.</li>
+              <li>|A| does not have an [=@type=] property, and |A|'s [=type=] equals |B|'s [=type=].</li>
+            </ul>
+          </li>
         </ul>
 
         <p class="ednote">TODO: Rewrite and complete to integrate [=variables=] (which impose presence but not a specific value) and <code>~</code> which match when values are not equal or, if <code>~</code> is used alone, when the property is undefined.</p>
+        <p class="ednote">TODO: Also explain what happens when values being compared are not [=atomic values=].</p>
       </section>
     </section>
 
@@ -560,6 +633,7 @@ bar {loop prop18; name ?name; value ?value}
         <section>
           <h5>The <dfn><code>@do update</code></dfn> operation</h5>
           <p>Directly updates the [=module buffer=] if the chunk [=type=] for the [=action=] is the same as the [=chunk=] currently held in the [=module buffer=]. The operation updates the properties given in the [=action=], leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk [=type=] for the action is not the same as the [=chunk=] currently held in the [=module buffer=], a new [=chunk=] is created with the properties given in the [=action=], excluding properties prefixed with an <code>@</code> character. This is the default action when an [=action=] has neither an [=@do=] property nor an [=@for=] property.</p>
+          <p class="issue">How can one update the properties prefixed with an <code>@</code> character in a [=chunk=] such as [=@context=], [=@subject=] or [=@object=]?</p>
         </section>
       </section>
     </section>
