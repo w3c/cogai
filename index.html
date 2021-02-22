@@ -189,9 +189,11 @@
       <h3>Chunk context</h3>
       <p>A [=chunk=] may be scoped to a <dfn>context</dfn>, which identifies the specific situation under which the [=chunk=] should be considered to be true. This mechanism allows [=chunks=] to describe things that are only true in hypothetical situations.</p>
 
-      <p>A [=chunk=] can be associated with a specific [=context=] through an [=@context=] [=property=].</p>
+      <p>[=Contexts=] can be used to express situations that involve the use of statements about statements, including beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns. They are also useful for episodic memory when one wants to describe facts that are true in a given situation, for instance an even when a peson visited a restaurant for lunch, sat by the window, and had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.</p>
 
-      <p>A [=chunk=] that does not belong to an explicit context belongs to the <dfn>default context</dfn>.</p>
+      <p>A [=chunk=] gets associated with a specific [=context=] through an [=@context=] [=property=].</p>
+
+      <p>A [=chunk=] that is not explicitly associated with a [=context=] (i.e. in the absence of an [=@context=] property) belongs to the <dfn>default context</dfn>.</p>
 
       <aside class="example" title="Expressing a belief">
         <p>Here is an example from John Sowa's <a href="http://www.jfsowa.com/pubs/arch.htm">Architectures for Intelligent Systems</a>:</p>
@@ -221,8 +223,6 @@ a s1 {
       </aside>
 
       <p>As illustrated in the previous example, [=contexts=] can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, thus creating a tree of [=contexts=].</p>
-
-      <p>[=Contexts=] can be used to express situations that involve the use of statements about statements, including beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns. They are also useful for episodic memory when one wants to describe facts that are true in a given situation, for instance an even when a peson visited a restaurant for lunch, sat by the window, and had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.</p>
     </section>
 
     <section>
