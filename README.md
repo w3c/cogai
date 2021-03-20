@@ -43,6 +43,8 @@ We have a weekly zoom teleconference slot every Monday at 2pm Paris local time. 
 ## Background materials
 
 * Talks
+  * 17 March 2021 - [Digital Transformation and the Knowledge Economy](https://www.w3.org/2021/digital-transformation-2021-03-17.pdf), an invited keynote for the Siemens conference on the IoT
+  * 17 March 2021 - [Roadmap for realising general purpose AI](https://www.w3.org/2021/roadmap-2021-03-17.pdf)
   * 14-19 February 2021 - Human-like AI and the Sentient Web for [Dagstuhl seminar on autonomous agents on the Web](https://www.dagstuhl.de/en/program/calendar/semhp/?semnr=21072) - [slides](https://www.w3.org/2021/sentient-web-2021-01-11.pdf), [paper](https://www.w3.org/2021/Human-like-AI-article-raggett-long.pdf)
   * 11 January 2021 - [Presentation and discussion of work on Cognitive Natural Language Processing](https://www.w3.org/2021/Cognitive-NLP-2021-Jan.pdf)
   * 25 November 2020 - Seminar on Cognitive AI for [Centre for Artificial Intelligence, Robotics and Human-Machine Systems](https://www.cardiff.ac.uk/artificial-intelligence-robotics-and-human-machine-systems), Cardiff University: [slides](https://www.w3.org/2020/CogAI-2020-11-25.pdf), [video](https://www.youtube.com/watch?v=gJiDi3lqwcA&feature=youtu.be)
