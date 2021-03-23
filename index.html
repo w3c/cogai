@@ -223,6 +223,8 @@ a s1 {
       </aside>
 
       <p>As illustrated in the previous example, [=contexts=] can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, thus creating a tree of [=contexts=].</p>
+
+      <p>Practically speaking, [=contexts=] make it possible to filter out non relevant [=chunks=] in [=conditions=] and [=actions=]. Two [=chunks=] may only [=match=] when they belong to the same context. For instance, a [=chunk=] that belongs to the context <code>tom-belief-1</code> can only [=match=] [=chunks=] that also belong to that context, and de facto cannot match [=chunks=] that belong to the [=default context=]. In particular, a [=chunk=] that belongs to the [=default context=] can only [=match=] [=chunks=] that also belong to the [=default context=].</p>
     </section>
 
     <section>
