@@ -420,7 +420,7 @@ Tasks allow you to write rules that are only applicable to specific tasks. Tasks
 
 Tasks and contexts are complementary. You use *@context* to name a particular event/situation, e.g. having dinner at a restaurant, and *@task* to segregate rules for different tasks within the overall plan for having dinner (finding a table, reviewing the menu, ordering, paying the bill).
 
-*Note: it might be convenient to automatically leave sub-tasks when leaving a task. For this we would need a way to enter a sub-task, e.g. ```@sub-task task1.1```. This is part of the general challenge for reasoning about plans at multiple levels of abstraction, and being able to cope with the variety of different ways that natural language allows you to say more or less the same thing.*
+*It will often be convenient when leaving a task to automatically leave any of its sub-tasks. One idea would be to use @task to name a currently active task, and @subtask to enter a subtask for that task. If @task is missing, or doesn't name a currently active task, then @subtask would have the same semantics as @enter. We need to try this out to see how useful sub-tasks are in practice.*
 
 ## Ebbinghaus forgetting curve
 
