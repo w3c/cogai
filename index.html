@@ -173,7 +173,7 @@
       <h3>Chunk properties</h3>
       <p>A chunk <dfn>property</dfn> is a [=name=]/[=value=] pair that describes a chunk across the particular dimension identified by the property name.</p>
 
-      <p>A <dfn>value</dfn> is either an [=atomic value=] or a list of [=atomic values=] (values are comma-separated in serialized form).</p>
+      <p>A <dfn>value</dfn> is either an [=atomic value=] or an ordered list of [=atomic values=] (values are comma-separated in serialized form).</p>
 
       <p>An <dfn>atomic value</dfn> is either:</p>
       <ul>
@@ -483,38 +483,43 @@ digits { @shift 0, @to list }</code></pre>
       <section>
         <h4>Matching chunks</h4>
 
-        <p>A [=chunk=] |B| is said to be a <dfn data-lt="matches">matching chunk</dfn> for a [=chunk=] |A| if the conditions below are all met:</p>
+        <p>A property [=value=] |a| <dfn>equals</dfn> property [=value=] |b| if either of the following conditions holds true:</p>
+        <ul>
+          <li>|a| and |b| are identical [=atomic values=]</li>
+          <li>|a] and |b| are lists of [=atomic values=], both lists have the same length, and [=atomic values=] at the same position in |a| and |b| are identical.</li>
+        </ul>
+
+        <p>A [=chunk=] |A| <dfn data-lt="matching chunk">matches</dfn> [=chunk=] |B| if the conditions below are all met:</p>
         <ul>
           <li><i>Context</i>. One of the following conditions holds true:
             <ul>
               <li>Neither |A| nor |B| have [=@context=] properties.</li>
-              <li>Both |A| and |B| have [=@context=] properties and |A|'s [=@context=] property [=value=] equals |B|'s [=@context=] property [=value=].</li>
+              <li>Both |A| and |B| have [=@context=] properties and |A|'s [=@context=] property [=value=] [=equals=] |B|'s [=@context=] property [=value=].</li>
             </ul>
           </li>
           <li><i>Identifier</i>. One of the following conditions holds true:
             <ul>
-              <li>|A| has an [=@id=] property whose [=value=] equals |B|'s [=identifier=].</li>
+              <li>|A| has an [=@id=] property whose [=value=] is an [=atomic value=] that equals |B|'s [=identifier=].</li>
               <li>|A| does not have an [=@id=] property.</li>
             </ul>
           </li>
           <li><i>Inheritance</i>. One of the following conditions holds true:
             <ul>
-              <li>|A| has an [=@kindof=] property whose [=value=] is |V|, and |B|'s [=type=] is a subclass of |V|, meaning that |B|'s [=type=] equals |V| or there exists a chain of <code>kindof</code> links between |V| and |B|'s [=type=].</li>
+              <li>|A| has an [=@kindof=] property whose [=value=] |V| is an [=atomic value=], and |B|'s [=type=] is a subclass of |V|, meaning that |B|'s [=type=] is |V| or there exists a chain of <code>kindof</code> links between |V| and |B|'s [=type=].</li>
               <li>|A| does not have an [=@kindof=] property.</li>
             </ul>
           </li>
-          <li><i>Properties</i>. For all [=properties=] in |A| whose [=names=] do not start with <code>@</code>, there is a corresponding [=property=] in |B| with the same [=name=] and [=value=].</li>
+          <li><i>Properties</i>. For all [=properties=] in |A| whose [=names=] do not start with <code>@</code>, there is a corresponding [=property=] in |B| with the same [=name=] and [=equal=] [=value=].</li>
           <li><i>Type</i>. One of the following conditions holds true:
             <ul>
-              <li>|A| has an [=@type=] property whose [=value=] equals |B|'s [=type=].</li>
+              <li>|A| has an [=@type=] property whose [=value=] is an [=atomic value=] that equals |B|'s [=type=].</li>
               <li>|A| does not have an [=@type=] property, and |A|'s [=type=] is <code>*</code>.</li>
-              <li>|A| does not have an [=@type=] property, and |A|'s [=type=] equals |B|'s [=type=].</li>
+              <li>|A| does not have an [=@type=] property, and |A|'s [=type=] and |B|'s [=type=] are identical.</li>
             </ul>
           </li>
         </ul>
 
         <p class="ednote">TODO: Rewrite and complete to integrate [=variables=] (which impose presence but not a specific value) and <code>~</code> which match when values are not equal or, if <code>~</code> is used alone, when the property is undefined.</p>
-        <p class="ednote">TODO: Also explain what happens when values being compared are not [=atomic values=].</p>
       </section>
     </section>
 
