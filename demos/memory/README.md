@@ -20,4 +20,6 @@ Further work is planned on:
 
 * Modelling the encoding and consolidation processs in terms of existing knowledge expressed as chunk graphs, chunk rules and graph algorithms
 * Investigating human memory in relation to the recall of sets and ordered sequences, and the effects of spreading activation
+* Exploring efficient solutions for recalling memories distributed across multiple cognitive databases, to mimic the role of the anterior temporal lobe for semantic integration
 * Exploring approaches for dealing with statistical correlations at an early stage of concept formation for thematic knowledge, i.e. before chunk properties are created to represent relationships between concepts. This involves managing statistics across episodic memory for co-occurrence (which things are commonly found together) and for temporal sequences (which things commonly follow other things) suggestive of potential causal relationships
+* Mechanisms for specialised kinds of memories, e.g. visual and aural, in respect to geospatial memory, and recognition of musical pieces
