@@ -16,7 +16,7 @@ This challenge can be met by adjusting the decay rate based upon an estimate of 
 
 For more information, you are recommended to look at the web-based [tutorial and demo for mimicking human memory](https://www.w3.org/Data/demos/chunks/memory/).
 
-Further works is planned on:
+Further work is planned on:
 
 * Modelling the encoding and consolidation processs in terms of existing knowledge expressed as chunk graphs, chunk rules and graph algorithms
 * Investigating human memory in relation to the recall of sets and ordered sequences, and the effects of spreading activation
