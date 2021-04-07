@@ -1315,7 +1315,7 @@ let test = {
 		// hold the paths that are clipped to their bounds
 		// we thus need quad chunks and quadpath chunks
 		let graph = test.map;
-		let bounds = graph.get("bounds"); 
+		let bounds = graph.get({type:"bounds"}); 
 		
 		// note location of the map's centre
 		test.lat = (bounds.properties.minlat + bounds.properties.maxlat)/2.0;
