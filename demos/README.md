@@ -52,6 +52,10 @@ Vision is modelled in terms of the position of the car in the lane and the chang
 
 An extended version of this demo could include multiple road users, including pedestrians, cyclists and other cars, each simulated by a separate cognitive agent. This could be further combined with work on learning from experience and reasoning about how to handle new situations.
 
+## [Mimicking Human Memory, Learning and Forgetting](memory/README.md)
+
+Human memory is associative and seeks to provide the most relevant information based upon past experience and prior knowledge. To mimic this, chunks combine symbolic information with sub-symbolic statistics. This is used to model the forgetting curve, spacing effect, priming and interference.
+
 ## [Natural Language Processing](nlp/README.md)
 
 Natural language is key to simplifying communication between humans and cognitive agents. It is also critical for teaching cognitive agents every day (common sense) skills. A series of demos are planned to evolve richer support for natural language understanding, generation, dialogues, reasoning and learning.
