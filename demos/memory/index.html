@@ -1,0 +1,404 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mimicking Human Memory</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="memory.js"></script>
+<style>
+	body {
+		background-color: rgb(250,250,255);
+		text-align: center;
+	}
+	#content {
+		background-color: #FFF;
+		display: inline-block;
+		padding-left: 2em;
+		padding-right: 2em;
+		max-width: 110ex;
+		text-align: left;
+	}
+	#command {
+		width: 40ex;
+		font-size: large;
+	}
+	canvas {
+		border: 0px solid black;
+		perspective: 400px;
+		transform-style: preserve-3d;
+		background-color: #EEE;
+		width: 100%;
+	}
+	div.test {
+		border: solid #aaa 1px;
+		background-color: #EEF;
+		width: calc(100% - 2em);
+		padding: 1ex;
+		font-family: sans-serif;
+	}
+	#score1, #score2 {
+		color: blue;
+	}
+	#recalled1, #recalled2 {
+		font-weight: normal;
+		color: rgb(150,80,80);
+	}
+	pre {
+		min-height: 1em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(240,240,240);
+		border-style: solid;
+	}
+	#log {
+		height: 10em;
+		max-height: 60em;
+		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
+	}
+	.photo {
+		float: left;
+		margin-left: 0;
+		margin-right: 1ex;
+		width: 30ex;
+		max-width: 20%;
+	}
+	.figure {
+	    text-align: center
+	}
+	.figure img {
+		width: 50%;
+		max-width: 50em;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: top;
+		margin-right: 1em;
+		float: left;
+	}
+	span {
+		font-weight: bold;
+	}
+	blockquote {
+		font-style: italic;
+	}
+	table {
+		margin-left: 1em;
+		max-width: 40em;
+		border: solid #aaa 1px;
+		border-collapse: collapse;
+	}
+	tr:nth-child(odd) {
+		background: #b8d1f3
+	}
+	tr:nth-child(even) {
+		background: #dae5f4
+	}
+	td {
+		width: 8em;
+		padding: 0.1em;
+		font-family: sans-serif
+	}
+</style>
+</head>
+<body>
+<div id="content">
+<h1>Mimicking Human Memory</h1>
+
+<ul>
+<li><a href="#forgetting">The Forgetting Curve</a></li>
+<li><a href="#spacing">The Spacing Effect</a></li>
+<li><a href="#stochastic">Stochastic Recall</a></li>
+<li><a href="#wave">Spreading Activation</a></li>
+<li><a href="#commentary">Commentary</a></li>
+<li><a href="#tests">Memory Tests</a></li>
+<li><a href="#chunks">Facts and Rules</a></li>
+<li><a href="#footnote">Footnote</a></li>
+</ul>
+
+<p>This page uses <a href="https://github.com/w3c/cogai/blob/master/README.md">Cognitive AI</a> for a tutorial on modelling memory, learning and forgetting. You might ask why we would want to make computers forgetful, given how faithful they are at remembering. The answer is that in everyday situations you want to recall just what is most important based upon past experience. This is similar to web search engines which seek to provide the results that are most likely to be relevant given the words given in the search query.</p>
+
+<p>There are different kinds of memory, e.g. current information you are working on (working memory), memories of past events (episodic memory), general knowledge about the world (semantic memory), remembering how to dance the rumba (muscle memory). Memory can be considered in terms of stages: encoding, consolidation, storage and retrieval. Encoding and consolidation is about how you initially represent information and subsequently relate it to what you know already.</p>
+
+<p>Different kinds of memories are stored in different parts of the brain, e.g. people's faces, the sound of their names, and facts about their lives. Memory retrieval involves the use of cues to selectively recall relevant memories, including the means to integrate information from different parts of the brain. When retrieving memories of past situations, we try to understand what happened, and to fill in the gaps in our recollection based upon what is likely.</p>
+
+<p>Memory is associated with priming and interference. Priming occurs when the retrieval of one memory makes it easier to retrieve another. Conversely, interference occurs when a memory primes multiple other memories instead of just the ones that are useful or relevant to the current situation. Interference makes it harder to retrieve the correct memory, and can be modelled in terms of stochastic recall between competing memories.</p>
+
+<p>See also <a href="../chunks.html">further information on chunks and rules</a>.</p>
+
+
+<h2 id="forgetting">The Forgetting Curve</h2>
+
+<p><img class="photo" src="Ebbinghaus.jpg" alt="portrait of Ebbinghause" title="Hermann Ebbinghaus">In 1885 <a href="https://en.wikipedia.org/wiki/Hermann_Ebbinghaus">Hermann Ebbinghaus</a> published the results of experiments he had conducted on his own memory. This showed how our ability to recall memories drops over time in a matter of days or weeks unless the memories are consciously reviewed or reinforced through repetition. Further work showed that repetitions have less effect when they are closer together.</p>
+
+<p>Work in neuroscience has shown that memories are held in the outer layer of the cortex, encoded in synaptic connections between nerve fibres. When activated, memories are represented as concurrent firing patterns of bundles of neurons in cortical columns, akin to vectors in noisy high-dimensional spaces. Memories are accessed associatively, allowing you to follow relationships between concepts at a symbolic level.</p>
+
+<p>Rather than replicating the human brain with artificial neurons, human-like AI can make use of a functional model of memory in terms of chunk graphs where each chunk is set of properties whose values are literals or references to other chunks. The references form the graph edges, while the chunks form the graph nodes. Chunks combine a symbolic representation with sub-symbolic information that describe the strength of memories in terms of past experience and prior knowledge. Strong memories are easier to recall than weak ones.</p>
+
+<p>The forgetting curve is modelled by associating chunks with:
+
+<ul>
+<li>a positive number representing the chunk's strength</li>
+<li>a timestamp representing the time the chunk was created or last accessed</li>
+<li>a count of how many times it has been accessed since it was created</li>
+</ul>
+
+<p>The following graph is dynamically computed and shows how the strength of a single chunk decays like a leaky capacitor unless boosted by being re-added, updated or recalled. In this case, the initial decay rate has been set to drop by half every 3 days, however, that is somewhat arbitrary, and should be set to mimic data from memory tests with human subjects. As the strength decays, and approaches, and then falls below a system-wide threshold, the chunk becomes increasingly harder to recall.</p>
+
+<canvas id="decay" width="800px" height="350px"></canvas>
+
+<p>The horizontal green line represents the threshold for recall. This shows that even when memories have been forgotten, further practice can recover them, as illustrated by the sudden jumps in the chunk's strength at 7, 9 and 23 days after it was created.</p>
+
+<p>The effective rate of forgetting is effected by various factor's including:</p>
+
+<ul>
+<li>Meaningfulness of the information</li>
+<li>The way it is represented</li>
+<li>Physiological factors, e.g. stress and sleep</li>
+</ul>
+
+<p>For human-like AI, we can mimic these factors (at least the first two) in terms of the initial strength of chunks when they are first added, the way that knowledge is modelled with chunk graphs, the way that related memories are boosted through spreading activation, and the effects of interference during stochastic recall. More details are given below.</p>
+
+<h2 id="spacing">The Spacing Effect</h2>
+
+<p>In the earlier graph of the forgetting curve, the rehearsal at 9 days has a reduced effect compared to the rehearsals at 7 and 23 days. The <em>Spacing Effect</em> describes how repetitions have less effect when they are closer together, as this lessens the likelihood that the memory will have continued value further out into the future. This is modelled using the <em>Logistic Function</em> applied to the logarithm of the time interval divided by a characteristic time period. For smaller intervals the effect of repetitions gradually drop off to zero, and for larger intervals the effect of  repetitions gradually flatten out.</p>
+
+<p class="figure"><img src="Logistic-curve.png"></p>
+
+<p>If memories have been frequently used in the past, then it is likely that they will be useful again in the future, even after a long interval of disuse. This can occur when a given skill isn't needed for a prolonged period due to environmental factors, e.g. different foraging tactics are appropriate during the winter vs during the summer. One way to model this is to make the decay rate inversely proportional to the number of times a memory has been updated or recalled, modulo the spacing effect. This would explain how you can recognise a popular song from your youth that you haven't heard for many years.</p>
+
+<h2 id="stochastic">Stochastic Recall</h2>
+
+<p>Memory recall is stochastic. This means that when recalling memories of equal strength, the probability of recalling anyone of them is the same. Sometimes, you will recall a weaker memory in preference to a stronger one. However, the likelihood of that rapidly drops off the greater the difference in strengths. This modelled using <em>Gaussian noise</em> where a random number is generated with an average value of zero, and a 95% chance of being within plus or minus twice the standard deviation. In the following figure, the mid-point μ is set to zero.</p>
+
+<p class="figure"><img src="gaussian.png"></p>
+
+<p>The chunk strength is multiplied by Euler's constant (e) raised to the power of the value returned by the noise generator. This means that on average the resulting value is close to the chunk strength, but on rare occasions, it will either be a lot smaller or a lot larger. The value is then compared to the minimum strength for successful recall.</p>
+
+<h2 id="wave">Spreading Activation</h2>
+
+<p>Priming occurs when the retrieval of one memory makes it easier to retrieve another. This is useful in natural language understanding, where the meaning of earlier words influence the likely interpretation of later words. Priming can be modelled in terms of a decaying wave of activation that spreads out across chunk graphs, following references to other chunks, and vice versa. The following example provides an illustration:</p>
+
+<pre class="chunks">
+cluster {items horse, dog, cat}
+word horse {}
+word dog {}
+word cat {}
+</pre>
+
+<p>Activating the word <em>horse</em> will boost the chunk strength of the cluster it appears in, and in turn, other words in that cluster. This shows that activation needs to spread in both directions: from a chunk to the chunks that reference it, and from chunks to the chunks they reference. Spreading activation can explain why old dormant memories can become easy to recall given the appropriate priming.</p>
+
+<p>The amount of activation is divided evenly across the referenced chunks, thus if one chunk references a thousand others, each of the referenced chunks will receive a thousandth of the activation energy. This is referred to as the <em>fan effect</em>. To ensure that the wave decays in all cases, when a chunk is boosted by a wave, only a fraction of this is redistributed to other chunks. Spreading activation reflects the dynamic nature of recall in the cortex, in terms of stochastic waves of neural activity ringing out across the cortical columns. For more details, see e.g. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3490422/">Lerner, Bentin and Shriki</a>.</p>
+
+<h2 id="commentary">Commentary</h2>
+
+<p><img class="photo" src="Anderson.jpg" alt="portrait of John Anderson" title="John R. Anderson">The framework presented on this page was loosely inspired by the work of <a href="http://act-r.psy.cmu.edu/peoplepages/ja/ja_bio.html">John R. Anderson</a>, with simplifications intended for greater scalability when engineering human-like AI agents. The current work, for instance, makes no attempt to mimic human recall latency.</p>
+
+<p><a href="http://act-r.psy.cmu.edu/about/">ACT-R</a> is a popular cognitive architecture developed by <a href="https://www.cmu.edu/dietrich/psychology/people/core-training-faculty/anderson-john.html">John R. Anderson</a> at CMU. It features a more complex and more costly framework for chunk activation and retrieval than presented in this tutorial, see the <a href="http://acs.ist.psu.edu/ist597/ACT-R_Penn-State-tutorial4.pdf">introduction to ACT-R 6</a> by Frank Ritter and Mike Schoelles, as well as the <a href="https://arxiv.org/pdf/1306.0125.pdf">analysis by Jacob Whitehill</a>. Ultimately, any such framework needs to be explainable in terms of neural models of computation, and the demands on memory throughout an animal's life.</p>
+
+<p>In part, this involves a balance between short term and long term needs. Some knowledge is transitory, dealing with the current situation, whilst other knowledge has lasting value. Seasonal knowledge allows animals to adapt their behaviour to match the changing seasons of the year. Such knowledge lies dormant for many months until that season comes again. The forgetting curve involves exponential decay, and a decay rate suitable for short term knowledge would make long term knowledge inaccessible, given extended periods of disuse.</p>
+
+<p>This challenge can be met by adjusting the decay rate based upon an estimate of the long term utility of memories. A low cost mechanism for this is to make the half-life for decay proportional to the summation of the boost each chunk gets when it is updated or recalled.  The boost takes the spacing effect into account, so that closely spaced accesses have less effect. From a neurological perspective, there are a number of different processes acting on different timescales, including neurotransmitters and neural plasticity.</p>
+
+<p>Working memory can be defined as a limited capacity store for retaining information whilst it is operated upon. Research (e.g. <a href="https://app.nova.edu/toolbox/instructionalproducts/edd8124/fall11/1974-Baddeley-and-Hitch.pdf">Baddeley & Hitch 1974</a>) suggests that working memory is modular, including such components as the central executive, visuospatial sketchpad, phonological loop and the episodic buffer. That fits with the cognitive architecture proposed for human-like AI in which the cortex is modelled as a number of specialised associative datastores with associated graph algorithms. Perception places short-lived models in the cortex for access by different cortical circuits. Some memories are short term, whilst others have lasting value. Cognitive buffers provide dynamic access to the cortex as part of a model of sequential rule execution for the cortico-basal ganglia circuit.</p>
+
+<p>Spreading activation is related to the encoding and consolidation of memories. The richer connections we can make, the easier it will be to recall memories when we need them. The effort needed during encoding and consolidation reflects the perceived importance of the information. This relates to the attention we give to things. Everyday things get little attention, and it is things that are out of the normal that catch our attention.</p>
+
+<p>One area for further study is how memory works in respect to memories of individual things, memories of sets of things, and memories of ordered sequences. In the memory tests described below, where people or cognitive agents try to remember a set of items seen earlier, a question is whether items are recalled in the original sequence, or as an unordered set of items. This also relates to spreading activation. If you recall one item in a cluster, are you likely to recall all items in the cluster, or are you more likely to remember the following items in the sequence in which you originally learned the cluster?</p>
+
+<p>The approach implemented with the chunks library has several parameters:</p>
+
+<ul>
+<li>Initial chunk strength: 1.0</li>
+<li>Minimum strength threshold: 0.008</li>
+<li>Standard deviation for noise generation: 2.0</li>
+<li>Time constant for spacing effect: 24 hours</li>
+<li>Initial decay rate: 50% in 3 days</li>
+<li>Decay rate proportionality - <em>not yet implemented</em></li>
+</ul>
+
+<p>These parameters will need to be adjusted to match the desired performance across a wide range of tasks. Humans vary in how good their memory is, and in their ability to learn, so the question is what do we want to achieve with cognitive agents that mimic human capabilities?</p>
+
+<p>n.b. <em>further work will explore approaches for dealing with statistical correlations at an early stage of concept formation for thematic knowledge, i.e. before chunk properties are created to represent relationships between concepts. This involves managing statistics across episodic memory for co-occurrence (which things are commonly found together) and for temporal sequences (which things commonly follow other things) suggestive of potential causal relationships.</em></p>
+
+<h2 id="tests">Memory Tests</h2>
+
+<p>The following provides some tests of memory performance using different levels of encoding.</p>
+
+<p>Imagine you are shown a tray with a set of cards each of which has a word. You are given some time to try to remember them. The tray is then taken away, and some time later, you are asked to write down all of the words that you can remember.</p>
+
+<p>The first part of the test can be modelled by adding a set of chunks where each chunk corresponds to one of the cards on the tray, e.g.</p>
+
+<pre class="chunks">
+# declare the tray and the words it has
+
+tray tray3 {}
+
+word horse {tray tray3}
+word orange {tray tray3}
+word table {tray tray3}
+word teacher {tray tray3}
+word apple {tray tray3}
+</pre>
+
+<p>Alternatively, information about the tray can be modelled as a chunk context, to ensure that the facts about the tray are held distinctly from general declarative knowledge, e.g. as in the following where context <code>c1</code> represents episodic knowledge that is only true in a given context:</p>
+
+<pre class="chunks">
+# this episode has a tray and a set of words
+
+tray tray3 {@context c1}
+
+word horse {@context c1}
+word orange {@context c1}
+word table {@context c1}
+word teacher {@context c1}
+word apple {@context c1}
+</pre>
+
+<p>For the second part of the test, we see how many chunks can be recalled after a given time interval. In the simplest case, the words are unrelated and spreading activation has little effect as it is divided across all of the cards on the tray.</p>
+
+<p>Here is a table containing a random selection of words:</p>
+
+<table id="unrelated">
+<tbody><tr><td>Nine</td><td>Swap</td><td>Cell</td><td>Ring</td><td>Lust</td></tr><tr><td>Plugs</td><td>Lamp</td><td>Apple</td><td>Table</td><td>Sway</td></tr><tr><td>Army</td><td>Bank</td><td>Fire</td><td>Hold</td><td>Worm</td></tr><tr><td>Clock</td><td>Horse</td><td>Color</td><td>Baby</td><td>Sword</td></tr><tr><td>Desk</td><td>Grab</td><td>Find</td><td>Bird</td><td>Rock</td></tr></tbody>
+</table>
+
+<p>The following allows you to run the memory test with unrelated words from the above table. You can choose the time delay for applying the test after being shown the tray. The results are stochastic and likely to vary from one run to the next.</p>
+
+<div id="test1" class="test">
+<p>Run test1 with given time delay:
+<button delay="1">1 day</button> 
+<button delay="5">5 days</button> 
+<button delay="10">10 days</button> 
+<button delay="15">15 days</button>
+<button delay="20">20 days</button>
+<button delay="30">30 days</button>
+<button delay="35">35 days</button>
+</p>
+
+<p>Test results: <span id="score1"></span></p>
+
+<p>Words recalled: <span id="recalled1"></span></p>
+</div>
+
+<p>If the words are related, this allows you to group them into clusters of related words. This can be modelled in terms of chunks that represent the individual clusters. With fewer cards in each cluster, and a few clusters for the tray, spreading activation has a much greater impact, improving the probability of recall.</p>
+
+<p>Here is a table where the entries can be easily clustered by category:</p>
+
+<table id="related">
+<tbody><tr><td>Horse</td><td>Cat</td><td>Dog</td><td>Fish</td><td>Bird</td></tr><tr><td>Orange</td><td>Yellow</td><td>Blue</td><td>Green</td><td>Black</td></tr><tr><td>Table</td><td>Chair</td><td>Desk</td><td>Bookcase</td><td>Bed</td></tr><tr><td>Teacher</td><td>School</td><td>Student</td><td>Homework</td><td>Class</td></tr><tr><td>Apple</td><td>Banana</td><td>Kiwi</td><td>Grape</td><td>Mango</td></tr></tbody>
+</table>
+
+<p>How can a human-like AI agent create the clusters? In principle, an agent could try several different approaches to see which works best, and discarding the clusters that aren't useful. This involves heuristics for selecting an approach, the means to apply each approach, along with the means to evaluate their results, and to discard unwanted clusters. All of this could be implemented using a mix of facts, rules and graph algorithms.</p>
+
+<p>The facts include background knowledge about the meaning of words, e.g. words for different kinds of animals, and words for things commonly associated with education:</p>
+
+<pre class="chunks">
+# taxonomic relationships
+
+cat kindof animal
+fish kindof animal
+
+# thematic relationships
+
+teacher partof education
+school partof education
+student partof education
+</pre>
+
+<p>You might know the names of many different kinds of animals. This dilutes the effect of spreading activation, and explains why it is important to explicitly represent clusters of cards, e.g.</p>
+
+<pre class="chunks">
+cluster cl {items horse, dog, cat, fish, bird}
+cluster c2 {items orange, yellow, blue, green, black}
+...
+</pre>
+
+<p>Clusters could be proposed based upon:</p>
+
+<ul>
+<li>chunk types</li>
+<li>relationships between chunk types</li>
+<li>chunk property names</li>
+<li>chunk property values</li>
+<li>richer taxonomic knowledge involving classes and properties</li>
+<li>thematic knowledge about co-occurence of related information
+</ul>
+
+<p>The following test uses clustered items:</p>
+
+<div id="test2" class="test">
+<p>Run test2 with given time delay:
+<button delay="1">1 day</button> 
+<button delay="5">5 days</button> 
+<button delay="10">10 days</button> 
+<button delay="15">15 days</button>
+<button delay="20">20 days</button>
+<button delay="30">30 days</button>
+<button delay="35">35 days</button>
+</p>
+
+<p>Test results: <span id="score2"></span></p>
+
+<p>Words recalled: <span id="recalled2"></span></p>
+</div>
+
+<p>How do people decide how to form the different clusters? While this may be obvious for some lists, it will be less so for others.</p>
+
+<ul>
+<li>Hard Clustering: In the above example, something either is a fruit or it isn't, so it's easy to make the distinction. In hard clustering, you separate the items by distinct qualities. Think about what makes the items in the list distinct. You may have some leftovers that don't seem to have qualities in common.</li>
+<li>Hierarchical Clustering: Start with all of the objects in the group and begin to group them two by two for the ones that are the most similar. Then look at the pairs and group the closest pairs together so that you now have groups of four. For simple memorization, that's probably as far as you want to go.</li>
+</ul>
+
+<p>This is an opportunity for a synergistic blend of cognitive rules and graph algorithms. Using rules alone would be complicated and slow, e.g. creating an index by properties and counting the number of entries.  Graph algorithms will be a lot more efficient, but have limited flexibility on their own.  This could be compensated for by using a suite of algorithms for different purposes under the control of rules, along with the means to control algorithms via parameters passed from the rules.</p>
+
+<p>Further work is expected to explore the effects of different ways of organising knowledge on recall. Concepts can have two very different kinds of relations: similarity relations based on shared features (e.g., dog – wolf), which are called “taxonomic” relations, and contiguity relations based on co-occurrence in events or scenarios (e.g., dog – collar), which are called “thematic” relations. See the <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5393928/">survey paper</a> by Mirman, Landrigan & Britt, 2017.</p>
+
+<p>In principle, thematic relations are learned first, based upon co-occurrence within individual episodes, whilst taxonomic relations are learned later, based upon generalising across different episodes. This points to future demos on learning from experience, the role of analogies, metacognition and hierarchical reinforcement learning. This will in turn drive work indexing facts and rules for scalable cognitive databases, mimicking the function of the anterior cingulate gyrus.</p>
+
+<p><strong><em>Further work is planned on modelling the process of clustering as part of the encoding and consolidation of new memories. The facts and rules for this will be viewable below.</em></strong></p>
+
+<hr>
+
+<h2 id="chunks">Facts and Rules</h2>
+
+<p>Log: <button id="clear">clear</button></p>
+<pre id='log'>
+</pre>
+
+<p><button id="factsButton">►</button> Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p><button id="rulesButton">►</button> Rules graph:</p>
+<pre id='rules'>
+</pre>
+
+<hr>
+
+<p id="footnote">n.b. many thanks to <a href="https://www.verywellmind.com/a-short-term-memory-experiment-2795664">verywellmind.com</a> for the tables of words and the above account on clustering.</p>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<hr>
+<p><img id="ec-logo" src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 957406 for project <a href="https://terminet-h2020.eu/">TERMINET</a>, which focuses on next generation IoT.</p>
+</div>
+</div>
+</body>
+</html>

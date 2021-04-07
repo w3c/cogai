@@ -1,0 +1,6 @@
+# Factual knowledge for memory demo
+
+# used in computing forgetting curve
+
+animal a2 {isa mouse}
+
