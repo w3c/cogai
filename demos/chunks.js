@@ -44,14 +44,21 @@
 
 class Chunk {
 	constructor (type, id) {
-		this.type = type;
-		this.properties = {};
+		//const decay = 1.6045E-6;  // half-life of 5 days
+		const decay = 2.6742E-6; 	// half-life 3 days
+		//const decay = 4.0113E-6;  // half-life of 2 days
+		//const decay = 8.0335E-6;  // half-life of 1 day
+
+		let chunk = this;
+		chunk.type = type;
+		chunk.properties = {};
+		//chunk.strength = 0;
 		
 		if (id !== undefined)
-			this.id = id;
+			chunk.id = id;
 			
-		// return copy of self
-		this.clone = function (skipAtNames) {
+		// return copy of self which is not in a graph
+		chunk.clone = function (skipAtNames) {
 			let chunk = new Chunk(this.type, this.id);
 			let props = this.properties;
 			for (let name in props) {
@@ -74,23 +81,105 @@ class Chunk {
 			return chunk;
 		};
 		
+		// returns true if this chunk has the given chunk ID
+		// as one of its property values or as its type
+		// this is used to help with graph indexing for
+		// spreading strength in both directions
+		chunk.cited = function (id) {
+			if (chunk.type === id)
+				return true;
+				
+			let props = chunk.properties;
+			for (let name in props) {
+				if (props.hasOwnProperty) {
+					let value = props[name];
+					
+					if (Array.isArray(value)) {
+						for (let i = 0; i < value.length; ++i) {
+							if (value[i] === id)
+								return true;
+						}
+					} else if (value === id) {
+							return true;
+					}
+				}
+			}
+				
+			return false;
+		};
+		
+		// this provides a means for changing a chunk's type
+		// that ensures that the graph's indexes are in step
+		
+		chunk.setType = function (type) {
+			if (chunk.graph)
+				chunk.graph.updateType(chunk, type);
+			else
+				chunk.type = type;
+		};
+		
+		// return the current strength level which decays
+		// exponentially over time unless boosted in some way
+		// where delay = log(0.5)/tau) for tau in seconds
+		chunk.getStrength = function (now) {
+			return chunk.strength * Math.exp(decay * (chunk.age - now));
+		};
+		
+		chunk.setStrength = function (strength, now) {
+			chunk.strength = strength * Math.exp(decay * (now - chunk.age));
+		};
+		
+		chunk.updateStrength = function (now) {
+			chunk.strength = chunk.getStrength(now);
+			chunk.age = now;
+		};
+		
+		let forgetValue = function (value) {
+			if (chunk.graph) {
+				if (Array.isArray(value)) {
+					for (let i = 0; i < value.length; ++i) {
+						chunk.graph.forgetLink(chunk, value[i]);
+					}
+				} else {
+					chunk.graph.forgetLink(chunk, value);
+				}
+			}
+		};
+		
+		let rememberValue = function (value) {
+			if (chunk.graph) {
+				if (Array.isArray(value)) {
+					for (let i = 0; i < value.length; ++i) {
+						chunk.graph.rememberLink(chunk, value[i]);
+					}
+				} else {
+					chunk.graph.rememberLink(chunk, value);
+				}
+			}
+		};
+				
 		// clean house keeping for lists of values
 		// used to avoid lists with just one item
 		// and to avoid bad values (undefined, null, [])
 		
 		// overrides property's existing value(s)
-		this.setValue = function (name, value) {
+		chunk.setValue = function (name, value) {
+			let old = chunk.properties[name];
 			if (value === undefined || value === null ||
 				(Array.isArray(value) && value.length === 0)) {
-				if (this.properties[name] !== undefined)
-					delete this.properties[name];
-			} else {
-				this.properties[name] = value;
+				if (chunk.properties[name] !== undefined) {
+					forgetValue(old);
+					delete chunk.properties[name];
+				}
+			} else if (old !== value) {
+				forgetValue(old);
+				chunk.properties[name] = value;
+				rememberValue(value);
 			}
 		};
 		
 		// supplement's property's existing values
-		this.addValue = function (name, value) {
+		chunk.addValue = function (name, value) {
 			if (value === undefined)
 				return;
 				
@@ -102,26 +191,28 @@ class Chunk {
 					value = value[0];
 			}
 				
-			let old = this.properties[name];
+			let old = chunk.properties[name];
 			if (old === undefined)
-				this.properties[name] = value;
+				chunk.properties[name] = value;
 			else if (Array.isArray(old)) {
 				if (Array.isArray(value))
-					this.properties[name] = old.concat(value);
+					chunk.properties[name] = old.concat(value);
 				else
 					old.push(value);
 			} else if (Array.isArray(value)) {
 				if (value.length )
-				this.properties[name] = [old].concat(value);
+				chunk.properties[name] = [old].concat(value);
 			} else
-				this.properties[name] = [old, value];
+				chunk.properties[name] = [old, value];
+				
+			rememberValue(value);
 		};
 		
 		// remove value from list of values
-		this.removeValue = function (name, value) {
-			let old = this.properties[name];
+		chunk.removeValue = function (name, value) {
+			let old = chunk.properties[name];
 			if (old === value) {
-				delete this.properties[name];
+				delete chunk.properties[name];
 			} else {
 				if (Array.isArray(old)) {
 					for (let i = 0; i < old.length; ++i) {
@@ -129,20 +220,22 @@ class Chunk {
 							old.splice(i, 1);
 							
 							if (old.length === 0)
-								delete this.properties[name];
+								delete chunk.properties[name];
 								
 							if (old.length === 1)
-								this.properties[name] = old[0];
+								chunk.properties[name] = old[0];
 
 							break;
 						}
 					}
 				}
 			}
+			
+			forgetValue(value);
 		};
 		
-		this.hasValue = function (name, value) {
-			let current = this.properties[name];
+		chunk.hasValue = function (name, value) {
+			let current = chunk.properties[name];
 			
 			if (current === undefined)
 				return false;
@@ -160,13 +253,27 @@ class Chunk {
 			return false;
 		};
 	
-		this.toString = function (verbose, hideId) {
-			if (!verbose) {
-				let s= this.type + ' ';
-				if (this.id && !hideId)
-					s += this.id + ' ';
+		chunk.toString = function (options) {
+			let now = chunk.graph ? chunk.graph.now : undefined;
+			if (options === undefined)
+				options = {};
+			
+			if (options.concise) {					
+				let s= chunk.type + ' ';
+				if (chunk.id && !options.rule)
+					s += chunk.id + ' ';
 				s += '{'
-				let props = this.properties;
+				
+				// sub-symbolic parameters
+				
+				if (!options.rule && now !== undefined && chunk.strength !== undefined) {
+					s += '@strength ' +  chunk.strength + '; ';
+					s += '@age ' +  (now - chunk.age) + '; ';
+				}
+				
+				// regular properties
+				
+				let props = chunk.properties;
 				for (let name in props) {
 						if (props.hasOwnProperty(name)) {
 							s += name + ' ';
@@ -194,8 +301,18 @@ class Chunk {
 			
 			// verbose syntax
 			
-			let s= this.type + ' ' + this.id + ' {\n'
-			let props = this.properties;
+			let s= chunk.type + ' ' + chunk.id + ' {\n'
+			
+			// sub-symbolic parameters
+			
+			if (now !== undefined && chunk.strength !== undefined) {
+				s += '   @strength ' +  chunk.strength + '\n';
+				s += '   @age ' +  (now - chunk.age) + '\n';
+			}
+			
+			// regular properties
+			
+			let props = chunk.properties;
 			for (let name in props) {
 					if (props.hasOwnProperty(name)) {
 						s += '   ' + name + ' ';
@@ -226,7 +343,7 @@ class Link extends Chunk  {
 			"@subject": subject,
 			"@object":object
 		};
-		this.toString = function (verbose) {
+		this.toString = function (options) {
 			return this.properties["@subject"] + 
 				' ' + this.type +
 				' ' + this.properties["@object"] +
@@ -238,15 +355,20 @@ class Link extends Chunk  {
 function ChunkGraph (source) {
 	let graph = this;
 	
+	const minimum_strength = 0.008;
+
 	const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
 	const re_name = /^(\*|(@)?[\w|\.|\-|\:]+)$/;
 	const re_value = /^(~[\w|\.|\-|]*|~\?[\w|\.|\-|]+|\?[\w|\.|\-|]+)$/;
 	const re_uri = /(http:\/\/|https:\/\/|www\.)([^ '"]*)/;
 	const re_iso8601 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/;
 
-	graph.chunks = {}; // map chunk id to chunk
-	graph.types = {};  // map chunk type to list of chunks
-	graph.count = 0;   // count of chunks created
+	graph.chunks = {};   // map chunk id to chunk with that id
+	graph.types = {};    // map chunk type to list of chunks
+	graph.cited = {};    // map type and property values to chunk's id
+	graph.contexts = {}  // map chunk context to object mapping chunk id's to chunks
+	graph.count = 0;     // count of chunks created
+	graph.now = Date.now()/1000.0;  // timestamp in seconds since epoch
 	
 	let gensym_count = 0;
 	
@@ -324,10 +446,175 @@ function ChunkGraph (source) {
 		return true;
 	};
 	
+	let isLink = function (value) {
+		return (typeof (value) === "string" && value[0] !== '"')
+	};
+	
 	let randomIntFromInterval = function (min, max) {
   		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
 	
+	// called after deleting or updating a property
+	// this first checks if the old value is
+	// cited and then removes it from the index
+	// this needs to be called for type and all
+	// properties when removing a chunk from the graph
+	graph.forgetLink = function (chunk, id) {
+		if (isLink(id) && chunk.graph === graph && chunk.cited(id)) {
+			let list = graph.cited[id];
+			if (list) {
+				list.splice(find(list, chunk.id), 1);
+				if (list.length === 0)
+					delete graph.cited[id];
+			}
+		}
+	};
+	
+	// called when setting type or property value
+	// and for type and all properties when adding
+	// a chunk to the graph 
+	graph.rememberLink = function (chunk, id) {
+		if (isLink(id)) {
+			if (!graph.cited[id])
+				graph.cited[id] = []
+			
+			let i = find(graph.cited[id], chunk.id);
+		
+			if (i < 0)
+				graph.cited[id].push(chunk.id);
+		}
+	};
+
+	// To mimic human learning and forgetting, the strength
+	// of a chunk is modelled as a leaky capacitor where charge
+	// is injected each time the chunk is recalled or updated,
+	// and then decays over time. Related chunks are primed with
+	// a fraction of the injected charge being divided across
+	// linked chunks in a wave of spreading strength until a
+	// cut-off threshold is reached. Links are followed in both
+	// directions, for chunk types and properties.
+	
+	// ???? should activation spread via a shared ID when
+	// that ID is missing from graph.chunks[ID] ????
+	
+	graph.activate = function (chunk) {
+		// parameters for spreading strength
+		// to be adjusted from experience
+		const base = 1.0;
+		const fraction = 0.5;
+		const cutoff = 0.01;
+		const tau = 24*60*60;  // arbitrarily set to 24 hours
+		
+		// The spacing effect is that massed presentations have
+		// reduced novelty, and are less effective for learning.
+		// The logistic function is used to mimic the effect,
+		// mapping the time interval since the chunk was last
+		// recalled or updated to the boost in its strength,
+		// see: https://en.wikipedia.org/wiki/Logistic_function
+		function logistic (x) {
+			return (1 + Math.tanh(x/2))/2;
+		};
+		
+		function prime(chunk, boost) {
+			let strength = chunk.getStrength(graph.now) + boost;
+			console.log('boosting: ' + chunk.id + ' by ' + boost + ' to ' + strength);
+			chunk.setStrength(strength, graph.now);
+			
+			// spread strength through linked chunks
+			if (boost > cutoff) {
+				// reduce boost to guarantee decaying wave
+				boost = boost*fraction;
+				
+				// which chunks does this chunk link to?
+				let chunks = [];
+				
+				if (graph.chunks[chunk.type])
+					chunks.push(graph.chunks[chunk.type])
+				
+				let props = chunk.properties;
+				for (let name in props) {
+					if (props.hasOwnProperty(name)) {
+						let id = props[name];
+						if (Array.isArray(id)) {
+							let list = id;
+							for (let i = 0; i < list.length; ++i) {
+								id = list[i];
+								if (typeof (id) === "string" && id[0] !== '"') {
+									let c = graph.chunks[id];
+									if (c)
+										chunks.push(c);
+								}
+							}
+						} else 	if (typeof (id) === "string" && id[0] !== '"') {
+							let c = graph.chunks[id];
+							if (c)
+								chunks.push(c)
+						}
+					}
+				}
+				
+				// which chunks cite this chunk?
+				let cited = [], ids = graph.cited[chunk.id];
+				
+				if (ids && ids.length > 0) {
+					for (let i = 0; i < ids.length; ++i) {
+						cited.push(graph.chunks[ids[i]]);
+					}
+				}
+				
+				if (boost > cutoff * (chunks.length + cited.length)) {
+					if (cited.length > 0)
+						chunks = chunks.concat(cited);
+			
+					// prime the linked chunks
+					if (chunks.length) {
+						boost = boost*fraction/chunks.length;
+			
+						for (let i = 0; i < chunks.length; ++i) {
+							prime(chunks[i], boost);
+						}
+					}
+				}
+			}
+		};
+		
+		if (chunk) {
+			let now = graph.now; // updated by application
+			let boost = base;
+		
+			if (now > chunk.age)
+				boost *= logistic(Math.log((now - chunk.age)/tau));
+			
+			// apply forgetting curve to update chunk strength
+			chunk.updateStrength(now);
+			console.log('** activating ' + chunk.id + ' ' + chunk.strength);
+			prime(chunk, boost);
+		}
+		return chunk;
+	};
+	
+	// Used as part of stochastic recall of chunks where
+	// where stronger chunks are more likely to be selected.
+	// This implementation uses the Box–Muller algorithm.
+	// Multiply the strength level by e^x where x is the
+	// value returned by this function. The standard deviation
+	// determines how much variability is injected.
+	graph.gaussian = function (stdev) {
+		const epsilon = 1E-20;
+		const TwoPI = 2 * Math.PI;
+		let u1, u2;
+		do {
+			u1 = Math.random();
+			u2 = Math.random();
+		} while (u1 < epsilon);
+		return stdev*Math.sqrt(-2*Math.log(u1))*Math.cos(TwoPI*u2);
+	};
+	
+	graph.noise = function (chunk) {
+		const stdev = 2.0;
+		return chunk.getStrength(graph.now) * Math.exp(graph.gaussian(stdev));
+	};
+		
 	// value is a name or a list of names
 	// bindings maps variable names to values
 	// map to a list of names, substituting variables
@@ -515,7 +802,8 @@ function ChunkGraph (source) {
 					break;
 					
 					case '@subject':
-					case '@object': {
+					case '@object': 
+					case '@context': {
 						
 					}
 					break;
@@ -604,13 +892,13 @@ function ChunkGraph (source) {
 					cond = bindings[cond.substr(1)];
 					
 				if (cond === undefined)
-					return false; //continue;
+					return negate; //continue;
 												
 				let target = chunk.properties[name];
 				
 				if (target === undefined) {
 					if (name !== "@task")
-						return false;
+						return negate;
 						
 					let module = engine.getModule(condition);
 						
@@ -625,7 +913,15 @@ function ChunkGraph (source) {
 							return negate;
 							
 						for (let i = 0; i < cond.length; ++i) {
-							if (cond[i] !== target[i])
+							let c = cond[i];
+							
+							if (c[0] === "?")
+								c = bindings[c.substr(1)];
+								
+							if (c === undefined)
+								return negate;
+
+							if (c !== target[i])
 								return negate;
 						}
 						return !negate;
@@ -656,7 +952,7 @@ function ChunkGraph (source) {
 			return matched;
 			
 		if (values === undefined)
-			return chunks;
+			return chunks.slice();
 		
 		for (let i = 0; i < chunks.length; ++i) {
 			let chunk = chunks[i];
@@ -705,41 +1001,120 @@ function ChunkGraph (source) {
 	};
 
 	// recall best chunk with given type and given property values
-	// *** needs updating for stochastic recall according to expected utility
-	graph.get = function (type, values, id) {
+	// previously defined as graph.get = function (type, values, id, all)
+	graph.get = function (args) {
+		let type, values, id, all;
+		
+		if (typeof args === "string") {
+			type = args;
+			value = {};
+		}
+		else {
+			type = args.type;
+			values = args.values ? args.values : {};
+			id = args.id;
+			all = args.all;
+		}
+			
 		if (id) {
-			return graph.chunks[id];
+			return graph.activate(graph.chunks[id]);
 		}
 		
-		let chunks = this.types[type];
-		let matched = matching_values(chunks, values);
+		let ids, chunks, matched;
+		let length = Number.POSITIVE_INFINITY;
+			
+		if (type && this.types[type])
+			chunks = this.types[type];
+			
+		// search given values for references to chunks
+		// then find the set of chunks that cite those chunks
+		// and set ids to the shortest such set
+		for (let name in values) {
+			let value = values[name];
+			
+			if (typeof value === "string" && value[0] !== '"') {
+				let list = graph.cited[value];
+				if (list.length < length)
+					ids = list;
+			}
+		}
 		
+		// if type isn't given or has a larger set of chunks
+		// we use the chunk set identified from the values
+		if (ids && (!chunks || chunks.length > ids.length)) {
+			chunks = [];
+	
+			for (let i = 0; i < ids.length; ++i) {
+				let chunk = graph.chunks[ids[i]];
+				if (chunk)
+					chunks.push(chunk);
+			}
+		}
+		
+		if (chunks && chunks.length > 0)
+			matched = matching_values(chunks, values);
+
 		if (matched && matched.length > 0) {
+			if (all) {
+				let list = [];
+				for (let i = 0; i < matched.length; ++i) {
+					let chunk = matched[i];
+					let strength = graph.noise(chunk);
+					if (strength >= minimum_strength) {
+						graph.activate(chunk);
+						list.push(chunk);
+					}
+				}
+				return list;
+			}
+				
 			// pick best match based on prior knowledge & past experience
-			// for now we cheat and return random choice
-			let i = randomIntFromInterval(0, matched.length - 1);
-			return matched[i];
+			// along with a serendipitous sprinkling of gaussian noise
+			let best, strength;
+			for (let i = 0; i < matched.length; ++i) {
+				let chunk = matched[i];
+				if (best) {
+					let chunkStrength = graph.noise(chunk);
+					if (strength < chunkStrength) {
+						best = chunk;
+						strength = chunkStrength;
+					}
+				} else {
+					best = chunk;
+					strength = graph.noise(chunk);
+				}
+			}
+			
+			if (strength >= minimum_strength) {
+				graph.activate(best);
+				return best;
+			}
 		}
 	};
 	
 	graph.delete = function (type, values, id) {
+	// *** fix me to work if the type is undefined
+	// but no type and no values would clear entire graph
 		if (id) {
 			let chunk = graph.chunks[id];
 			if (chunk)
 				graph.remove(chunk);
 		} else if (type) {
-			let chunks = this.types[type];
+			let chunks = graph.types[type];
 			let matched = matching_values(chunks, values);
 		
-			for (let i = 0; i < matched.length; ++i)
+			for (let i = 0; i < matched.length; ++i) {
 				graph.remove(matched[i]);
-		}
+			}
+		} else
+			console.assert(type, "graph.delete with undefined type");
 	};
 
 	// create a new chunk with given type and values
 	// unless there is an existing matching chunk
 	graph.put = function (type, values, id) {
-		let chunk = id !== undefined ? this.chunks[i] : this.get(type, values);
+		// type and values must be defined, id can be undefined
+		let chunk = id !== undefined ? this.chunks[id] : this.get(type, values);
 		
 		if (chunk === undefined) {
 			chunk = new Chunk(type, id);
@@ -752,14 +1127,15 @@ function ChunkGraph (source) {
 		} else {
 			for (let name in values) {
 				chunk.properties[name] = values[name];
-			}		
+			}
+			
+			graph.activate(chunk);		
 		}
 		
 		return chunk;
 	}
 	
 	// used for @do get using same matching algorithm as for rule conditions
-	// *** needs updating for stochastic recall according to expected utility
 	graph.doGet = function (action, bindings, engine, doNext) {
 		let id = action.properties["@id"];
 		
@@ -775,7 +1151,8 @@ function ChunkGraph (source) {
 				return chunk;
 			} 
 				
-			return graph.chunks[id];
+			// should this be stochastic and sometimes fail?
+			return graph.activate(graph.chunks[id]);
 		}
 		
 		let type = action.properties["@type"];
@@ -797,14 +1174,41 @@ function ChunkGraph (source) {
 					matched.push(chunk);
 			}
 			
-			if (doNext)
-				return matched;
+			if (doNext) {
+				let list = [];
+				for (let i = 0; i < matched.length; ++i) {
+					let chunk = matched[i];
+					let strength = graph.noise(chunk);
+					if (strength >= minimum_strength) {
+						graph.activate(chunk);
+						list.push(chunk);
+					}
+				}
+				return list;
+			}
 
 			if (matched && matched.length > 0) {
 				// pick best match based on prior knowledge & past experience
-				// for now we cheat and return random choice
-				let i = randomIntFromInterval(0, matched.length - 1);
-				return matched[i];
+				// along with a serendipitous sprinkling of gaussian noise
+				let best, strength;
+				for (let i = 0; i < matched.length; ++i) {
+					let chunk = matched[i];
+					if (best) {
+						let level = graph.noise(chunk);
+						if (strength < level) {
+							best = chunk;
+							strength = level;
+						}
+					} else {
+						best = chunk;
+						strength = graph.noise(chunk);
+					}
+				}
+			
+				if (strength >= minimum_strength) {
+					graph.activate(best);
+					return best;
+				}
 			}
 		}
 	};
@@ -932,7 +1336,26 @@ function ChunkGraph (source) {
 				
 		return false;
 	};
+	
+	graph.updateType = function (chunk, newType) {
+		if (chunk.type !== newType) {
+			let oldType = chunk.type;
+			chunk.type = newType;
 			
+			if (!this.types[newType])
+				this.types[newType] = [];
+
+			this.types[newType].push(chunk);
+			this.rememberLink(chunk, newType);
+			
+			let list = this.types[oldType];
+			let i = find(list, chunk);
+			list.splice(i, 1);
+		
+			this.forgetLink(chunk, oldType);			
+		}
+	};
+	
 	graph.add = function (chunk) {
 		if (chunk === undefined) {
 			throw new Error("trying to add undefined chunk");
@@ -941,30 +1364,66 @@ function ChunkGraph (source) {
 		// if it belongs to another graph we need to
 		// remove it before adding it to this graph
 		if (chunk.graph !== undefined) {
-			if (chunk.graph === this)
+			if (chunk.graph === graph && chunk === graph.chunks[chunk.id]) {
+				graph.activate(chunk);
 				return; // already in this graph
+			}
 		
 			chunk.graph.remove(chunk);
 		}
 		
-		chunk.graph = this;
+		chunk.graph = graph;
 		
 		// overwriting an existing chunk with same id?
 		
 		if (chunk.id !== undefined) {
-			if (this.chunks[chunk.id]) {
-				this.remove(this.chunks[chunk.id])
+			let old = graph.chunks[chunk.id];
+			if (old) {
+				graph.remove(old);
 			}
 		} else {
-			chunk.id = this.gensym();
+			chunk.id = graph.gensym();
 		}
 
-		this.chunks[chunk.id] = chunk;
+		graph.chunks[chunk.id] = chunk;
 		
-		if (!this.types[chunk.type])
-			this.types[chunk.type] = [];
+		if (!graph.types[chunk.type])
+			graph.types[chunk.type] = [];
 
-		this.types[chunk.type].push(chunk);
+		graph.types[chunk.type].push(chunk);
+		
+		graph.rememberLink(chunk, chunk.type);
+		let props = chunk.properties;
+		
+		for (let name in props) {
+			if (props.hasOwnProperty(name)) {
+				value = props[name];
+				if (Array.isArray(value)) {
+					for (let i = 0; i < value.length; ++i) {
+						graph.rememberLink(chunk, value[i]);
+					}
+				} else {
+					graph.rememberLink(chunk, value);
+				}
+			}
+		}
+
+		let context = chunk.properties["@context"];
+		
+		if (context) {
+			let map = graph.contexts[context];
+			
+			if (map === undefined)
+				map = graph.contexts[context] = {};
+				
+			map[chunk.id] = chunk;
+		}
+			
+		if (chunk.strength === undefined)
+			chunk.strength = 1;
+			
+		if (chunk.age === undefined)
+			chunk.age = graph.now;
 			
 		this.lastAdded = chunk;
 		this.count++;
@@ -975,14 +1434,74 @@ function ChunkGraph (source) {
 		if (chunk === undefined) {
 			throw new Error("trying to remove undefined chunk");
 		}
+						
+		this.forgetLink(chunk, chunk.type);
+		let props = chunk.properties;
+		
+		for (let name in props) {
+			if (props.hasOwnProperty(name)) {
+				value = props[name];
+				if (Array.isArray(value)) {
+					for (let i = 0; i < value.length; ++i) {
+						this.forgetLink(chunk, value[i]);
+					}
+				} else {
+					this.forgetLink(chunk, value);
+				}
+			}
+		}
+		
+		let context = chunk.properties["@context"];
+		
+		if (context) {
+			let map = this.contexts[context];
+			
+			if (map) {
+				delete map[chunk.id];
+				
+				let count = 0;
+				
+				for (let id in map) {
+					if (map.hasOwnProperty(id)) {
+						++count;
+						break;
+					}
+				}
+				
+				if (count === 0)
+					delete this.contexts[context];
+			}
+		}
 		
 		this.count--;
 		delete this.chunks[chunk.id];
 		let list = this.types[chunk.type];
 		let i = find(list, chunk);
 		list.splice(i, 1);
+
 		chunk.id = undefined;
 		chunk.graph = undefined;
+	};
+	
+	graph.addToContext = function (chunk, context) {
+		if (chunk.graph) {
+			chunk.graph.remove(chunk);
+		}
+		
+		chunk.properties["@context"] = context;
+		return graph.add(chunk);
+	};
+			
+	graph.removeContext = function (context) {
+		context = graph.contexts[context];
+		if (context) {
+			for (let id in context) {
+				if (context.hasOwnProperty(id)) {
+					graph.remove(context[id]);
+					delete context[id];
+				}
+			}
+		}
 	};
 	
 	graph.chunkCount = function () {
@@ -1016,8 +1535,28 @@ function ChunkGraph (source) {
 		const NUMBER = 7;
 		const BOOLEAN = 8;
 		const NULL = 9;
-		
+				
 		let map = {};  // map from source code ids to graph ids
+		
+		let add_chunk = function (chunk) {
+			if (chunk.properties["@strength"] !== undefined) {
+				chunk.strength = chunk.properties["@strength"];
+				delete chunk.properties["@strength"];
+			}
+			
+			chunk.age = graph.now;
+
+			if (chunk.properties["@age"] !== undefined) {
+				let age = chunk.properties["@age"];
+				
+				if (typeof age === "number")
+					chunk.age -= age;
+					
+				delete chunk.properties["@age"];
+			}
+			
+			graph.add(chunk);
+		};
 
 		let skip_white = function(lexer) {
 			while (lexer.here < lexer.length) {
@@ -1321,7 +1860,7 @@ function ChunkGraph (source) {
 					// condition[,condition]* '=>' action[,action]*
 					lexer.here++;
 					rule = new Chunk('rule');
-					graph.add(rule);
+					add_chunk(rule);
 					
 					if (list) {
 						list.push(chunk.id);
@@ -1373,7 +1912,7 @@ function ChunkGraph (source) {
 				if (mode === PARSE_CHUNK)
 					return chunk;
 					
-				graph.add(chunk);
+				add_chunk(chunk);
 				last = CHUNK;
 				continue;
 			} else if (lexer.type !== NAME)
@@ -1406,7 +1945,7 @@ function ChunkGraph (source) {
 				if (mode === PARSE_CHUNK)
 					return chunk;
 					
-				graph.add(chunk);
+				add_chunk(chunk);
 				last = CHUNK;
 				continue;
 			} else if (lexer.type === NAME) {
@@ -1435,7 +1974,7 @@ function ChunkGraph (source) {
 					throw new Error("Missing chunk after comma" + report_where(lexer));
 					
 				// add new link as a subclass of chunk
-				graph.add(new Link(subject, predicate, object));
+				add_chunk(new Link(subject, predicate, object));
 				last = LINK;
 				
 				rule = list = id = null;
@@ -1449,18 +1988,30 @@ function ChunkGraph (source) {
 	};
 	
 	graph.toString = function () {
-		const verbose = true;
+		const options = {concise:false};
 		let s = "";
 		let graph = this;
 		forall (this.chunks, function (id) {
 			let chunk = graph.chunks[id];
-			s += chunk.toString(verbose);
+			s += chunk.toString(options);
 		});
 		return s;
-	}
+	};
+	
+	graph.contextToString = function (context) {
+		const options = {concise:false};
+		let chunks = context !== undefined ? graph.contexts[context] : graph.chunks;
+		let s = "";
+		forall (chunks, function (id) {
+			let chunk = chunks[id];
+			s += chunk.toString(options);
+		});
+		return s;		
+	};
 	
 	graph.ruleToString = function (chunk) {
 		let rule = chunk;
+		const options = {concise:true, rule:true};
 		
 		if (typeof(chunk) === "string")
 			rule = graph.chunks[id];
@@ -1473,24 +2024,24 @@ function ChunkGraph (source) {
 			if (Array.isArray(conditions)) {
 				for (let i = 0; i < conditions.length; ++i) {
 					let condition = graph.chunks[conditions[i]];
-					text += (condition.negated ? '!' : '') + condition.toString(false, true);
+					text += (condition.negated ? '!' : '') + condition.toString(options);
 					if (i < conditions.length - 1)
 						text += ',\n';
 				}
 			} else {
 				let condition = graph.chunks[conditions];
-				text += (condition.negated ? '!' : '') +  condition.toString(false, true);
+				text += (condition.negated ? '!' : '') +  condition.toString(options);
 			}
 			text += "\n => \n";
 			
 			if (Array.isArray(actions)) {
 				for (let i = 0; i < actions.length; ++i) {
-					text += "   " + graph.chunks[actions[i]].toString(false, true);
+					text += "   " + graph.chunks[actions[i]].toString(options);
 					if (i < actions.length - 1)
 						text += ',\n';
 				}
 			} else {
-				text += graph.chunks[actions].toString(false, true);
+				text += graph.chunks[actions].toString(options);
 			}
 			
 			return text;
@@ -1529,27 +2080,7 @@ function RuleEngine (log){
 	let randomIntFromInterval = function (min, max) {
   		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
-		
-	// the logistic function is used for the spacing effect
-	// see https://en.wikipedia.org/wiki/Logistic_function
-	engine.logisticFunction = function () {
-		return (1 + Math.tanh(x/2))/2;
-	};
 	
-	// used as part of stochastic recall of chunks where
-	// where stronger chunks are more likely to be selected
-	// This implementation uses the Box–Muller algorithm
-	engine.gaussian = function (stdev) {
-		const epsilon = 1E-20;
-		const TwoPI = 2 * Math.PI;
-		let u1, u2;
-		do {
-			u1 = Math.random();
-			u2 = Math.random();
-		} while (u1 < epsilon);
-		return stdev*Math.sqrt(-2*Math.log(u1))*Math.cos(TwoPI*u2);
-	};
-		
 	// these three functions are used to detect when the buffers
 	// used in a rule's conditions are unchanged by that rule
 	// so that the same rule risks being pointlessly reapplied
@@ -1704,8 +2235,15 @@ function RuleEngine (log){
 		};
 		
 		module.first = function (list) {
-			chunkList = list;
-			return module.next();
+			chunkList = null;
+			
+			if (list !== undefined) {
+				if (!Array.isArray(list))
+					return list;
+			
+				chunkList = list;
+				return module.next();
+			}
 		};
 		
 		module.next = function () {
@@ -1720,7 +2258,7 @@ function RuleEngine (log){
 		};
 	}
 
-	engine.addModule = function (name, graph, algorithms) {
+	engine.addModule = function (name, graph, algorithms) {			
 		return modules[name] = new Module(name, graph, algorithms);
 	};
 	
@@ -1731,12 +2269,24 @@ function RuleEngine (log){
 			name = "goal";
 			
 		return modules[name];
-	}
+	};
 
 	engine.getModuleByName = function (name) {
 		if (name)
 			return modules[name];
-	}
+	};
+	
+	engine.setTime = function (now) {
+		if (now === undefined)
+			now = Date.now()/1000.0;
+			
+		for (let name in modules) {
+			if (modules.hasOwnProperty(name)) {
+				let graph = modules[name].graph;
+				graph.now = now;
+			}
+		}
+	};
 	
 	engine.getBuffer = function (name) {
 		let module = modules[name];
@@ -2366,13 +2916,32 @@ function RuleEngine (log){
 			if (properties.hasOwnProperty(name)) {
 				let cond = properties[name];
 				
-				if (cond[0] === "~")
-					cond = cond.substr(1);
+				if (Array.isArray(cond)) {
+					let target = chunk.properties[name];
+					if (!Array.isArray(target) && cond.length != target.length)
+						return false;
+						
+					for (let i = 0; i < cond.length; ++i) {
+						let c = cond[i];
+						if (c[0] === "~")
+							c = c.substr(1);
 
-				if (cond[0] === "?") {
-					let v = cond.substr(1);
-					if (bindings[v] === undefined) {
-						bindings[v] = chunk.properties[name];
+						if (c[0] === "?") {
+							let v = c.substr(1);
+							if (bindings[v] === undefined) {
+								bindings[v] = target[i];
+							}
+						}
+					}
+				} else {
+					if (cond[0] === "~")
+						cond = cond.substr(1);
+
+					if (cond[0] === "?") {
+						let v = cond.substr(1);
+						if (bindings[v] === undefined) {
+							bindings[v] = chunk.properties[name];
+						}
 					}
 				}
 			}
