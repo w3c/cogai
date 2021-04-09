@@ -37,10 +37,10 @@
 		padding: 1ex;
 		font-family: sans-serif;
 	}
-	#score1, #score2 {
+	#score1, #score2, #score3, #score4 {
 		color: blue;
 	}
-	#recalled1, #recalled2 {
+	#recalled1, #recalled2, #recalled3, #recalled4, #recalled5 {
 		font-weight: normal;
 		color: rgb(150,80,80);
 	}
@@ -125,6 +125,7 @@
 <li><a href="#spacing">The Spacing Effect</a></li>
 <li><a href="#stochastic">Stochastic Recall</a></li>
 <li><a href="#wave">Spreading Activation</a></li>
+<li><a href="techniques">Memory Boosting Techniques</a></li>
 <li><a href="#commentary">Commentary</a></li>
 <li><a href="#tests">Memory Tests</a></li>
 <li><a href="#chunks">Facts and Rules</a></li>
@@ -205,6 +206,20 @@ word cat {}
 
 <p>The amount of activation is divided evenly across the referenced chunks, thus if one chunk references a thousand others, each of the referenced chunks will receive a thousandth of the activation energy. This is referred to as the <em>fan effect</em>. To ensure that the wave decays in all cases, when a chunk is boosted by a wave, only a fraction of this is redistributed to other chunks. Spreading activation reflects the dynamic nature of recall in the cortex, in terms of stochastic waves of neural activity ringing out across the cortical columns. For more details, see e.g. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3490422/">Lerner, Bentin and Shriki</a>.</p>
 
+<h2 id="techniques">Memory Boosting Techniques</h2>
+
+<p>People can learn to apply techniques to boost their recall of lists of items or long sequences of digits:</p>
+
+<ul>
+<li>Relate items to existing knowledge to make them more meaningful. Look for generalisations, e.g. to cluster items that belong to the same class or which are commonly found together. Focusing on learning generalisations first as this will speed learning of examples due to the priming effects of spreading activation.</li>
+<li>Mnemonic sentences: e.g. to help remember the names of the planets in sequence, you might associate this with the sentence: "my very educated mother just served us noodles", where the first letter for each word is a reminder of the corresponding planet's name: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus and Neptune.</li>
+<li>Mental imagery, i.e. visualising images of verbal information. Abstract ideas are easier to remember if associated with different forms of non-abstract information, e.g. images, movement, sounds and smells. The memory palace technique involves mentally placing images of things in different rooms of a familiar imaginary palace or castle. You mentally walk through the rooms to recall the images.</li>
+<li>Chunking into groups: e.g. breaking digit sequences into smaller sequences of 3 or 4 digits, as in a phone number. This can be done hierarchically with categories to make the groups more meaningful.</li>
+<li>Rehearsal: consciously rehearsing information will help, but not if you cram everything into a short time, where the spacing effect will come into play.</li>
+</ul>
+
+<p>These techniques show that learning is an active process that combines factual and procedural knowledge.</p>
+
 <h2 id="commentary">Commentary</h2>
 
 <p><img class="photo" src="Anderson.jpg" alt="portrait of John Anderson" title="John R. Anderson">The framework presented on this page was loosely inspired by the work of <a href="http://act-r.psy.cmu.edu/peoplepages/ja/ja_bio.html">John R. Anderson</a>, with simplifications intended for greater scalability when engineering human-like AI agents. The current work, for instance, makes no attempt to mimic human recall latency.</p>
@@ -221,11 +236,13 @@ word cat {}
 
 <p>One area for further study is how memory works in respect to memories of individual things, memories of sets of things, and memories of ordered sequences. In the memory tests described below, where people or cognitive agents try to remember a set of items seen earlier, a question is whether items are recalled in the original sequence, or as an unordered set of items. This also relates to spreading activation. If you recall one item in a cluster, are you likely to recall all items in the cluster, or are you more likely to remember the following items in the sequence in which you originally learned the cluster?</p>
 
+<p>The chunks library uses two passes through the set of chunks that match the query. The first pass iterates forward to ensure that later chunks can be recalled when sufficiently primed by earlier ones. The second pass iterates backward to ensure that earlier chunks can be recalled when sufficiently primed by later ones.</p>
+
 <p>The approach implemented with the chunks library has several parameters:</p>
 
 <ul>
 <li>Initial chunk strength: 1.0</li>
-<li>Minimum strength threshold: 0.008</li>
+<li>Minimum strength threshold: 0.02</li>
 <li>Standard deviation for noise generation: 2.0</li>
 <li>Time constant for spacing effect: 24 hours</li>
 <li>Initial decay rate: 50% in 3 days</li>
@@ -356,6 +373,44 @@ cluster c2 {items orange, yellow, blue, green, black}
 <p>Test results: <span id="score2"></span></p>
 
 <p>Words recalled: <span id="recalled2"></span></p>
+</div>
+
+<p>The following test makes the relationship between the clusters and the tray explicit:</p>
+
+<div id="test3" class="test">
+<p>Run test3 with given time delay:
+<button delay="1">1 day</button> 
+<button delay="5">5 days</button> 
+<button delay="10">10 days</button> 
+<button delay="15">15 days</button>
+<button delay="20">20 days</button>
+<button delay="30">30 days</button>
+<button delay="35">35 days</button>
+</p>
+
+<p>Test results: <span id="score3"></span></p>
+
+<p>Words recalled: <span id="recalled3"></span></p>
+</div>
+
+<p>The following test recalls the clusters directly:</p>
+
+<div id="test4" class="test">
+<p>Run test4 with given time delay:
+<button delay="1">1 day</button> 
+<button delay="5">5 days</button> 
+<button delay="10">10 days</button> 
+<button delay="15">15 days</button>
+<button delay="20">20 days</button>
+<button delay="30">30 days</button>
+<button delay="35">35 days</button>
+</p>
+
+<p>Test results: <span id="score4"></span></p>
+
+<p>Clusters recalled: <span id="recalled5"></span></p>
+
+<p>Words recalled: <span id="recalled4"></span></p>
 </div>
 
 <p>How do people decide how to form the different clusters? While this may be obvious for some lists, it will be less so for others.</p>

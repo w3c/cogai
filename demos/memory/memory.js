@@ -148,29 +148,23 @@ function test () {
 				factGraph.add(chunk);
 			}
 			
-			let before = factGraph.chunks[words[0]].getStrength(factGraph.now);
-			console.log("strength before: " + before);
-			
 			// let time pass
 			factGraph.now += days * 24*60*60;  // in seconds
 			
 			// now see how many we can recall
 			let list = factGraph.get({type: "word", all: true});
 			
-			let after = factGraph.chunks[words[0]].getStrength(factGraph.now);
-			console.log("strength after: " + after);
-
 			log("recalled: " + list);
+			
 			let score = document.getElementById("score1");
 			score.innerText = "recalled " +
 				(list ? list.length : "zero") + " words" +
-				" (" + (100.0*list.length/25).toFixed(0) + "%), " + 
-				"strength = " + after; // after.toExponential(2);
+				" (" + (100.0*list.length/25).toFixed(0) + "%)";
+				
 			let items = [];
 			for (let i = 0; i < list.length; ++i)
 				items.push(list[i].id);
-			let recalled = document.getElementById("recalled1");
-			recalled.innerText = items.join(", ");
+			document.getElementById("recalled1").innerText = items.join(", ");
 			
 			// now clear up by deleting the words
 			factGraph.delete("word");
@@ -216,29 +210,23 @@ function test () {
 			
 			let cited = factGraph.cited;
 			
-			//let before = factGraph.chunks[words[0]].getStrength(factGraph.now);
-			//console.log("strength before: " + before);
-			
 			// let time pass
 			factGraph.now += days * 24*60*60;  // in seconds
 			
 			// now see how many we can recall
 			let list = factGraph.get({type: "word", all: true});
 			
-			//let after = factGraph.chunks[words[0]].getStrength(factGraph.now);
-			//console.log("strength after: " + after);
-
 			log("recalled: " + list);
+			
 			let score = document.getElementById("score2");
 			score.innerText = "recalled " +
 				(list ? list.length : "zero") + " words" +
 				" (" + (100.0*list.length/25).toFixed(0) + "%)";
-				//"strength = " + after; // after.toExponential(2);
+
 			let items = [];
 			for (let i = 0; i < list.length; ++i)
 				items.push(list[i].id);
-			let recalled = document.getElementById("recalled2");
-			recalled.innerText = items.join(", ");
+			document.getElementById("recalled2").innerText = items.join(", ");
 			
 			console.log("recalled chunks:");
 			for (let i = 0; i < list.length; ++i) {
@@ -268,10 +256,155 @@ function test () {
 		}
 	};
 	
+	// prepare for memory test3
+	let prepareTest3 = function () {
+		let words = [];
+		// carry out test for given delay in days
+		let test3 = function (days) {
+			factGraph.now = Date.now()/1000;  // now in seconds
+			
+			// remember the words
+			for (let i = 0; i < words.length; ++i) {
+				let chunk = new Chunk("word", words[i]);
+				factGraph.add(chunk);
+			}
+			
+			// remember the clusters and their relationship to the tray
+			
+			factGraph.add(factGraph.parseChunk('tray tray1 {clusters c1, c2, c3, c4, c5}'));
+			factGraph.add(factGraph.parseChunk('cluster c1 {tray tray1; items horse, cat, dog, fish, bird}'));
+			factGraph.add(factGraph.parseChunk('cluster c2 {tray tray1; items orange, yellow, blue, green, black}'));
+			factGraph.add(factGraph.parseChunk('cluster c3 {tray tray1; items table, chair, desk, bookcase, bed}'));
+			factGraph.add(factGraph.parseChunk('cluster c4 {tray tray1; items teacher, school, student, homework, class}'));
+			factGraph.add(factGraph.parseChunk('cluster c5 {tray tray1; items apple, banana, kiwi, grape, mango}'));
+			
+			let cited = factGraph.cited;
+			
+			// let time pass
+			factGraph.now += days * 24*60*60;  // in seconds
+			
+			// now see how many we can recall
+			let list = factGraph.get({type: "word", all: true});
+			
+			log("recalled: " + list);
+			
+			let score = document.getElementById("score3");
+			score.innerText = "recalled " +
+				(list ? list.length : "zero") + " words" +
+				" (" + (100.0*list.length/25).toFixed(0) + "%)";
+				
+			let items = [];
+			for (let i = 0; i < list.length; ++i)
+				items.push(list[i].id);
+			document.getElementById("recalled3").innerText = items.join(", ");
+			
+			console.log("recalled chunks:");
+			for (let i = 0; i < list.length; ++i) {
+				let chunk = list[i];
+				console.log('  ' + chunk.id + ' ' + chunk.getStrength(factGraph.now));
+			}
+			
+			// now clear up by deleting the words and clusters
+			factGraph.delete("word");
+			factGraph.delete("cluster");
+			factGraph.delete("tray");
+		};
+		
+		let table = document.getElementById("related");
+		let cells = table.getElementsByTagName("td");
+		for (let i = 0; i < cells.length; ++i) {
+			words.push(cells[i].innerText.toLowerCase());
+		}
+				
+		let div = document.getElementById("test3");
+		let buttons = div.getElementsByTagName("button");
+		for (let i = 0; i < buttons.length; ++i) {
+			let button = buttons[i];
+			button.addEventListener("click", () => {
+				log("test with " + button.getAttribute("delay") + " days");
+				test3(parseInt(button.getAttribute("delay")));
+			});
+		}
+	};
+	
+	// prepare for memory test4
+	let prepareTest4 = function () {
+		let words = [];
+		// carry out test for given delay in days
+		let test4 = function (days) {
+			factGraph.now = Date.now()/1000;  // now in seconds
+			
+			// remember the words
+			for (let i = 0; i < words.length; ++i) {
+				let chunk = new Chunk("word", words[i]);
+				factGraph.add(chunk);
+			}
+			
+			// remember the clusters and their relationship to the tray
+			
+			factGraph.add(factGraph.parseChunk('tray tray1 {clusters c1, c2, c3, c4, c5}'));
+			factGraph.add(factGraph.parseChunk('cluster c1 {tray tray1; items horse, cat, dog, fish, bird}'));
+			factGraph.add(factGraph.parseChunk('cluster c2 {tray tray1; items orange, yellow, blue, green, black}'));
+			factGraph.add(factGraph.parseChunk('cluster c3 {tray tray1; items table, chair, desk, bookcase, bed}'));
+			factGraph.add(factGraph.parseChunk('cluster c4 {tray tray1; items teacher, school, student, homework, class}'));
+			factGraph.add(factGraph.parseChunk('cluster c5 {tray tray1; items apple, banana, kiwi, grape, mango}'));
+			
+			let cited = factGraph.cited;
+			
+			// let time pass
+			factGraph.now += days * 24*60*60;  // in seconds
+			
+			// now see how many we can recall
+			let clusters = factGraph.get({type: "cluster", all: true});
+			
+			log("recalled: " + clusters);
+			
+			let list = [];
+			for (let i = 0; i < clusters.length; ++i)
+				list = list.concat(clusters[i].properties.items);
+			
+			let score = document.getElementById("score4");
+			score.innerText = "recalled " +
+				(list ? list.length : "zero") + " words" +
+				" (" + (100.0*list.length/25).toFixed(0) + "%)";
+				
+			let recalled = document.getElementById("recalled4");
+			recalled.innerText = list.join(", ");
+			
+			let items = [];
+			for (let i = 0; i < clusters.length; ++i)
+				items.push(clusters[i].id);
+			document.getElementById("recalled5").innerText = items.join(", ");
+						
+			// now clear up by deleting the words and clusters
+			factGraph.delete("word");
+			factGraph.delete("cluster");
+			factGraph.delete("tray");
+		};
+		
+		let table = document.getElementById("related");
+		let cells = table.getElementsByTagName("td");
+		for (let i = 0; i < cells.length; ++i) {
+			words.push(cells[i].innerText.toLowerCase());
+		}
+				
+		let div = document.getElementById("test4");
+		let buttons = div.getElementsByTagName("button");
+		for (let i = 0; i < buttons.length; ++i) {
+			let button = buttons[i];
+			button.addEventListener("click", () => {
+				log("test with " + button.getAttribute("delay") + " days");
+				test4(parseInt(button.getAttribute("delay")));
+			});
+		}
+	};
+
 	let initFields = function () {	
 		prettify();
 		prepareTest1();  // initialise memory test for unclustered items
 		prepareTest2();  // initialise memory test for clustered items
+		prepareTest3();  // initialise memory test for enhanced clustered items 
+		prepareTest4();  // initialise memory test for active recall via clusters
 		
 		if (window.Worker) {
 			let worker = new Worker('worker.js');
