@@ -355,7 +355,7 @@ class Link extends Chunk  {
 function ChunkGraph (source) {
 	let graph = this;
 	
-	const minimum_strength = 0.008;
+	const minimum_strength = 0.02;
 
 	const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
 	const re_name = /^(\*|(@)?[\w|\.|\-|\:]+)$/;
@@ -1051,21 +1051,38 @@ function ChunkGraph (source) {
 			}
 		}
 		
+		// filter to find set of matching chunks
 		if (chunks && chunks.length > 0)
 			matched = matching_values(chunks, values);
 
 		if (matched && matched.length > 0) {
 			if (all) {
-				let list = [];
+				// forward pass
+				let found = [], weak = [], now = graph.now;
 				for (let i = 0; i < matched.length; ++i) {
 					let chunk = matched[i];
 					let strength = graph.noise(chunk);
 					if (strength >= minimum_strength) {
 						graph.activate(chunk);
-						list.push(chunk);
+						found.push(chunk);
+					} else {
+						weak.push(chunk);
 					}
 				}
-				return list;
+				
+				// backward pass
+				for (let i = weak.length - 1; i >= 0; --i) {
+					let chunk = weak[i];
+					let strength = graph.noise(chunk);
+					if (strength >= minimum_strength) {
+						console.log("lifted: " + chunk.id);
+						graph.activate(chunk);
+						//found.unshift(chunk);
+						found.push(chunk);
+					}
+				}
+				
+				return found;
 			}
 				
 			// pick best match based on prior knowledge & past experience
@@ -1175,16 +1192,31 @@ function ChunkGraph (source) {
 			}
 			
 			if (doNext) {
-				let list = [];
+				// forward pass
+				let found = [], weak = [], now = graph.now;
 				for (let i = 0; i < matched.length; ++i) {
 					let chunk = matched[i];
 					let strength = graph.noise(chunk);
 					if (strength >= minimum_strength) {
 						graph.activate(chunk);
-						list.push(chunk);
+						found.push(chunk);
+					} else {
+						weak.push(chunk);
 					}
 				}
-				return list;
+				
+				// backward pass
+				for (let i = weak.length - 1; i >= 0; --i) {
+					let chunk = weak[i];
+					let strength = graph.noise(chunk);
+					if (strength >= minimum_strength) {
+						console.log("lifted: " + chunk.id);
+						graph.activate(chunk);
+						found.unshift(chunk);
+					}
+				}
+
+				return found;
 			}
 
 			if (matched && matched.length > 0) {
