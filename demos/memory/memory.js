@@ -267,6 +267,7 @@ function test () {
 			for (let i = 0; i < words.length; ++i) {
 				let chunk = new Chunk("word", words[i]);
 				factGraph.add(chunk);
+				chunk.setValue("tray", "tray1");
 			}
 			
 			// remember the clusters and their relationship to the tray
@@ -338,6 +339,7 @@ function test () {
 			for (let i = 0; i < words.length; ++i) {
 				let chunk = new Chunk("word", words[i]);
 				factGraph.add(chunk);
+				chunk.setValue("tray", "tray1");
 			}
 			
 			// remember the clusters and their relationship to the tray

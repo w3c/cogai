@@ -33,6 +33,7 @@
 	div.test {
 		border: solid #aaa 1px;
 		background-color: #EEF;
+		margin: 0.5em;
 		width: calc(100% - 2em);
 		padding: 1ex;
 		font-family: sans-serif;
@@ -357,7 +358,16 @@ cluster c2 {items orange, yellow, blue, green, black}
 <li>thematic knowledge about co-occurence of related information
 </ul>
 
-<p>The following test uses clustered items:</p>
+<p>The following test uses clustered items using the following representation:</p>
+
+<pre class="chunks">
+cluster cl {items horse, dog, cat, fish, bird}
+cluster c2 {items orange, yellow, blue, green, black}
+...
+word horse {}
+word orange {}
+...
+</pre>
 
 <div id="test2" class="test">
 <p>Run test2 with given time delay:
@@ -377,6 +387,16 @@ cluster c2 {items orange, yellow, blue, green, black}
 
 <p>The following test makes the relationship between the clusters and the tray explicit:</p>
 
+<pre class="chunks">
+tray tray1 {clusters c1, c2, c3, c4}
+cluster cl {tray tray1; items horse, dog, cat, fish, bird}
+cluster c2 {tray tray1; items orange, yellow, blue, green, black}
+...
+word horse {tray tray1}
+word orange {tray tray1}
+...
+</pre>
+
 <div id="test3" class="test">
 <p>Run test3 with given time delay:
 <button delay="1">1 day</button> 
@@ -393,7 +413,7 @@ cluster c2 {items orange, yellow, blue, green, black}
 <p>Words recalled: <span id="recalled3"></span></p>
 </div>
 
-<p>The following test recalls the clusters directly:</p>
+<p>The following test recalls the clusters directly, i.e. using a query for chunks of type <em>cluster</em> rather than of type <em>word</em>:</p>
 
 <div id="test4" class="test">
 <p>Run test4 with given time delay:
