@@ -126,7 +126,7 @@
 <li><a href="#spacing">The Spacing Effect</a></li>
 <li><a href="#stochastic">Stochastic Recall</a></li>
 <li><a href="#wave">Spreading Activation</a></li>
-<li><a href="techniques">Memory Boosting Techniques</a></li>
+<li><a href="#techniques">Memory Boosting Techniques</a></li>
 <li><a href="#commentary">Commentary</a></li>
 <li><a href="#tests">Memory Tests</a></li>
 <li><a href="#chunks">Facts and Rules</a></li>
@@ -157,7 +157,7 @@
 <ul>
 <li>a positive number representing the chunk's strength</li>
 <li>a timestamp representing the time the chunk was created or last accessed</li>
-<li>a count of how many times it has been accessed since it was created</li>
+<li>a measure of how many times it has been accessed since it was created</li>
 </ul>
 
 <p>The following graph is dynamically computed and shows how the strength of a single chunk decays like a leaky capacitor unless boosted by being re-added, updated or recalled. In this case, the initial decay rate has been set to drop by half every 3 days, however, that is somewhat arbitrary, and should be set to mimic data from memory tests with human subjects. As the strength decays, and approaches, and then falls below a system-wide threshold, the chunk becomes increasingly harder to recall.</p>
