@@ -52,8 +52,9 @@ class Chunk {
 		let chunk = this;
 		chunk.type = type;
 		chunk.properties = {};
-		chunk.strength = 1;
-		chunk.usage = 1;
+		chunk.strength = undefined;
+		chunk.lastAccessed = undefined;
+		chunk.usage = undefined;
 		
 		if (id !== undefined)
 			chunk.id = id;
@@ -123,16 +124,16 @@ class Chunk {
 		// exponentially over time unless boosted in some way
 		// where delay = log(0.5)/tau) for tau in seconds
 		chunk.getStrength = function (now) {
-			return chunk.strength * Math.exp(decay * (chunk.age - now) / chunk.usage);
+			return chunk.strength * Math.exp(decay * (chunk.lastAccessed - now) / chunk.usage);
 		};
 		
 		chunk.setStrength = function (strength, now) {
-			chunk.strength = strength * Math.exp(decay * (now - chunk.age) / chunk.usage);
+			chunk.strength = strength * Math.exp(decay * (now - chunk.lastAccessed) / chunk.usage);
 		};
 		
 		chunk.updateStrength = function (now, worth) {
 			chunk.strength = chunk.getStrength(now);
-			chunk.age = now;
+			chunk.lastAccessed = now;
 			chunk.usage += worth;
 		};
 		
@@ -270,7 +271,7 @@ class Chunk {
 				
 				if (!options.rule && now !== undefined && chunk.strength !== undefined) {
 					s += '@strength ' +  chunk.strength + '; ';
-					s += '@ago ' +  (now - chunk.age) + '; ';
+					s += '@ago ' +  (now - chunk.lastAccessed) + '; ';
 					s += '@use ' + chunk.usage + '; ';
 				}
 				
@@ -310,7 +311,7 @@ class Chunk {
 			
 			if (now !== undefined && chunk.strength !== undefined) {
 				s += '   @strength ' +  chunk.strength + '\n';
-				s += '   @ago ' +  (now - chunk.age) + '\n';
+				s += '   @ago ' +  (now - chunk.lastAccessed) + '\n';
 				s += '   @use ' +  chunk.usage + '\n';
 			}
 			
@@ -587,8 +588,8 @@ function ChunkGraph (source) {
 			let boost = base;
 			let worth = 0;
 		
-			if (now > chunk.age) {
-				worth = logistic(Math.log((now - chunk.age)/tau));
+			if (now > chunk.lastAccessed) {
+				worth = logistic(Math.log((now - chunk.lastAccessed)/tau));
 				boost *= worth;
 			}
 			
@@ -1138,7 +1139,7 @@ function ChunkGraph (source) {
 	// unless there is an existing matching chunk
 	graph.put = function (type, values, id) {
 		// type and values must be defined, id can be undefined
-		let chunk = id !== undefined ? this.chunks[id] : this.get(type, values);
+		let chunk = id !== undefined ? graph.chunks[id] : graph.get(type, values);
 		
 		if (chunk === undefined) {
 			chunk = new Chunk(type, id);
@@ -1147,7 +1148,7 @@ function ChunkGraph (source) {
 				chunk.properties[name] = values[name];
 			}
 			
-			this.add(chunk);
+			graph.add(chunk);
 		} else {
 			for (let name in values) {
 				chunk.properties[name] = values[name];
@@ -1461,8 +1462,11 @@ function ChunkGraph (source) {
 		if (chunk.strength === undefined)
 			chunk.strength = 1;
 			
-		if (chunk.age === undefined)
-			chunk.age = graph.now;
+		if (chunk.lastAccessed === undefined)
+			chunk.lastAccessed = graph.now;
+			
+		if (chunk.usage === undefined)
+			chunk.usage = 1.0;
 			
 		this.lastAdded = chunk;
 		this.count++;
@@ -1520,6 +1524,9 @@ function ChunkGraph (source) {
 
 		chunk.id = undefined;
 		chunk.graph = undefined;
+		chunk.strength = undefined;
+		chunk.lastAccessed = undefined;
+		chunk.usage = undefined;
 	};
 	
 	graph.addToContext = function (chunk, context) {
@@ -1583,13 +1590,13 @@ function ChunkGraph (source) {
 				delete chunk.properties["@strength"];
 			}
 			
-			chunk.age = graph.now;
+			chunk.lastAccessed = graph.now;
 
 			if (chunk.properties["@ago"] !== undefined) {
-				let age = chunk.properties["@ago"];
+				let ago = chunk.properties["@ago"];
 				
-				if (typeof age === "number")
-					chunk.age -= age;
+				if (typeof ago === "number")
+					chunk.lastAccessed -= ago;
 					
 				delete chunk.properties["@ago"];
 			}
