@@ -52,7 +52,8 @@ class Chunk {
 		let chunk = this;
 		chunk.type = type;
 		chunk.properties = {};
-		//chunk.strength = 0;
+		chunk.strength = 1;
+		chunk.usage = 1;
 		
 		if (id !== undefined)
 			chunk.id = id;
@@ -122,16 +123,17 @@ class Chunk {
 		// exponentially over time unless boosted in some way
 		// where delay = log(0.5)/tau) for tau in seconds
 		chunk.getStrength = function (now) {
-			return chunk.strength * Math.exp(decay * (chunk.age - now));
+			return chunk.strength * Math.exp(decay * (chunk.age - now) / chunk.usage);
 		};
 		
 		chunk.setStrength = function (strength, now) {
-			chunk.strength = strength * Math.exp(decay * (now - chunk.age));
+			chunk.strength = strength * Math.exp(decay * (now - chunk.age) / chunk.usage);
 		};
 		
-		chunk.updateStrength = function (now) {
+		chunk.updateStrength = function (now, worth) {
 			chunk.strength = chunk.getStrength(now);
 			chunk.age = now;
+			chunk.usage += worth;
 		};
 		
 		let forgetValue = function (value) {
@@ -268,7 +270,8 @@ class Chunk {
 				
 				if (!options.rule && now !== undefined && chunk.strength !== undefined) {
 					s += '@strength ' +  chunk.strength + '; ';
-					s += '@age ' +  (now - chunk.age) + '; ';
+					s += '@ago ' +  (now - chunk.age) + '; ';
+					s += '@use ' + chunk.usage + '; ';
 				}
 				
 				// regular properties
@@ -307,7 +310,8 @@ class Chunk {
 			
 			if (now !== undefined && chunk.strength !== undefined) {
 				s += '   @strength ' +  chunk.strength + '\n';
-				s += '   @age ' +  (now - chunk.age) + '\n';
+				s += '   @ago ' +  (now - chunk.age) + '\n';
+				s += '   @use ' +  chunk.usage + '\n';
 			}
 			
 			// regular properties
@@ -581,12 +585,15 @@ function ChunkGraph (source) {
 		if (chunk) {
 			let now = graph.now; // updated by application
 			let boost = base;
+			let worth = 0;
 		
-			if (now > chunk.age)
-				boost *= logistic(Math.log((now - chunk.age)/tau));
+			if (now > chunk.age) {
+				worth = logistic(Math.log((now - chunk.age)/tau));
+				boost *= worth;
+			}
 			
 			// apply forgetting curve to update chunk strength
-			chunk.updateStrength(now);
+			chunk.updateStrength(now, worth);
 			console.log('** activating ' + chunk.id + ' ' + chunk.strength);
 			prime(chunk, boost);
 		}
@@ -1578,14 +1585,24 @@ function ChunkGraph (source) {
 			
 			chunk.age = graph.now;
 
-			if (chunk.properties["@age"] !== undefined) {
-				let age = chunk.properties["@age"];
+			if (chunk.properties["@ago"] !== undefined) {
+				let age = chunk.properties["@ago"];
 				
 				if (typeof age === "number")
 					chunk.age -= age;
 					
-				delete chunk.properties["@age"];
+				delete chunk.properties["@ago"];
 			}
+			
+			if (chunk.properties["@use"] !== undefined) {
+				let usage = chunk.properties["@use"];
+				
+				if (typeof usage === "number")
+					chunk.usage = usage;
+					
+				delete chunk.properties["@use"];
+			}
+			
 			
 			graph.add(chunk);
 		};
