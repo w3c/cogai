@@ -545,7 +545,7 @@ function test () {
 	};
 	
 	let drawThreshold = function () {
-		let x0 = 0, y0 = 33;
+		let x0 = 0, y0 = 80;
 		ctx.strokeStyle = "#383";
 		ctx.lineWidth = 1;
 		ctx.beginPath();
@@ -567,14 +567,14 @@ function test () {
 			factGraph.now = t + i * day;		
 			points.push({x: i, y:mouse.getStrength(factGraph.now)});
 			
-			// rehearsal at 7 days
-			if (i == 7) {
+			// rehearsal at 9 days
+			if (i == 9) {
 				factGraph.add(mouse);
 				points.push({x: i, y:mouse.strength});
 			}
 			
-			// rehearsal at 9 days
-			if (i == 9) {
+			// rehearsal at 10 days
+			if (i == 10) {
 				factGraph.add(mouse);
 				points.push({x: i, y:mouse.strength});
 			}

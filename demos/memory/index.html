@@ -135,7 +135,7 @@
 
 <p>This page uses <a href="https://github.com/w3c/cogai/blob/master/README.md">Cognitive AI</a> for a tutorial on modelling memory, learning and forgetting. You might ask why we would want to make computers forgetful, given how faithful they are at remembering. The answer is that in everyday situations you want to recall just what is most important based upon past experience. This is similar to web search engines which seek to provide the results that are most likely to be relevant given the words given in the search query.</p>
 
-<p>There are different kinds of memory, e.g. current information you are working on (working memory), memories of past events (episodic memory), general knowledge about the world (semantic memory), remembering how to dance the rumba (muscle memory). Memory can be considered in terms of stages: encoding, consolidation, storage and retrieval. Encoding and consolidation is about how you initially represent information and subsequently relate it to what you know already.</p>
+<p>There are different kinds of memory, e.g. current information you are working on (working memory), memories of past events (episodic memory), general knowledge about the world (semantic memory), memories of people's faces (visual memory), memories of people's voices (phonological memory), remembering how to dance the rumba (muscle memory). Memory can be considered in terms of stages: encoding, consolidation, storage and retrieval. Encoding and consolidation is about how you initially represent information and subsequently relate it to what you know already.</p>
 
 <p>Different kinds of memories are stored in different parts of the brain, e.g. people's faces, the sound of their names, and facts about their lives. Memory retrieval involves the use of cues to selectively recall relevant memories, including the means to integrate information from different parts of the brain. When retrieving memories of past situations, we try to understand what happened, and to fill in the gaps in our recollection based upon what is likely.</p>
 
@@ -164,7 +164,7 @@
 
 <canvas id="decay" width="800px" height="350px"></canvas>
 
-<p>The horizontal green line represents the threshold for recall. This shows that even when memories have been forgotten, further practice can recover them, as illustrated by the sudden jumps in the chunk's strength at 7, 9 and 23 days after it was created.</p>
+<p>The horizontal green line represents the threshold for recall. This shows that even when memories have been forgotten, further practice can recover them, as illustrated by the sudden jumps in the chunk's strength at 9, 10 and 23 days after it was created.</p>
 
 <p>The effective rate of forgetting is effected by various factor's including:</p>
 
@@ -178,7 +178,7 @@
 
 <h2 id="spacing">The Spacing Effect</h2>
 
-<p>In the earlier graph of the forgetting curve, the rehearsal at 9 days has a reduced effect compared to the rehearsals at 7 and 23 days. The <em>Spacing Effect</em> describes how repetitions have less effect when they are closer together, as this lessens the likelihood that the memory will have continued value further out into the future. This is modelled using the <em>Logistic Function</em> applied to the logarithm of the time interval divided by a characteristic time period. For smaller intervals the effect of repetitions gradually drop off to zero, and for larger intervals the effect of  repetitions gradually flatten out.</p>
+<p>In the earlier graph of the forgetting curve, the rehearsal at 10 days has a reduced effect compared to the rehearsals at 9 and 23 days. The <em>Spacing Effect</em> describes how repetitions have less effect when they are closer together, as this lessens the likelihood that the memory will have continued value further out into the future. This is modelled using the <em>Logistic Function</em> applied to the logarithm of the time interval divided by a characteristic time period. For smaller intervals the effect of repetitions gradually drop off to zero, and for larger intervals the effect of  repetitions gradually flatten out.</p>
 
 <p class="figure"><img src="Logistic-curve.png"></p>
 
@@ -223,13 +223,15 @@ word cat {}
 
 <h2 id="commentary">Commentary</h2>
 
-<p><img class="photo" src="Anderson.jpg" alt="portrait of John Anderson" title="John R. Anderson">The framework presented on this page was loosely inspired by the work of <a href="http://act-r.psy.cmu.edu/peoplepages/ja/ja_bio.html">John R. Anderson</a>, with simplifications intended for greater scalability when engineering human-like AI agents. The current work, for instance, makes no attempt to mimic human recall latency.</p>
+<p><img class="photo" src="Anderson.jpg" alt="portrait of John Anderson" title="John R. Anderson">The framework presented on this page was loosely inspired by the work of <a href="http://act-r.psy.cmu.edu/peoplepages/ja/ja_bio.html">John R. Anderson</a>, with simplifications intended for greater scalability when engineering human-like AI agents. The current work, for instance, makes no attempt to mimic human recall latency, furthermore, only the last access to each chunk is tracked rather than the full history of accesses.</p>
 
 <p><a href="http://act-r.psy.cmu.edu/about/">ACT-R</a> is a popular cognitive architecture developed by <a href="https://www.cmu.edu/dietrich/psychology/people/core-training-faculty/anderson-john.html">John R. Anderson</a> at CMU. It features a more complex and more costly framework for chunk activation and retrieval than presented in this tutorial, see the <a href="http://acs.ist.psu.edu/ist597/ACT-R_Penn-State-tutorial4.pdf">introduction to ACT-R 6</a> by Frank Ritter and Mike Schoelles, as well as the <a href="https://arxiv.org/pdf/1306.0125.pdf">analysis by Jacob Whitehill</a>. Ultimately, any such framework needs to be explainable in terms of neural models of computation, and the demands on memory throughout an animal's life.</p>
 
 <p>In part, this involves a balance between short term and long term needs. Some knowledge is transitory, dealing with the current situation, whilst other knowledge has lasting value. Seasonal knowledge allows animals to adapt their behaviour to match the changing seasons of the year. Such knowledge lies dormant for many months until that season comes again. The forgetting curve involves exponential decay, and a decay rate suitable for short term knowledge would make long term knowledge inaccessible, given extended periods of disuse.</p>
 
-<p>This challenge can be met by adjusting the decay rate based upon an estimate of the long term utility of memories. A low cost mechanism for this is to make the half-life for decay proportional to the summation of the boost each chunk gets when it is updated or recalled.  The boost takes the spacing effect into account, so that closely spaced accesses have less effect. From a neurological perspective, there are a number of different processes acting on different timescales, including neurotransmitters and neural plasticity.</p>
+<p>This challenge can be met by adjusting the decay rate based upon an estimate of the long term utility of memories. A low cost mechanism for this is to make the half-life for decay linearly proportional to one plus the aggregate sum of the boost each chunk gets when it is updated or recalled. The boost takes the spacing effect into account, so that closely spaced accesses have less effect. From a neurological perspective, there are a number of different processes acting on different timescales, including synaptic neurotransmitters and neural plasticity.</p>
+
+<p>The cortex implements an associative memory store that can be queried with cues for chunk identifiers and properties. When recalled, chunks correspond to the concurrent firing patterns of nerves in cortical columns. You can think of this in terms of vectors in noisy spaces with many dimensions. The vector for a concept like <em>dog</em> will differ from one person to the next. Human language maps these internal private vectors to vocabularies of words whose meaning is understood by language users. This can be contrasted with the Semantic Web, where web addresses (URIs) are used in place of words. RDF also has <em>blank nodes</em> which are local to each graph.</p>
 
 <p>Working memory can be defined as a limited capacity store for retaining information whilst it is operated upon. Research (e.g. <a href="https://app.nova.edu/toolbox/instructionalproducts/edd8124/fall11/1974-Baddeley-and-Hitch.pdf">Baddeley & Hitch 1974</a>) suggests that working memory is modular, including such components as the central executive, visuospatial sketchpad, phonological loop and the episodic buffer. That fits with the cognitive architecture proposed for human-like AI in which the cortex is modelled as a number of specialised associative datastores with associated graph algorithms. Perception places short-lived models in the cortex for access by different cortical circuits. Some memories are short term, whilst others have lasting value. Cognitive buffers provide dynamic access to the cortex as part of a model of sequential rule execution for the cortico-basal ganglia circuit.</p>
 
@@ -247,7 +249,7 @@ word cat {}
 <li>Standard deviation for noise generation: 2.0</li>
 <li>Time constant for spacing effect: 24 hours</li>
 <li>Initial decay rate: 50% in 3 days</li>
-<li>Decay rate proportionality - <em>not yet implemented</em></li>
+<li>Strength half-life proportionality: 1.0</li>
 </ul>
 
 <p>These parameters will need to be adjusted to match the desired performance across a wide range of tasks. Humans vary in how good their memory is, and in their ability to learn, so the question is what do we want to achieve with cognitive agents that mimic human capabilities?</p>
