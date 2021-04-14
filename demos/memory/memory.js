@@ -558,7 +558,7 @@ function test () {
 	let data = function () {
 		let points = [];
 		let mouse = factGraph.chunks["a2"];
-		let t = mouse.age;
+		let t = mouse.lastAccessed;
 		const day = 24*60*60; // seconds
 		
 		points.push({x: 0, y:mouse.strength});
