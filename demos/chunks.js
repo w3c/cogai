@@ -361,6 +361,9 @@ function ChunkGraph (source) {
 	let graph = this;
 	
 	const minimum_strength = 0.02;
+	const tau = 24*60*60;  // arbitrarily set to 24 hours
+	
+	const CONCISE = {concise:true};
 
 	const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
 	const re_name = /^(\*|(@)?[\w|\.|\-|\:]+)$/;
@@ -508,7 +511,6 @@ function ChunkGraph (source) {
 		const base = 1.0;
 		const fraction = 0.5;
 		const cutoff = 0.01;
-		const tau = 24*60*60;  // arbitrarily set to 24 hours
 		
 		// The spacing effect is that massed presentations have
 		// reduced novelty, and are less effective for learning.
@@ -522,7 +524,7 @@ function ChunkGraph (source) {
 		
 		function prime(chunk, boost) {
 			let strength = chunk.getStrength(graph.now) + boost;
-			console.log('boosting: ' + chunk.id + ' by ' + boost + ' to ' + strength);
+			//console.log('boosting: ' + chunk.id + ' by ' + boost + ' to ' + strength);
 			chunk.setStrength(strength, graph.now);
 			
 			// spread strength through linked chunks
@@ -618,8 +620,16 @@ function ChunkGraph (source) {
 		return stdev*Math.sqrt(-2*Math.log(u1))*Math.cos(TwoPI*u2);
 	};
 	
+	// apply noise from the normal distribution to chunk strength
+	// but reduce standard deviation for small time intervals
 	graph.noise = function (chunk) {
-		const stdev = 2.0;
+		let delta = graph.now - chunk.lastAccessed;
+		
+		if (delta <= 10)
+			return 1.0;
+			
+		const stdev = delta >= tau ? 2.0 : 2.0*delta/tau;
+
 		return chunk.getStrength(graph.now) * Math.exp(graph.gaussian(stdev));
 	};
 		
@@ -1011,7 +1021,7 @@ function ChunkGraph (source) {
 	// recall best chunk with given type and given property values
 	// previously defined as graph.get = function (type, values, id, all)
 	graph.get = function (args) {
-		let type, values, id, all;
+		let type, values, id, all = false;
 		
 		if (typeof args === "string") {
 			type = args;
@@ -1162,6 +1172,7 @@ function ChunkGraph (source) {
 	
 	// used for @do get using same matching algorithm as for rule conditions
 	graph.doGet = function (action, bindings, engine, doNext) {
+		console.log("doGet with: " + action.type + " " + JSON.stringify(bindings));
 		let id = action.properties["@id"];
 		
 		if (id) {
@@ -1221,6 +1232,11 @@ function ChunkGraph (source) {
 						console.log("lifted: " + chunk.id);
 						graph.activate(chunk);
 						found.unshift(chunk);
+					} else {
+						console.log("*** unable to recall " + 
+							action.type + " " + JSON.stringify(bindings) +
+							" strength: " + strength +
+							" ("+ chunk.strength +")");
 					}
 				}
 
@@ -1247,7 +1263,13 @@ function ChunkGraph (source) {
 			
 				if (strength >= minimum_strength) {
 					graph.activate(best);
+					console.log("doGet returning: " + best.toString(CONCISE));
 					return best;
+				} else {
+					console.log("*** unable to recall " + 
+						action.type + " " + JSON.stringify(bindings) +
+						" strength: " + strength +
+						" ("+ chunk.strength +")");
 				}
 			}
 		}
@@ -1295,9 +1317,36 @@ function ChunkGraph (source) {
 	// used for @do remember using same matching algorithm as for rule conditions
 	// if the ID is left unspecified we search for a matching chunk to update
 	// using a stochastic selection from amongst matching chunks 
-	// *** fix me to to use statistics of chunk utility from past experience
 	graph.doPut = function (action, bindings, engine) {
+		let buffer = engine.getModule(action).readBuffer();
+		if (buffer) console.log("doPut with buffer: " + buffer.toString(CONCISE));
 		let update = function (chunk) {
+			// copy over properties from module buffer
+			if (buffer && buffer.properties) {
+				for (let name in buffer.properties) {
+					if (name[0] === '@') {
+						if (name !== "@subject" && name !== "@object")
+							continue;
+					}
+					
+					if (buffer.properties.hasOwnProperty(name)) {
+						let value = buffer.properties[name];
+				
+						if (Array.isArray(value)) {
+							let list = [];
+					
+							for (let i = 0; i < value.length; ++i)
+								list[i] = value[i];
+						
+							chunk.properties[name] = list;
+						} else
+							chunk.properties[name] = value;	
+					}
+				
+				}
+			}
+			
+			// copy over properties from action chunk
 			for (let name in action.properties) {
 				if (name[0] === '@')
 					continue;
@@ -1319,9 +1368,25 @@ function ChunkGraph (source) {
 						chunk.properties[name] = value;	
 				}
 			}
+			console.log("doPut with: " + chunk.toString(CONCISE));
 		};
-	
-		let chunk = graph.doGet(action, bindings, engine);
+		
+		// is the chunk to be updated named with @id ?
+		
+		let id = action.properties['@id'];
+		let chunk;
+		
+		if (id) {
+			if (id[0] === '?') {
+				id = bindings[id.substr(1)];
+			}
+			
+			if (id && graph.chunks[id])
+				chunk = graph.chunks[id];
+		} else {
+			// otherwise find best matching chunk for action
+			chunk = graph.doGet(action, bindings, engine);
+		}
 		
 		if (!chunk) {
 			let type = action.properties["@type"];
@@ -1337,6 +1402,7 @@ function ChunkGraph (source) {
 		}
 		
 		update(chunk);
+		console.log("*** putting: " + chunk.toString({concise:true}));
 	};
 	
 	// return copy of next matching chunk in an implementation dependent order
@@ -2483,6 +2549,7 @@ function RuleEngine (log){
 			"@state": true,
 			"@subject": true,
 			"@object": true,
+			"@more": true,
 			"@enter": true,
 			"@leave" : true
 		};
@@ -2564,6 +2631,7 @@ function RuleEngine (log){
 			} else
 				buffer.properties[name] = value;
 				
+			console.log("pushed " + value + " to " + name + " yielding: " + buffer.properties[name]);
 			module.updated = true;
 			return "push";
 		}
@@ -2637,6 +2705,8 @@ function RuleEngine (log){
 			let old = module.readBuffer();
 			let buffer = new Chunk(action.type);
 			
+			// copy buffer's current properties
+			
 			if (old) {
 				let properties = old.properties;
 			
@@ -2646,9 +2716,11 @@ function RuleEngine (log){
 				}
 			}
 			
+			// values contains the variable bindings
+			
 			for (let name in values) {
 				if (name[0] === "@" && name !== "@enter"  && name !== "@leave"
-					 && name !== "@subject" && name !== "@object")
+					 && name !== "@more" && name !== "@subject" && name !== "@object")
 					continue;
 					
 				if (values.hasOwnProperty(name)) {
@@ -2789,7 +2861,6 @@ function RuleEngine (log){
 	let apply_actions = function (match) {
 		let rule = match[0];
 		let bindings = match[1];
-		let operation = null;
 		let actions = rule.properties["@action"]; // chunk id or list of ids
 		noteConditionModules(rule);  // used to avoid looping pointlessly
 		
@@ -2803,17 +2874,12 @@ function RuleEngine (log){
 				if (action === undefined)
 					throw (new Error("rule " + rule.id + " is missing action " + actions[i]));
 					
-				if (operation === null)	
-					operation = apply_action(rule, action, bindings);
-				else
-					apply_action(rule, action, bindings);
+				apply_action(rule, action, bindings);
 			}
 		} else { // single action
 			let action = getAction(actions);
 			operation = apply_action(rule, action, bindings);
 		}
-		
-		//log("executed rule " + rule.id + " " + operation);
 	};
 	
 	
