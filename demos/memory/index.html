@@ -129,7 +129,7 @@
 <li><a href="#techniques">Memory Boosting Techniques</a></li>
 <li><a href="#commentary">Commentary</a></li>
 <li><a href="#tests">Memory Tests</a></li>
-<li><a href="#chunks">Facts and Rules</a></li>
+<li><a href="#chunks">Facts and Rules for clustering</a></li>
 <li><a href="#footnote">Footnote</a></li>
 </ul>
 
@@ -190,7 +190,7 @@
 
 <p class="figure"><img src="gaussian.png"></p>
 
-<p>The chunk strength is multiplied by Euler's constant (e) raised to the power of the value returned by the noise generator. This means that on average the resulting value is close to the chunk strength, but on rare occasions, it will either be a lot smaller or a lot larger. The value is then compared to the minimum strength for successful recall.</p>
+<p>The chunk strength is multiplied by Euler's constant (e) raised to the power of the value returned by the noise generator. This means that on average the resulting value is close to the chunk strength, but on rare occasions, it will either be a lot smaller or a lot larger. The value is then compared to the minimum strength for successful recall. The standard deviation is reduced for time intervals small compared to the half-life for the forgetting curve. This ensures that recall is accurate for very recent memories.</p>
 
 <h2 id="wave">Spreading Activation</h2>
 
@@ -448,11 +448,11 @@ word orange {tray tray1}
 
 <p>In principle, thematic relations are learned first, based upon co-occurrence within individual episodes, whilst taxonomic relations are learned later, based upon generalising across different episodes. This points to future demos on learning from experience, the role of analogies, metacognition and hierarchical reinforcement learning. This will in turn drive work indexing facts and rules for scalable cognitive databases, mimicking the function of the anterior cingulate gyrus.</p>
 
-<p><strong><em>Further work is planned on modelling the process of clustering as part of the encoding and consolidation of new memories. The facts and rules for this will be viewable below.</em></strong></p>
+<h2 id="chunks">Facts and Rules for clustering</h2>
 
-<hr>
+<p>The button below triggers the start goal to initiate clustering based upon the <em>kindof</em> and <em>partof</em> relationships as given in the facts graph, and respectively representing taxonomic and thematic knowledge.</p>
 
-<h2 id="chunks">Facts and Rules</h2>
+<p><button id="cluster">Cluster words</button> - the clusters are shown in the log below.</p>
 
 <p>Log: <button id="clear">clear</button></p>
 <pre id='log'>

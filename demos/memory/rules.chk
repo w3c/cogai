@@ -1,3 +1,63 @@
 # Procedural knowledge for memory demo
 
+# cluster words by taxonomic or thematic relationships
 
+start {} =>
+	console {@do clearlog},
+	word {@module facts; @do next},
+	iterate {}
+	
+iterate {}, word {@module facts; @id ?id; @more true} =>
+	check-word {@do update; word ?id; @more true}
+
+iterate {}, word {@module facts; @id ?id; @more false} =>
+	check-word {@do update; word ?id; @more false}
+
+next-word {@more true} =>
+	word {@module facts; @do next},
+	next-word {@do clear},
+	iterate {}
+
+next-word {@more false} =>
+	cluster {@do list},
+	word {@module facts; @do clear}
+
+# check if word is subject of kindof link (taxonomic relationship)
+
+check-word {word ?word; @more ?more} =>
+	kindof {@module facts; @do get; @subject ?word},
+	check-class {@do update; word ?word; @more ?more}
+	
+check-class {word ?word; @more ?more}, kindof {@module facts; @object ?class} =>
+	#console {@do log; message ?word, kindof, ?class},
+	cluster {@module facts; @do get; kind ?class},
+	update-cluster {word ?word; kind ?class; @more ?more}
+
+check-class {word ?word; @more ?more}, !kindof {@module facts} =>
+	partof {@module facts; @do get; @subject ?word},
+	check-part {@do update; word ?word; @more ?more}
+	
+# check if word is subject of partof link (thematic relationship)
+
+check-part {word ?word; @more ?more}, partof {@module facts; @object ?theme} =>
+	#console {@do log; message ?word, partof, ?theme},
+	cluster {@module facts; @do get; theme ?theme},
+	update-cluster {word ?word; theme ?theme; @more ?more}
+
+check-part {word ?word; @more ?more}, !partof {@module facts} =>
+	next-word {@more ?more}
+	
+update-cluster {word ?word; @more ?more}, cluster {@module facts; @id ?id} =>
+	cluster {@module facts; @push ?word; @to items},
+	cluster {@module facts; @do put; @id ?id},
+	next-word {@more ?more}
+
+update-cluster {word ?word; kind ?class; @more ?more}, !cluster {@module facts} =>
+	kindof {@module facts; @do clear},
+	cluster {@module facts; @do put; kind ?class; items ?word},
+	next-word {@more ?more}
+
+update-cluster {word ?word; theme ?theme; @more ?more}, !cluster {@module facts} =>
+	partof {@module facts; @do clear},
+	cluster {@module facts; @do put; theme ?theme; items ?word},
+	next-word {@more ?more}

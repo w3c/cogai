@@ -8,7 +8,8 @@ function test () {
 	const PARSE_ALL = 0;
 	const PARSE_CHUNK = 1;
 	const logElement = document.getElementById('log');
-	const clearLog = document.getElementById("clear");
+	const clearLog = document.getElementById('clear');
+	const clusterButton = document.getElementById('cluster');
 	const canvas = document.getElementById('decay');
 	const ctx = canvas.getContext('2d');
 	const width = canvas.width;
@@ -18,7 +19,11 @@ function test () {
 	let factGraph, ruleGraph, goalModule, factsModule, rulesModule;
 	let man = true, woman = false, timeOfDay = "morning";
 	
-	function log (message) {
+	function log(message)  {
+		//console.log(message);
+	}
+	
+	function show (message) {
 		if (Array.isArray(message)) {
 			message = message.join(' ');
 		}
@@ -43,6 +48,13 @@ function test () {
 	
 	clearLog.addEventListener("click", () =>  {
 		clear();
+	});
+	
+	clusterButton.addEventListener("click", () =>  {
+		let horse = factGraph.chunks['horse'];
+		// set goal to execute clustering
+		let goal = new Chunk("start");
+		goalModule.pushBuffer(goal);
 	});
 	
 	// used from initFields to prettify <pre> with class="chunks"
@@ -140,6 +152,7 @@ function test () {
 		let words = [];
 		// carry out test for given delay in days
 		let test1 = function (days) {
+			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
 			// remember the words
@@ -168,6 +181,7 @@ function test () {
 			
 			// now clear up by deleting the words
 			factGraph.delete("word");
+			factGraph.now = now;
 		};
 		
 		let table = document.getElementById("unrelated");
@@ -192,6 +206,7 @@ function test () {
 		let words = [];
 		// carry out test for given delay in days
 		let test2 = function (days) {
+			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
 			// remember the words
@@ -237,6 +252,7 @@ function test () {
 			// now clear up by deleting the words and clusters
 			factGraph.delete("word");
 			factGraph.delete("cluster");
+			factGraph.now = now;
 		};
 		
 		let table = document.getElementById("related");
@@ -261,6 +277,7 @@ function test () {
 		let words = [];
 		// carry out test for given delay in days
 		let test3 = function (days) {
+			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
 			// remember the words
@@ -309,6 +326,7 @@ function test () {
 			factGraph.delete("word");
 			factGraph.delete("cluster");
 			factGraph.delete("tray");
+			factGraph.now = now;
 		};
 		
 		let table = document.getElementById("related");
@@ -333,6 +351,7 @@ function test () {
 		let words = [];
 		// carry out test for given delay in days
 		let test4 = function (days) {
+			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
 			// remember the words
@@ -382,6 +401,7 @@ function test () {
 			factGraph.delete("word");
 			factGraph.delete("cluster");
 			factGraph.delete("tray");
+			factGraph.now = now;
 		};
 		
 		let table = document.getElementById("related");
@@ -560,6 +580,7 @@ function test () {
 		let mouse = factGraph.chunks["a2"];
 		let t = mouse.lastAccessed;
 		const day = 24*60*60; // seconds
+		let now = factGraph.now;
 		
 		points.push({x: 0, y:mouse.strength});
 
@@ -585,6 +606,8 @@ function test () {
 				points.push({x: i, y:mouse.strength});
 			}
 		}
+		
+		factGraph.now = now;
 		return points;
 	};
 
@@ -635,7 +658,21 @@ function test () {
 			if (Array.isArray(message))
 				message = message.join(' ');
 					
-			log(message);
+			show(message);
+		},
+		list: function (action, values) {
+			let chunks = factGraph.get({
+				type: action.type,
+				id: values['@id'],
+				values: values,
+				all: true
+			});
+			for (let i = 0; i < chunks.length; ++i) {
+				show(chunks[i].toString({concise:true}));
+			}
+		},
+		clearlog: function (action, values) {
+			clear();  // clear the log
 		}
 	};
 		
@@ -647,6 +684,8 @@ function test () {
 		console.log(factGraph.toString());
 		console.log("*** Rules ***")
 		console.log(ruleGraph.rulesToString());
+		
+		console.log("*** fact graph loaded at: " + factGraph.now);
 		
 		rulesModule = ruleEngine.addModule('rules', ruleGraph);
 		factsModule = ruleEngine.addModule('facts', factGraph);

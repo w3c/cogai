@@ -4,3 +4,67 @@
 
 animal a2 {isa mouse}
 
+# used for clustering rules
+
+word horse {}
+word orange {}
+word table {}
+word teacher {}
+word apple {}
+
+word cat {}
+word yellow {}
+word chair {}
+word school {}
+word banana {}
+
+word dog {}
+word blue {}
+word desk {}
+word student {}
+word kiwi {}
+
+word fish {}
+word green {}
+word bookcase {}
+word homework {}
+word grape {}
+
+word bird {}
+word black {}
+word bed {}
+word class {}
+word mango {}
+
+# general facts
+
+horse kindof animal
+cat kindof animal
+dog kindof animal
+fish kindof animal
+bird kindof animal
+
+orange kindof colour
+yellow kindof colour
+blue kindof colour
+green kindof colour
+black kindof colour
+
+table kindof furniture
+chair kindof furniture
+desk kindof furniture
+bookcase kindof furniture
+bed kindof furniture
+
+teacher partof education
+school partof education
+student partof education
+homework partof education
+class partof education
+
+# orange kindof fruit
+apple kindof fruit
+banana kindof fruit
+kiwi kindof fruit
+grape kindof fruit
+mango kindof fruit
