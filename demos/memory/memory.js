@@ -51,7 +51,21 @@ function test () {
 	});
 	
 	clusterButton.addEventListener("click", () =>  {
-		let horse = factGraph.chunks['horse'];
+		// prepare a clean slate
+		factGraph.delete("word");
+		factGraph.delete("cluster");
+		factGraph.delete("tray");
+
+		// and load words from table
+		
+		let table = document.getElementById("related");
+		let cells = table.getElementsByTagName("td");
+		for (let i = 0; i < cells.length; ++i) {
+			let word = cells[i].innerText.toLowerCase();
+			let chunk = new Chunk("word", word);
+			factGraph.add(chunk);
+		}
+		
 		// set goal to execute clustering
 		let goal = new Chunk("start");
 		goalModule.pushBuffer(goal);
@@ -155,6 +169,9 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
+			// clear word chunks for a clean slate
+			factGraph.delete("word");
+
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
 				let chunk = new Chunk("word", words[i]);
@@ -179,8 +196,6 @@ function test () {
 				items.push(list[i].id);
 			document.getElementById("recalled1").innerText = items.join(", ");
 			
-			// now clear up by deleting the words
-			factGraph.delete("word");
 			factGraph.now = now;
 		};
 		
@@ -209,6 +224,10 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
+			// prepare a clean slate
+			factGraph.delete("word");
+			factGraph.delete("cluster");
+
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
 				let chunk = new Chunk("word", words[i]);
@@ -249,9 +268,6 @@ function test () {
 				console.log('  ' + chunk.id + ' ' + chunk.getStrength(factGraph.now));
 			}
 			
-			// now clear up by deleting the words and clusters
-			factGraph.delete("word");
-			factGraph.delete("cluster");
 			factGraph.now = now;
 		};
 		
@@ -280,6 +296,11 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
+			// prepare a clean slate
+			factGraph.delete("word");
+			factGraph.delete("cluster");
+			factGraph.delete("tray");
+
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
 				let chunk = new Chunk("word", words[i]);
@@ -322,10 +343,6 @@ function test () {
 				console.log('  ' + chunk.id + ' ' + chunk.getStrength(factGraph.now));
 			}
 			
-			// now clear up by deleting the words and clusters
-			factGraph.delete("word");
-			factGraph.delete("cluster");
-			factGraph.delete("tray");
 			factGraph.now = now;
 		};
 		
@@ -354,6 +371,11 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
+			// prepare a clean slate
+			factGraph.delete("word");
+			factGraph.delete("cluster");
+			factGraph.delete("tray");
+
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
 				let chunk = new Chunk("word", words[i]);
@@ -397,10 +419,6 @@ function test () {
 				items.push(clusters[i].id);
 			document.getElementById("recalled5").innerText = items.join(", ");
 						
-			// now clear up by deleting the words and clusters
-			factGraph.delete("word");
-			factGraph.delete("cluster");
-			factGraph.delete("tray");
 			factGraph.now = now;
 		};
 		
