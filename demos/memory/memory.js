@@ -50,13 +50,15 @@ function test () {
 		clear();
 	});
 	
-	clusterButton.addEventListener("click", () =>  {
-		// prepare a clean slate
+	let cleanSlate = function () {
 		factGraph.delete("word");
 		factGraph.delete("cluster");
 		factGraph.delete("tray");
-
-		// and load words from table
+	};
+	
+	clusterButton.addEventListener("click", () =>  {
+		// load words from table
+		cleanSlate();
 		
 		let table = document.getElementById("related");
 		let cells = table.getElementsByTagName("td");
@@ -169,8 +171,7 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
-			// clear word chunks for a clean slate
-			factGraph.delete("word");
+			cleanSlate();
 
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
@@ -224,9 +225,7 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
-			// prepare a clean slate
-			factGraph.delete("word");
-			factGraph.delete("cluster");
+			cleanSlate();
 
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
@@ -296,10 +295,7 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
-			// prepare a clean slate
-			factGraph.delete("word");
-			factGraph.delete("cluster");
-			factGraph.delete("tray");
+			cleanSlate();
 
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {
@@ -371,10 +367,7 @@ function test () {
 			let now = factGraph.now;
 			factGraph.now = Date.now()/1000;  // now in seconds
 			
-			// prepare a clean slate
-			factGraph.delete("word");
-			factGraph.delete("cluster");
-			factGraph.delete("tray");
+			cleanSlate();
 
 			// remember the words
 			for (let i = 0; i < words.length; ++i) {

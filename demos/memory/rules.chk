@@ -7,11 +7,8 @@ start {} =>
 	word {@module facts; @do next},
 	iterate {}
 	
-iterate {}, word {@module facts; @id ?id; @more true} =>
-	check-word {@do update; word ?id; @more true}
-
-iterate {}, word {@module facts; @id ?id; @more false} =>
-	check-word {@do update; word ?id; @more false}
+iterate {}, word {@module facts; @id ?id; @more ?more} =>
+	check-word {@do update; word ?id; @more ?more}
 
 next-word {@more true} =>
 	word {@module facts; @do next},
