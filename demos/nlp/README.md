@@ -15,7 +15,7 @@ Processing occurs concurrently across all stages, and incrementally, as words ar
 
 Word senses can be inferred using semantic priming, involving spreading activation and statistics relating to part of speech. This feeds analysis of phrase structure, where simple shift-reduce parsing is high effective, when used in combination with concurrent semantic processing. This constructs a graph denoting the meaning, using processing to resolve the interpretation of nominal groups, prepositional attachment and so forth. Search through alternatives occurs using concurrent asynchronous threads of reasoning. Natural language generation is similar, working in reverse, and using shared statistics.
 
-A series of demos are planned to explore how natural language understanding and generation can be implemented in a way that is cognitively plausible, and to satisfy the following goals:
+A [series of demos](#demos) are planned to explore how natural language understanding and generation can be implemented in a way that is cognitively plausible, and to satisfy the following goals:
 
 * A permissive grammar that maps variants in input to the same syntactic graph, or at least minimises the effort for interpreting variations in the syntactic graph that don't alter the meaning.
 * To minimise the requirements on working memory and allow incremental parsing
