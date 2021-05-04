@@ -2,6 +2,19 @@
 
 Humans are unique amongst all other animals on the Earth in respect to our amazing ability to communicate via language. Speech evolved at least a million years ago, and perhaps even further back in time. By contrast written language is very recent and dates back just a few thousand years. Our brains are similar in many respects to other mammals and primates in particular. This suggests that language must be largely based on existing mechanisms as there simply hasn't been the time to evolve a radical new neural system since we split from other primates.
 
+The approach to be explored treats natural language understanding in terms of a pipeline through successive levels of abstraction:
+
+* Phonological
+* Morphological
+* Words
+* Phrase structure
+* Semantics
+* Pragmatics
+
+Processing occurs concurrently across all stages, and incrementally, as words are scanned one by one. This seeks to mimic data from gaze tracking when human subjects are reading text. Language is highly ambiguous at a syntactic level, yet we understand it without backtracking. An exception are so called garden path sentences where something later on reveals that you have misinterpreted what you read earlier. Such cases are very rare as language is usually a co-operative exchange between the speaker and listener, following [Grice's maxims](https://en.wikipedia.org/wiki/Cooperative_principle).
+
+Word senses can be inferred using semantic priming, involving spreading activation and statistics relating to part of speech. This feeds analysis of phrase structure, where simple shift-reduce parsing is high effective, when used in combination with concurrent semantic processing. This constructs a graph denoting the meaning, using processing to resolve the interpretation of nominal groups, prepositional attachment and so forth. Search through alternatives occurs using concurrent asynchronous threads of reasoning. Natural language generation is similar, working in reverse, and using shared statistics.
+
 A series of demos are planned to explore how natural language understanding and generation can be implemented in a way that is cognitively plausible, and to satisfy the following goals:
 
 * A permissive grammar that maps variants in input to the same syntactic graph, or at least minimises the effort for interpreting variations in the syntactic graph that don't alter the meaning.
@@ -11,7 +24,7 @@ A series of demos are planned to explore how natural language understanding and 
 * To clarify how  information is handled at different stages of the pipeline
 * To gather statistics from natural language understanding (competence) that can then be applied to natural language generation (performance)
 * To incrementally generate the semantic graph concurrently with syntactic processing
-* To gather information on previously unknown words
+* To gather information on previously unknown words and mimic how children learn language
 
 That is rather a lot of goals to fulfil, and the demos will need to focus on just a few initially, and gradually work towards fulfilling the rest of them!
 
