@@ -33,6 +33,7 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
   * Teaching assistants for self-paced online learning
   * Autonomous vehicles
   * Smart manufacturing
+  * Smart web search
 * Outreach to explain the huge opportunities for Cognitive AI
 * Participation is open to all, free of charge: [join group](https://www.w3.org/community/cogai/join)
 
