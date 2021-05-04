@@ -67,3 +67,5 @@ The initial demo was chosen to explore the basic concepts, and future demos will
 ## Demos
 
 * [Towers of Hanoi](toh/README.md)
+* [Dinner dialogue](https://www.w3.org/Data/demos/chunks/nlp/dinner/)
+* [Shift-Reduce Parsing](https://www.w3.org/Data/demos/chunks/nlp/parsing/)
