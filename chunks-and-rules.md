@@ -203,13 +203,13 @@ increment a2 {
 }
 ```
 
-Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert tilda (`~`) as a prefix to the condition's property value. You can further test that a property is undefined by using `~` on its own in place of a value. In an action you can use `~` on its own to set a property to be undefined.
+Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert an exclamation mark (`!`) as a prefix to the condition's property value. You can further test that a property is undefined by using `!` on its own in place of a value. In an action you can use `!` on its own to set a property to be undefined.
 
 In the following rule, the first condition checks that the *from* and *to* properties in the goal buffer are distinct.
 
 ```
 # count up one at a time
-count {@module goal; state counting; from ?num1; to ~?num1},
+count {@module goal; state counting; from ?num1; to !?num1},
 increment {@module facts; number ?num1; successor ?num3}
    =>
      count {@module goal; @do update; from ?num3},
