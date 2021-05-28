@@ -1,5 +1,8 @@
 # Procedural knowledge for counting demo
 
+# a dummy rule for testing
+foo{}, !bar{}, hum {p !} => duh{}
+
 # prepare to count up
 count {start ?num; state start} =>
 	count {state counting},
@@ -7,7 +10,7 @@ count {start ?num; state start} =>
 	console {@do show; value ?num}
 
 # count up one at a time
-count {state counting; start ?num1; end ~?num1},
+count {state counting; start ?num1; end !?num1},
 increment {@module facts; number ?num1; successor ?num3} =>
 	count {start ?num3},
 	increment {@module facts; @do get; number ?num3},
