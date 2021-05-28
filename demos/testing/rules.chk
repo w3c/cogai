@@ -3,201 +3,221 @@
 # a far from exhaustive set of tests
 
 # updating goal buffer
-run {test test1} => run {foo bar}
-run {foo bar; test ?test}
+run {test test1} => test1 {foo bar}
+test1 {foo bar}
   =>
-    action {@do result; test ?test; result true}
+    action {@do result; test test1; result true}
 
 # checking that one value is different from another
-run {test test2}, run {test ~test4}
+run {test test2}, run {test !test4}
   =>
 	action {@do result; test test2; result true}
 
 # undefining a property in a buffer
-run {test test3}, run {test ?test}
+run {test test3}
   => 
-	test3 {test ?test; foo bar}
-test3 {test ?test; foo bar}
+	test3 {foo bar}
+test3 {foo bar}
   =>
-	test3 {foo ~}
-test3 {test ?test; foo ~}
+	test3.1 {foo !}
+test3.1 {foo !}
   =>
-	action {@do result; test ?test; result true}
+  	action {@do result; test test3; result true}
 	
-# put followed by get
+# Matching lists as property values
 run {test test4}
   =>
-	test4 {test test4},
-	test {@module facts; @do put; test test4},
-	test {@module facts; @do get; test test4}
-test4 {test ?test}, test {@module facts; test ?test}
+    test4 {list a, b, c}
+
+test4 {list a, b, c},
+!test4 {list a, b},
+!test4 {list a, b, c, d}
   =>
-	action {@do result; test ?test; result true}
-	
-# delete followed by get
+    action {@do result; test test4; result true}
+
+# Negation in lists as property values for conditions	
 run {test test5}
   =>
-	test5 {},
-	test {@module facts; @do put; test test4},
-	test {@module facts; @do put; test test5},
-	test {@module facts; @do delete; test test5},
-	test {@module facts; @do get}
-test5 {}, test {@module facts; test test4}
+    test5 {list a, b, c, d}
+    
+test5 {list a, !d, c, !}
   =>
-	action {@do result; test test5; result true}
-test5 {}, test {@module facts; test test5}
-  =>
-	action {@do result; test test5; result false}
-
-# greater than, and less than or equal
+    action {@do result; test test5; result true} 
+	
+# put followed by get
 run {test test6}
   =>
-	test {@module facts; x 23; y 26; z 23},
-	test6 {}
-test6 {}, test {@module facts; x ?x; y ?y; z ?z; @lteq ?x, ?z; @gt ?y, ?x}
+	test6 {},
+	test {@module facts; @do put; test test6},
+	test {@module facts; @do get; test test6}
+test6 {}, test {@module facts; test test6}
   =>
 	action {@do result; test test6; result true}
+	
+# delete followed by get
+run {test test7}
+  =>
+  	test7 {@module facts; @do delete},
+	test7 {@module facts; @do put; p a},
+	test7 {@module facts; @do delete; p a},
+	test7 {@module facts; p b},
+	test7 {@module facts; @do get}
+test7 {@module facts; p b}
+  =>
+	action {@do result; test test7; result true}
+test7 {@module facts; p a}
+  =>
+	action {@do result; test test7; result false}
+	
+# greater than, and less than or equal
+run {test test8}
+  =>
+	test {@module facts; x 23; y 26; z 23},
+	test8 {}
+test8 {}, test {@module facts; x ?x; y ?y; z ?z; @lteq ?x, ?z; @gt ?y, ?x}
+  =>
+	action {@do result; test test8; result true}
 
 # iteration over matching chunks
-run {test test7}
+run {test test9}
   => 
     town {@module facts; @do next; county cornwall},
-    test7 {}
+    test9 {}
      
-test7 {}, town {@module facts; @id ?town; @more true}
+test9 {}, town {@module facts; @id ?town; @more true}
   => 
     action {@do log; message ?town},
     town {@module facts; @do next; county somerset}
-test7 {}, town {@module facts; @id ?town; @more false} 
+test9 {}, town {@module facts; @id ?town; @more false} 
   => 
     action {@do log; message ?town},
-    action {@do result; test test7; result true},
+    action {@do result; test test9; result true},
     town {@module facts; @do clear}
 
 # iteration over properties
-run {test test8}
+run {test test10}
   =>
     set {@module facts; a 1; c 2},
-    property {@module facts; @do properties; step 8; @to goal}
-property {step 8; name ?name; value ?value; @more true}
+    property {@module facts; @do properties; step 10; @to goal}
+property {step 10; name ?name; value ?value; @more true}
   =>
     console {@do log; message ?name, is, ?value},
     property {@do next}
-property {step 8; name ?name; value ?value; @more false}
+property {step 10; name ?name; value ?value; @more false}
   =>
     console {@do log; message ?name, is, ?value},
-    action {@do result; test test8; result true}
+    action {@do result; test test10; result true}
     
 # iteration over comma separated lists
-run {test test9}
+run {test test11}
   =>
     person {@module facts; @do get; name Wendy},
-	test9 {}
-test9 {}, person {@module facts; name Wendy; friends ?friends}
+	test11 {}
+test11 {}, person {@module facts; name Wendy; friends ?friends}
   =>
-    item {@for ?friends; @from 1; @to 2; test test9}
-item {test test9; value ?value; index ?index; @more true}
+    item {@for ?friends; @from 1; @to 2; test test11}
+item {test test11; value ?value; @index ?index; @more true}
   =>
     console {@do log; message item, ?index, is, ?value},
     item {@do next}
-item {test test9; value ?value; index ?index; @more false}
+item {test test11; value ?value; @index ?index; @more false}
   =>
     console {@do log; message item, ?index, is, ?value},
-    action {@do result; test test9; result true}
+    action {@do result; test test11; result true}
      
 # accessing @status in a condition 
-run {test test10}
+run {test test12}
   => 
     town {@module facts; @do get; county berkshire},
-    test10 {}
-test10 {}, town {@module facts; county berkshire; @status ?status}
+    test12 {}
+test12 {}, town {@module facts; county berkshire; @status ?status}
   =>
-    action {@do result; test test10; result true},
+    action {@do result; test test12; result true},
     console {@do log; message status, is, ?status}
 
 # handling get with no matching chunks     
-run {test test11}
+run {test test13}
   => 
     town {@module facts; @do get; county yorkshire},
-    test11 {}
-test11 {}, !town {@module facts; @status ?status}
+    test13 {}
+test13 {}, !town {@module facts; @status ?status}
   =>
-    action {@do result; test test11; result true},
+    action {@do result; test test13; result true},
     console {@do log; message status, is, ?status}
 
 # queuing sub-goals    
-run {test test12}
+run {test test14}
  =>
-   test12 {@do queue; @priority 7}
-test12 {}
+   test14 {@do queue; @priority 7}
+test14 {}
  => 
-   action {@do result; test test12; result true}
+   action {@do result; test test14; result true}
     
 # handling @context matching correctly
-run {test test13}
+run {test test15}
  =>
    # should fail as we don't specify the @context
    wants {@module facts; @do get; person mary},
-   test13.1 {}
-test13.1 {}, !wants {@module facts; person mary}
+   test15.1 {}
+test15.1 {}, !wants {@module facts; person mary}
  =>
    # should succeed as we specify the correct @context
    wants {@context s2; @do get; @module facts; person mary},
-   test13.2 {}
-test13.2 {}, wants {@context s2; @module facts; person mary}
- =>
-   action {@do result; test test13; result true}
-
-# handling @subject matching  
-run {test test14}
- =>
-   likes {@module facts; @do get; @subject john},
-   test14 {}
-test14 {}, likes {@module facts; @subject john}
- =>
-   action {@do result; test test14; result true}
-
-# handling @object matching  
-run {test test15}
- =>
-   likes {@module facts; @do get; @object janet},
-   test15 {}
-test15 {}, likes {@module facts; @object janet}
+   test15.2 {}
+test15.2 {}, wants {@context s2; @module facts; person mary}
  =>
    action {@do result; test test15; result true}
-   
-# handling @push
+
+# handling @subject matching  
 run {test test16}
  =>
-   test16 {list a, b},
-   test16 {@push c; @to list}
-test16 {list a,b,c}
+   likes {@module facts; @do get; @subject john},
+   test16 {}
+test16 {}, likes {@module facts; @subject john}
  =>
    action {@do result; test test16; result true}
-   
-# handling @unshift
+
+# handling @object matching  
 run {test test17}
  =>
-   test17 {list a, b},
-   test17 {@unshift c; @to list}
-test17 {list c,a,b}
+   likes {@module facts; @do get; @object janet},
+   test17 {}
+test17 {}, likes {@module facts; @object janet}
  =>
    action {@do result; test test17; result true}
    
-# handling @pop
+# handling @push
 run {test test18}
  =>
-   test18 {list a, b, c},
-   test18 {@pop list; @to item}
-test18 {list a,b; item c}
+   test18 {list a, b},
+   test18 {@push c; @to list}
+test18 {list a,b,c}
  =>
    action {@do result; test test18; result true}
    
-# handling @shift
+# handling @unshift
 run {test test19}
  =>
-   test19 {list a, b, c},
-   test19 {@shift list; @to item}
-test19 {list b,c; item a}
+   test19 {list a, b},
+   test19 {@unshift c; @to list}
+test19 {list c,a,b}
  =>
    action {@do result; test test19; result true}
+   
+# handling @pop
+run {test test20}
+ =>
+   test20 {list a, b, c},
+   test20 {@pop list; @to item}
+test20 {list a,b; item c}
+ =>
+   action {@do result; test test20; result true}
+   
+# handling @shift
+run {test test21}
+ =>
+   test21 {list a, b, c},
+   test21 {@shift list; @to item}
+test21 {list b,c; item a}
+ =>
+   action {@do result; test test21; result true}

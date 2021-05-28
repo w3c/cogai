@@ -112,6 +112,30 @@ function test () {
 		for (let i = 0; i < buttons.length; ++i) {
 			enableTest(buttons[i]);
 		}
+		
+		let allButton = document.getElementById("all");
+		allButton.addEventListener("click", () => {
+			let div = document.getElementById("tests");
+			let buttons = div.getElementsByTagName("button");
+			let i = 0;
+			
+			let test = function () {
+				let button = buttons[i];
+				fail (button.id);
+				goalModule.clearBuffer();
+				factsModule.clearBuffer();
+				clear();
+				let chunk = new Chunk('run');
+				chunk.properties.test = button.id;
+				goalModule.pushBuffer(chunk);
+				ruleEngine.run();
+				
+				if (++i < buttons.length)
+					setTimeout(test, 1000);
+			};
+			
+			setTimeout(test, 1000);
+		});
 	};
 	
 	let actions = {
