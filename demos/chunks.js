@@ -357,6 +357,19 @@ class Link extends Chunk  {
 	}
 }
 
+// used to model negated condition chunks or their values
+class Negate {
+	constructor(value) {
+		this.negate = value;
+		this.toString = function (options) {
+			if (this.negate === undefined)
+				return '!';
+				
+			return '!' + this.negate.toString(options);
+		};
+	}
+}
+
 function ChunkGraph (source) {
 	let graph = this;
 	
@@ -367,7 +380,7 @@ function ChunkGraph (source) {
 
 	const re_number = /^[-+]?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?$/;
 	const re_name = /^(\*|(@)?[\w|\.|\-|\:]+)$/;
-	const re_value = /^(~[\w|\.|\-|]*|~\?[\w|\.|\-|]+|\?[\w|\.|\-|]+)$/;
+	const re_value = /^([\w|\.|\-|]*|\!\?[\w|\.|\-|]+|\?[\w|\.|\-|]+)$/;
 	const re_uri = /(http:\/\/|https:\/\/|www\.)([^ '"]*)/;
 	const re_iso8601 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/;
 
@@ -453,7 +466,7 @@ function ChunkGraph (source) {
 
 		return true;
 	};
-	
+		
 	let isLink = function (value) {
 		return (typeof (value) === "string" && value[0] !== '"')
 	};
@@ -897,11 +910,11 @@ function ChunkGraph (source) {
 				let cond = properties[name];
 				let negate = false
 				
-				if (cond[0] === "~") {
+				if (cond instanceof Negate) {
 					negate = true;
-					cond = cond.substr(1);
+					cond = cond.negate;
 					
-					if (cond === "") {
+					if (cond === undefined) {
 						return chunk.properties[name] === undefined;
 					}
 				}
@@ -933,14 +946,27 @@ function ChunkGraph (source) {
 						for (let i = 0; i < cond.length; ++i) {
 							let c = cond[i];
 							
-							if (c[0] === "?")
-								c = bindings[c.substr(1)];
-								
-							if (c === undefined)
-								return negate;
+							if (c instanceof Negate) {
+								c = c.negate;
 
-							if (c !== target[i])
-								return negate;
+								if (c[0] === "?")
+									c = bindings[c.substr(1)];
+								
+								if (c === undefined)
+									return !negate;
+
+								if (c !== target[i])
+									return !negate;
+							} else {
+								if (c[0] === "?")
+									c = bindings[c.substr(1)];
+								
+								if (c === undefined)
+									return negate;
+
+								if (c !== target[i])
+									return negate;
+							}						
 						}
 						return !negate;
 					}
@@ -1173,6 +1199,8 @@ function ChunkGraph (source) {
 	// used for @do get using same matching algorithm as for rule conditions
 	graph.doGet = function (action, bindings, engine, doNext) {
 		console.log("doGet with: " + action.type + " " + JSON.stringify(bindings));
+		if (action.type === "word")
+			debug = true;
 		let id = action.properties["@id"];
 		
 		if (id) {
@@ -1543,6 +1571,9 @@ function ChunkGraph (source) {
 		if (chunk === undefined) {
 			throw new Error("trying to remove undefined chunk");
 		}
+		
+		if (chunk.type === "word")
+			debug = true;
 						
 		this.forgetLink(chunk, chunk.type);
 		let props = chunk.properties;
@@ -1634,6 +1665,9 @@ function ChunkGraph (source) {
 	};
 	
 	graph.parse = function (source, mode) {
+		if (source === undefined || source === "")
+			return;
+			
 		if (mode === undefined)
 			mode = PARSE_ALL;
 	
@@ -1703,11 +1737,11 @@ function ChunkGraph (source) {
 			return null;
 		};
 		
-		let skip_line = function(lexer) {
+		let skip_line = function (lexer) {
 			while (lexer.here < lexer.length) {
 				let c = lexer.source[lexer.here];
 				
-				if (c === '\r' && ! !lexer.source[++lexer.here]) {
+				if (c === '\r' && !lexer.source[++lexer.here]) {
 					lexer.line_start = lexer.here;
 					lexer.line++;
 				}
@@ -1721,7 +1755,24 @@ function ChunkGraph (source) {
 				lexer.here++;
 			}
 			
-			return ;
+			return;
+		};
+		
+		let missing_value = function (lexer) {
+			let line = lexer.line;
+			skip_white(lexer);
+			
+			// new line
+			if (lexer.line !== line)
+				return true;
+			
+			let c = lexer.source[lexer.here];
+			
+			// punctuation
+			if (/[.;,{}=!]/.test(c))
+				return true;
+			
+			return false;
 		};
 		
 		let report_where = function (lexer) {
@@ -1771,7 +1822,7 @@ function ChunkGraph (source) {
 			
 			throw new Error("Unexpected end of string" + report_where(lexer));
 		};
-				
+						
 		let lexer = {
 			graph: this,
 			source: source,
@@ -1837,7 +1888,18 @@ function ChunkGraph (source) {
 					break;
 				}
 			},
-			parseValue: function (chunk) {
+			parseValue: function () {
+				let negated = false;
+				if (lexer.token === "!") {
+					negated = true;
+					
+					if (missing_value(lexer)) {
+						return new Negate();
+					}
+					
+					lexer.next();
+				}
+				
 				if (lexer.type !== NAME &&
 				    lexer.type !== VALUE &&
 					lexer.type !== NUMBER &&
@@ -1846,6 +1908,9 @@ function ChunkGraph (source) {
 					throw new Error("Expected name token" + report_where(lexer));
 				}
 
+				if (negated)
+					return new Negate(lexer.value);
+					
 				return lexer.value;
 			},
 			parseChunk: function (type, id) {
@@ -1973,20 +2038,32 @@ function ChunkGraph (source) {
 					if (!list)
 						list = [];
 						
-					list.push(chunk.id);
+					if (chunk.negated) {
+						list.push(new Negate(chunk.id));
+					} else {
+						list.push(chunk.id);
+					}
+
 					lexer.next();
 					last = COMMA;
 					continue;
 					
 				} else 	if (lexer.token === "=" && lexer.peek() === ">") {
-					// condition[,condition]* '=>' action[,action]*
+					// [!]condition[,[!]condition]* '=>' action[,action]*
 					lexer.here++;
 					rule = new Chunk('rule');
 					add_chunk(rule);
 					
 					if (list) {
-						list.push(chunk.id);
+						if (chunk.negated) {
+							list.push(new Negate(chunk.id));
+						} else {
+							list.push(chunk.id);
+						}
+						
 						rule.properties['@condition'] = list;
+					} else if (chunk.negated) {
+						rule.properties['@condition'] = new Negate(chunk.id);
 					} else {
 						rule.properties['@condition'] = chunk.id;
 					}
@@ -2034,7 +2111,7 @@ function ChunkGraph (source) {
 				if (mode === PARSE_CHUNK)
 					return chunk;
 					
-				add_chunk(chunk);
+				add_chunk(chunk);				
 				last = CHUNK;
 				continue;
 			} else if (lexer.type !== NAME)
@@ -2145,14 +2222,26 @@ function ChunkGraph (source) {
 			
 			if (Array.isArray(conditions)) {
 				for (let i = 0; i < conditions.length; ++i) {
-					let condition = graph.chunks[conditions[i]];
-					text += (condition.negated ? '!' : '') + condition.toString(options);
+					let cond = conditions[i];
+					
+					if (cond.negate) {
+						cond = cond.negate;
+						text += '!' + graph.chunks[cond].toString(options);
+					} else {
+						text += graph.chunks[cond].toString(options);
+					}
+					
 					if (i < conditions.length - 1)
 						text += ',\n';
 				}
 			} else {
-				let condition = graph.chunks[conditions];
-				text += (condition.negated ? '!' : '') +  condition.toString(options);
+				let cond = conditions;
+				if (cond.negate) {
+					cond = cond.negate;
+					text += '!' + graph.chunks[cond].toString(options);
+				} else {
+					text += graph.chunks[cond].toString(options);
+				}
 			}
 			text += "\n => \n";
 			
@@ -2230,13 +2319,24 @@ function RuleEngine (log){
 		};
 	
 		let ids = rule.properties["@condition"];
+		let id;
 		
 		if (Array.isArray(ids)) {
 			for (let i = 0; i < ids.length; ++i) {
-				conditionModule(getCondition(ids[i]));
+				id = ids[i];
+				
+				if (id instanceof Negate)
+					id = id.negate;
+					
+				conditionModule(getCondition(id));
 			}
 		} else {
-			conditionModule(getCondition(ids));
+			id = ids;
+				
+			if (id instanceof Negate)
+				id = id.negate;
+					
+			conditionModule(getCondition(id));
 		}
 	};
 	
@@ -2442,11 +2542,15 @@ function RuleEngine (log){
 		
 		if (!goals)
 			goals = this.addModule('goal', new ChunkGraph());
-
-		let chunk = goals.graph.parseChunk(source);
+			
+		if (source !== undefined && source !== null && source.length) {
+			let chunk = goals.graph.parseChunk(source);
 		
-		if (chunk)
-			goals.writeBuffer(chunk);
+			if (chunk)
+				goals.writeBuffer(chunk);
+		} else {
+			goals.clearBuffer();
+		}
 	};
 	
 	let getCondition = function (id) {
@@ -2515,24 +2619,25 @@ function RuleEngine (log){
 		let values = {};
 		
 		let mapValue = function (name, value) {
-			if (value !== '~') {
-				if (typeof value === "string" && value[0] === '~')
+			if (value instanceof Negate) {
+				if (operation !== "update") {
 					throw new Error("illegal action property: "
-						 + name + " with value " + value);
-						 
+							 + name + " with value " + value);
+				}
+							 
+				value = new Negate(mapValue(name, value.negate));
+			} else {
 				if (typeof value === "string" && value[0] === "?") {
 					let v = value.substr(1);
 					value = bindings[v];
 					
-					if (value === undefined)
+					if (value === undefined) {
 						log("undefined variable in property "
 							 + name + " with value " + value);
+					}
 				}
-			
-			} else if (operation !== "update") {
-				throw new Error("illegal action property: "
-						 + name + " with value " + value);
 			}
+
 			return value;
 		};
 		
@@ -2724,7 +2829,7 @@ function RuleEngine (log){
 					continue;
 					
 				if (values.hasOwnProperty(name)) {
-					if (values[name] === "~") {
+					if ((values[name] instanceof Negate) && values[name].negate === undefined) {
 						delete buffer.properties[name];
 					} else if (name === "@enter") {
 						let value = values[name];
@@ -2945,9 +3050,9 @@ function RuleEngine (log){
 				let status = engine.getModule(condition).getStatus();
 				let negated = false;
 				
-				if (cond[0] === "~") {
+				if (cond instanceof Negate) {
 					negated = true;
-					cond = cond.substr(1);
+					cond = cond.negate;
 				}
 
 				if (cond[0] === "?") {
@@ -2978,8 +3083,8 @@ function RuleEngine (log){
 				if (name === "@id") {
 					let cond = properties[name];
 
-					if (cond[0] === "~")
-						cond = cond.substr(1);
+					if (cond instanceof Negate)
+						cond = cond.negate;
 
 					if (cond[0] === "?") {
 						let v = cond.substr(1);
@@ -2990,10 +3095,10 @@ function RuleEngine (log){
 				} else if (name === "@type") {
 					let cond = properties[name];
 					
-					if (cond[0] === "~")
-						cond = cond.substr(1);
+					if (cond instanceof Negate)
+						cond = cond.negate;
 
-					if (cond[0] === "?") {
+					if (cond !== undefined && cond[0] === "?") {
 						let v = cond.substr(1);
 						if (bindings[v] === undefined) {
 							bindings[v] = chunk.type;
@@ -3007,10 +3112,10 @@ function RuleEngine (log){
 						let module = engine.getModule(condition);
 						let cond = properties[name];
 				
-						if (cond[0] === "~")
-							cond = cond.substr(1);
+						if (cond instanceof Negate)
+							cond = cond.negate;
 
-						if (cond[0] === "?") {
+						if (cond !== undefined && cond[0] === "?") {
 							let v = cond.substr(1);
 							if (bindings[v] === undefined) {
 								bindings[v] = module.getStatus();
@@ -3021,10 +3126,10 @@ function RuleEngine (log){
 							 || name === "@object" || name === "@task") {
 					let cond = properties[name];
 				
-					if (cond[0] === "~")
-						cond = cond.substr(1);
+					if (cond instanceof Negate)
+						cond = cond.negate;
 
-					if (cond[0] === "?") {
+					if (cond !== undefined && cond[0] === "?") {
 						let v = cond.substr(1);
 						if (bindings[v] === undefined) {
 							bindings[v] = chunk.properties[name];
@@ -3045,10 +3150,10 @@ function RuleEngine (log){
 						
 					for (let i = 0; i < cond.length; ++i) {
 						let c = cond[i];
-						if (c[0] === "~")
-							c = c.substr(1);
+						if (c instanceof Negate)
+							c = c.negate;
 
-						if (c[0] === "?") {
+						if (c !== undefined && c[0] === "?") {
 							let v = c.substr(1);
 							if (bindings[v] === undefined) {
 								bindings[v] = target[i];
@@ -3056,10 +3161,10 @@ function RuleEngine (log){
 						}
 					}
 				} else {
-					if (cond[0] === "~")
-						cond = cond.substr(1);
+					if (cond instanceof Negate)
+						cond = cond.negate;
 
-					if (cond[0] === "?") {
+					if (cond !== undefined && cond[0] === "?") {
 						let v = cond.substr(1);
 						if (bindings[v] === undefined) {
 							bindings[v] = chunk.properties[name];
@@ -3083,45 +3188,77 @@ function RuleEngine (log){
 		if (Array.isArray(conditions)) { // list of conditions
 			for (let i = 0; i < conditions.length; ++i) {
 				let id = conditions[i]; // chunk id
+				let negate = false;
+				
+				if (id instanceof Negate) {
+					negate = true;
+					id = id.negate;
+				}
+
 				let condition = getCondition(id); // chunk for condition
 								
 				if (!bind_variables(condition, bindings))
-					return false;
+					return negate;
 			}
 		} else { // single id
-			condition = getCondition(conditions);
+			let id = conditions; // chunk id
+			let negate = false;
+			
+			if (id instanceof Negate) {
+				negate = true;
+				id = id.negate;
+			}
+			
+			condition = getCondition(id);
 			
 			if (!bind_variables(condition, bindings))
-				return false;
+				return negate;
 		}
 		
 		// step 2 - using bindings to apply all constraints
 		
 		if (Array.isArray(conditions)) { // list of conditions
 			for (let i = 0; i < conditions.length; ++i) {
+				let negate = false;
 				let id = conditions[i]; // chunk id
+				
+				if (id instanceof Negate) {
+					negate = true;
+					id = id.negate;
+				}
+
 				let condition = getCondition(id); // chunk for condition
 				let chunk = get_buffer(condition);
 				
-				if (condition.negated) {
+				if (negate) {
 					let status = engine.getModule(condition).getStatus();
 					if (status === undefined || (status !== "nomatch"
 							&& status !== "failed" && status !== "forbidden"))
-						return false;
+						return negate;
 				} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
-					return false;
+					return negate;
 			}
 		} else { // single id
-			condition = getCondition(conditions);
+			let negate = false;
+			let id = conditions; // chunk id
+			if (id instanceof Negate) {
+				negate = true;
+				id = id.negate;
+			}
+
+			condition = getCondition(id);
 			let chunk = get_buffer(condition);
 			
-			if (condition.negated) {
+			if (chunk === undefined)
+				debug = true;
+			
+			if (negate) {
 				let status = chunk.properties["@status"];
 				if (status === undefined || (status !== "nomatch"
 						&& status !== "failed" && status !== "forbidden"))
-					return false;
+					return negate;
 			} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
-				return false;
+				return negate;
 		}
 		
 		return bindings;
