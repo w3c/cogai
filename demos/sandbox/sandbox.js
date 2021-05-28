@@ -3,12 +3,15 @@
 */
 
 window.addEventListener("load", () => {
-	const tutorialElement = document.getElementById("tutorial");
+	const tutorial = document.getElementById("tutorial");
 	const logElement = document.getElementById("log");
 	const clearLog = document.getElementById("clear");
 	const persistCheckBox = document.getElementById("persist");
 	const topicDiv = document.getElementById("topic");
+	
 	let initialGoal = 'start {}';
+	let currentIndex = tutorial.selectedIndex;
+	let currentTopic = tutorial.item(tutorial.selectedIndex).value;
 
 	function log (message) {
 		let atBottom = logElement.scrollHeight - 
@@ -28,6 +31,7 @@ window.addEventListener("load", () => {
 		clear();
 	});
 
+	const revertButton = document.getElementById("revert");
 	const startButton = document.getElementById("start");
 	const stepButton = document.getElementById("step");
 	const goalBuffer = document.getElementById("goal");
@@ -40,7 +44,7 @@ window.addEventListener("load", () => {
 	
 	startButton.disabled = true;
 	stepButton.disabled = true;
-	
+
 	function viewButton (buttonID, viewID) {
 		let button = document.getElementById(buttonID);
 		let view = document.getElementById(viewID);
@@ -94,7 +98,9 @@ window.addEventListener("load", () => {
 				fetch(tutorial + "/tutorial.md")
 				.then((response) => response.text())
 				.then(function (source) {
-    				document.getElementById("topic").innerHTML = marked(source);
+					const topic = document.getElementById("topic");
+    				topic.markdown = source;
+    				topic.innerHTML = marked(source, {gfm:true});
 					resolve(true);
 				});
 			})
@@ -148,14 +154,21 @@ window.addEventListener("load", () => {
 			ready = resolve;
 		});
 	};
-
 	
 	tutorial.addEventListener("change", () =>  {
 		let topic = tutorial.item(tutorial.selectedIndex).value;
 		if (topic === "") {
-		} else {
+		} else if (currentTopic !== topic) {
+			save();
 			clearAll();
-			loadResources("tutorials/" + topic);
+			currentTopic = topic;
+			currentIndex = tutorial.selectedIndex;
+			loadResources("tutorials/" + topic).then(
+				function (results) {					
+					if (persistCheckBox.checked)
+						save();
+				}
+			);
 		}
 	});
 	
@@ -167,6 +180,54 @@ window.addEventListener("load", () => {
 	function hide (element) {
 		element.style.display = "none";
 		element.style.visibility = "hidden";
+	}
+	
+	function editTopic (buttonID, bufferID) {
+		const editButton = document.getElementById(buttonID);
+		const topicView = document.getElementById(bufferID);
+		
+		editButton.addEventListener("click", () => {
+			let editBuffer = document.createElement("textarea");
+			let saveButton = document.createElement("button");
+			let cancelButton = document.createElement("button");
+			editBuffer.setAttribute("spellcheck", "false");
+
+			saveButton.innerText = "save";
+			saveButton.addEventListener("click", () => {
+				try {
+					topicView.markdown = editBuffer.value;
+					topicView.innerHTML = marked(editBuffer.value, {gfm:true});
+					editBuffer.remove();
+					saveButton.remove();
+					cancelButton.remove();
+					show(editButton, "inline");
+					show(topicView, "block");
+					
+					if (persistCheckBox.checked)
+						save();
+				} catch (e) {
+					editBuffer.className = "error";
+					log(e.message);
+				}
+			});
+			
+			cancelButton.innerText = "cancel";
+			cancelButton.addEventListener("click", () => {
+				editBuffer.remove();
+				saveButton.remove();
+				cancelButton.remove();
+				show(editButton, "inline");
+				show(topicView, "block");
+			});
+
+			hide(topicView);
+			hide(editButton);
+			editBuffer.value = topicView.markdown;
+			topicView.parentNode.insertBefore(editBuffer, topicView);
+			topicView.parentNode.insertBefore(saveButton, topicView);
+			topicView.parentNode.insertBefore(cancelButton, topicView);
+			editBuffer.focus();
+		})
 	}
 	
 	// e.g. editButton("editFacts", "facts")
@@ -217,7 +278,6 @@ window.addEventListener("load", () => {
 				show(chunkview, "block");
 			});
 			
-			
 			hide(chunkview);
 			hide(editButton);
 			editBuffer.value = chunkview.innerText;
@@ -260,6 +320,18 @@ window.addEventListener("load", () => {
 		return s;
 	}
 	
+	revertButton.onclick = function () {
+		let topic = tutorial.item(tutorial.selectedIndex).value;
+		
+		clearAll();
+		loadResources("tutorials/" + topic);
+		
+		if (persistCheckBox.checked)
+			save();
+				
+		console.log("revert on " + topic);
+	};
+	
 	startButton.onclick = function () {
 		stepButton.disabled = false;
 		ruleView.innerText = outputView.innerText = logElement.innerText = "";
@@ -267,7 +339,7 @@ window.addEventListener("load", () => {
 		ruleEngine.getModuleByName('facts').clearBuffer();
 		showBuffers();
 		return false;
-	}
+	};
 
 	stepButton.onclick = function () {
 		let text = "";
@@ -286,7 +358,7 @@ window.addEventListener("load", () => {
 		
 		
 		return false;
-	}
+	};
 	
 	goal = ruleEngine.addModule('goal', new ChunkGraph(), {
 		log: function (action, properties) {
@@ -310,6 +382,7 @@ window.addEventListener("load", () => {
 	editButton("editGoal", "goal");
 	editButton("editFacts", "facts");
 	editButton("editRules", "rules");
+	editTopic("editTopic", "topic");
 
 	persistCheckBox.addEventListener("change", () =>  {		
 		if (persistCheckBox.checked) {
@@ -322,35 +395,67 @@ window.addEventListener("load", () => {
 	});
 	
 	function save () {
-		let source = document.getElementById('facts').innerText;
-		localStorage.setItem('facts', source);
-		source = document.getElementById('rules').innerText;
-		localStorage.setItem('rules', source);
-		localStorage.setItem('goal', initialGoal);
+		let topic = currentTopic;
+		let index = currentIndex;
+		localStorage.setItem('tutorialIndex', index);
+		console.log('save tutorial index ' + index);
+		
+		if (topic === undefined || topic === null)
+			topic = 'topic';
+			
+		console.log("saving " + topic)
+		
+		let facts = document.getElementById('facts').innerText;
+		let rules = document.getElementById('rules').innerText;
+		console.log("   saving " + facts.length + " bytes for facts");
+		console.log("   saving " + rules.length + " bytes for rules");
+
+		localStorage.setItem(topic+'-facts', document.getElementById('facts').innerText);
+		localStorage.setItem(topic+'-rules', document.getElementById('rules').innerText);
+		localStorage.setItem(topic+'-goal', initialGoal);
+		localStorage.setItem(topic, document.getElementById('topic').markdown);
 		localStorage.setItem('persist', persistCheckBox.checked ? true : false);
 	}
 	
 	function restore () {
-		let source = localStorage.getItem('facts');
+		let tutorialIndex = localStorage.getItem('tutorialIndex');
 		
-		if (typeof (source) === "string") {
-			document.getElementById("facts").show(source);
-			facts = ruleEngine.addModule('facts', new ChunkGraph(source));
+		if (tutorialIndex !== null)
+			tutorial.selectedIndex = tutorialIndex;
+	
+		console.log('restore tutorial index ' + tutorial.selectedIndex);
+		let topic = tutorial.item(tutorial.selectedIndex).value;
+
+		if (topic === undefined || topic === null)
+			topic = 'topic';
 		
-			source = localStorage.getItem('rules');
-			document.getElementById("rules").show(source);
-			rules = ruleEngine.addModule('rules', new ChunkGraph(source));
+		console.log("restoring " + topic)
+		currentIndex = tutorial.selectedIndex;
+		currentTopic = tutorial.item(tutorial.selectedIndex).value;
+
+		let source = localStorage.getItem(topic+'-facts');
+		document.getElementById("facts").show(source);
+		facts = ruleEngine.addModule(topic+'-facts', new ChunkGraph(source));
+		console.log("   restoring " + source.length +  " bytes for facts");
+	
+		source = localStorage.getItem(topic+'-rules');
+		document.getElementById("rules").show(source);
+		rules = ruleEngine.addModule('rules', new ChunkGraph(source));
+		console.log("   restoring " + source.length + " bytes for rules");
+	
+		initialGoal = localStorage.getItem(topic+'-goal');
+		goalBuffer.innerText = initialGoal;
+		ruleEngine.setGoal(initialGoal);
 		
-			initialGoal = localStorage.getItem('goal');
-			goalBuffer.innerText = initialGoal;
-			ruleEngine.setGoal(initialGoal);
-			persistCheckBox.checked = localStorage.getItem('persist') ? true : false;
-			startButton.disabled = false;
-			stepButton.disabled = initialGoal === "" ? true : false;
-			return true;
-		}
+		source = localStorage.getItem(topic);
+		let description = document.getElementById('topic');
+		description.markdown = source;
+		description.innerHTML = marked(source, {gfm:true});
 		
-		return false;
+		persistCheckBox.checked = localStorage.getItem('persist') ? true : false;
+		startButton.disabled = false;
+		stepButton.disabled = initialGoal === "" ? true : false;
+		return true;
 	}
 
 	if (!restore()) {
