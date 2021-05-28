@@ -1,47 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Sandbox for testing Chunk Rules</title>
+<title>Test suite for chunks</title>
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <script type="text/javascript" src="../chunks.js"></script>
-<script type="text/javascript" src="sandbox.js"></script>
-<script type="text/javascript" src="marked.js"></script>
+<script type="text/javascript" src="test-suite.js"></script>
 <style>
-* {
-  box-sizing: border-box;
-}
-
-/* Create two equal columns that floats next to each other */
-.column {
-  float: left;
-  width: 50%;
-  padding: 10px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 1000px) {
-  .column {
-    width: 100%;
-  }
-}
-</style>
-<style>
-	body{
-		background-color: seashell;
-		font-family: "Ubuntu-Italic", "Lucida Sans", helvetica, sans;
-	}
-	p.indent {margin-left: 4em;}
 	pre {
-		min-height: 1.5em;
+		min-height: 1em;
 		//max-height: 25em;
 		width: calc(100% - 2em);
 		overflow-y: auto;
@@ -49,7 +16,7 @@
 		margin: 0.5em;
 		border: solid 1px black;
 		color: rgb(150,80,80);
-		background: rgb(250,250,250);
+		background-color: rgb(250,250,250);
 	}
 	#log {
 		height: 10em;
@@ -57,23 +24,6 @@
 		overflow-y: scroll;
 		border-style: solid;
 		resize: vertical;
-	}
-	textarea {
-		display: block;
-		padding: 0.5em;
-		margin: 0.5em;
-		width: calc(100% - 2em);
-		min-height: 10em;
-		max-height: 80em;
-		overflow-y: scroll;
-		border-style: solid;
-		resize: vertical;
-		border-color: blue;
-		background: #EEF;
-	}
-	textarea.error {
-		border-color: red;
-		background: #FEE;
 	}
 	.comment {
 		color: green;
@@ -88,85 +38,75 @@
 		font-style: italic;
 		font-weight: bold;
 	}
-	#topic {
-		background: #EDEFFF;
-		border-radius: 10px;
-		border: 2px solid #CCC;
+	#tests span.good {
+		color: green;
+		font-weight: bold;
 	}
-	#footnote {
-		font-style: italic;
-		font-size: smaller;
+	#tests span.bad {
+		color: red;
+		font-weight: bold;
 	}
 	#footnote img {
 		height: 3em;
-		vertical-align: middle;
-		float: left;
+		vertical-align: top;
 		margin-right: 1em;
+		float: left;
 	}
 </style>
 </head>
 <body>
-<h1>Sandbox for testing Chunk Rules</h1>
+<h1>Test suite for chunks</h1>
 
-<p>This page uses <a href="https://github.com/w3c/cogai/blob/master/README.md">Cognitive AI</a> for a sandbox for testing chunk rules with the means to single step, and to manually edit the chunks within the webpage.</p>
+<p>This page is a preliminary test suite for the <a href="https://github.com/w3c/cogai/blob/master/chunks-and-rules.md">chunk rules language</a> and far from exhaustive. Additional tests are planned to cover parsing with a suite of valid and invalid examples.</p>
 
-<p class="indent"><label><input id="persist" type="checkbox"> Select this if you want to persist your work across sessions using your browser's local storage.</label></p>
+<p><b>There are missing tests on properties whose values are lists, where we need to check:</b><p>
 
-<p><label>Choose a tutorial:</label>
-<select id="tutorial">
-  <option value="">please choose</option>
-  <option value="blank">Clean slate</option>
-  <option value="counting">Counting up</option>
-  <option value="decision-tree">Simple decision tree</option>
-  <option value="prop-list">Iterating over property lists</option>
-</select>
-or enter your own goal, facts and rules using the pencil buttons below. The <a href="#topic">topic description</a> is either to the right or at the end of this page depending on the page width. If you would like to contribute a tutorial, or to provide feedback on an existing one, please contact the <a href="https://www.w3.org/community/cogai/">W3C Cognitive AI Community Group</a>.</p>
+<ul>
+<li>lists must have same lengths</li>
+<li>list items must match</li>
+<li>use of variables and negation on condition's list items</li>
+</ul>
 
-<div class="row">
-<div class="column">
-<p>Press <em>Start</em> to initiate/restart the demo, and then <em>Step</em> to execute a single step. For further reading, see <a href="https://github.com/w3c/cogai/blob/master/chunks-and-rules.md">detailed information on chunks and rules</a>.</p>
+<p><button id="all">Run all tests</button></p>
 
-<p>Execute rules, one at a time: <button type="button" id="start">Start</button> <button type="button" id="step">Step</button></p>
-
-<p>Output:</p>
-<pre id='output'>
-</pre>
-
-<p>Goal buffer: <button id="editGoal" title="edit goal">&#x270E;</button></p>
-<pre id='goal'>
-</pre>
-
-<p>Facts buffer:</p>
-<pre id='factsBuffer'>
-</pre>
-
-<p>Rule applied:</p>
-<pre id='rule'>
-</pre>
-
-<p>Variable bindings:</p>
-<pre id='bindings'>
-</pre>
+<div id="tests">
+<p><button id="test1">Test 1</button> Updating goal buffer</p>
+<p><button id="test2">Test 2</button> Checking one value doesn’t equal another</p>
+<p><button id="test3">Test 3</button> Undefining a property in a buffer</p>
+<p><button id="test4">Test 4</button> Matching lists as property values</p>
+<p><button id="test5">Test 5</button> Negation in lists as property values</p>
+<p><button id="test6">Test 6</button> Put followed by get</p>
+<p><button id="test7">Test 7</button> Delete followed by get</p>
+<p><button id="test8">Test 8</button> Greater than and Less than or equal</p>
+<p><button id="test9">Test 9</button> Iteration over a set of chunks</p>
+<p><button id="test10">Test 10</button> Iteration over module buffer properties</p>
+<p><button id="test11">Test 11</button> Iteration over properties with item lists</p>
+<p><button id="test12">Test 12</button> Accessing @status in a condition</p>
+<p><button id="test13">Test 13</button> Handling get with no matching chunks</p>
+<p><button id="test14">Test 14</button> Queuing sub-goals</p>
+<p><button id="test15">Test 15</button> Handling @context matching</p>
+<p><button id="test16">Test 16</button> Handling @subject matching</p>
+<p><button id="test17">Test 17</button> Handling @object matching</p>
+<p><button id="test18">Test 18</button> Handling @push</p>
+<p><button id="test19">Test 19</button> Handling @unshift</p>
+<p><button id="test20">Test 20</button> Handling @pop</p>
+<p><button id="test21">Test 21</button> Handling @shift</p>
+</div>
 
 <p>Log: <button id="clear">clear</button></p>
 <pre id='log'>
 </pre>
 
-<p><button id="factsButton" title="expand view">&#x25BC;</button> Facts graph:
-<button id="editFacts" title="edit facts">&#x270E;</button>
-</p>
+<p><button id="factsButton">&#x25BC;</button> Facts graph:</p>
 <pre id='facts'>
 </pre>
 
-<p><button id="rulesButton" title="expand view">&#x25BC;</button> Rules graph:
-<button id="editRules" title="edit rules">&#x270E;</button>
-</p>
+<p><button id="rulesButton">&#x25BC;</button> Rules graph:</p>
 <pre id='rules'>
 </pre>
-</div> <!-- class column-->
-<div id="topic" class="column">
-</div> <!-- class column-->
-</div> <!-- class row -->
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
 <div id="footnote">
 <hr>
 <p><img src="../eu.png" alt="eu logo"> This work is supported by the European Union's Horizon 2020 research and innovation programme under grant agreement No 780732 for project <a href="https://boost40.eu/">Boost 4.0</a>, which focuses on smart factories.</p>
