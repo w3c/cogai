@@ -59,14 +59,6 @@
 
 <p>This page is a preliminary test suite for the <a href="https://github.com/w3c/cogai/blob/master/chunks-and-rules.md">chunk rules language</a> and far from exhaustive. Additional tests are planned to cover parsing with a suite of valid and invalid examples.</p>
 
-<p><b>There are missing tests on properties whose values are lists, where we need to check:</b><p>
-
-<ul>
-<li>lists must have same lengths</li>
-<li>list items must match</li>
-<li>use of variables and negation on condition's list items</li>
-</ul>
-
 <p><button id="all">Run all tests</button></p>
 
 <div id="tests">
@@ -74,23 +66,26 @@
 <p><button id="test2">Test 2</button> Checking one value doesn’t equal another</p>
 <p><button id="test3">Test 3</button> Undefining a property in a buffer</p>
 <p><button id="test4">Test 4</button> Matching lists as property values</p>
-<p><button id="test5">Test 5</button> Negation in lists as property values</p>
-<p><button id="test6">Test 6</button> Put followed by get</p>
-<p><button id="test7">Test 7</button> Delete followed by get</p>
-<p><button id="test8">Test 8</button> Greater than and Less than or equal</p>
-<p><button id="test9">Test 9</button> Iteration over a set of chunks</p>
-<p><button id="test10">Test 10</button> Iteration over module buffer properties</p>
-<p><button id="test11">Test 11</button> Iteration over properties with item lists</p>
-<p><button id="test12">Test 12</button> Accessing @status in a condition</p>
-<p><button id="test13">Test 13</button> Handling get with no matching chunks</p>
-<p><button id="test14">Test 14</button> Queuing sub-goals</p>
-<p><button id="test15">Test 15</button> Handling @context matching</p>
-<p><button id="test16">Test 16</button> Handling @subject matching</p>
-<p><button id="test17">Test 17</button> Handling @object matching</p>
-<p><button id="test18">Test 18</button> Handling @push</p>
-<p><button id="test19">Test 19</button> Handling @unshift</p>
-<p><button id="test20">Test 20</button> Handling @pop</p>
-<p><button id="test21">Test 21</button> Handling @shift</p>
+<p><button id="test5">Test 5</button> Variables in lists as property values</p>
+<p><button id="test6">Test 6</button> Negation in lists as property values</p>
+<p><button id="test7">Test 7</button> Put followed by get</p>
+<p><button id="test8">Test 8</button> Delete followed by get</p>
+<p><button id="test9">Test 9</button> Greater than and Less than or equal</p>
+<p><button id="test10">Test 10</button> Iteration over a set of chunks</p>
+<p><button id="test11">Test 11</button> Iteration over module buffer properties</p>
+<p><button id="test12">Test 12</button> Iteration over properties with item lists</p>
+<p><button id="test13">Test 13</button> Accessing @status in a condition</p>
+<p><button id="test14">Test 14</button> Handling get with no matching chunks</p>
+<p><button id="test15">Test 15</button> Queuing sub-goals</p>
+<p><button id="test16">Test 16</button> Handling @context matching</p>
+<p><button id="test17">Test 17</button> Handling @subject matching</p>
+<p><button id="test18">Test 18</button> Handling @object matching</p>
+<p><button id="test19">Test 19</button> Handling @push</p>
+<p><button id="test20">Test 20</button> Handling @unshift</p>
+<p><button id="test21">Test 21</button> Handling @pop</p>
+<p><button id="test22">Test 22</button> Handling @shift</p>
+<p><button id="test23">Test 23</button> Negated condition on empty buffer</p>
+<p><button id="test24">Test 24</button> Negated condition on non-empty buffer</p>
 </div>
 
 <p>Log: <button id="clear">clear</button></p>
