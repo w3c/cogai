@@ -38,7 +38,7 @@ A smart home demo developed for the AIOTI WG3 semantic interoperability group. I
 
 ## [Test Suite](testing/README.md)
 
-* https://www.w3.org/Data/demos/chunks/testing/
+* https://www.w3.org/Data/demos/chunks/test-suite/
 
 A web-based test suite for the major features of the chunks data and rules format.
 
