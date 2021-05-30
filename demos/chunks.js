@@ -3033,16 +3033,16 @@ function RuleEngine (log){
 	// module, or previous bound variable doesn't match
 	// chunk's value, or condition doesn't match value
 	
-	let bind_variables = function (condition, bindings) {
+	let bind_variables = function (condition, bindings, negated) {
 		let chunk = get_buffer(condition);
 		
-		// fail if buffer is undefined?
-		if (!chunk && !condition.negated)
+		// fail if buffer is undefined and condition isn't negated?
+		if (!chunk && !negated)
 			return false;
 			
 		// can't bind variables on negative match
 		// with the sole exception of @status
-		if (condition.negated) {
+		if (negated) {
 			let name = "@status";
 
 			if (condition.properties[name]) {
@@ -3196,9 +3196,9 @@ function RuleEngine (log){
 				}
 
 				let condition = getCondition(id); // chunk for condition
-								
-				if (!bind_variables(condition, bindings))
-					return negate;
+				
+				if (!bind_variables(condition, bindings, negate))
+					return false;
 			}
 		} else { // single id
 			let id = conditions; // chunk id
@@ -3211,8 +3211,8 @@ function RuleEngine (log){
 			
 			condition = getCondition(id);
 			
-			if (!bind_variables(condition, bindings))
-				return negate;
+			if (!bind_variables(condition, bindings, negate))
+				return false;
 		}
 		
 		// step 2 - using bindings to apply all constraints
@@ -3231,12 +3231,19 @@ function RuleEngine (log){
 				let chunk = get_buffer(condition);
 				
 				if (negate) {
+					if (chunk === undefined)
+						return true;
+						
+					if (rule.graph.test_constraints(chunk, condition, bindings, engine))
+						return false;
+/*						
 					let status = engine.getModule(condition).getStatus();
 					if (status === undefined || (status !== "nomatch"
 							&& status !== "failed" && status !== "forbidden"))
-						return negate;
+						return false;
+*/
 				} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
-					return negate;
+					return false;
 			}
 		} else { // single id
 			let negate = false;
@@ -3253,12 +3260,19 @@ function RuleEngine (log){
 				debug = true;
 			
 			if (negate) {
+				if (chunk === undefined)
+					return true;
+						
+				if (rule.graph.test_constraints(chunk, condition, bindings, engine))
+					return false;
+/*
 				let status = chunk.properties["@status"];
 				if (status === undefined || (status !== "nomatch"
 						&& status !== "failed" && status !== "forbidden"))
-					return negate;
+					return false;
+*/
 			} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
-				return negate;
+				return false;
 		}
 		
 		return bindings;
