@@ -5,7 +5,7 @@
 	Dave Raggett <dsr@w3.org>
 	
 	Released under the MIT open source software license.
-	Copyright (c) 2019
+	Copyright (c) 2019 - 2021
 
 	This is a library module for graphs of chunks, and inspired by ACT-R.
 	A chunk is a collection of properties whose values are either literals
@@ -305,7 +305,7 @@ class Chunk {
 			
 			// verbose syntax
 			
-			let s= chunk.type + ' ' + chunk.id + ' {\n'
+			let s = chunk.type + (chunk.id ? ' ' + chunk.id : '') + ' {\n';
 			
 			// sub-symbolic parameters
 			
@@ -685,6 +685,9 @@ function ChunkGraph (source) {
 	// using the variable bindings and any @ constraints
 	
 	graph.test_constraints = function (chunk, condition, bindings, engine) {
+		if (chunk.type !== condition.type && condition.type !== '*')
+			return false;
+	
 		// these are not matched as normal properties
 		const skip = {
 			"@module": true,
@@ -2452,7 +2455,7 @@ function RuleEngine (log){
 			bufferStatus = status;
 		};
 		
-		module.getStatus = function (status) {
+		module.getStatus = function () {
 			return bufferStatus;
 		};
 		
@@ -2471,6 +2474,7 @@ function RuleEngine (log){
 		module.next = function () {
 			if (chunkList && chunkList.length > 0) {
 				log("list length = " + chunkList.length);
+				log("list is " + chunkList);
 				let chunk = chunkList.shift();
 				chunk.properties["@more"] = chunkList.length > 0 ? true : false;
 				return chunk;
@@ -2878,8 +2882,8 @@ function RuleEngine (log){
 				module.writeBuffer(chunk.clone())
 			} else {
 				log("failed to get chunk")
+				module.clearBuffer();
 				module.setStatus("nomatch");
-				//module.clearBuffer();
 			}
 		} else if (operation === "next") {
 			log("@do next");
@@ -3182,7 +3186,11 @@ function RuleEngine (log){
 		
 		if (conditions === undefined)
 			throw (new Error("rule " + rule.id + " is missing @condition"));
-		
+	
+		let gb = engine.getBuffer('goal');
+		if (gb && gb.type === 'update-cluster')
+			debug = true;
+			
 		// step 1 - bind variables in condition's property values
 		
 		if (Array.isArray(conditions)) { // list of conditions
@@ -3196,6 +3204,9 @@ function RuleEngine (log){
 				}
 
 				let condition = getCondition(id); // chunk for condition
+				
+				if (gb && gb.type === 'update-cluster' && condition.type === 'update-cluster')
+					debug = true;
 				
 				if (!bind_variables(condition, bindings, negate))
 					return false;
@@ -3232,16 +3243,15 @@ function RuleEngine (log){
 				
 				if (negate) {
 					if (chunk === undefined)
-						return true;
+						return bindings;
 						
-					if (rule.graph.test_constraints(chunk, condition, bindings, engine))
-						return false;
-/*						
 					let status = engine.getModule(condition).getStatus();
-					if (status === undefined || (status !== "nomatch"
-							&& status !== "failed" && status !== "forbidden"))
-						return false;
-*/
+					
+					if (status === "nomatch")
+						return bindings;
+
+					if (rule.graph.test_constraints(chunk, condition, bindings, engine))
+						return false;	
 				} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
 					return false;
 			}
@@ -3256,21 +3266,17 @@ function RuleEngine (log){
 			condition = getCondition(id);
 			let chunk = get_buffer(condition);
 			
-			if (chunk === undefined)
-				debug = true;
-			
 			if (negate) {
 				if (chunk === undefined)
-					return true;
-						
+					return bindings;
+
+				let status = engine.getModule(condition).getStatus();
+				
+				if (status === "nomatch")
+					return bindings;
+					
 				if (rule.graph.test_constraints(chunk, condition, bindings, engine))
 					return false;
-/*
-				let status = chunk.properties["@status"];
-				if (status === undefined || (status !== "nomatch"
-						&& status !== "failed" && status !== "forbidden"))
-					return false;
-*/
 			} else if (!rule.graph.test_constraints(chunk, condition, bindings, engine))
 				return false;
 		}
