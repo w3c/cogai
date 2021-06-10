@@ -69,16 +69,12 @@ test7 {}, test {@module facts; test test7}
 run {test test8}
   =>
   	test8 {@module facts; @do delete},
-	test8 {@module facts; @do put; p a},
-	test8 {@module facts; @do delete; p a},
-	test8 {@module facts; p b},
-	test8 {@module facts; @do get}
-test8 {@module facts; p b}
+	test8 {@module facts; @do get},
+	test8.1 {@module goal}
+
+test8.1 {}, !test8 {@module facts}
   =>
-	action {@do result; test test8; result true}
-test8 {@module facts; p a}
-  =>
-	action {@do result; test test8; result false}
+     action {@do result; test test8; result true}
 	
 # greater than, and less than or equal
 run {test test9}
