@@ -73,6 +73,11 @@ state {step 5}, person {@module facts; @id Janet}
   preferences {@module facts; @do get; person Janet},
   state {step 6}
 
+# Janet is not present
+state {step 5}, !person {@module facts; @id Janet}
+=>
+  state {step 7}
+
 # Janet is present, so apply her preferences
 state {step 6; time ?time},
 preferences {@module facts; person Janet; lights ?lights; hue ?hue; temperature ?temp}
@@ -81,11 +86,6 @@ preferences {@module facts; person Janet; lights ?lights; hue ?hue; temperature 
   console {@do log; message Janet,turn,lights,?lights},
   action {@do thermostat; targetTemperature ?temp},
   state {step 7; Janet present}
-
-# Janet is not present
-state {step 5}, !preferences {@module facts; person Janet}
-=>
-  state {step 7}
 
 # now get precedence info for hue
 state {step 7}
