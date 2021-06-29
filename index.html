@@ -127,7 +127,7 @@
     <ul>
       <li><code>@</code> to denote a <dfn>reserved name</dfn> with specific meaning (defined in this specification). Such [=names=] may only appear as [=property=] names.</li>
       <li><code>?</code> to denote a [=variable=]. Such [=names=] may only appear as [=property=] values.</li>
-      <li><code>~</code> to denote a negative match. Such [=names=] may only appear in property [=values=] of a rule [=condition=]. The <code>~</code> prefix may be followed by <code>?</code> to reference a [=variable=]. Also, the [=name=] may actually equal <code>~</code> to test that a [=property=] is undefined.</li>
+      <li><code>!</code> to [=negate=] a match. The <code>!</code> prefix may be followed by <code>?</code> to reference a [=variable=]. Also, the [=name=] may actually equal <code>!</code> to test that a [=property=] is undefined.</li>
     </ul>
   </section>
 </section>
@@ -330,15 +330,120 @@ memory a2 { @module facts }</code></pre>
       <section>
         <h4>Variables</h4>
 
-        <p>A <dfn>variable</dfn> is a [=name=] that starts with <code>?</code> that represents a symbolic name to a [=value=]. A [=value=] gets bound to a [=variable=] in [=conditions=]. The [=value=] can then be referenced in [=actions=] using the [=variable=]'s name. Effectively, [=variables=] allow applications to copy information from rule [=conditions=] to rule [=actions=].</p>
+        <p>A <dfn>variable</dfn> is a [=name=] that starts with <code>?</code> that represents a symbolic name to a [=value=]. A [=variable=] gets <dfn>bound</dfn> to a [=value=] in [=conditions=]. The [=value=] can then be referenced in [=actions=] using the [=variable=]'s name. Effectively, [=variables=] allow applications to copy information from rule [=conditions=] to rule [=actions=].</p>
 
-        <p>[=Variables=] are scoped to the [=rule=] where they appear. They may represent any type of [=value=].</p>
+        <p>[=Variables=] are scoped to the [=rule=] where they appear.</p>
 
         <aside class="example" title="Variable binding and referencing">
           <pre><code>count { state start; from ?num1; to ?num2 }
-   => increment { @module facts; @do get; number ?num1 }</code></pre>
+  => increment { @module facts; @do get; number ?num1 }</code></pre>
           <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=]. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk, and the value of the [=variable=] <code>?num2</code> to the [=value=] of the <code>to</code> [=property=].</p>
           <p>The [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>increment</code> and that has a [=property=] named <code>number</code> and whose [=value=] equals the value of the <code>?num1</code> [=variable=].</p>
+        </aside>
+
+        <p>[=Variables=] are [=bound=] to a [=value=] the first time they appear in a [=condition=]. Subsequent occurrences of the same [=variable=] in a [=condition=] reference their [=value=].</p>
+
+        <aside class="example" title="Variable binding and referencing in the same condition">
+          <pre><code>count { state start; from ?num1; to ?num1 }
+  => console { @do log; message ?num1 }</code></pre>
+          <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=] that have identical values. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk.</p>
+        </aside>
+
+        <p>[=Variables=] may represent any type of [=value=]. In particular, a [=variable=] that [=matches=] a property whose value is a list of [=atomic values=] gets bound to the list of [=atomic values=].</p>
+
+        <aside class="example" title="Variable binding to a list of atomic values">
+          <pre><code>basket { fruit ?f }
+  => console { @do log; message ?f }</code></pre>
+          <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>basket</code> and that has a <code>fruit</code> [=property=]. Given the following [=chunk=] in the <code>goal</code> [=module buffer=], the [=condition=] binds variable <code>?f</code> to <code>apple, banana, orange</code>:</p>
+          <pre><code>basket { fruit apple, banana, orange }</code></pre>
+        </aside>
+
+        <p>A [=condition=] that contains a [=property=] with a list of [=variables=] [=matches=] a list of [=atomic values=] that has the same length. The [=condition=] does not [=match=] when the lengths of the lists differ.</p>
+
+        <aside class="example" title="Variable binding to atomic values in a list">
+          <pre><code>basket { fruit ?a, ?b, ?o }
+  => console { @do log; message ?a, ?b, ?o }</code></pre>
+          <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>basket</code> and that has a <code>fruit</code> [=property=] whose value is a list of <em>three</em> atomic values. Given the following [=chunk=] in the <code>goal</code> [=module buffer=], the [=condition=] binds variable <code>?a</code> to <code>apple</code>, <code>?b</code> to <code>banana</code>, and <code>?o</code> to <code>orange</code>:</p>
+          <pre><code>basket { fruit apple, banana, orange }</code></pre>
+        </aside>
+      </section>
+
+      <section>
+        <h4>The negation operator <code>!</code></h4>
+        <p>The <dfn data-lt="negative operation">negation operator</dfn> <code>!</code> may be prepended to [=names=] to <dfn>negate</dfn> the outcome of their evaluation. The [=negation operator=] may be used in one of the following cases:</p>
+        <ul>
+          <li>
+            In a [=rule=] in front of a [=condition=] to negate it. A rule with a negated [=condition=] !|cond| applies if and only if |cond| does not hold true.
+            <aside class="example" title="Negate a rule condition">
+              <pre><code># Rule with a negated condition
+rule {
+  @condition !c1
+  @action a1
+}
+person c1 { @id John }
+console a1 { @do log; message "Type is not person or id is not John" }
+
+# Same rule defined using the compact format
+!person { @id John }
+  => console { @do log; message "Type is not person or id is not John" }</code></pre>
+              <p>The above example illustrates two equivalent ways to define a rule with a negated condition. In this example, the condition |c1| [=matches=] a [=chunk=] whose [=type=] is <code>person</code> and whose [=identifier=] is <code>John</code>. As such, the negated condition [=matches=] a [=chunk=] whose [=type=] is <em>not</em> <code>person</code> <em>or</em> whose [=identifier=] is <em>not</em> <code>John</code>.</p>
+            </aside>
+          </li>
+          <li>
+            In a [=condition=] in front of a [=property=] value to negate the result of a [=match=]. A negated [=property=] value !|val1| [=equals=] another [=property=] value |val2| if and only if |val1| does not [=equal=] |val2|.
+            <aside class="example" title="Negate a value match">
+              <pre><code>person { @id !John }
+  => console { @do log; message "Type is person but id is not John" }</code></pre>
+              <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>person</code> and whose [=identifier=] is <em>not</em> <code>John</code>.</p>
+            </aside>
+            <aside class="example" title="Negate an atomic value in a list">
+              <pre><code>basket { fruit ?a, !banana, ?o }
+  => console { @do log; message "No banana in second position" }</code></pre>
+              <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] whose [=value=] is a list of three [=atomic values=]. First and third [=atomic values=] in that list can be anything. Second [=atomic value=] must <em>not</em> be <code>banana</code>.</p>
+            </aside>
+          </li>
+          <li>
+            On its own as a [=property=] value in a [=condition=] to test that a [=property=] is undefined. A [=condition=] with a [=property=] |p| whose value is <code>!</code> [=matches=] a [=chunk=] if and only if the [=chunk=] does not have a [=property=] whose [=name=] is |p|'s [=name=].
+            <aside class="example" title="Test that a property is undefined">
+              <pre><code>basket { fruit ! }
+  => console { @do log; message "Basket without fruits" }</code></pre>
+              <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which does not have a <code>fruit</code> [=property=].</p>
+            </aside>
+          </li>
+          <li>
+            On its own as a [=property=] value in a [=@do patch=], [=@do update=] or similar [=action=] that updates a [=chunk=] to unset a [=property=].
+            <aside class="example" title="Unset a chunk property">
+              <pre><code># Given the following chunk in the module buffer
+basket { fruit apple, banana, orange }
+
+# ... the following rule drops the fruit property
+* {} => basket { @do update; fruit ! }
+
+# Resulting chunk
+basket {}</code></pre>
+            </aside>
+          </li>
+        </ul>
+
+        <p>The [=negation operator=] cannot be prepended to a [=variable=] that has not yet been [=bound=]. Similarly, the [=negation operator=] cannot be used on its own as an [=atomic value=] in a list. More generally, the [=negation operator=] cannot be used elsewhere than in the cases detailed above.</p>
+        <aside class="example" title="Some invalid uses of the negation operator">
+          <pre><code># Invalid: variable ?num1 is unbound
+count { state counting; start !?num1 } => ...
+
+# Invalid: on its own in a list
+basket { fruit ?a, !, ?o } => ...
+
+# Invalid: in an update action but not on its own
+* {} => basket { @do update; fruit !apple }</code></pre>
+        </aside>
+
+        <p>A second [=negation operator=] prepended to a [=name=] that starts with a [=negation operator=] cancels the effect of the first [=negation operator=].</p>
+        <aside class="example" title="Double negation">
+          <pre><code># The following condition
+person { @id !!John }
+
+# ... is the same as this one:
+person { @id John }</code></pre>
         </aside>
       </section>
 
@@ -483,10 +588,19 @@ digits { @shift 0, @to list }</code></pre>
       <section>
         <h4>Matching chunks</h4>
 
-        <p>A property [=value=] |a| <dfn>equals</dfn> property [=value=] |b| if either of the following conditions holds true:</p>
+        <p>A property [=value=] |a| <dfn>equals</dfn> property [=value=] |b| when the following algorithm returns <code>true</code>:</p>
         <ul>
-          <li>|a| and |b| are identical [=atomic values=]</li>
-          <li>|a] and |b| are lists of [=atomic values=], both lists have the same length, and [=atomic values=] at the same position in |a| and |b| are identical.</li>
+          <li>If |a| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
+          <li>If |b| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
+          <li>If |a| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if !|a| [=equals=] |b|, <code>true</code> otherwise.</li>
+          <li>If |b| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if |a| [=equals=] !|b|, <code>true</code> otherwise.</li>
+          <li>If |a| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
+          <li>If |b| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
+          <li>If |a| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |v| [=equals=] |b|, <code>false</code> otherwise.</li>
+          <li>If |b| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |a| [=equals=] |v|, <code>false</code> otherwise.</li>
+          <li>If |a| and |b| are identical [=atomic values=], return <code>true</code>.</li>
+          <li>If |a] and |b| are lists of [=atomic values=], both lists have the same length, and [=atomic values=] at the same position in |a| and |b| are [=equal=], return <code>true</code>.</li>
+          <li>Otherwise, return <code>false</code>.</li>
         </ul>
 
         <p>A [=chunk=] |A| <dfn data-lt="matching chunk">matches</dfn> [=chunk=] |B| if the conditions below are all met:</p>
@@ -499,7 +613,7 @@ digits { @shift 0, @to list }</code></pre>
           </li>
           <li><i>Identifier</i>. One of the following conditions holds true:
             <ul>
-              <li>|A| has an [=@id=] property whose [=value=] is an [=atomic value=] that equals |B|'s [=identifier=].</li>
+              <li>|A| has an [=@id=] property whose [=value=] is an [=atomic value=] that [=equals=] |B|'s [=identifier=].</li>
               <li>|A| does not have an [=@id=] property.</li>
             </ul>
           </li>
@@ -509,17 +623,20 @@ digits { @shift 0, @to list }</code></pre>
               <li>|A| does not have an [=@kindof=] property.</li>
             </ul>
           </li>
-          <li><i>Properties</i>. For all [=properties=] in |A| whose [=names=] do not start with <code>@</code>, there is a corresponding [=property=] in |B| with the same [=name=] and [=equal=] [=value=].</li>
+          <li><i>Properties</i>. For each [=property=] |p| in |A| whose [=name=] does not start with <code>@</code>, either of the following holds true:
+            <ul>
+              <li>|p|'s [=value=] is <code>!</code> and there is no [=property=] in |B| with |p|'s [=name=].</li>
+              <li>|p|'s [=value=] is not <code>!</code> and there exits a [=property=] in |B| with the same [=name=] and [=equal=] [=value=] as |p|.</li>
+            </ul>
+          </li>
           <li><i>Type</i>. One of the following conditions holds true:
             <ul>
-              <li>|A| has an [=@type=] property whose [=value=] is an [=atomic value=] that equals |B|'s [=type=].</li>
+              <li>|A| has an [=@type=] property whose [=value=] is an [=atomic value=] that [=equals=] |B|'s [=type=].</li>
               <li>|A| does not have an [=@type=] property, and |A|'s [=type=] is <code>*</code>.</li>
               <li>|A| does not have an [=@type=] property, and |A|'s [=type=] and |B|'s [=type=] are identical.</li>
             </ul>
           </li>
         </ul>
-
-        <p class="ednote">TODO: Rewrite and complete to integrate [=variables=] (which impose presence but not a specific value) and <code>~</code> which match when values are not equal or, if <code>~</code> is used alone, when the property is undefined.</p>
       </section>
     </section>
 
