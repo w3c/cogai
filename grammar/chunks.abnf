@@ -18,7 +18,7 @@ comment = "#" *char
 chunk = type [ws id] begin-properties [properties] end-properties
 
 ; Compact rules associate a condition chunk with action chunks
-compact-rule = chunk "=>" chunk *("," chunk)
+compact-rule = *"!" chunk "=>" chunk *("," chunk)
 
 ; Compact links (subject predicate object)
 compact-link = id ws property-name ws id
@@ -32,14 +32,18 @@ id = name
 ; Chunk properties
 properties = property *(sep property)
 property = property-name ws property-value
-property-name = name
+property-name = name / reserved-name
 property-value = value *("," value)
 
-; Property values
-value = *ws ("false" / "true" / name / number / string) *ws
-
 ; Names
-name = *ws ["@"] 1*(ALPHA / DIGIT / "." / "_" / "-" / "/" / ":") *ws
+name = *ws inner-name *ws
+reserved-name = *ws "@" inner-name *ws
+negated = "!" *(inner-name / variable)
+variable = "?" inner-name
+inner-name = 1*(ALPHA / DIGIT / "." / "_" / "-" / "/" / ":")
+
+; Property values
+value = *ws ("*" / "false" / "true" / inner-name / variable / negated / number / string) *ws
 
 ; Numbers (same as in JSON)
 number = [ minus ] int [ frac ] [ exp ]
