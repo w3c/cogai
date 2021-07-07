@@ -124,23 +124,6 @@
     <p>A <dfn>string literal</dfn> is an arbitrary set of characters. It is serialized enclosed in double quotes, following the same grammar as <a data-cite="RFC8259#section-7">strings in JSON</a> [[RFC8259]].</p>
 
     <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=], a [=boolean=]. Additionally, depending on the context under which it is used, a [=name=] may start with one of the [[[#name-operators]]].</p>
-
-    <p>A property [=value=] |a| <dfn>equals</dfn> property [=value=] |b| when the following algorithm returns <code>true</code>:</p>
-    <ul>
-      <li>If |a| is the [=wild card operator=] <code>*</code>, return <code>true</code>.</li>
-      <li>If |b| is the [=wild card operator=] <code>*</code>, return <code>true</code>.</li>
-      <li>If |a| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
-      <li>If |b| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
-      <li>If |a| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if !|a| [=equals=] |b|, <code>true</code> otherwise.</li>
-      <li>If |b| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if |a| [=equals=] !|b|, <code>true</code> otherwise.</li>
-      <li>If |a| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
-      <li>If |b| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
-      <li>If |a| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |v| [=equals=] |b|, <code>false</code> otherwise.</li>
-      <li>If |b| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |a| [=equals=] |v|, <code>false</code> otherwise.</li>
-      <li>If |a| and |b| are identical [=atomic values=], return <code>true</code>.</li>
-      <li>If |a] and |b| are lists of [=atomic values=], both lists have the same length, and [=atomic values=] at the same position in |a| and |b| are [=equal=], return <code>true</code>.</li>
-      <li>Otherwise, return <code>false</code>.</li>
-    </ul>
   </section>
 </section>
 
@@ -194,6 +177,23 @@
         <li>a [=boolean=] (<code>true</code> or <code>false</code>)</li>
         <li>a [=date=]</li>
         <li>a [=string literal=]</li>
+      </ul>
+
+      <p>A property [=value=] |a| <dfn>equals</dfn> property [=value=] |b| when the following algorithm returns <code>true</code>:</p>
+      <ul>
+        <li>If |a| is the [=wild card operator=] <code>*</code>, return <code>true</code>.</li>
+        <li>If |b| is the [=wild card operator=] <code>*</code>, return <code>true</code>.</li>
+        <li>If |a| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
+        <li>If |b| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
+        <li>If |a| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if !|a| [=equals=] |b|, <code>true</code> otherwise.</li>
+        <li>If |b| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if |a| [=equals=] !|b|, <code>true</code> otherwise.</li>
+        <li>If |a| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
+        <li>If |b| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
+        <li>If |a| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |v| [=equals=] |b|, <code>false</code> otherwise.</li>
+        <li>If |b| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |a| [=equals=] |v|, <code>false</code> otherwise.</li>
+        <li>If |a| and |b| are identical [=atomic values=], return <code>true</code>.</li>
+        <li>If |a] and |b| are lists of [=atomic values=], both lists have the same length, and [=atomic values=] at the same position in |a| and |b| are [=equal=], return <code>true</code>.</li>
+        <li>Otherwise, return <code>false</code>.</li>
       </ul>
     </section>
 
