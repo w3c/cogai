@@ -226,6 +226,8 @@ You can write rules that apply when an action such as retrieving a chunk from me
 
 which will match the facts module buffer after a failure to *get* a chunk of type *present* with the corresponding properties. See below for details of response status codes.
 
+When a condition has a property whose value is a list, the corresponding property value in the module buffer must be a list of the same length, and each item in the two lists must match. You can use `!` before an item in the condition's list when you want to check that the buffer's list item isn't a particular value. You can use `*` for an item in the condition's list when you don't care about the corresponding value of the the buffer's list item.
+
 Both conditions and actions can use *@id* to bind to a chunk ID.
 
 ### Built-in actions
