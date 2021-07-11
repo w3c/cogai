@@ -51,7 +51,7 @@ run {test test6}
   =>
     test6 {list a, b, c, d}
     
-test6 {list a, !d, c, !}
+test6 {list a, *, !d, d}
   =>
     action {@do result; test test6; result true} 
 	
