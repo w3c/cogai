@@ -913,6 +913,9 @@ function ChunkGraph (source) {
 				let cond = properties[name];
 				let negate = false
 				
+				if (cond === '*')
+					return true;
+				
 				if (cond instanceof Negate) {
 					negate = true;
 					cond = cond.negate;
@@ -958,12 +961,15 @@ function ChunkGraph (source) {
 								if (c === undefined)
 									return !negate;
 
-								if (c !== target[i])
+								if (c === target[i])
 									return !negate;
 							} else {
+								if (c === '*')
+									continue;
+								
 								if (c[0] === "?")
 									c = bindings[c.substr(1)];
-								
+									
 								if (c === undefined)
 									return negate;
 
