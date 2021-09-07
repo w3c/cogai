@@ -52,6 +52,8 @@ The chunk ID is optional, and if missing, will be automatically assigned when ad
 
 The notion of type is a loose one and provides a way to name a collection of chunks that have something in common. It may be the case that all such chunks must satisfy some ontological constraint, on the other hand, it could be an informal grouping. This corresponds to the distinction between an intensional definition and an extensional definition. Inductive reasoning provides a way to learn models that describe regularities across members of groups. 
 
+Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names can include the following character classes: letters, digits, period, and hyphen. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type. 
+
 Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a [common subset of ISO8601](https://www.w3.org/TR/NOTE-datetime) and are treated as identifiers for read-only chunks of type *iso8601* with properties for the year, month, day etc., e.g.
 
 ```
@@ -64,7 +66,7 @@ iso8601 1879-03-14 {
 ```
 which also illustrates the use of single line comments that start with a #.
 
-Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names can include the following character classes: letters, digits, period, and hyphen. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type. 
+A similar approach is under consideration for numerical values with units of measure, e.g. `1.2cm` and `9v` which would map respectively to `measure 1.2cm {value 1.2; units cm}` and `measure 9v {value 9; units v}`.
 
 Sometimes you just want to indicate that a named relationship applies between two concepts. This can expressed conveniently as follows:
 
@@ -80,6 +82,26 @@ likes {
   @object Mary
 }
 ```
+Chunk properties can be promoted to relationships as in the following example:
+
+```
+# chunk for a sports player
+Player p413 {
+    name "Lionel Messi"
+    dob 1987-06-24
+    # PlaysFor t87
+}
+
+# chunk for a relationship
+PlaysFor r45 {
+    @subject p413
+    @object t87
+     since 2001-02
+     contract 2021
+}
+```
+where property `PlaysFor` has been promoted to a relationship in order to annotate it with properties of its own. More generally, this design pattern can be used whenever you want to have properties that apply to other properties.
+
 ## Sandbox for learning Chunks and Rules
 
 You can experiment with chunks and rules in your web browser, with the means to single step rule execution, to explore several tutorials and to edit the initial goal, facts and rules, and to save them across browser sessions.
@@ -415,6 +437,8 @@ Contexts are also useful for episodic memory when you want to describe facts tha
 If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
 
 In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
+
+Note: when mapping chunks to RDF, contexts can be mapped to named graphs.
 
 ## Tasks
 
