@@ -844,6 +844,7 @@ person { @id John }</code></pre>
   dog http://example.com/ns/dog
   cat http://example.com/ns/cat
   age http://example.com/ns/age
+  name http://example.com/ns/name
 }
 
 dog { name "Youki"; age 5 }
@@ -870,6 +871,8 @@ cat { name "Isidore"; age 3 }</code></pre>
       </aside>
 
       <p class="note">The [=@rdfmap=] keyword plays the same role in [=chunks=] as the <code>@context</code> keyword in JSON-LD. See the notion of <a data-cite="JSON-LD#the-context">Context in JSON-LD</a> for details [[JSON-LD]]. The term [=context=] and the [=@context=] keyword have a different meaning in [=chunks=] where they identify the specific situation under which a [=chunk=] should be considered to be true. A distinct [=@rdfmap=] keyword is used here to avoid any confusion.</p>
+
+      <p>If multiple [=@rdfmap=] chunks create a mapping for the same [=name=], the last definition in overrides previous ones.</p>
 
       <aside class="example" title="Conflicting mapping">
         <pre><code># Creates a mapping from image to the example.org namespace
