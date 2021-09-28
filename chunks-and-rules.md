@@ -149,11 +149,15 @@ You can likewise use @prefix for defining URI prefixes, e.g.
   cat ex:cat
 }
 ```
-It may be more convenient to refer to a collection of @rdfmap and @prefix mappings rather than inlining them, e.g.
+Sometimes it will be more convenient to refer to an external collection of mappings rather than inlining them, e.g.
 
 ```
-@rdfmap from http://example.org/mappings
+@rdfmap {
+  @from http://example.org/mappings
+}
 ```
+where `@from` is used with a URI for a file that contains `@rdfmap` and `@prefix` declarations.
+
 If there are multiple conflicting definitions, the most recent will override earlier ones.
 
 Note: people familiar with JSON-LD would probably suggest using @context instead of @rdfmap, however, that would be confusing given that the term @context is needed in respect to reasoning in multiple contexts and modelling the theory of mind.
