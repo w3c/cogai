@@ -11,7 +11,9 @@ The approach to be explored treats natural language understanding in terms of a 
 * Semantics
 * Pragmatics
 
-Processing occurs concurrently across all stages, and incrementally, as words are scanned one by one. This seeks to mimic data from gaze tracking when human subjects are reading text. Language is highly ambiguous at a syntactic level, yet we understand it with little apparent effort and without backtracking. An exception is so called garden path sentences where something later on reveals that you have misinterpreted what you read earlier causing you to look back. Such cases are very rare as language is usually a co-operative exchange between the speaker and listener, following [Grice's maxims](https://en.wikipedia.org/wiki/Cooperative_principle).
+Processing occurs concurrently across all stages, and incrementally, as words are scanned one by one. This seeks to mimic data from gaze tracking when human subjects are reading text. Further evidence comes from the way we are able to complete each other's sentences, and to interrupt and ask clarifying questions before the current speaker finishes a sentence.
+
+Language is highly ambiguous at a syntactic level, yet we understand it with little apparent effort and without backtracking. An exception is so called garden path sentences where something later on reveals that you have misinterpreted what you read earlier causing you to look back. Such cases are very rare as language is usually a co-operative exchange between the speaker and listener, following [Grice's maxims](https://en.wikipedia.org/wiki/Cooperative_principle).
 
 Word senses can be inferred using semantic priming, involving spreading activation and statistics relating to part of speech. This feeds analysis of phrase structure, where simple shift-reduce parsing is high effective, when used in combination with concurrent semantic processing. This constructs a graph denoting the meaning, using processing to resolve the interpretation of nominal groups, prepositional attachment and so forth. Search through alternatives occurs using concurrent asynchronous threads of reasoning. Natural language generation is similar, working in reverse, and using shared statistics.
 
@@ -68,6 +70,21 @@ The red sweet apple
 These examples show that prepositions can be moved around, although it is preferable to place them after the thing to which they attach as progressive refinement of the intended meaning. The order also relates to the focus, i.e. the second example above focuses on what happened on Sunday rather than on John, Janet or the present.
 
 Items in a conjunction may in some cases be order independent. Likewise for a sequence of adjectives.
+
+## Research challenges
+
+This is a summary of challenges to be worked through to realise practical cognitive NLP:
+
+* Design and population of the lexicon, exploiting existing resources such as corpora and machine readable lexical resources such as WordNet.
+* Choice of the tag set for part of speech, balancing the requirements for phrase structure parsing and robustness
+* Dealing with the awkward cases that inevitably arise in real text, e.g. reported speech, sentence boundaries, ellipsis, foreign words, and so forth.
+* Part of speech tagging based upon learning from annotated corpora
+* Loose parsing that preserves positional information
+* Assessing semantic consistency for word sense disambiguation, bindings for pronouns and nominal groups, as well as prepositional attachments
+
+Semantic consistency could be approached from a statistical perspective using collocations, but given that we expect cognitive agents to have a rich understanding of the meaning of utterances, we also need to assess (for example) whether an adjective is meaningful for a given sense of a noun.  That points to the need for work on taxonomic knowledge that licenses such uses, along with how to extend such knowledge as new words or word meanings are encountered. 
+
+Some people claim that taxonomic based NLP is impractical, and point to the success of self-supervised deep learning of language models, based on predicting masked words from a huge corpus of texts. However, this is far away from human-like NLP where agents can explain the meaning of words and reason with them. It is time to prove such people that human-like cognition is practical and to show how it can be scaled.
 
 ## Implementation
 
