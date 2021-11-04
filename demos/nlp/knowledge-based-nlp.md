@@ -10,6 +10,14 @@ Children similarly steadily expand their vocabulary, learning words along with t
 
 We need to gather a collection of utterances and work on a subset of common sense knowledge sufficient for understanding those utterances. It is not a goal to develop a comprehensive taxonomy of common sense knowledge, and the emphasis is rather on demonstrating human-like understanding, reasoning and learning. Nonetheless, it will be helpful to develop visual tools to support browsing, querying and reasoning.
 
+People are generally quick to resolve semantic ambiguities in utterances. 
+
+* What meaning does this word have in this utterance?
+* What is the meaning of this pronoun or noun phrase?
+* How does this preposition bind to the phrase structure?
+
+This points to the need for efficient processing to identify (say) whether an adjective is consistent with a particular meaning of the associated noun. In principle, a purely knowledge based approach can be combined with statistical approaches based upon word colocations and a model of attention, e.g. verbs and nouns.
+
 ## Background resources
 
 Here are a few resources for further reading:
