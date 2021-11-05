@@ -37,7 +37,7 @@ Here are a few resources for further reading:
 * [COCA](https://www.english-corpora.org/coca/), a corpus of contemporary American English including word stems and part of speech tags
 * [BNC](http://www.natcorp.ox.ac.uk), a corpus of contemporary British English including word stems and part of speech tags
 * [Linguistics in the age of AI](https://direct.mit.edu/books/book/5042/Linguistics-for-the-Age-of-AI) by Marjorie McShane and Sergei Nirenburg, Cognitive Science Department at Rensselaer Polytechnic Institute.
-* [ConceptNet](https://en.m.wikipedia.org/wiki/ConceptNet) is a [crowd sourced semantic network](https://github.com/commonsense/conceptnet) now hosted on GitHub. [ConceptNet5](https://github.com/commonsense/conceptnet5) is based on [34 relationships](https://github.com/commonsense/conceptnet5/wiki/Relations).
+* [ConceptNet](https://en.m.wikipedia.org/wiki/ConceptNet) is a [crowd sourced semantic network](https://github.com/commonsense/conceptnet) now hosted on GitHub. [ConceptNet5](https://github.com/commonsense/conceptnet5) is multilingual and based on [34 relationships](https://github.com/commonsense/conceptnet5/wiki/Relations).
 * [NLP Progress repository](http://nlpprogress.com/english/common_sense.html), including the Winograd Schema Challenge, a dataset for common sense reasoning. It lists questions that require the resolution of anaphora: the system must identify the antecedent of an ambiguous pronoun in a statement. Models are evaluated based on accuracy. Here is an example:
 
     *The trophy doesn’t fit in the suitcase because it is too big.*<br>
