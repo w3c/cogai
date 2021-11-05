@@ -26,7 +26,7 @@ Taxonomic knowledge licenses the use of related words, e.g. "red flowers", given
 
 Concepts are based on natural language semantics, and may have fuzzy context dependent meanings. An example is `warm` which is relative to `hot` and `cold`, rather than to specific temperatures.  Fuzzy meanings may be related to functions over a set of things and a given thing may be described as `warm` (60%) and `cold` (40%). This is connected to human reasoning based upon consideration of a set of examples.
 
-Reasoning involves graph algorithms and rulesets that act over episodic and semantic memory. In principle, these can be described as services as part of taxonomic graphs and invoked as needed. Decision trees modeled as discrimination networks can be used for efficient selection in any give context.
+Reasoning involves graph algorithms and rulesets that act over episodic and semantic memory. In principle, these can be described as services as part of taxonomic graphs and invoked as needed. Decision trees modeled as discrimination networks can be used for efficient selection in any given context.
 
 A small set of examples is needed to provide a proof of concept demonstrator for cognitive natural language understanding. This then needs to be followed by a proof of concept demonstrator for cognitive natural language generation, as understanding and generation are closely coupled.
 
