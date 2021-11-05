@@ -2,7 +2,7 @@
 
 This is a summary of the ideas and work plan for realising knowledge-based natural language processing with links to existing work.
 
-Natural language understanding involves mapping words into a graph model for the meaning of an utterance. The amount and kinds of reasoning involved depends on the context and the agent's current goals. We can distinguish between System 1 (decision trees and analogical reasoning) versus System 2 (slower sequential rule-based reasoning).
+Natural language understanding involves mapping words into a graph model for the meaning of an utterance. The amount and kinds of reasoning involved depends on the context and the agent's current goals. We can distinguish between **System 1** (decision trees and analogical reasoning) and **System 2** (slower sequential rule-based reasoning).
 
 Common sense reasoning covers a broad range of everyday knowledge including time, space, physical interactions, theory of mind and so forth. This includes causal models, e.g. things fall if they are not supported, and objects can't fit into containers smaller than themselves. Young children learn a lot of this for themselves through play and interacting with others.
 
