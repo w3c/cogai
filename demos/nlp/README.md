@@ -84,7 +84,7 @@ This is a summary of challenges to be worked through to realise practical cognit
 
 Semantic consistency could be approached from a statistical perspective using collocations, but given that we expect cognitive agents to have a rich understanding of the meaning of utterances, we also need to assess (for example) whether an adjective is meaningful for a given sense of a noun.  That points to the need for work on taxonomic knowledge that licenses such uses, along with how to extend such knowledge as new words or word meanings are encountered. 
 
-Some people claim that taxonomic based NLP is impractical, and point to the success of self-supervised deep learning of language models, based on predicting masked words from a huge corpus of texts. However, this is far away from human-like NLP where agents can explain the meaning of words and reason with them. It is time to prove such people that human-like cognition is practical and to show how it can be scaled.
+Some people claim that taxonomic based NLP is impractical, and point to the success of self-supervised deep learning of language models, based on predicting masked words from a huge corpus of texts. However, this is far away from human-like NLP where agents can explain the meaning of words and reason with them. It is time to prove to such people that human-like cognition is practical, and to show how it can be scaled.
 
 * [Knowledge-based NLP](./knowledge-based-nlp.md)
 
