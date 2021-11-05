@@ -24,7 +24,7 @@ Pronouns and noun phrases either introduce or refer to thing(s). This involves a
 
 Taxonomic knowledge licenses the use of related words, e.g. "red flowers", given that flowers come in different colours. This can be used to select the most likely meaning of a word that has multiple possible meanings. The processing is incremental, i.e. word by word, and may involve progressive refinement as further evidence is observed.
 
-Concepts are based on natural language semantics, and may have fuzzy context dependent meanings. An example is `warm` which is relative to `hot` and `cold`, rather than to specific temperatures.  Fuzzy meanings may be related to functions over a set of things and a given thing may be described as 60% warm and 40% cold. This is connected to human reasoning based upon consideration of a set of examples.
+Concepts are based on natural language semantics, and may have fuzzy context dependent meanings. An example is `warm` which is relative to `hot` and `cold`, rather than to specific temperatures.  Fuzzy meanings may be related to functions over a set of things and a given thing may be described as `warm` (60%) and `cold` (40%). This is connected to human reasoning based upon consideration of a set of examples.
 
 A small set of examples is needed to provide a proof of concept demonstrator for cognitive natural language understanding. This then needs to be followed by a proof of concept demonstrator for cognitive natural language generation, as understanding and generation are closely coupled.
 
