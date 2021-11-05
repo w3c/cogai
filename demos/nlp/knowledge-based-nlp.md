@@ -20,7 +20,7 @@ This points to the need for efficient processing to identify (say) whether an ad
 
 Verbs map to actions or relationships with a flexible set of arguments that are filled by noun phrases and prepositions. The mapping further depends on the focus of the utterance, e.g. *Mary bought the book* vs *The book was bought by May*. The tense is mapped to temporal annotations, which may refer to another event or interval, e.g. *John was doing the washing up when Mary rang the door bell*, which describes an activity that was ongoing when another event occurred.
 
-Pronouns and noun phrases either introduce or refer to some thing(s). This involves a search through episodic memory that holds the representation of the meaning. Search can also occur through the phrase structure, looking for potential antecedents, e.g. *Susan was looking for her door key*, where *her* refers to *Susan*.
+Pronouns and noun phrases either introduce or refer to thing(s). This involves a search through episodic memory that holds the representation of the meaning. Search can also occur through the phrase structure, looking for potential antecedents, e.g. *Susan was looking for her door key*, where *her* refers to *Susan*.
 
 Taxonomic knowledge licenses the use of related words, e.g. "red flowers", given that flowers come in different colours. This can be used to select the most likely meaning of a word that has multiple possible meanings. The processing is incremental, i.e. word by word, and may involve progressive refinement as further evidence is observed.
 
