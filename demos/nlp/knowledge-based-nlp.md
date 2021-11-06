@@ -31,8 +31,8 @@ Reasoning involves graph algorithms and rulesets that act over episodic and sema
 A small set of examples is needed to provide a proof of concept demonstrator for cognitive natural language understanding. This then needs to be followed by a proof of concept demonstrator for cognitive natural language generation, as understanding and generation are closely coupled.
 
 ## Background resources
-
-Here are a few resources for further reading:
+<details>
+   <summary>Here are a few resources for further reading:</summary>
 
 * [Wikipedia article on common sense reasoning](https://en.m.wikipedia.org/wiki/Commonsense_reasoning), which they defined as a human-like ability to make presumptions about the type and essence of ordinary situations humans encounter every day. These assumptions include judgments about the nature of physical objects, taxonomic properties, and peoples' intentions. A device that exhibits commonsense reasoning might be capable of drawing conclusions that are similar to humans' folk psychology (humans' innate ability to reason about people's behavior and intentions) and naive physics (humans' natural understanding of the physical world).
 * [WordNet](https://wordnet.princeton.edu) which is a lexicon that includes a limited taxonomy of word senses.
@@ -49,4 +49,4 @@ What is too big? Answer 0: the trophy. Answer 1: the suitcase
 
     <p align="center"><img alt="Bloom's taxonomy" src="https://cdn.vanderbilt.edu/vu-wp0/wp-content/uploads/sites/59/2019/03/27124326/Blooms-Taxonomy.jpg" width="70%"><br>
    <em>Courtesy of Vanderbilt University Center for Teaching</em></p>
-
+</details>
