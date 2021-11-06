@@ -35,6 +35,9 @@ A small set of examples is needed to provide a proof of concept demonstrator for
    <summary>Here are a few resources for further reading:</summary>
 
 * [Wikipedia article on common sense reasoning](https://en.m.wikipedia.org/wiki/Commonsense_reasoning), which they defined as a human-like ability to make presumptions about the type and essence of ordinary situations humans encounter every day. These assumptions include judgments about the nature of physical objects, taxonomic properties, and peoples' intentions. A device that exhibits commonsense reasoning might be capable of drawing conclusions that are similar to humans' folk psychology (humans' innate ability to reason about people's behavior and intentions) and naive physics (humans' natural understanding of the physical world).
+* [ACL 2020 Commonsensae Tutorial](https://homes.cs.washington.edu/~msap/acl2020-commonsense/) which provides a survey of work on applying language models such as BERT and GPT-3 to commonsense, noting that language models mostly pick up lexical cues, and that no model actually solves commonsense reasoning to date. Language models lack an understanding of some of the most basic physical properties of the world. 
+* [WebChild](http://gerard.demelo.org/papers/csk-webchild.pdf), automatically constructed commonsense knowledgebase extracted by crawling web text collections, using semisupervised learning to classify word senses according to WordNet senses.
+* [ATOMIC](https://arxiv.org/abs/1811.00146) knowledgebase describing cause and effect of everyday situations. ATOMIC focuses on inferential knowledge organized as typed if-then relations with variables (e.g., "if X pays Y a compliment, then Y will likely return the compliment").
 * [WordNet](https://wordnet.princeton.edu) which is a lexicon that includes a limited taxonomy of word senses.
 * [COCA](https://www.english-corpora.org/coca/), a corpus of contemporary American English including word stems and part of speech tags
 * [BNC](http://www.natcorp.ox.ac.uk), a corpus of contemporary British English including word stems and part of speech tags
@@ -49,4 +52,20 @@ What is too big? Answer 0: the trophy. Answer 1: the suitcase
 
     <p align="center"><img alt="Bloom's taxonomy" src="https://cdn.vanderbilt.edu/vu-wp0/wp-content/uploads/sites/59/2019/03/27124326/Blooms-Taxonomy.jpg" width="70%"><br>
    <em>Courtesy of Vanderbilt University Center for Teaching</em></p>
+
+Antoine Bosselut claims:
+
+> * Commonsense knowledge is immeasurably vast, making it impossible to manually enumerate
+> * Commonsense knowledge is often implicit, and often can’t be directly extracted from text
+> * Commonsense knowledge resources are quite sparse, making them difficult to extend by only learning from examples
+   
+Yet according to Ernest Davis, children acquire a good grasp of commonsense by the time they are seven. It therefore makes sense to try to mimic human knowledge and reasoning. We need to move beyond lexical models of knowledge and to consider how children generalise from individual examples, and apply this knowledge to make sense of what they read.
+   
+How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
+   
+Benchmarks are one way to assess performance, but fail to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
 </details>
+
+# Examples
+
+This section considers a small set of example utterances along with the supporting knowledge and reasoning.
