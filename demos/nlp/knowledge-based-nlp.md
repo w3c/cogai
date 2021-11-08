@@ -63,7 +63,7 @@ Yet according to Ernest Davis, children acquire a good grasp of commonsense by t
    
 Susie Loraine claims that a typical six year old has a 2,600 word expressive vocabulary (words he or she says), and a receptive vocabulary (words he or she understands) of 20,000–24,000 words.
 
-Given a six year old has live for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million assertions interrelating 300,000 nodes.
+Given a six year old has lived for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million facts interrelating 300,000 nodes. This is a simplification as commonsense involves reasoning as well as facts, and this allows children to generalise from specific examples.
    
 How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
