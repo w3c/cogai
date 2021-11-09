@@ -49,6 +49,7 @@ Many researchers express commonsense in terms of a relatively small set of relat
 * taxonomic, e.g. is-a, kind-of, manner-of
 * part-whole, e.g. part-of
 * properties, e.g. colour, size, weight, texture, made-of
+* cardinality, e.g. most mammals have 4 legs
 * spatial, e.g. at-location, near-to, above, below
 * temporal, e.g. interval, point-in-time, now, day, night
 * ranges, e.g. small, medium, large, very small, slightly small
