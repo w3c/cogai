@@ -44,6 +44,7 @@ A small set of examples is needed to provide a proof of concept demonstrator for
 * [Linguistics in the age of AI](https://direct.mit.edu/books/book/5042/Linguistics-for-the-Age-of-AI) by Marjorie McShane and Sergei Nirenburg, Cognitive Science Department at Rensselaer Polytechnic Institute.
 * [ConceptNet](https://en.m.wikipedia.org/wiki/ConceptNet) is a [crowd sourced semantic network](https://github.com/commonsense/conceptnet) now hosted on GitHub. [ConceptNet5](https://github.com/commonsense/conceptnet5) is multilingual and based on [34 relationships](https://github.com/commonsense/conceptnet5/wiki/Relations).
 * [Event2Mind](https://github.com/uwnlp/event2mind), a crowdsourced corpus of 25,000 event phrases covering a diverse range of everyday events and situations. The training and test data are given as comma separated values.
+* [Dimensions of Commonsense Knowledge](https://arxiv.org/abs/2101.04640), a survey of popular commonsense sources and consolidation into 13 knowledge dimensions and a large combined graph CSKG (a 1GB tab separated value file).
 * [NLP Progress repository](http://nlpprogress.com/english/common_sense.html), including the Winograd Schema Challenge, a dataset for common sense reasoning. It lists questions that require the resolution of anaphora: the system must identify the antecedent of an ambiguous pronoun in a statement. Models are evaluated based on accuracy. Here is an example:
 
     *The trophy doesn’t fit in the suitcase because it is too big.*<br>
@@ -54,21 +55,7 @@ What is too big? Answer 0: the trophy. Answer 1: the suitcase
     <p align="center"><img alt="Bloom's taxonomy" src="https://cdn.vanderbilt.edu/vu-wp0/wp-content/uploads/sites/59/2019/03/27124326/Blooms-Taxonomy.jpg" width="70%"><br>
    <em>Courtesy of Vanderbilt University Center for Teaching</em></p>
 
-Antoine Bosselut claims:
-
-> * Commonsense knowledge is immeasurably vast, making it impossible to manually enumerate
-> * Commonsense knowledge is often implicit, and often can’t be directly extracted from text
-> * Commonsense knowledge resources are quite sparse, making them difficult to extend by only learning from examples
-   
-Yet according to Ernest Davis, children acquire a good grasp of commonsense by the time they are seven. It therefore makes sense to try to mimic human knowledge and reasoning. We need to move beyond lexical models of knowledge and to consider how children generalise from individual examples, and apply this knowledge to make sense of what they read.
-   
-Susie Loraine claims that a typical six year old has a 2,600 word expressive vocabulary (words he or she says), and a receptive vocabulary (words he or she understands) of 20,000–24,000 words.
-
-Given a six year old has lived for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million facts interrelating 300,000 nodes. This is a simplification as commonsense involves reasoning as well as facts, and this allows children to generalise from specific examples.
-   
-How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
-   
-Benchmarks are one way to assess performance, but fail to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
+* [Commonsense Reasoning](commonsense.md), a preliminary investigation of how commonsense knowledge and reasoning can be implemented with chunks
 </details>
 
 # Examples
