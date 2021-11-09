@@ -25,3 +25,35 @@ Given a six year old has lived for just over 2000 days, this implies vocabulary 
 How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
 Benchmarks are one way to assess performance, but fail to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
+
+## Examples of Commonsense
+
+Commonsense can often be expressed in natural language, e.g.
+
+* things fall down unless supported by something else
+* I am younger than my mother and father
+* my head is part of my body
+* a dog is a kind of mammal
+* a thing can't fit into a container smaller than itself
+* fragile things often break when they fall and hit the ground
+* flowers are parts of plants, and their colour and shape depends on the plant
+
+These often involve constrained variables, e.g. "I" is a person, and describe static or causal relationships, involving additional knowledge. In many cases, commonsense rules can be modelled as chunk graphs, and interpreted using graph algorithms. This raises the challenge for how commonsense is used in natural language processing and everyday reasoning, along with how it is learned and indexed.
+
+## Dimensions of Commonsense
+
+Many researchers express commonsense in terms of a relatively small set of relationships, e.g. [Ilievski et al.](https://arxiv.org/pdf/2101.04640.pdf) categorise relations into some 13 dimensions. The following is illustrative and not intended to be complete:
+
+* similarity, e.g. similar-to, same-as
+* distinctness, e.g. opposite-of, distinct-from
+* taxonomic, e.g. is-a, kind-of, manner-of
+* part-whole, e.g. part-of
+* properties, e.g. colour, size, weight, texture, made-of
+* spatial, e.g. at-location, near-to, above, below
+* temporal, e.g. interval, point-in-time, now, day, night
+* ranges, e.g. small, medium, large, very small, slightly small
+* comparative, e.g. smaller, larger, softer, louder
+* causal, predicting direct consequences of some event/action
+* pre- and post-conditions for actions
+
+The set of relationships is open-ended and domain dependent, relying on graph algorithms for their interpretation. The meaning of terms is grounded in the interaction of communicating agents, e.g. if I bring some red balloons to your birthday party, I can be confident that you will agree that they are red rather than some other colour.
