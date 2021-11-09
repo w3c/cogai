@@ -50,7 +50,7 @@ Many researchers express commonsense in terms of a relatively small set of relat
 * part-whole, e.g. part-of
 * properties, e.g. colour, size, weight, texture, made-of
 * cardinality, e.g. most mammals have 4 legs
-* spatial, e.g. at-location, near-to, above, below
+* spatial, e.g. at-location, near-to, above, below, distance, area, volume
 * temporal, e.g. interval, point-in-time, now, day, night
 * ranges, e.g. small, medium, large, very small, slightly small
 * comparative, e.g. smaller, larger, softer, louder
