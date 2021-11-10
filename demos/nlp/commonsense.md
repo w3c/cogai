@@ -34,7 +34,7 @@ Given a six year old has lived for just over 2000 days, this implies vocabulary 
    
 How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
-Benchmarks are one way to assess performance, but fail to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
+Benchmarks are one way to assess performance, e.g. scoring agents on their answers to multiple-choice questions, but this fails to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
 
 ## Background resources
 <details>
