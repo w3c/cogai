@@ -10,7 +10,7 @@ Children similarly steadily expand their vocabulary, learning words along with t
 
 We need to gather a collection of utterances and work on a subset of common sense knowledge sufficient for understanding those utterances. It is not a goal to develop a comprehensive taxonomy of common sense knowledge, and the emphasis is rather on demonstrating human-like understanding, reasoning and learning.
 
-Scaling will be a matter of learning by being taught lessons in the classroom, and through interaction in simulated virtual environments (playgrounds), with humans and other cognitive agents. In principle, agents can be designed to learn faster than humans, without getting tired and losing concentration. Likewise, agents can be designed to interact with many people as a form of crowd-sourcing. Once agents have been well trained they will be trivially easy to clone.
+Scaling will be a matter of learning through being taught lessons in the classroom, and through interaction in simulated virtual environments (playgrounds), with humans and other cognitive agents. In principle, agents can be designed to learn faster than humans, without getting tired and losing concentration. Likewise, agents can be designed to interact with many people as a form of crowd-sourcing. Once agents have been well trained they will be trivially easy to clone.
 
 It will be helpful to develop visual tools to support browsing, querying and reasoning, including taxonomic knowledge and the graph models constructed in episodic memory.
 
