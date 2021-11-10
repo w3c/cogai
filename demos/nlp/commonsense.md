@@ -14,9 +14,11 @@ Scaling will be a matter of learning through being taught lessons in the classro
 
 It will be helpful to develop visual tools to support browsing, querying and reasoning, including taxonomic knowledge and the graph models constructed in episodic memory.
 
-According to Matt Turek:
+According to DARPA:
 
 > The absence of common sense prevents intelligent systems from understanding their world, behaving reasonably in unforeseen situations, communicating naturally with people, and learning from new experiences. Its absence is considered the most significant barrier between the narrowly focused AI applications of today and the more general, human-like AI systems hoped for in the future. Common sense reasoning’s obscure but pervasive nature makes it difficult to articulate and encode.
+
+> The exploration of machine common sense is not a new field. Since the early days of AI, researchers have pursued a variety of efforts to develop logic-based approaches to common sense knowledge and reasoning, as well as means of extracting and collecting commonsense knowledge from the Web. While these efforts have produced useful results, their brittleness and lack of semantic understanding have prevented the creation of a widely applicable common sense capability.
 
 Antoine Bosselut claims:
 
