@@ -14,6 +14,10 @@ Scaling will be a matter of learning by being taught lessons in the classroom, a
 
 It will be helpful to develop visual tools to support browsing, querying and reasoning, including taxonomic knowledge and the graph models constructed in episodic memory.
 
+According to Matt Turek:
+
+> The absence of common sense prevents intelligent systems from understanding their world, behaving reasonably in unforeseen situations, communicating naturally with people, and learning from new experiences. Its absence is considered the most significant barrier between the narrowly focused AI applications of today and the more general, human-like AI systems hoped for in the future. Common sense reasoning’s obscure but pervasive nature makes it difficult to articulate and encode.
+
 Antoine Bosselut claims:
 
 > * Commonsense knowledge is immeasurably vast, making it impossible to manually enumerate
@@ -29,6 +33,33 @@ Given a six year old has lived for just over 2000 days, this implies vocabulary 
 How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
 Benchmarks are one way to assess performance, but fail to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
+
+## Background resources
+<details>
+   <summary>Here are a few resources for further reading:</summary>
+
+* [DARPA Machine Common Sense (MCS) Program](https://www.darpa.mil/program/machine-common-sense) which seeks to address the challenge of machine common sense by pursuing two broad strategies. Both envision machine common sense as a computational service, or as machine commonsense services. The first strategy aims to create a service that learns from experience, like a child, to construct computational models that mimic the core domains of child cognition for objects (intuitive physics), agents (intentional actors), and places (spatial navigation). The second strategy seeks to develop a service that learns from reading the Web, like a research librarian, to construct a commonsense knowledge repository capable of answering natural language and image-based questions about commonsense phenomena.
+* [Wikipedia article on common sense reasoning](https://en.m.wikipedia.org/wiki/Commonsense_reasoning), which they defined as a human-like ability to make presumptions about the type and essence of ordinary situations humans encounter every day. These assumptions include judgments about the nature of physical objects, taxonomic properties, and peoples' intentions. A device that exhibits commonsense reasoning might be capable of drawing conclusions that are similar to humans' folk psychology (humans' innate ability to reason about people's behavior and intentions) and naive physics (humans' natural understanding of the physical world).
+* [ACL 2020 Commonsense Tutorial](https://homes.cs.washington.edu/~msap/acl2020-commonsense/) which provides a survey of work on applying language models such as BERT and GPT-3 to commonsense, noting that language models mostly pick up lexical cues, and that no model actually solves commonsense reasoning to date. Language models lack an understanding of some of the most basic physical properties of the world. 
+* [WebChild](http://gerard.demelo.org/papers/csk-webchild.pdf), automatically constructed commonsense knowledgebase extracted by crawling web text collections, using semisupervised learning to classify word senses according to WordNet senses.
+* [ATOMIC](https://arxiv.org/abs/1811.00146) knowledgebase describing cause and effect of everyday situations. ATOMIC focuses on inferential knowledge organized as typed if-then relations with variables (e.g., "if X pays Y a compliment, then Y will likely return the compliment").
+* [WordNet](https://wordnet.princeton.edu) which is a lexicon that includes a limited taxonomy of word senses.
+* [COCA](https://www.english-corpora.org/coca/), a corpus of contemporary American English including word stems and part of speech tags
+* [BNC](http://www.natcorp.ox.ac.uk), a corpus of contemporary British English including word stems and part of speech tags
+* [Linguistics in the age of AI](https://direct.mit.edu/books/book/5042/Linguistics-for-the-Age-of-AI) by Marjorie McShane and Sergei Nirenburg, Cognitive Science Department at Rensselaer Polytechnic Institute.
+* [ConceptNet](https://en.m.wikipedia.org/wiki/ConceptNet) is a [crowd sourced semantic network](https://github.com/commonsense/conceptnet) now hosted on GitHub. [ConceptNet5](https://github.com/commonsense/conceptnet5) is multilingual and based on [34 relationships](https://github.com/commonsense/conceptnet5/wiki/Relations).
+* [Event2Mind](https://github.com/uwnlp/event2mind), a crowdsourced corpus of 25,000 event phrases covering a diverse range of everyday events and situations. The training and test data are given as comma separated values.
+* [Dimensions of Commonsense Knowledge](https://arxiv.org/abs/2101.04640), a survey of popular commonsense sources and consolidation into 13 knowledge dimensions and a large combined graph CSKG (a 1GB tab separated value file).
+* [NLP Progress repository](http://nlpprogress.com/english/common_sense.html), including the Winograd Schema Challenge, a dataset for common sense reasoning. It lists questions that require the resolution of anaphora: the system must identify the antecedent of an ambiguous pronoun in a statement. Models are evaluated based on accuracy. Here is an example:
+
+    *The trophy doesn’t fit in the suitcase because it is too big.*<br>
+What is too big? Answer 0: the trophy. Answer 1: the suitcase
+
+* [Bloom's taxonomy for educational goals](https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/), this has the potential for use in distinguishing different kinds of knowledge and cognitive processes.  A revised taxonomy uses the following terms for six cognitive processes: remember, understand, apply, analyse, evaluate and create. The authors further provide a taxonomy of the types of knowledge used in cognition: factual, conceptual, procedural, and metacognitive. See Mary Forrehand's [guide to the revised edition](https://cft.vanderbilt.edu/wp-content/uploads/sites/59/BloomsTaxonomy-mary-forehand.pdf).
+
+    <p align="center"><img alt="Bloom's taxonomy" src="https://cdn.vanderbilt.edu/vu-wp0/wp-content/uploads/sites/59/2019/03/27124326/Blooms-Taxonomy.jpg" width="70%"><br>
+   <em>Courtesy of Vanderbilt University Center for Teaching</em></p>
+</details>
 
 ## Examples of Commonsense
 
