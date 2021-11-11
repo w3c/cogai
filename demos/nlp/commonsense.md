@@ -109,7 +109,7 @@ Q: who has a present<br>
 A: Bob
 
 S: Wendy gave me a yellow balloon<br>
-Q: what is the colour of the balloon?<br>
+Q: what is the colour of the balloon<br>
 A: yellow
 
 S: the trophy won’t fit into the box<br>
