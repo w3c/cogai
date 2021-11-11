@@ -113,7 +113,7 @@ Q: what is the colour of the balloon<br>
 A: yellow
 
 S: the trophy won’t fit into the box<br>
-Q: why won’t it fit?<br>
+Q: why won’t it fit<br>
 A: it is too large
 
 S: John is Janet's dad<br>
