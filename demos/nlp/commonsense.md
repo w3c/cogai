@@ -99,3 +99,25 @@ Many researchers express commonsense in terms of a relatively small set of relat
 * pre- and post-conditions for actions
 
 The set of relationships is open-ended and domain dependent, relying on graph algorithms for their interpretation. The meaning of terms is grounded in the interaction of communicating agents, e.g. if I bring some red balloons to your birthday party, I can be confident that you will agree that they are red rather than some other colour.
+
+## Using Natural Language to Probe Understanding
+
+One way to probe understanding is to ask a question about a statement, e.g.
+
+S: Jane gave Bob a present<br>
+Q: who has a present<br>
+A: Bob
+
+S: Wendy gave me a yellow balloon<br>
+Q: what is the colour of the balloon?<br>
+A: yellow
+
+S: the trophy won’t fit into the box<br>
+Q: why won’t it fit?<br>
+A: it is too large
+
+S: John is Janet's dad<br>
+Q: is John older than Janet<br>
+A: yes
+
+Given a collection of such examples, we can develop a lexicon, taxonomy and common sense rules for understanding, reasoning and responding.
