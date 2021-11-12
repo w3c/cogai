@@ -32,7 +32,7 @@ Web-mining and crowd sourcing suffer from a lack of consistency and deeper knowl
 
 The quest for comprehensive broad coverage of common sense is perhaps misguided, and we should instead focus on how humans acquire and refine their knowledge, especially in the early years of their lives.
 
-<p align="center"><b><i>"It is not what you know, but your ability to learn that really matters"</i></b></p>
+<p align="center"><b><i>“It is not what you know, but your ability to learn that really matters”</i></b></p>
 
 Antoine Bosselut claims:
 
@@ -45,6 +45,8 @@ Yet according to Ernest Davis, children acquire a good grasp of commonsense by t
 Susie Loraine claims that typical six year olds have a 2,600 word expressive vocabulary (words they say), and a receptive vocabulary (words they understand) of 20,000–24,000 words.
 
 Given a six year old has lived for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million facts interrelating 300,000 nodes. This is a simplification as commonsense involves reasoning as well as facts, and this allows children to generalise from specific examples.
+
+<p align="center"><b><i>“He who learns but does not think, is lost! He who thinks but does not learn is in great danger”</i></b>, Confucius</p>
    
 How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
