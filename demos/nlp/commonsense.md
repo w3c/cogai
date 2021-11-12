@@ -151,3 +151,5 @@ A: she is going to drive her car
 S: Marcy reminded Bill to buy some milk on his way home<br>
 Q: why<br>
 A: they were out of milk
+
+Whilst conventional research focuses on using benchmarks to evaluate new work relative to previous work, that is not the case here, as we are more interested in qualitative rather than quantitive measures. In other words, to show how cognitive agents can mimic human reasoning and learning.
