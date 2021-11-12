@@ -113,6 +113,7 @@ Many researchers express commonsense in terms of a relatively small set of relat
 * comparative, e.g. smaller, larger, softer, louder
 * causal, predicting direct consequences of some event/action
 * pre- and post-conditions for actions
+* facilitate, e.g. things that help or hinder some action
 
 The set of relationships is open-ended and domain dependent, relying on graph algorithms for their interpretation. The meaning of terms is grounded in the interaction of communicating agents, e.g. if I bring some red balloons to your birthday party, I can be confident that you will agree that they are red rather than some other colour.
 
