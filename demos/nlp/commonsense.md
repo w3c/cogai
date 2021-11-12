@@ -26,7 +26,7 @@ Current approaches include:
 * _Web-mining_ based upon identifying assertions or self-supervised learning of large language models
 * _Crowd sourcing_ relying on large numbers of non-experts to provide simple assertions
 
-Knowledge-based approaches are hand crafted, but are not comprehensive. There has been success in isolated areas amenable to logical theories, e.g. taxonomies, planning and temporal reasoning. The lack of a complete solution may not be a problem for specific applications.
+Knowledge-based approaches are hand crafted and far from comprehensive. There has been success in isolated areas amenable to logical theories, e.g. taxonomies, planning and temporal reasoning. The lack of a complete solution may not be a problem for specific applications.
 
 Web-mining and crowd sourcing suffer from a lack of consistency and deeper knowledge. Large language models generate fluent text, but are incapable of deeper reasoning, and invent plausible responses in the absence of real understanding.
 
