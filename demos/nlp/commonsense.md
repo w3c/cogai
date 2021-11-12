@@ -120,4 +120,8 @@ S: John is Janet's dad<br>
 Q: is John older than Janet<br>
 A: yes
 
-Given a collection of such examples, we can develop a lexicon, taxonomy and common sense rules for understanding, reasoning and responding.
+S: Mike is taller than Peter and Peter is taller than Sam<br>
+Q: is Sam shorter than Mike<br>
+A: yes
+
+Given a collection of such examples, we can develop and test a lexicon, taxonomy and common sense rules for understanding, reasoning and responding. Additional work would allow agents to explain their reasoning, and to learn from experience.
