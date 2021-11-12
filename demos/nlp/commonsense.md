@@ -93,7 +93,7 @@ Commonsense can often be expressed in natural language, e.g.
 * flowers are parts of plants, and their colour and shape depends on the plant
 * pushing something will cause it to move unless it is fixed in place
 
-These often involve constrained variables, e.g. "I" is a person, and describe static or causal relationships, involving additional knowledge. In many cases, commonsense rules can be modelled as chunk graphs, and interpreted using graph algorithms. This raises the challenge for how commonsense is used in natural language processing and everyday reasoning, along with how it is learned and indexed.
+These often involve constrained variables, e.g. "I" is a person, and describe static or causal relationships, involving additional knowledge. In many cases, commonsense facts and rules can be modelled as chunk graphs, and interpreted using graph algorithms. This raises the challenge for how commonsense is used in natural language processing and everyday reasoning, along with how it is learned and indexed.
 
 The examples suggest the potential for conventions for chunk graphs for expressing rules, but also for the need to justify such rules in terms of deeper knowledge. Human-like agents should be able to explain themselves!
 
