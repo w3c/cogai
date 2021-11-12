@@ -141,3 +141,13 @@ Q: is Sam shorter than Mike<br>
 A: yes
 
 Given a collection of such examples, we can develop and test a lexicon, taxonomy and common sense rules for understanding, reasoning and responding. Additional work would allow agents to explain their reasoning, and to learn from experience.
+
+Further examples could be used to demonstrate abductive reasoning in which an agent creates the most plausible explanation for some observations. This involves a chain of causal reasoning about alternative explanations, e.g.
+
+S: Susan picked up her car key<br>
+Q: why did she do that<br>
+A: she is going to drive her car
+
+S: Marcy reminded Bill to buy some milk on his way home<br>
+Q: why<br>
+A: they were out of milk
