@@ -32,6 +32,8 @@ Web-mining and crowd sourcing suffer from a lack of consistency and deeper knowl
 
 The quest for comprehensive broad coverage of common sense is perhaps misguided, and we should instead focus on how humans acquire and refine their knowledge, especially in the early years of their lives.
 
+<p align="center"><b><i>"It is not what you know, but your ability to learn that really matters"</i></b></p>
+
 Antoine Bosselut claims:
 
 > * Commonsense knowledge is immeasurably vast, making it impossible to manually enumerate
