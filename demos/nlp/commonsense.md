@@ -99,7 +99,7 @@ The examples suggest the potential for conventions for chunk graphs for expressi
 
 ## Dimensions of Commonsense
 
-Many researchers express commonsense in terms of a relatively small set of relationships, e.g. [Ilievski et al.](https://arxiv.org/pdf/2101.04640.pdf) categorise relations into some 13 dimensions. The following is illustrative and not intended to be complete:
+Many researchers express commonsense in terms of a small number of groups of related relationships, e.g. [Ilievski et al.](https://arxiv.org/pdf/2101.04640.pdf) categorise relations into some 13 dimensions. The following is illustrative and not intended to be complete:
 
 * similarity, e.g. similar-to, same-as
 * distinctness, e.g. opposite-of, distinct-from
