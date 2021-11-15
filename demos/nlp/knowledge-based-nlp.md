@@ -22,7 +22,7 @@ Verbs map to actions or relationships with a flexible set of arguments that are 
 
 Pronouns and noun phrases either introduce or refer to thing(s). This involves a search through episodic memory that holds the representation of the meaning. Search can also occur through the phrase structure, looking for potential antecedents, e.g. *Susan was looking for her door key*, where *her* refers to *Susan*.
 
-Taxonomic knowledge licenses the use of related words, e.g. "red flowers", given that flowers come in different colours. This can be used to select the most likely meaning of a word that has multiple possible meanings. The processing is incremental, i.e. word by word, and may involve progressive refinement as further evidence is observed.
+Taxonomic knowledge licenses the use of related words, e.g. "red flowers", given that flowers come in different colours. This can be used to select the most likely meaning of a word that has multiple possible meanings. The processing is incremental, i.e. word by word, and may involve progressive refinement as further evidence is observed. Semantic priming biases the selection of meanings based upon the preceding episodic context. In principle, this can be implemented using spreading activation.
 
 Concepts are based on natural language semantics, and may have fuzzy context dependent meanings. An example is `warm` which is relative to `hot` and `cold`, rather than to specific temperatures.  Fuzzy meanings may be related to functions over a set of things and a given thing may be described as `warm` (60%) and `cold` (40%). This is connected to human reasoning based upon consideration of a set of examples.
 
