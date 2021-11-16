@@ -108,7 +108,7 @@ Many researchers express commonsense in terms of a small number of groups of rel
 * properties, e.g. colour, size, weight, texture, made-of
 * cardinality, e.g. most mammals have 4 legs
 * spatial, e.g. at-location, near-to, above, below, distance, area, volume
-* temporal, e.g. interval, point-in-time, now, day, night
+* temporal, e.g. interval, point-in-time, past, now, future, day, night
 * ranges, e.g. small, medium, large, very small, slightly small
 * comparative, e.g. smaller, larger, softer, louder
 * causal, predicting direct consequences of some event/action
