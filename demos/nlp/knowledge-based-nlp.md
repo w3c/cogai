@@ -43,7 +43,18 @@ This covers some ideas for working on knowledge-based NLP starting with NLU, whi
 5. Apply the shift-reduce rules to update the loose syntactic structure for the utterance.
 6. When reducing the shift-reduce stack, applying knowledge-based processing to a) noun phrases, b) verbs, c) prepositions and d) conjunctions, as appropriate, to build the model of meaning of the utterance in episodic memory.
 
+It isn't practical to codify knowledge for all of the English language, so we need to start by focusing on a small vocabulary that is sufficient for the utterances we want to include in early demonstrators. This potentially includes:
 
+* English language versions of common sense facts and rules
+* Examples for demonstrating common sense reasoning with the form: <statement, question, answer>
+* Conversational dialogues such as ordering dinner at a restaurant, see existing demo
+* Examples of lessons that teach and assess everyday knowledge and skills
+
+A starting point would be to be to explore how taxonomic knowledge can be used to license usage in language, e.g. which adjectives can be used with given nouns. At the same time, it would be helpful to consider the kinds of graph models that are appropriate for representing the meaning of example utterances, and how this relates to the processing of noun phrases, verbs, prepositions and conjunctions.
+
+Other work relates to evolving the syntactic processing, e.g. text pre-processor, part of speech tagger, lexicon, and shift-reduce parser. It may, for instance, make sense to expand the number of part of speech tags if that would simplify processing.
+
+Plenty of work is needed on NLG and the desire to share knowledge across NLU and NLG.
 
 ## Examples
 
