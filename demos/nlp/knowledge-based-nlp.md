@@ -32,6 +32,19 @@ A small set of examples is needed to provide a proof of concept demonstrator for
 
 Further background is given in [Commonsense Reasoning](commonsense.md), a preliminary investigation of how commonsense knowledge and reasoning can be implemented with chunks
 
-# Examples
+# Roadmap
+
+This covers some ideas for working on knowledge-based NLP starting with NLU, which involves the following processing model:
+
+1. Preprocess text to a sequence of lower case words, stripping punctuation and expanding common abbreviations, using the following word, if necessary, for disambiguation. Apostrophes are retained for candidate possessives.
+2. Determine the part of speech for the current word using the preceding words and the following word as needed. This uses a small set of rules together with simple statistics, starting from the part of speech tags listed in the lexicon for this word.
+3. Use the lexicon to identify the candidate word senses for the current word. Each word sense is also associated with the word stem and lexical attributes, e.g. possessive, number and gender. Note that word stems are associated with patterns that predict morphological regularities (word endings).
+4. Use taxonomic and statistical knowledge to rank the candidate word senses, using the preceding words and the episodic record of their meaning.
+5. Apply the shift-reduce rules to update the loose syntactic structure for the utterance.
+6. When reducing the shift-reduce stack, applying knowledge-based processing to a) noun phrases, b) verbs, c) prepositions and d) conjunctions, as appropriate, to build the model of meaning of the utterance in episodic memory.
+
+
+
+## Examples
 
 This section considers a small set of example utterances along with the supporting knowledge and reasoning.
