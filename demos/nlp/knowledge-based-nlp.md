@@ -69,6 +69,6 @@ This example involves a wide range of common sense knowledge:
 - categories of animals and their characteristics
 - common animal behaviours
 - territories and spatial reasoning
-- causal reasoning
+- causal reasoning about behaviours
 - events, actions, activities and temporal reasoning
 
