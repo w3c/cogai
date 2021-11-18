@@ -49,7 +49,7 @@ Davis suggests the following techniques for resolving ambiguity:
 * **Semantic constraints**, e.g. "the bat flew around me" implying the animal rather than a wooden bat.
 * **Recency** for resolving anaphora. Davis notes that 85% of the time the referent is the most recent matching object.
 * **Parallel structure for anaphora**, e.g. "John met Jim on the street and he invited him to to go to the pub", where he = John and him = Jim.
-* **World knowledge**, e.g. "I knocked on the door of the house with red shutters", where you knock on a door to request admittance, and the shutters on the window's of the house.
+* **World knowledge**, e.g. "I knocked on the door of the house with red shutters", where you knock on a door to request admittance, and the shutters are on the windows of the house.
 
 Much of the above implies that ambiguities are resolved as part of the process of understanding, which therefore needs to be carried out concurrently with syntactic processing.
 
