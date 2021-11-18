@@ -47,7 +47,7 @@ It isn't practical to codify knowledge for all of the English language, so we ne
 
 * English language versions of common sense facts and rules
 * Examples for demonstrating common sense reasoning with the form: <statement, question, answer>
-* Conversational dialogues such as ordering dinner at a restaurant, see existing demo
+* Conversational dialogues such as ordering dinner at a restaurant, see existing [demo](https://www.w3.org/Data/demos/chunks/nlp/dinner/)
 * Examples of lessons that teach and assess everyday knowledge and skills
 
 A starting point would be to be to explore how taxonomic knowledge can be used to license usage in language, e.g. which adjectives can be used with given nouns. At the same time, it would be helpful to consider the kinds of graph models that are appropriate for representing the meaning of example utterances, and how this relates to the processing of noun phrases, verbs, prepositions and conjunctions.
