@@ -56,6 +56,18 @@ How can we partition commonsense knowledge into areas with strong internal depen
    
 Benchmarks are one way to assess performance, e.g. scoring agents on their answers to multiple-choice questions, but this fails to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
 
+## Plausible reasoning with imperfect knowledge
+
+Commonsense reasoning needs to be able answer such questions as:
+
+* What is the meaning of this utterance?
+* Why did the person say this utterance?
+* What is happening, and why?
+* What is likely to happen next?
+* How can I achieve my desired outcome?
+
+Plausible reasoning can be used to identify likely outcomes using causal knowledge and informed guesses. It can also be applied in reverse to identify the most likely causes for a given situation. The kind of reasoning varies, e.g. reasoning about people's motivation vs qualitative reasoning about physical systems. Knowledge can be compiled into rules of thumb for easy application (System 1), but need to be related to explanations in terms of deeper knowledge (System 2).
+
 ## Background resources
 <details>
    <summary>Here are a few resources for further reading:</summary>
