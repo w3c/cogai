@@ -1,6 +1,6 @@
 # Common Sense Reasoning
 
-Common sense is needed to support natural language interaction and everyday reasoning.
+Common sense is needed to support natural language interaction and everyday reasoning. According to Jim Taylor, it can be defined as sound judgment derived from experience rather than study. In other words, it relies on general knowledge rather than specialised knowledge.
 
 * [Knowledge-based NLP](knowledge-based-nlp.md)
 
