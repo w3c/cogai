@@ -30,7 +30,9 @@ Knowledge-based approaches are hand crafted and far from comprehensive. There ha
 
 Web-mining and crowd sourcing suffer from a lack of consistency and deeper knowledge. Large language models generate fluent text, but are incapable of deeper reasoning, and invent plausible responses in the absence of real understanding.
 
-The quest for comprehensive broad coverage of common sense is perhaps misguided, and we should instead focus on how humans acquire and refine their knowledge, especially in the early years of their lives.
+Human reasoning operates from imperfect knowledge and what's plausible given past experience. This uses a patch work of informal knowledge rather than mathematically sound principles. It needs to be good enough to understand situations, to make informed guesses as to what will happen next, and to decide on what actions are needed to realise desired outcomes. It also needs to know how to revise existing knowledge as new knowledge is learned.
+
+The quest for comprehensive broad coverage of common sense is perhaps misguided, and we should instead focus on how humans acquire and refine their knowledge, especially in the early years of their lives. 
 
 <p align="center"><b><i>“It is not what you know, but your ability to learn that really matters”</i></b></p>
 
@@ -47,6 +49,8 @@ Susie Loraine claims that typical six year olds have a 2,600 word expressive voc
 Given a six year old has lived for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million facts interrelating 300,000 nodes. This is a simplification as commonsense involves reasoning as well as facts, and this allows children to generalise from specific examples.
 
 <p align="center"><b><i>“He who learns but does not think, is lost! He who thinks but does not learn is in great danger”</i></b>, Confucius</p>
+
+<p>In other words, you need to think about how to apply what you have learned, and likewise to realise that there is always more to learn as you will never know everything, so you need to keep an open mind and actively seek out new knowledge.</p>
    
 How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
