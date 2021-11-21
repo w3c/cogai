@@ -10,7 +10,7 @@ Children similarly steadily expand their vocabulary, learning words along with t
 
 We need to gather a collection of utterances and work on a subset of common sense knowledge sufficient for understanding those utterances. It is not a goal to develop comprehensive coverage of common sense knowledge, and the emphasis is rather on demonstrating human-like understanding, reasoning and learning.
 
-Scaling machine commonsense will be a matter of learning through being taught lessons in the classroom, and through interaction in simulated virtual environments (playgrounds), with humans and other cognitive agents. In principle, agents can be designed to learn faster than humans, without getting tired and losing concentration. Likewise, agents can be designed to interact with many people as a form of crowd-sourcing whilst preserving their users' privacy. Once agents have been well trained they will be trivially easy to clone.
+Scaling machine common sense will be a matter of learning through being taught lessons in the classroom, and through interaction in simulated virtual environments (playgrounds), with humans and other cognitive agents. In principle, agents can be designed to learn faster than humans, without getting tired and losing concentration. Likewise, agents can be designed to interact with many people as a form of crowd-sourcing whilst preserving their users' privacy. Once agents have been well trained they will be trivially easy to clone.
 
 It will be helpful to develop visual tools to support browsing, querying and reasoning, including taxonomic knowledge and the graph models constructed in episodic memory.
 
@@ -18,7 +18,7 @@ According to DARPA:
 
 > The absence of common sense prevents intelligent systems from understanding their world, behaving reasonably in unforeseen situations, communicating naturally with people, and learning from new experiences. Its absence is considered the most significant barrier between the narrowly focused AI applications of today and the more general, human-like AI systems hoped for in the future. Common sense reasoning’s obscure but pervasive nature makes it difficult to articulate and encode.
 
-> The exploration of machine common sense is not a new field. Since the early days of AI, researchers have pursued a variety of efforts to develop logic-based approaches to common sense knowledge and reasoning, as well as means of extracting and collecting commonsense knowledge from the Web. While these efforts have produced useful results, their brittleness and lack of semantic understanding have prevented the creation of a widely applicable common sense capability.
+> The exploration of machine common sense is not a new field. Since the early days of AI, researchers have pursued a variety of efforts to develop logic-based approaches to common sense knowledge and reasoning, as well as means of extracting and collecting common sense knowledge from the Web. While these efforts have produced useful results, their brittleness and lack of semantic understanding have prevented the creation of a widely applicable common sense capability.
 
 Current approaches include:
 
@@ -42,17 +42,17 @@ Antoine Bosselut claims:
 > * Commonsense knowledge is often implicit, and often can’t be directly extracted from text
 > * Commonsense knowledge resources are quite sparse, making them difficult to extend by only learning from examples
    
-Yet according to Ernest Davis, children acquire a good grasp of commonsense by the time they are seven. It therefore makes sense to try to mimic human knowledge and reasoning. We need to move beyond lexical models of knowledge and to consider how children generalise from individual examples, and apply this knowledge to make sense of what they read.
+Yet according to Ernest Davis, children acquire a good grasp of common sense by the time they are seven. It therefore makes sense to try to mimic human knowledge and reasoning. We need to move beyond lexical models of knowledge and to consider how children generalise from individual examples, and apply this knowledge to make sense of what they read.
    
 Susie Loraine claims that typical six year olds have a 2,600 word expressive vocabulary (words they say), and a receptive vocabulary (words they understand) of 20,000–24,000 words.
 
-Given a six year old has lived for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million facts interrelating 300,000 nodes. This is a simplification as commonsense involves reasoning as well as facts, and this allows children to generalise from specific examples.
+Given a six year old has lived for just over 2000 days, this implies vocabulary growth of ten or more words a day.  Assuming 10 to 100 common sense facts per word, that amounts to 200,000 to 2,000,000 facts about the world. This compares to ConceptNet with 1.6 million facts interrelating 300,000 nodes. This is a simplification as common sense involves reasoning as well as facts, and this allows children to generalise from specific examples.
 
 <p align="center"><b><i>“He who learns but does not think, is lost! He who thinks but does not learn is in great danger”</i></b>, Confucius</p>
 
 <p>In other words, you need to think about how to apply what you have learned, and likewise to realise that there is always more to learn as you will never know everything, so you need to keep an open mind and actively seek out new knowledge.</p>
    
-How can we partition commonsense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
+How can we partition common sense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
 Benchmarks are one way to assess performance, e.g. scoring agents on their answers to multiple-choice questions, but this fails to explain how an agent understands and reasons. That requires a conversational interface that allows understanding to be probed through questions.
 
@@ -101,7 +101,7 @@ What is too big? Answer 0: the trophy. Answer 1: the suitcase
 
 ## Examples of Commonsense
 
-Commonsense can often be expressed in natural language, e.g.
+Common sense can often be expressed in natural language, e.g.
 
 * things fall down unless supported by something else
 * I am younger than my mother and father
@@ -112,13 +112,13 @@ Commonsense can often be expressed in natural language, e.g.
 * flowers are parts of plants, and their colour and shape depends on the plant
 * pushing something will cause it to move unless it is fixed in place
 
-These often involve constrained variables, e.g. "I" is a person, and describe static or causal relationships, involving additional knowledge. In many cases, commonsense facts and rules can be modelled as [chunk graphs](https://github.com/w3c/cogai/blob/master/chunks-and-rules.md), and interpreted using graph algorithms. This raises the challenge for how commonsense is used in natural language processing and everyday reasoning, along with how it is learned and indexed.
+These often involve constrained variables, e.g. "I" is a person, and describe static or causal relationships, involving additional knowledge. In many cases, common sense facts and rules can be modelled as [chunk graphs](https://github.com/w3c/cogai/blob/master/chunks-and-rules.md), and interpreted using graph algorithms. This raises the challenge for how common sense is used in natural language processing and everyday reasoning, along with how it is learned and indexed.
 
 The examples suggest the potential for conventions for chunk graphs for expressing rules, but also for the need to justify such rules in terms of deeper knowledge. Human-like agents should be able to explain themselves!
 
 ## Dimensions of Commonsense
 
-Many researchers express commonsense in terms of a small number of groups of relationships, e.g. [Ilievski et al.](https://arxiv.org/pdf/2101.04640.pdf) categorise relations into some 13 dimensions. The following is illustrative and not intended to be complete:
+Many researchers express common sense in terms of a small number of groups of relationships, e.g. [Ilievski et al.](https://arxiv.org/pdf/2101.04640.pdf) categorise relations into some 13 dimensions. The following is illustrative and not intended to be complete:
 
 * similarity, e.g. similar-to, same-as
 * distinctness, e.g. opposite-of, distinct-from
