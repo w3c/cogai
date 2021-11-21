@@ -1,6 +1,6 @@
 # Common Sense Reasoning
 
-Common sense is needed to support natural language interaction and everyday reasoning. According to Jim Taylor, it can be defined as sound judgment derived from experience rather than study. In other words, it relies on general knowledge rather than specialised knowledge. Humans are not a gold standard, as many people exhibit poor judgement, e.g. purchasing things they can't afford, smoking and eating junk food, as well as blatent prejudices e.g. against people from different backgrounds.  Machine common sense needs to be assessed from a practical perspective including adherence to ethical principles, e.g. avoiding discriminatory behaviour.
+Common sense is needed to support natural language interaction and everyday reasoning. According to Jim Taylor, it can be defined as sound judgment derived from experience rather than study. In other words, it relies on general knowledge rather than specialised knowledge. Humans are not a gold standard, as many people exhibit poor judgement, e.g. purchasing things they can't afford, smoking and eating junk food, as well as blatent prejudices against people from different backgrounds.  Machine common sense needs to be assessed from a practical perspective including adherence to ethical principles, e.g. avoiding discriminatory behaviour.
 
 * [Knowledge-based NLP](knowledge-based-nlp.md)
 
