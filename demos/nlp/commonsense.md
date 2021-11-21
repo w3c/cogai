@@ -8,7 +8,7 @@ Common sense reasoning covers a broad range of everyday knowledge including time
 
 Children similarly steadily expand their vocabulary, learning words along with their meaning. New words stimulate System 2 reasoning and updates to the lexicon and taxonomic knowledge. Misunderstandings may occur, be noticed and corrected.
 
-We need to gather a collection of utterances and work on a subset of common sense knowledge sufficient for understanding those utterances. It is not a goal to develop a comprehensive taxonomy of common sense knowledge, and the emphasis is rather on demonstrating human-like understanding, reasoning and learning.
+We need to gather a collection of utterances and work on a subset of common sense knowledge sufficient for understanding those utterances. It is not a goal to develop comprehensive coverage of common sense knowledge, and the emphasis is rather on demonstrating human-like understanding, reasoning and learning.
 
 Scaling will be a matter of learning through being taught lessons in the classroom, and through interaction in simulated virtual environments (playgrounds), with humans and other cognitive agents. In principle, agents can be designed to learn faster than humans, without getting tired and losing concentration. Likewise, agents can be designed to interact with many people as a form of crowd-sourcing whilst preserving their users' privacy. Once agents have been well trained they will be trivially easy to clone.
 
