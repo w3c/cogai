@@ -122,7 +122,7 @@ Many researchers express common sense in terms of a small number of groups of re
 
 * similarity, e.g. similar-to, same-as
 * distinctness, e.g. opposite-of, distinct-from
-* taxonomic, e.g. is-a, kind-of, manner-of
+* taxonomic, e.g. is-a, kind-of, manner-of, disjoint-from
 * part-whole, e.g. part-of
 * properties, e.g. colour, size, weight, texture, made-of
 * cardinality, e.g. most mammals have 4 legs
