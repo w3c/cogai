@@ -69,6 +69,31 @@ Commonsense reasoning needs to be able answer such questions as:
 
 Plausible reasoning can be used to identify likely outcomes using causal knowledge and informed guesses. It can also be applied in reverse to identify the most likely causes for a given situation. The kind of reasoning varies, e.g. reasoning about people's motivation vs qualitative reasoning about physical systems. Knowledge can be compiled into rules of thumb for easy application (System 1), but need to be related to explanations in terms of deeper knowledge (System 2).
 
+## Folk psychology and theory of mind
+
+Folk psychology and naïve psychology are largely interchangeable terms. The former refers to common sense psychology, whilst the latter focuses on child development. Theory of mind highlights that children's social understanding is based on their understanding other people's minds.
+
+These theories refer to mental models used by children for themselves and for thinking about other people, including concepts such as:
+
+* beliefs
+* desires
+* fantasies vs realities
+* intentions
+* deceptions
+* hopes and wishes
+* pretending and imaginary vs factual
+* action as an event initiated by a sentient entity, e.g. a person
+* causal connections between belief, desire, intention and action
+
+How do children develop and improve their mental models?  For instance, when you are very young, you might think that everyone who disagrees with you is stupid and uninformed.  As you mature, you may seek richer explanations, e.g. for someone's values, beliefs and desires, as these will offer better predictions for how that person will behave. What kinds of knowledge and reasoning are needed to support this?
+
+In some cases people's mental states are explicit in their behaviour, e.g. facial expressions signifying being happy, angry, or upset. In other cases, it needs to be inferred through abductive reasoning based upon causal models, people's observed behaviour, and relevant contextual knowledge.
+
+In principle, mental models can be a mix of taxonomic facts, rules and algorithms. The taxonomy and rules can be revised when they provide conclusions that run counter to the evidence. An agent could have multiple theories and evaluate which ones work better in particular circumstances, as a basis for generating improved theories and discarding bad theories.
+
+Causal models may be inferred as plausible explanations of observed reality.
+
+
 ## Background resources
 <details>
    <summary>Here are a few resources for further reading:</summary>
@@ -93,6 +118,7 @@ What is too big? Answer 0: the trophy. Answer 1: the suitcase
 * [Graphic Causal Models](https://matheusfacure.github.io/python-causality-handbook/04-Graphical-Causal-Models.html) which describe how causality works in terms of what causes what, and are used in statistical studies, e.g. to determine whether smoking is more likely to give you lung cancer, or to determine the effectiveness of a given medication for treatment of some disease. This is complicated by confounding bias, selection bias and other effects. Confounding bias is where the treatment and outcome have a common cause that hasn't been controlled for. Selection bias is due to conditioning on a common effect.
 * [Bayesian Networks](https://www.cs.ubc.ca/~murphyk/Bayes/bayes_tutorial.pdf) (see also [wikipedia article](https://en.wikipedia.org/wiki/Bayesian_network)) are graphical models in which vertices represent random variables and edges represent conditional dependencies between such variables. Bayesian networks can be used to model causal relationships. Probabilistic inference in Bayesian networks is possible using approximation algorithms, e.g. the bounded variance algorithm.
 * [Qualitative Reasoning](https://web.stanford.edu/class/cs227/Lectures/lec13.pdf) models physical systems symbolically rather than using continuous numeric properties, for instance, replacing a numeric quantity by symbols denoting whether the quantity is increasing, decreasing or constant. Such abstraction leads to ambiguity, producing multiple answers in place of a single answer. Changes can be propagated across causal connections. Phase transitions can be modelled in terms of named phases, e.g. solid, liquid and gas. An example is a kettle left to boil on a stove. The temperature of the kettle remains at the boiling point until all of the liquid has boiled away, at which point the temperature rises rapidly, risking damage to the kettle.
+* [Naive Psychology: Preschoolers' Understanding of Intention and False Belief and Its Relationship to Mental World](https://repository.arizona.edu/bitstream/handle/10150/193561/azu_etd_1526_sip1_m.pdf?sequence=1&isAllowed=y), Jianhua Jian (2006), a study of child development.
 * [Bloom's taxonomy for educational goals](https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/), this has the potential for use in distinguishing different kinds of knowledge and cognitive processes.  A revised taxonomy uses the following terms for six cognitive processes: remember, understand, apply, analyse, evaluate and create. The authors further provide a taxonomy of the types of knowledge used in cognition: factual, conceptual, procedural, and metacognitive. See Mary Forrehand's [guide to the revised edition](https://cft.vanderbilt.edu/wp-content/uploads/sites/59/BloomsTaxonomy-mary-forehand.pdf).
 
     <p align="center"><img alt="Bloom's taxonomy" src="https://cdn.vanderbilt.edu/vu-wp0/wp-content/uploads/sites/59/2019/03/27124326/Blooms-Taxonomy.jpg" width="70%"><br>
