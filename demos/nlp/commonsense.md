@@ -66,6 +66,7 @@ Commonsense reasoning needs to be able answer such questions as:
 * What is likely to happen next?
 * How can I achieve my desired outcome?
 * How can I avoid or minimise undesired outcomes?
+* What are good ways to solve this problem?
 
 Plausible reasoning can be used to identify likely outcomes using causal knowledge and informed guesses. It can also be applied in reverse to identify the most likely causes for a given situation. The kind of reasoning varies, e.g. reasoning about people's motivation vs qualitative reasoning about physical systems. Knowledge can be compiled into rules of thumb for easy application (System 1), but need to be related to explanations in terms of deeper knowledge (System 2).
 
