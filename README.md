@@ -83,7 +83,10 @@ Credit is also due to [Marvin Minsky](https://en.wikipedia.org/wiki/Marvin_Minsk
 
 The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex. The initial focus of work is on a chunk rule engine inspired by John Anderson's ACT-R. Future work will look at the other building blocks.
 
-![Image of cognitive architecture as a set of modules connected via the cortex](images/cog-arch.png)
+
+
+<p align="center"><img alt="cognitive architecture" src="images/cog-arch.png" width="70%"><br>
+Image of cognitive architecture as a set of modules connected via the cortex</p>
 
 * **Perception** interprets sensory data and places the resulting models into the cortex. Cognitive rules can set the context for perception, and direct attention as needed. Events are signalled by queuing chunks to cognitive buffers to trigger rules describing the appropriate behaviour. A prioritised first-in first-out queue is used to avoid missing events that are closely spaced in time.
 * **Emotion** is about cognitive control and prioritising what’s important. The limbic system provides rapid assessment of situations without the delays incurred in deliberative thought. This is sometimes referred to as System 1 vs System 2.
@@ -94,7 +97,8 @@ The following diagram depicts how cognitive agents can be built as a collection 
 
 Zooming in on cognition and the role of the basal ganglia as a sequential rule engine, the architecture looks like:
 
-![Image of cognitive architecture for cognition](images/rule-engine.png)
+<p align="center"><img alt="cognitive architecture" src="images/rule-engine.png" width="70%"><br>
+Image of cognitive architecture for deliberative reasoning (System 2)</p>
 
 This has been implemented as an open source JavaScript library and used as the basis for an [evolving suite of demos](demos/README.md).
 
