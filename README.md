@@ -53,6 +53,7 @@ We have a weekly zoom teleconference slot every Monday at 5pm Paris local time. 
   * 06 November 2020 - [Seminar on Cognitive AI for Knowledge Media Institute, Open University](http://kmi.open.ac.uk/seminars/3552) -  [video](https://github.com/w3c/cogai/blob/master/faq.md) and [slides](https://www.w3.org/2020/CogAI-2020-11-06.pdf)
   * 08 June 2020 - [Cognitive AI and the Sentient Web for ISO/TC 211 50th Plenary meeting, WG4 Geospatial Services](https://www.w3.org/2020/sentient-web-20200608.pdf)
 * [Chunks format for declarative and procedural knowledge](chunks-and-rules.md)
+* [Common Sense Reasoning](demos/nlp/commonsense.md)
 * [Demonstrators](demos/README.md)
 * [Frequently asked questions](faq.md)
 * [Longer treatise on Cognitive AI](https://www.w3.org/Data/demos/chunks/chunks.html)
@@ -68,7 +69,7 @@ Traditional AI focuses on symbolic representations of knowledge and on mathemati
 
 Cognitive AI seeks to address these weaknesses through mimicking human thought, taking inspiration from over 500 million years of neural evolution and decades of work across the cognitive sciences. This involves the combination of symbolic and statistical approaches using functional models of the human brain, including the cortex, basal ganglia, cerebellum and limbic system. Human memory is modelled in terms of symbolic graphs with embedded statistics reflecting prior knowledge and past experience. Human reasoning is not based upon logic, nor on the laws of probability, but rather on mental models of what is possible, along with the use of metaphors and analogies.
 
-Research challenges include mimicry, emotional intelligence and natural language. Mimicry is key to social interaction, e.g. a baby learning to smile at its mother, and young children learning to speak. Emotional control of cognition determines what is important, and plays a key role in how we learn, reason and act. Natural language is important for both communication and for learning and the means to break free from the manual programming bottleneck.
+Research challenges include mimicry, emotional intelligence, natural language and common sense reasoning. Mimicry is key to social interaction, e.g. a baby learning to smile at its mother, and young children learning to speak. Emotional control of cognition determines what is important, and plays a key role in how we learn, reason and act. Natural language is important for both communication and for learning and the means to break free from the manual programming bottleneck. Common sense is everyday knowledge and key to natural language understanding, and is learned through experience.
 
 ## Historical context
 
