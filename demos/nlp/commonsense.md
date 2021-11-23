@@ -2,7 +2,7 @@
 
 Common sense is needed to support natural language interaction and everyday reasoning. According to Jim Taylor, it can be defined as sound judgment derived from experience rather than study. In other words, it relies on general knowledge rather than specialised knowledge. Humans are not a gold standard, as many people exhibit poor judgement, e.g. purchasing things they can't afford, smoking and eating junk food, holding irrational beliefs contrary to the evidence, as well as blatent prejudices against people from different backgrounds.  Machine common sense needs to be assessed from a practical perspective, including adherence to ethical principles and standards of normative behaviour.
 
-* *Common sense is key to natural language understanding of meaning, see: [Knowledge-based NLP](knowledge-based-nlp.md)*
+* *Common sense is key to the understanding of meaning in natural language, see: [Knowledge-based NLP](knowledge-based-nlp.md)*
 
 Common sense reasoning covers a broad range of everyday knowledge including time, space, physical interactions, theory of mind and so forth. This includes causal models, e.g. things fall if they are not supported, and objects can't fit into containers smaller than themselves. Young children learn a lot of this for themselves through play and through interacting with others.
 
