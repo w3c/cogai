@@ -138,10 +138,18 @@ Common sense can often be expressed in natural language, e.g.
 * fragile things often break when they fall and hit the ground
 * flowers are parts of plants, and their colour and shape depends on the plant
 * pushing something will cause it to move unless it is fixed in place
+* say greetings, introductions and goodbyes when meeting people
+* politely offer and receive compliments
+* wait for others to finish speaking before starting to talk
+* follow directions when you're asked to
+* ask for help when you need it
+* apologize when necessary
 
 These often involve constrained variables, e.g. "I" is a person, and describe static or causal relationships, involving additional knowledge. In many cases, common sense facts and rules can be modelled as [chunk graphs](https://github.com/w3c/cogai/blob/master/chunks-and-rules.md), and interpreted using graph algorithms. This raises the challenge for how common sense is used in natural language processing and everyday reasoning, along with how it is learned and indexed.
 
 The examples suggest the potential for conventions for chunk graphs for expressing rules, but also for the need to justify such rules in terms of deeper knowledge. Human-like agents should be able to explain themselves!
+
+p.s. with thanks to Lexi Walters Wright for [examples of social rules](https://www.understood.org/articles/en/5-unwritten-social-rules).
 
 ## Dimensions of Commonsense
 
