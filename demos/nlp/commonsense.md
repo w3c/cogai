@@ -50,7 +50,7 @@ Given a six year old has lived for just over 2000 days, this implies vocabulary 
 
 <p align="center"><b><i>“He who learns but does not think, is lost! He who thinks but does not learn is in great danger”</i></b>, Confucius</p>
 
-<p>In other words, you need to think about how to apply what you have learned, and likewise to realise that there is always more to learn as you will never know everything, so you need to keep an open mind and actively seek out new knowledge.</p>
+<p>In other words, you need to think about how to apply what you have learned, and likewise to realise that there is always more to learn as you will never know everything, so you need to keep an open mind and actively seek out new knowledge. Sound judgement is much more than the blind application of learned rules.</p>
    
 How can we partition common sense knowledge into areas with strong internal dependencies, and weak external dependencies? Can we sort such areas into a dependency graph that gives us an ordering of what needs to be learned before proceeding to other areas? Examples of such areas include social, physical and temporal reasoning.
    
