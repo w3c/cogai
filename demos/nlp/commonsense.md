@@ -2,7 +2,7 @@
 
 Common sense is needed to support natural language interaction and everyday reasoning. According to Jim Taylor, it can be defined as sound judgment derived from experience rather than study. In other words, it relies on general knowledge rather than specialised knowledge.
 
-Humans are not a gold standard, as many people exhibit poor judgement, e.g. purchasing things they can't afford, smoking and eating junk food, holding irrational beliefs contrary to the evidence, as well as blatent prejudices against people from different backgrounds.  Machine common sense needs to be assessed from a practical perspective, including adherence to ethical principles and standards of normative behaviour.
+Humans are not a gold standard, as many people exhibit poor judgement, e.g. purchasing things they can't afford, smoking and eating junk food, holding irrational beliefs contrary to the evidence, as well as blatent prejudices against people from different backgrounds.  Machine common sense needs to be assessed from a practical perspective, including adherence to ethical principles and standards of normative behaviour. How can we codify such principles and standards? Is it possible to include them as part of common sense and to attend to them as part of metacognition, akin to an inner voice?
 
 * *Common sense is key to the understanding of meaning in natural language, see: [Knowledge-based NLP](knowledge-based-nlp.md)*
 
