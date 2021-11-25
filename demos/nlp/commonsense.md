@@ -166,7 +166,7 @@ Many researchers express common sense in terms of a small number of groups of re
 * spatial, e.g. at-location, near-to, above, below, distance, area, volume
 * temporal, e.g. interval, point-in-time, past, now, future, day, night
 * ranges, e.g. small, medium, large, very small, slightly small
-* comparative, e.g. smaller, larger, softer, louder
+* comparative, e.g. smaller, larger, softer, louder, softer, harder
 * causal, predicting direct consequences of some event/action
 * pre- and post-conditions for actions
 * facilitate, e.g. things that help or hinder some action
