@@ -73,3 +73,9 @@ This example involves a wide range of common sense knowledge:
 - events, actions, activities and temporal reasoning
 
 How can this knowledge be modelled using chunk graphs?
+
+> the kettle boiled dry
+
+A kettle is used to boil water, e.g. to make tea. Water has different phases: solid (ice), liquid (water) and gas (steam). At atmospheric pressure, water boils at 100 degrees Celcius. The water level drops as the heat supplied to the kettle makes it boil off into steam. When all of the water has boiled off, the temperature of the kettle will rise abruptly risking damaging the kettle. This can be modelled using qualitative reasoning for physical systems.  In this example, the kettle needs to be removed from the heat, e.g. by turning off the stove ring it is on, or moving it away from that ring.  This relates to knowledge about heating and cooking.
+
+
