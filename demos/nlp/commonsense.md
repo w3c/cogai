@@ -96,9 +96,13 @@ In principle, mental models can be a mix of taxonomic facts, rules and algorithm
 
 Causal models may be inferred as plausible explanations of observed reality.
 
+## Visual Commonsense
+
+Our ability to understand everday scenes is based upon visual commonsense. This enables us to recognise a wide variety of different things and their relationships to each other as part of a scene, including part-whole relationships. We can direct attention to what is important in the current context. We expand our visual commonsense knowledge by learning across many scenes. This includes taxonomic knowledge as well as behavioural and causal knowledge. Work on graph neural networks and related techniques is showing considerable promise, but further work is needed to integrate commonsense knowledge and reasoning. In principle, this would also enable cognitive agents to learn to solve visual puzzles.
+
 ## Examples of Commonsense
 
-Common sense can often be expressed in natural language, e.g.
+Commonsense can often be expressed in natural language, e.g.
 
 * things fall down unless supported by something else
 * I am younger than my mother and father
@@ -204,6 +208,7 @@ Whilst conventional research focuses on using benchmarks to evaluate new work re
 
     *The trophy doesn’t fit in the suitcase because it is too big.*<br>
 What is too big? Answer 0: the trophy. Answer 1: the suitcase
+* [Graph Neural Networks](https://towardsdatascience.com/an-introduction-to-graph-neural-network-gnn-for-analysing-structured-data-afce79f4cfdc) (GNNs) cover techniques for applying multilayer neural networks to graphs formed from vertices and edges. Applications include generating scene description graphs from images, and vice versa, generating images from scene descriptions.  Graphs can also be used to enable recognition of objects that a recognizer has never seen before, e.g. an okapi is an animal that looks a bit like a deer with stripes from a zebra. Related work automatically generate [text descriptions from images](https://machinelearningmastery.com/how-to-caption-photos-with-deep-learning/), or generate images from text descriptions, see e.g. OpenAI's [DALL·E](https://openai.com/blog/dall-e/) and IBM's [Text2Scene](https://www.ibm.com/blogs/research/2019/06/text2scene-textual-descriptions/).
 * [Graphic Causal Models](https://matheusfacure.github.io/python-causality-handbook/04-Graphical-Causal-Models.html) which describe how causality works in terms of what causes what, and are used in statistical studies, e.g. to determine whether smoking is more likely to give you lung cancer, or to determine the effectiveness of a given medication for treatment of some disease. This is complicated by confounding bias, selection bias and other effects. Confounding bias is where the treatment and outcome have a common cause that hasn't been controlled for. Selection bias is due to conditioning on a common effect.
 * [Bayesian Networks](https://www.cs.ubc.ca/~murphyk/Bayes/bayes_tutorial.pdf) (see also [wikipedia article](https://en.wikipedia.org/wiki/Bayesian_network)) are graphical models in which vertices represent random variables and edges represent conditional dependencies between such variables. Bayesian networks can be used to model causal relationships. Probabilistic inference in Bayesian networks is possible using approximation algorithms, e.g. the bounded variance algorithm.
 * [Qualitative Reasoning](https://web.stanford.edu/class/cs227/Lectures/lec13.pdf) models physical systems symbolically rather than using continuous numeric properties, for instance, replacing a numeric quantity by symbols denoting whether the quantity is increasing, decreasing or constant. Such abstraction leads to ambiguity, producing multiple answers in place of a single answer. Changes can be propagated across causal connections. Phase transitions can be modelled in terms of named phases, e.g. solid, liquid and gas. An example is a kettle left to boil on a stove. The temperature of the kettle remains at the boiling point until all of the liquid has boiled away, at which point the temperature rises rapidly, risking damage to the kettle.
