@@ -1,5 +1,7 @@
 # Reasoning and Plans
 
+* See also [Common Sense Reasoning](../nlp/commonsense.md)
+
 Following the Aristotelian tradition, AI researchers have for the most part modelled reasoning by a reduction to logic and deductive inference: *what is provably true given the set of assumptions and inference rules.* Cognitive Science is the experimental study of the organizing principles of the mind, and by contrast with logic, focuses on *what has proved useful based upon prior knowledge and past experience in the presence of uncertainty.*
 
 Plans describe a sequence of steps that need to be taken in order to achieve the desired goals. One way to express plans is as event driven transitions between states. Such transitions can update information associated with the plan (the mental model of the world) and invoke actions, e.g. to say something. To make plans more manageable, it is convenient to structure them hierarchically into sub-plans.
@@ -33,3 +35,34 @@ I have yet to implement support for:
 
 For an introduction to informal reasoning see [Philip Johnson-Laird](https://www.pnas.org/content/108/50/19862)'s paper on [Mental models and human reasoning](https://www.pnas.org/content/107/43/18243).  He states that we don't rely on the laws of logic or probability - we reason by thinking about what's possible, we reason by seeing what is common to the possibilities.
 
+## Plausible reasoning with imperfect knowledge
+
+Commonsense reasoning needs to be able answer such questions as:
+
+* What is the meaning of this utterance?
+* Why did the person say this utterance?
+* What is happening, and why?
+* What is likely to happen next?
+* How can I achieve my desired outcome?
+* How can I avoid or minimise undesired outcomes?
+* What are good ways to solve this problem?
+
+Plausible reasoning can be used to identify likely outcomes using causal knowledge and informed guesses. It can also be applied in reverse to identify the most likely causes for a given situation. The kind of reasoning varies, e.g. reasoning about people's motivation vs qualitative reasoning about physical systems. Knowledge can be compiled into rules of thumb for easy application (System 1), but need to be related to explanations in terms of deeper knowledge (System 2).
+
+### Qualitative Reasoning
+
+Qualitative reasoning models physical systems symbolically rather than using continuous numeric properties, for instance, replacing a numeric quantity by symbols denoting whether the quantity is increasing, decreasing or constant. Such abstraction leads to ambiguity, producing multiple answers in place of a single answer. Changes can be propagated across causal connections. Phase transitions can be modelled in terms of named phases, e.g. solid, liquid and gas. An example is a kettle left to boil on a stove. The temperature of the kettle remains at the boiling point until all of the liquid has boiled away, at which point the temperature rises rapidly, risking damage to the kettle. If the heat source is removed at any point, the temperature will gradually fall to the ambient temperature.
+
+To explore this in more detail, let's consider the case of a kettle filled with cold water and placed upon a stove.
+
+1. The stove acts as a source of heat. This warms the water increasing its temperative gradually
+2. When the temperature reaches the boiling point it stops rising, and the water starts to boil away
+3. As the water boils, the water level in the kettle falls
+4. When the level falls to zero, the temperature of the kettle rises rapidly
+5. The kettle risks being damaged unless it is removed from the heat
+
+The challenge is to find a way to express this in terms of facts and rules, that can be used to predict how the system behaves over time. The kettle could be modelled as a chunk with properties for the water level, its temperature, and heat source.  The property values are given symbolically together with a symbol denoting their rate of change *(decreasing, constant, increasing)*. In principle, we could also have modifiers such as *slowly* and *rapidly*. To model the evolving state, we define a new chunk for each state. This is linked to from the previous state, and there may be multiple successors to represent multiple possibilities.
+
+Each such link describes a simplified model of a physical process. This is expressed declaratively to enable reasoning forward and backward in time. Links can be annotated to express the assumptions behind them. This typically relate to inequalities for property values, e.g. the temperature is less than the boiling point.
+
+*to do - expand this into a collection of chunks and explain how forward reasoning is applied to the evolving state of the system*
