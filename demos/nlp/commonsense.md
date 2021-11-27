@@ -100,7 +100,7 @@ Causal models may be inferred as plausible explanations of observed reality.
 
 ## Visual Commonsense
 
-Our ability to understand everday scenes is based upon visual commonsense. This enables us to recognise a wide variety of different things and their relationships to each other as part of a scene, including taxonomic knowledge and part-whole relationships. We can direct attention to what is important in the current context. We expand our visual commonsense knowledge by learning across many scenes. This includes behavioural and causal knowledge. Work on graph neural networks and related techniques is showing considerable promise, but further work is needed to integrate commonsense knowledge and reasoning. In principle, this would also enable cognitive agents to learn to solve visual puzzles.
+Our ability to understand everday scenes is based upon visual commonsense. This enables us to recognise a wide variety of different things and their relationships to each other as part of a scene, including taxonomic knowledge and part-whole relationships. We can direct attention to what is important in the current context. We expand our visual commonsense knowledge by learning across many scenes. This includes behavioural and causal knowledge. Work on graph neural networks and related techniques is showing considerable promise, but further work is needed to integrate commonsense knowledge and reasoning. In principle, this would also enable cognitive agents to learn to solve visual puzzles as found in IQ tests.
 
 ## Examples of Commonsense
 
