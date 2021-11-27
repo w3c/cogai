@@ -51,6 +51,8 @@ Plausible reasoning can be used to identify likely outcomes using causal knowled
 
 Plausible reasoning generally involves terms such as *likely, unlikely, less likely*, and *more likely* to describe premises and conclusions. This can be contrasted with reasoning based upon Bayesian statistics which involve estimates of various kinds of probabilities, which more often than not are unavailable. Plausible reasoning is limited to a few steps of inference as otherwise the results lack credibility. Further background is available in the wikipedia article on [plausible reasoning](https://en.wikipedia.org/wiki/Plausible_reasoning).
 
+* to do - describe a few examples and show how they can be modelled with chunks for facts and rules, and explain how forward and backward reasoning can be applied.*
+
 ### Qualitative Reasoning
 
 Qualitative reasoning models physical systems symbolically rather than using continuous numeric properties, for instance, replacing a numeric quantity by symbols denoting whether the quantity is increasing, decreasing or constant. Such abstraction leads to ambiguity, producing multiple answers in place of a single answer. Changes can be propagated across causal connections. Phase transitions can be modelled in terms of named phases, e.g. solid, liquid and gas. An example is a kettle left to boil on a stove. The temperature of the kettle remains at the boiling point until all of the liquid has boiled away, at which point the temperature rises rapidly, risking damage to the kettle. If the heat source is removed at any point, the temperature will gradually fall to the ambient temperature.
