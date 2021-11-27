@@ -51,7 +51,7 @@ Plausible reasoning can be used to identify likely outcomes using causal knowled
 
 Plausible reasoning generally involves terms such as *likely, unlikely, less likely*, and *more likely* to describe premises and conclusions. This can be contrasted with reasoning based upon Bayesian statistics which involve estimates of various kinds of probabilities, which more often than not are unavailable. Plausible reasoning is limited to a few steps of inference as otherwise the results lack credibility. Further background is available in the wikipedia article on [plausible reasoning](https://en.wikipedia.org/wiki/Plausible_reasoning).
 
-* to do - describe a few examples and show how they can be modelled with chunks for facts and rules, and explain how forward and backward reasoning can be applied.*
+*to do - describe a few examples and show how they can be modelled with chunks, and explain how forward and backward reasoning can be applied*
 
 ### Qualitative Reasoning
 
