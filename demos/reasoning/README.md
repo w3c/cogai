@@ -65,6 +65,6 @@ To explore this in more detail, let's consider the case of a kettle filled with 
 
 The challenge is to find a way to express this in terms of facts and rules, that can be used to predict how the system behaves over time. The kettle could be modelled as a chunk with properties for the water level, its temperature, and heat source.  The property values are given symbolically together with a symbol denoting their rate of change *(decreasing, constant, increasing)*. In principle, we could also have modifiers such as *slowly* and *rapidly*. To model the evolving state, we define a new chunk for each state that is qualitatively different from the previous state. This is linked to from the previous state, and there may be multiple successors to represent multiple possibilities.
 
-Each such link describes a simplified model of a physical process. This is expressed declaratively to enable reasoning forward and backward in time. Links can be annotated to express the assumptions behind them. This typically relate to inequalities for property values, e.g. the temperature is less than the boiling point.
+Each state describes a simplified model of a physical process. This is expressed declaratively to enable reasoning forward and backward in time. Links between states can be annotated to express the assumptions behind them. This typically relate to inequalities for property values, e.g. the temperature is less than the boiling point.
 
 *to do - expand this into a collection of chunks and explain how forward reasoning is applied to the evolving state of the system*
