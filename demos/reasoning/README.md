@@ -49,9 +49,15 @@ Commonsense reasoning needs to be able answer such questions as:
 
 Plausible reasoning can be used to identify likely outcomes using causal knowledge and informed guesses. It can also be applied in reverse to identify the most likely causes for a given situation. The kind of reasoning varies, e.g. reasoning about people's motivation vs qualitative reasoning about physical systems. Knowledge can be compiled into rules of thumb for easy application (System 1), but need to be related to explanations in terms of deeper knowledge (System 2).
 
-Plausible reasoning generally involves terms such as *likely, unlikely, less likely*, and *more likely* to describe premises and conclusions. This can be contrasted with reasoning based upon Bayesian statistics which involve estimates of various kinds of probabilities, which more often than not are unavailable. Plausible reasoning is limited to a few steps of inference as otherwise the results lack credibility. Further background is available in the wikipedia article on [plausible reasoning](https://en.wikipedia.org/wiki/Plausible_reasoning).
+Plausible reasoning involves models that are simple and effective, based upon past experience. Plausible reasoning uses a patchwork of context dependent informal knowledge in contrast to logic and formal semantics. Plausible reasoning generally involves terms such as *likely, unlikely, less likely*, and *more likely* to describe premises and conclusions. This can be contrasted with reasoning based upon Bayesian statistics which involve estimates of various kinds of probabilities, which more often than not are unavailable. Plausible reasoning is limited to a few steps of inference as otherwise the results lack credibility. Further background is available in the wikipedia article on [plausible reasoning](https://en.wikipedia.org/wiki/Plausible_reasoning).
+
+One example is using an elevator. You may start with the goal of moving to a different floor, deciding between using the stairs (harder, especially if we need to change more than a few floors) and the elevator (easier), navigating to the elevator, and summoning it with the button provided for that purpose. You need to press the *up button* if you want to summon an elevator to go to a higher floor, and the *down button* if you want to go to a lower floor. This involves reasoning about floor order based upon their names, e.g. *basement, ground floor, first floor, second floor* and so forth. In tall buildings, you may need to take a different elevator for the lower and upper floors.
+
+Plausible reasoning can use context specific rules when available, and when not, deliberative reasoning to find a satisfactory solution, and saving the conclusion as a new rule.  We don’t need to invoke deeper models as we can usually make use of higher level knowledge. We learn about elevators in functional terms: the purpose for moving between floors, the information the elevator provides to us, and the controls we use to operate it. The deeper models in terms of electrical circuits and computer control only become important in respect to people involved with installation and maintenance.
 
 *to do - describe a few examples and show how they can be modelled with chunks, and explain how forward and backward reasoning can be applied*
+
+
 
 ### Qualitative Reasoning
 
