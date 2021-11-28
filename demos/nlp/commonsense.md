@@ -72,7 +72,7 @@ Commonsense reasoning needs to be able answer such questions as:
 
 Plausible reasoning can be used to identify likely outcomes using causal knowledge and informed guesses. It can also be applied in reverse to identify the most likely causes for a given situation. The kind of reasoning varies, e.g. reasoning about people's motivation vs qualitative reasoning about physical systems. Knowledge can be compiled into rules of thumb for easy application (System 1), but need to be related to explanations in terms of deeper knowledge (System 2).
 
-Plausible reasoning generally involves terms such as *likely, unlikely, less likely*, and *more likely* to describe premises and conclusions. This can be contrasted with reasoning based upon Bayesian statistics which involve estimates of various kinds of probabilities, which more often than not are unavailable. Plausible reasoning is limited to a few steps of inference as otherwise the results lack credibility. Further background is available in the wikipedia article on [plausible reasoning](https://en.wikipedia.org/wiki/Plausible_reasoning).
+Plausible reasoning generally involves terms such as *likely, unlikely, less likely*, and *more likely* to describe premises and conclusions. This can be contrasted with reasoning based upon Bayesian statistics which involve estimates of various kinds of probabilities, which more often than not are unavailable. Plausible reasoning is limited to a few steps of inference as otherwise the results lack credibility. Further background is available in the page on [reasoning](../reasoning/README.md).
 
 ## Folk psychology and theory of mind
 
