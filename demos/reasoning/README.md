@@ -140,4 +140,4 @@ t23 model-transition {
 }
 ```
 
-*This assumes that the simulator knows the relationship between `temperature`, `initial-temperature` and `trend-temperature`. This is missing from the above account. We are also missing the representation of the underlying knowledge about the phases of matter, and how this applies to water. The `object` property above is used to reference the object whose state is being modelled, in this case a specific kettle.*
+*This assumes that the simulator knows the relationship between `temperature`, `initial-temperature` and `trend-temperature`. This is missing from the above account. We are also missing the representation of the underlying knowledge about the phases of matter, and how this applies to water, along with the function of the kettle as a container for heating water using a stove. The `object` property above is used to reference the object whose state is being modelled, in this case a specific kettle.*
