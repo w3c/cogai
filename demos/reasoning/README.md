@@ -77,6 +77,8 @@ Each state describes a simplified model of a physical process. This is expressed
 
 *to do - expand this into a collection of chunks and explain how forward reasoning is applied to the evolving state of the system*
 
+Qualitative reasoning involves the construction of the model of a process in terms of states and transitions, based upon underlying knowledge.
+
 We start with the state describing the kettle as it warms after being placed on the stove:
 
 ```
