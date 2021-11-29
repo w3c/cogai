@@ -80,7 +80,8 @@ Each state describes a simplified model of a physical process. This is expressed
 We start with the state describing the kettle as it warms after being placed on the stove:
 
 ```
-k23 kettle-state {
+s23 model-state {
+   object kettle41
    heat true
    initial-water-level full
    trend-water-level constant
@@ -92,7 +93,8 @@ k23 kettle-state {
 The next state describes the situation where the water is boiling and the water level decreasing:
 
 ```
-k24 kettle-state {
+s24 model-state {
+   object kettle41
    heat true
    initial-water-level full
    trend-water-level decreasing
@@ -104,7 +106,8 @@ k24 kettle-state {
 The next state describes the rapid rise in temperature when all of the water has boiled away:
 
 ```
-k25 kettle-state {
+s25 model-state {
+   object kettle41
    heat true
    initial-water-level zero
    trend-water-level constant
@@ -117,7 +120,8 @@ k25 kettle-state {
 Here is a state that describes the cooling kettle after it is removed from the stove:
 
 ```
-k26 kettle-state {
+s26 model-state {
+   object kettle41
    heat false
    trend-water-level constant
    trend-temperature decreasing
@@ -127,11 +131,11 @@ k26 kettle-state {
 We also need to describe the state transitions, e.g. from `k23` to `k24` when the temperature reaches boiling point.
 
 ```
-kt23 state-transition {
+t23 state-transition {
    from-state k23
    to-state k24
    temperature boiling-point
 }
 ```
 
-*This assumes that the simulator knows the relationship between `temperature`, `initial-temperature` and `trend-temperature`. This is missing from the above account. We are also missing the representation of the underlying knowledge about the phases of matter, and how this applies to water.*
+*This assumes that the simulator knows the relationship between `temperature`, `initial-temperature` and `trend-temperature`. This is missing from the above account. We are also missing the representation of the underlying knowledge about the phases of matter, and how this applies to water. The `object` property above is used to reference the object whose state is being modelled, in this case a specific kettle.*
