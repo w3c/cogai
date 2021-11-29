@@ -76,3 +76,62 @@ The challenge is to find a way to express this in terms of facts and rules, that
 Each state describes a simplified model of a physical process. This is expressed declaratively to enable reasoning forward and backward in time. Links between states can be annotated to express the assumptions behind them. This typically relate to inequalities for property values, e.g. the temperature is less than the boiling point.
 
 *to do - expand this into a collection of chunks and explain how forward reasoning is applied to the evolving state of the system*
+
+We start with the state describing the kettle as it warms after being placed on the stove:
+
+```
+k23 kettle-state {
+   heat true
+   initial-water-level full
+   trend-water-level constant
+   initial-temperature cold
+   trend-temperature increasing
+}
+```
+
+The next state describes the situation where the water is boiling and the water level decreasing:
+
+```
+k24 kettle-state {
+   heat true
+   initial-water-level full
+   trend-water-level decreasing
+   initial-temperature boiling-point
+   trend-temperature constant
+}
+```
+
+The next state describes the rapid rise in temperature when all of the water has boiled away:
+
+```
+k25 kettle-state {
+   heat true
+   initial-water-level zero
+   trend-water-level constant
+   initial-temperature boiling-point
+   trend-temperature rapidly-increasing
+   danger over-heating
+}
+```
+
+Here is a state that describes the cooling kettle after it is removed from the stove:
+
+```
+k26 kettle-state {
+   heat false
+   trend-water-level constant
+   trend-temperature decreasing
+}
+```
+
+We also need to describe the state transitions, e.g. from `k23` to `k24` when the temperature reaches boiling point.
+
+```
+kt23 state-transition {
+   from-state k23
+   to-state k24
+   temperature boiling-point
+}
+```
+
+*This assumes that the simulator knows the relationship between `temperature`, `initial-temperature` and `trend-temperature`. This is missing from the above account. We are also missing the representation of the underlying knowledge about the phases of matter, and how this applies to water.*
