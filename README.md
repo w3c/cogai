@@ -83,12 +83,10 @@ Credit is also due to [Marvin Minsky](https://en.wikipedia.org/wiki/Marvin_Minsk
 
 The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex. The initial focus of work is on a chunk rule engine inspired by John Anderson's ACT-R. Future work will look at the other building blocks.
 
-
-
 <p align="center"><img alt="cognitive architecture" src="images/cog-arch.png" width="70%"><br>
 Image of cognitive architecture as a set of modules connected via the cortex</p>
 
-* **Perception** interprets sensory data and places the resulting models into the cortex. Cognitive rules can set the context for perception, and direct attention as needed. Events are signalled by queuing chunks to cognitive buffers to trigger rules describing the appropriate behaviour. A prioritised first-in first-out queue is used to avoid missing events that are closely spaced in time.
+* **Perception** interprets sensory data and places the resulting models into the cortex, e.g. scene graphs. Cognitive rules can set the context for perception, and direct attention as needed. Events are signalled by queuing chunks to cognitive buffers to trigger rules describing the appropriate behaviour. A prioritised first-in first-out queue is used to avoid missing events that are closely spaced in time.
 * **Emotion** is about cognitive control and prioritising what’s important. The limbic system provides rapid assessment of situations without the delays incurred in deliberative thought. This is sometimes referred to as System 1 vs System 2.
 * **Cognition** is slower and more deliberate thought, involving sequential execution of rules to carry out particular tasks, including the means to invoke graph algorithms in the cortex, and to invoke operations involving other cognitive systems. Thought can be expressed at many different levels of abstraction.
 * **Action** is about carrying out actions initiated under conscious control, leaving the mind free to work on other things. An example is playing a musical instrument where muscle memory is needed to control your finger placements as thinking explicitly about each finger would be far too slow. The Cerebellum coordinates muscle activation guided by perception. 
