@@ -133,7 +133,7 @@ s26 model-state {
 We also need to describe the state transitions, e.g. from `k23` to `k24` when the temperature reaches boiling point.
 
 ```
-t23 state-transition {
+t23 model-transition {
    from-state k23
    to-state k24
    temperature boiling-point
