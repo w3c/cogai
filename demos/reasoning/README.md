@@ -111,7 +111,7 @@ The next state describes the rapid rise in temperature when all of the water has
 s25 model-state {
    object kettle41
    heat true
-   initial-water-level zero
+   initial-water-level empty
    trend-water-level constant
    initial-temperature boiling-point
    trend-temperature rapidly-increasing
