@@ -81,7 +81,7 @@ Credit is also due to [Marvin Minsky](https://en.wikipedia.org/wiki/Marvin_Minsk
 
 ## Cognitive Architecture
 
-The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex. The initial focus of work is on a chunk rule engine inspired by John Anderson's ACT-R. Future work will look at the other building blocks.
+The following diagram depicts how cognitive agents can be built as a collection of different building blocks that connect via the cortex, which functions as a collection of cognitive databases and associated algorithms. Semantic integration across the senses mimics the Anterior Temporal Lobe's role as a hub for the unimodal spokes. The initial focus of work is on a chunk rule engine inspired by John Anderson's ACT-R. Future work will look at the other building blocks.
 
 <p align="center"><img alt="cognitive architecture" src="images/cog-arch.png" width="70%"><br>
 Image of cognitive architecture as a set of modules connected via the cortex</p>
