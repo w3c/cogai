@@ -44,6 +44,7 @@ We have a weekly zoom teleconference slot every Monday at 5pm Paris local time. 
 ## Background materials
 
 * Talks
+  * 12 September 2-22 - [Plausible reasoning and artificial minds](https://www.w3.org/2022/09/ATA-Raggett-2022-09-12.pdf), [Workshop on Analogies: from Theory to Applications](https://iccbr-ata2022.loria.fr/)
   * 16 February 2022 - [Imperfect Knowledge](https://www.w3.org/2022/02/16-DKG-22-Raggett.pdf), [Distributed Knowledge Graphs workshop](https://easychair.org/cfp/dkg-22)
   * 06 September 2021 - [Digital Transformation using chunks as a simple abstraction above triples and property graphs](https://www.w3.org/2021/chunks-rdf-pg-2021-09-06.pdf) - talk at the Semantics2021 workshop on squaring the circle on graphs
   * 17 March 2021 - [Digital Transformation and the Knowledge Economy](https://www.w3.org/2021/digital-transformation-2021-03-17.pdf), an invited keynote for the Siemens conference on the IoT
