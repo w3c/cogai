@@ -1,6 +1,6 @@
 # Webinars on Cognitive AI
 
-This page is intended to support arranging webinars on behalf of the Cognitive AI Community Group. These webinars would be open to all, and not just the members of the Cognitive AI Community Group. The general aim is to draw attention to the potential of Cognitive AI, to present existing work, and to encourage discussion on research directions, software and educational resources, as well as dissemination and cross-coupling with other communities. Webinars will take place a times convenient to as many people as possible, and will be recorded for public access.
+This page is intended to support arranging webinars on behalf of the Cognitive AI Community Group. These webinars would be open to all, and not just the members of the Cognitive AI Community Group. The general aim is to draw attention to the potential of Cognitive AI, to present existing work, and to encourage discussion on research directions, software and educational resources, as well as dissemination and cross-coupling with other communities. Webinars should be arranged at times convenient to as many people as possible, and will be recorded for public access.
 
 ## Initial Webinar
 
