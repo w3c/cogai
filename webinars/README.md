@@ -1,0 +1,12 @@
+# Webinars on Cognitive AI
+
+This page is intended to support arranging webinars on behalf of the Cognitive AI Community Group. These webinars would be open to all, and not just the members of the Cognitive AI Community Group. The general aim is to draw attention to the potential of Cognitive AI, to present existing work, and to encourage discussion on research directions, software and educational resources, as well as dissemination and cross-coupling with other communities. Webinars will take place a times convenient to as many people as possible, and will be recorded for public access.
+
+## Initial Webinar
+
+_Please feel free to edit this section with your suggestions for the initial webinar._
+
+* A presentation by Dave Raggett on his work on plausible reasoning, including the [web-based demo](https://www.w3.org/Data/demos/chunks/reasoning/) for plausible reasoning (inspired by Allan Collins), analogical reasoning (inspired by Dendre Gentner), fuzzy reasoning (inspired by Lotfi Zadeh), and the potential for fuzzy quantifiers and modifiers as an extension to traditional logic
+* An open discussion on recent work on deep learning, e.g. Google's DreamBooth, and the challenges of achieving scalable learning for machine-based reasoning
+* _others to be added_
+
