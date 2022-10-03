@@ -4,6 +4,7 @@ This repository is for work by the [W3C Cognitive AI Community Group](https://ww
 ## Table of contents
 
  - [Introduction](#introduction)
+ - [Webinars](#webinars)
  - [Background materials](#background-materials)
  - [Program of work](#program-of-work)
  - [Positioning relative to existing approaches to AI](#positioning-relative-to-existing-approaches-to-ai)
