@@ -123,7 +123,7 @@
 
     <p>A <dfn>string literal</dfn> is an arbitrary set of characters. It is serialized enclosed in double quotes, following the same grammar as <a data-cite="RFC8259#section-7">strings in JSON</a> [[RFC8259]].</p>
 
-    <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=], a [=boolean=]. Additionally, depending on the context under which it is used, a [=name=] may start with one of the [[[#name-operators]]].</p>
+    <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=], a [=boolean=]. Additionally, depending on the context under which it is used, a [=name=] may start with one of the name operators (see [[[#name-operators]]]).</p>
   </section>
 </section>
 
@@ -376,6 +376,144 @@ memory a2 { @module facts }</code></pre>
             </ul>
           </li>
         </ul>
+      </section>
+
+      <section>
+        <h4>@-properties for conditions and actions</h4>
+        <p>The [=reserved names=] defined in this section may be used as [=property=] names in [=conditions=] and [=actions=] to control their behavior.</p>
+
+        <section>
+          <h5>The <dfn><code>@context</code></dfn> property</h5>
+          <p>When used in a regular [=chunk=], identifies a chunk's [=context=]. When used in a [=condition=] or in an [=action=], [=matches=] a [=chunk=]'s [=context=].</p>
+          <aside class="example" title="Looks for a chunk in a given context">
+            <pre><code>recall { lunch ?restaurant }
+     => lookup { @module facts; @do get; @type lunch; @context ?restaurant }</code></pre>
+            <p>The above [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>lunch</code> and whose [=context=] is the identifier of the lunch matched by the <code>recall</code> [=condition=].</p>
+          </aside>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@do</code></dfn> property</h5>
+          <p>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@for</code></dfn> property</h5>
+          <p>Iterates over a set of items in a comma separated list. The [=@from=] and [=@to=] properties may be used to restrict the iteration range.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@from</code></dfn> property</h5>
+          <p>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@id</code></dfn> property</h5>
+          <p>[=Matches=] a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@kindof</code></dfn> property</h5>
+          <p>[=Matches=] a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
+          <aside class="example" title="Matching subclasses in a taxonomy">
+            <p>Given the following facts in a <code>facts</code> [=module=]:</p>
+            <pre><code>penguin kindof bird
+eagle kindof bird
+penguin p6 { name Pingou }</code></pre>
+
+            <p>The following [=condition=] would match the [=chunk=] <code>p6</code> if it was in the [=module buffer=] of the <code>facts</code> [=module=]:</p>
+            <pre><code>* cond1 {
+  @module facts
+  @kindof bird
+}</code></pre>
+          </aside>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@module</code></dfn> property</h5>
+          <p>References the [=module=] a [=condition=] or [=action=] relates to. Value must be the [=module name=] of the targeted [=module=]. In the absence of an [=@module=] property, [=conditions=] and [=actions=] apply to the <code>goal</code> module.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@more</code></dfn> property</h5>
+          <p>Queries the [=boolean=] flag set to <code>true</code> by the [=rule engine=] on the current [=chunk=] in [=@for=] and [=@do properties=] iterations when there are remaining [=chunks=] to iterate over.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@pop</code></dfn> property</h5>
+          <p>An [=action=] property that removes the last [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
+          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
+          <aside class="example" title="Remove the last element from a list">
+            <p>Given the following [=chunk=] and [=action=]:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+digits { @pop list, @to item }</code></pre>
+            <p>The [=action=] will update the [=chunk=] to:</p>
+            <pre><code>digits {
+  list 0, 1, 2, 3, 4, 5, 6, 7, 8
+  item 9
+}</code></pre>
+          </aside>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@push</code></dfn> property</h5>
+          <p>An [=action=] property that pushes an [=atomic value=] to the end of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
+          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
+          <aside class="example" title="Add an element to the end of a list">
+            <p>Given the following [=chunk=] and [=action=]:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
+digits { @push 9, @to list }</code></pre>
+            <p>The [=action=] will update the [=chunk=] to:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
+          </aside>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@shift</code></dfn> property</h5>
+          <p>An [=action=] property that removes the first [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
+          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
+          <aside class="example" title="Remove the first element from a list">
+            <p>Given the following [=chunk=] and [=action=]:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+digits { @shift list, @to item }</code></pre>
+            <p>The [=action=] will update the [=chunk=] to:</p>
+            <pre><code>digits {
+  list 1, 2, 3, 4, 5, 6, 7, 8, 9
+  item 0
+}</code></pre>
+          </aside>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@status</code></dfn> property</h5>
+          <p>Queries the [=module buffer/status=] of a [=module buffer=]. The [=rule engine=] sets the status of a [=module buffer=] with the outcome of the [=rule=]'s execution. Most operations are asynchronous, except [=@do clear=], [=@do update=] and [=@do queue=].</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@to</code></dfn> property</h5>
+          <p>Companion [=action=] property used in [=@do properties=], [=@for=], [=@pop=], [=@push=], [=@shift=], [=@unshift=] operations.</p>
+          <p>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a [=@for=] operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a [=@do properties=] operation, the property specifies the name of the [=module buffer=] onto which to write the current [=chunk=].</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@type</code></dfn> property</h5>
+          <p>[=Matches=] a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@unshift</code></dfn> property</h5>
+          <p>An [=action=] property that pushes an [=atomic value=] to the beginning of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
+          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
+          <aside class="example" title="Add an element to the beginning of a list">
+            <p>Given the following [=chunk=] and [=action=]:</p>
+            <pre><code>digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
+digits { @shift 0, @to list }</code></pre>
+            <p>The [=action=] will update the [=chunk=] to:</p>
+            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
+          </aside>
+        </section>
+
+        <p class="ednote">TODO: Complete list with additional reserved names: <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@index</code>, <code>@map</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>.</p>
       </section>
     </section>
 
@@ -657,146 +795,7 @@ person { @id John }</code></pre>
 
     <section>
       <h3>The reserved name operator <code>@</code></h3>
-      <p>The <dfn>reserved name operator</dfn> <code>@</code> may be prepended to a [=name=] to denote a <dfn>reserved name</dfn> with specific meaning (defined in this specification). Such [=names=] may only appear as [=property=] names.</p>
-      <p>[=Reserved names=] control the behavior of [=conditions=] and [=actions=].</p>
-
-      <section>
-        <h4>@-properties for conditions and actions</h4>
-        <p>The [=reserved names=] defined in this section may be used in [=conditions=] and [=actions=] to control their behavior.</p>
-
-        <section>
-          <h5>The <dfn><code>@context</code></dfn> property</h5>
-          <p>When used in a regular [=chunk=], identifies a chunk's [=context=]. When used in a [=condition=] or in an [=action=], [=matches=] a [=chunk=]'s [=context=].</p>
-          <aside class="example" title="Looks for a chunk in a given context">
-            <pre><code>recall { lunch ?restaurant }
-     => lookup { @module facts; @do get; @type lunch; @context ?restaurant }</code></pre>
-            <p>The above [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>lunch</code> and whose [=context=] is the identifier of the lunch matched by the <code>recall</code> [=condition=].</p>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do</code></dfn> property</h5>
-          <p>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@for</code></dfn> property</h5>
-          <p>Iterates over a set of items in a comma separated list. The [=@from=] and [=@to=] properties may be used to restrict the iteration range.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@from</code></dfn> property</h5>
-          <p>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@id</code></dfn> property</h5>
-          <p>[=Matches=] a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@kindof</code></dfn> property</h5>
-          <p>[=Matches=] a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
-          <aside class="example" title="Matching subclasses in a taxonomy">
-            <p>Given the following facts in a <code>facts</code> [=module=]:</p>
-            <pre><code>penguin kindof bird
-eagle kindof bird
-penguin p6 { name Pingou }</code></pre>
-
-            <p>The following [=condition=] would match the [=chunk=] <code>p6</code> if it was in the [=module buffer=] of the <code>facts</code> [=module=]:</p>
-            <pre><code>* cond1 {
-  @module facts
-  @kindof bird
-}</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@module</code></dfn> property</h5>
-          <p>References the [=module=] a [=condition=] or [=action=] relates to. Value must be the [=module name=] of the targeted [=module=]. In the absence of an [=@module=] property, [=conditions=] and [=actions=] apply to the <code>goal</code> module.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@more</code></dfn> property</h5>
-          <p>Queries the [=boolean=] flag set to <code>true</code> by the [=rule engine=] on the current [=chunk=] in [=@for=] and [=@do properties=] iterations when there are remaining [=chunks=] to iterate over.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@pop</code></dfn> property</h5>
-          <p>An [=action=] property that removes the last [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
-          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
-          <aside class="example" title="Remove the last element from a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-digits { @pop list, @to item }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits {
-  list 0, 1, 2, 3, 4, 5, 6, 7, 8
-  item 9
-}</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@push</code></dfn> property</h5>
-          <p>An [=action=] property that pushes an [=atomic value=] to the end of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
-          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
-          <aside class="example" title="Add an element to the end of a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
-digits { @push 9, @to list }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@shift</code></dfn> property</h5>
-          <p>An [=action=] property that removes the first [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
-          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
-          <aside class="example" title="Remove the first element from a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-digits { @shift list, @to item }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits {
-  list 1, 2, 3, 4, 5, 6, 7, 8, 9
-  item 0
-}</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@status</code></dfn> property</h5>
-          <p>Queries the [=module buffer/status=] of a [=module buffer=]. The [=rule engine=] sets the status of a [=module buffer=] with the outcome of the [=rule=]'s execution. Most operations are asynchronous, except [=@do clear=], [=@do update=] and [=@do queue=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@to</code></dfn> property</h5>
-          <p>Companion [=action=] property used in [=@do properties=], [=@for=], [=@pop=], [=@push=], [=@shift=], [=@unshift=] operations.</p>
-          <p>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a [=@for=] operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a [=@do properties=] operation, the property specifies the name of the [=module buffer=] onto which to write the current [=chunk=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@type</code></dfn> property</h5>
-          <p>[=Matches=] a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@unshift</code></dfn> property</h5>
-          <p>An [=action=] property that pushes an [=atomic value=] to the beginning of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
-          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
-          <aside class="example" title="Add an element to the beginning of a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
-digits { @shift 0, @to list }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
-          </aside>
-        </section>
-
-        <p class="ednote">TODO: Complete list with additional reserved names: <code>@undefined</code>, <code>@unique</code>, <code>@compile</code>, <code>@index</code>, <code>@map</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@uncompile</code>, <code>@undefine</code>.</p>
-      </section>
+      <p>The <dfn>reserved name operator</dfn> <code>@</code> may be prepended to a [=name=] to denote a <dfn>reserved name</dfn> with specific meaning. Most [=reserved names=] are to be used as [=property=] names, typically in [=conditions=] and [=actions=] to control their behavior (see [[[#properties-for-conditions-and-actions]]]). Some of them may be used as chunk [=types=] to denote a chunk with specific meaning (see [[[#mapping-to-rdf]]]).</p>
     </section>
   </section>
 
@@ -830,7 +829,145 @@ digits { @shift 0, @to list }</code></pre>
 
   <section>
     <h2>Mapping to RDF</h2>
-    <p class="ednote">TODO: document <code>@rdfmap</code>, <code>@base</code>, <code>@prefix</code>.</p>
+
+    <p>Linked Data [[LINKED-DATA]], at the basis of RDF [[RDF11-CONCEPTS]], is a way to create a network of standards-based machine interpretable data across different documents and Web sites. It allows an application to start at one piece of Linked Data, and follow embedded links to other pieces of Linked Data that are hosted on different sites across the Web.
+
+    <p>[=Names=] used in [=chunks=] are local to the [=graph of chunks=] in which they appear. For [=names=] to be usable as linked data, there needs to be a way to associate them to global identifiers. [=Reserved names=] defined in this section may be used to create such a mapping.</p>
+
+    <p>In turn, this mechanism can be used to map a [=graph of chunks=] to an <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> and vice versa.</p>
+
+    <p class="note">Algorithms to serialize/deserialize a [=graph of chunks=] to an <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> and vice versa are out of scope of this document but may be specified in future revisions of it.</p>
+
+    <aside class="example" title="Mapping a graph of chunks to an RDF graph">
+      <p>Given the following [=graph of chunks=]:</p>
+      <pre><code>@rdfmap {
+  dog http://example.com/ns/dog
+  cat http://example.com/ns/cat
+  age http://example.com/ns/age
+  name http://example.com/ns/name
+}
+
+dog { name "Youki"; age 5 }
+cat { name "Isidore"; age 3 }</code></pre>
+      <p>The [=@rdfmap=] [=chunk=] creates a mapping between local names and a URL. This [=graph of chunks=] is equivalent to the following <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> expressed in Turtle [[TURTLE]]:</p>
+      <pre><code>&lt;http://example.org/ns/dog&gt;
+  &lt;http://example.org/ns/name&gt; "Youki";
+  &lt;http://example.org/ns/age&gt; 5.
+
+&lt;http://example.org/ns/cat&gt;
+  &lt;http://example.org/ns/name&gt; "Isidore";
+  &lt;http://example.org/ns/age&gt; 3.</code></pre>
+    </aside>
+
+    <section>
+      <h3>The <dfn><code>@rdfmap</code></dfn> type</h3>
+      <p>The [=@rdfmap=] chunk [=type=] identifies a chunk that defines a mapping between [=names=] and <abbr title="Internationalized Resource Identifiers">IRIs</abbr> [[IRI]]. Each [=property=] it defines whose [=name=] does not start with one of the name operators (see [[[#name-operators]]]) creates a mapping between this [=name=] and the property [=value=], interpreted as an <abbr title="Internationalized Resource Identifier">IRI</abbr>.</p>
+
+      <aside class="example" title="Mapping a name to the schema.org vocabulary">
+        <pre><code># Maps the name "thing" to the "Thing" item type in schema.org
+@rdfmap {
+  thing http://schema.org/Thing
+}</code></pre>
+      </aside>
+
+      <p class="note">The [=@rdfmap=] keyword plays the same role in [=chunks=] as the <code>@context</code> keyword in JSON-LD. See the notion of <a data-cite="JSON-LD#the-context">Context in JSON-LD</a> for details [[JSON-LD]]. The term [=context=] and the [=@context=] keyword have a different meaning in [=chunks=] where they identify the specific situation under which a [=chunk=] should be considered to be true. A distinct [=@rdfmap=] keyword is used here to avoid any confusion.</p>
+
+      <p>If multiple [=@rdfmap=] chunks create a mapping for the same [=name=], the last definition in overrides previous ones.</p>
+
+      <aside class="example" title="Conflicting mapping">
+        <pre><code># Creates a mapping from image to the example.org namespace
+@rdfmap { image http://example.org/ns/image }
+
+# "image" gets mapped to http://schema.org/image
+# due to the second mapping definition below that
+# overrides the initial mapping defined above.
+thing { image img1 }
+
+# New mapping definition for image, overrides former one
+@rdfmap { image http://schema.org/image }</code></pre>
+      </aside>
+
+      <p>An [=@rdfmap=] chunk may also contain a [=@base=] property to create a default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for [=names=] and [=@prefix=] properties to define prefixes for compact <abbr title="Internationalized Resource Identifiers">IRIs</abbr>.</p>
+    </section>
+
+    <section>
+      <h3>The <dfn><code>@base</code></dfn> property</h3>
+      <p>The [=@base=] [=property=] defines a default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for [=names=] that are not explicitly declared in an [=@rdfmap=].</p>
+
+      <aside class="example" title="Define a default IRI namespace">
+        <pre><code>@rdfmap {
+  @base http://schema.org/
+  dog http://example.org/ns/dog
+}
+
+dog { name "Youki"; birthDate 2021-07-09 }</code></pre>
+        <p>In this example, the [=@rdfmap=] chunk maps:</p>
+        <ul>
+          <li><code>dog</code> to <code>http://example.org/ns/dog</code></li>
+          <li><code>name</code> to <code>http://schema.org/name</code></li>
+          <li><code>birthDate</code> to <code>http://schema.org/birthDate</code></li>
+        </ul>
+      </aside>
+
+      <p>There can be only one default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for a given [=graph of chunks=]. If [=@base=] is used in multiple [=@rdfmap=] chunks, the last definition overrides previous ones.</p>
+
+      <aside class="example" title="Conflicting default namespaces">
+        <pre><code># Sets example.org as default namespace
+@rdfmap {
+  @base http://example.org/ns/
+}
+
+# Names actually get mapped to schema.org namespace
+# due to override below
+Thing { name "Desktop" }
+
+# Re-defines default namespace to use schema.org
+@rdfmap {
+  @base http://schema.org/
+}</code></pre>
+      </aside>
+    </section>
+
+    <section>
+      <h3>The <dfn><code>@prefix</code></dfn> property</h3>
+      <p>The [=@prefix=] [=property=] can be used in an [=@rdfmap=] chunk to reference a [=chunk=] that defines <abbr title="Internationalized Resource Identifier">IRI</abbr> prefixes, which in turn allow the use of compact <abbr title="Internationalized Resource Identifiers">IRIs</abbr> in the [=@rdfmap=] chunk.</p>
+
+      <p>The actual [=chunk=] that defines prefixes can have any [=type=]. Each [=property=] it defines whose [=name=] does not start with one of the name operators (see [[[#name-operators]]]) creates a prefix between the property [=name=] and the property [=value=], interpreted as an <abbr title="Internationalized Resource Identifier">IRI</abbr>.</p>
+
+      <aside class="example" title="Use compact IRIs in @rdfmap">
+        <pre><code>prefix p1 {
+  dcterms http://purl.org/dc/terms/
+  foaf http://xmlns.com/foaf/0.1/
+}
+
+@rdfmap {
+  @prefix p1
+  title dcterms:title
+  topic foaf:topic
+}
+
+book {
+  title "Chunks of life"
+  topic "Mammalian rules"
+}</code></pre>
+        <p>The [=@rdfmap=] chunk in this example maps:</p>
+        <ul>
+          <li><code>title</code> to the compact <abbr title="Internationalized Resource Identifier">IRI</abbr> <code>dcterms:title</code>, which gets expanded to <code>http://purl.org/dc/terms/title</code> through the [=@prefix=] property</li>
+          <li><code>topic</code> to the compact <abbr title="Internationalized Resource Identifier">IRI</abbr> <code>foaf:topic</code>, which gets expanded to <code>http://xmlns.com/foaf/0.1/topic</code> through the [=@prefix=] property</li>
+        </ul>
+      </aside>
+
+      <p>As with [=@base=], in case of conflicts, the definition that gets referenced last overrides former definitions.</p>
+
+      <aside class="example" title="">
+        <pre><code>prefix last { foaf http://xmlns.com/foaf/0.1/ }
+prefix first { foaf http://example.org/ns/ }
+
+@rdfmap { @prefix first; nick foaf:nick }
+@rdfmap { @prefix last }</code></pre>
+        <p>The last [=@rdfmap=] definition makes the <code>foaf</code> prefix map to <code>http://xmlns.com/foaf/0.1/</code>, overriding the previous mapping to <code>http://example.org/ns/</code>. The <code>nick</code> [=name=] gets mapped to <code>http://xmlns.com/foaf/0.1/nick</code> as a consequence.</p>
+      </aside>
+    </section>
   </section>
 
   <section id="index" class="appendix">
