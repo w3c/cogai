@@ -4,7 +4,7 @@ This page is intended to support arranging webinars on behalf of the Cognitive A
 
 ## Initial Webinar
 
-_Please feel free to edit this section with your suggestions for the initial webinar._
+_Please feel free to provide pull requests for updating this section with your suggestions for the initial webinar._
 
 * A presentation by [Dave Raggett](https://github.com/draggett) on his work on plausible reasoning, including the [web-based demo](https://www.w3.org/Data/demos/chunks/reasoning/) for plausible reasoning (inspired by Allan Collins), analogical reasoning (inspired by Dendre Gentner), fuzzy reasoning (inspired by Lotfi Zadeh), and the potential for fuzzy quantifiers and modifiers as an extension to traditional logic\
 * A presentation by [Paola Di Maio](https://github.com/Starborn) (AI KR CG) on the  intersection and co-evolution of Cognitive AI, Knowledge Representation and Machine Learning, expounding the system level knowledge representation and the need for KR to ensure reliablty transparency and accountability of CogAI. The presentation discusses the role of KR in AI, the risks arising from lack of KR, as well as the future of KR in ML
