@@ -49,7 +49,7 @@ We are hoping to arrange a series of recorded webinars and invite contributions,
 ## Background materials
 
 * Talks
-  * 20 February 2023 - [Human-like AI: Research directions for webs of cognitive agents that mimic human perception, memory, reasoning, learning and action](http://www.w3.org/2023/02-Raggett-Human-like-AI.pdf) 
+  * 20 February 2023 - [Human-like AI for Artificial General Intelligence - research challenges for the Intelligent Web of Things](https://www.w3.org/2023/02-Raggett-towards-AGI.pdf))
   * 14 November 2022 - [Cognitive Agents, Plausible Reasoning and Scalable Knowledge Engineering](https://www.w3.org/2022/11/Raggett-AI-Priorities.pdf), Workshop on Computing across the Continuum for the US NSF and the European Commission
   * 12 September 2022 - [Plausible reasoning and artificial minds](https://www.w3.org/2022/09/ATA-Raggett-2022-09-12.pdf), [Workshop on Analogies: from Theory to Applications](https://iccbr-ata2022.loria.fr/)
   * 16 February 2022 - [Imperfect Knowledge](https://www.w3.org/2022/02/16-DKG-22-Raggett.pdf), [Distributed Knowledge Graphs workshop](https://easychair.org/cfp/dkg-22)
