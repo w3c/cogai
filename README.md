@@ -49,6 +49,7 @@ We are hoping to arrange a series of recorded webinars and invite contributions,
 ## Background materials
 
 * Talks
+  * 18 April 2023 [Human-Like AI for Artificial General Intelligence](http://www.w3.org/2023/04-Raggett-towards-AGI.pdf), as part of the [Special day on Human-AI interaction, DATE 2023](https://www.date-conference.com/call-for-papers#Special-Day-on-Human-AI-Interaction)
   * 20 February 2023 - [Human-like AI for Artificial General Intelligence - research challenges for the Intelligent Web of Things](https://www.w3.org/2023/02-Raggett-towards-AGI.pdf))
   * 14 November 2022 - [Cognitive Agents, Plausible Reasoning and Scalable Knowledge Engineering](https://www.w3.org/2022/11/Raggett-AI-Priorities.pdf), Workshop on Computing across the Continuum for the US NSF and the European Commission
   * 12 September 2022 - [Plausible reasoning and artificial minds](https://www.w3.org/2022/09/ATA-Raggett-2022-09-12.pdf), [Workshop on Analogies: from Theory to Applications](https://iccbr-ata2022.loria.fr/)
