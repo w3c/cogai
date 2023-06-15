@@ -46,6 +46,8 @@ We have a weekly zoom teleconference slot every Monday at 5pm Paris local time. 
 
 We are hoping to arrange a series of recorded webinars and invite contributions, see [webinar planning](webinars/README.md)
 
+* 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](https://youtu.be/GMDGbRQSWyo), video of talk for Darmstadt Ontology Group, see also the [slides](http://www.w3.org/2023/06-Human-like-AI.pdf).
+
 ## Background materials
 
 * Talks
