@@ -1,5 +1,5 @@
 # Swarms for multi-agent coordination
-A swarm is a useful way of thinking about a collection of agents that need to work together to fulfil joint goals.  The swarm can be composed from a mix of mobile and static agents of varying capabilities. Agents coordinate via asynchronous message exchange at a level of abstraction decoupled from the underlying data formats and communication technologies.  This involves one to one messaging as well as topic based one to many message distribution.  A further means of communication is via the environment (stigmergy) e.g. via depositing artificial pheromones. Swarm simulation provides a low cost way to explore different algorithms in advance of real world deployment. Cognitive models based upon chunks & rules can be used for low-code development.
+A swarm is a useful way of thinking about a collection of agents that need to work together to fulfill joint goals.  The swarm can be composed from a mix of mobile and static agents of varying capabilities. Agents coordinate via asynchronous message exchange at a level of abstraction decoupled from the underlying data formats and communication technologies.  This involves one to one messaging as well as topic based one to many message distribution.  A further means of communication is via the environment (stigmergy) e.g. via depositing artificial pheromones. Swarm simulation provides a low cost way to explore different algorithms in advance of real world deployment. Cognitive models based upon chunks & rules can be used for low-code development.
 
 * [Talk at ETSI IoT Week, 2023](https://www.w3.org/2023/07-Raggett-SimSwarm.pdf)
 
@@ -13,7 +13,7 @@ One of the challenges is to plan routes for the robot forklifts. This prompted w
 
 * [A-star algorithm over a grid](https://www.w3.org/Data/demos/chunks/warehouse/search/)
 * [Ant swarm over a grid](https://www.w3.org/Data/demos/chunks/warehouse/ants/)
-* [Ant foraging with pheromones and sent](https://www.w3.org/Data/demos/foraging/)
+* [Ant foraging with pheromones and scent](https://www.w3.org/Data/demos/foraging/)
 
 The first link features the use of the A-star algorithm over a grid. The code maintains a prioritised queue of cells for exploration. The queue length is bounded to constrain the beam-width. The second link uses stochastic movement of a swarm of ants to map out the grid in respect to the minimum distance from the route's origin.  The third link features animated ants, two kinds of pheromone, plus the option of scent for the food sources.
 
