@@ -7,6 +7,8 @@ One use case is for managing a distribution warehouse where robot forklifts are 
 
 * [SimSwarm: warehouse](https://www.w3.org/Data/demos/chunks/warehouse/)
 
+## Route Planning
+
 One of the challenges is to plan routes for the robot forklifts. This prompted work on web-based demos for different approaches:
 
 * [A-star algorithm over a grid](https://www.w3.org/Data/demos/chunks/warehouse/search/)
