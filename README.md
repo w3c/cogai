@@ -51,6 +51,7 @@ We are hoping to arrange a series of recorded webinars and invite contributions,
 ## Background materials
 
 * Talks
+  * 04 July 2023 [Combining Digital Twins with Cognitive Agents](https://www.w3.org/2023/07-Raggett-SimSwarm.pdf), talk at ETSI IoT Week 2023
   * 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](http://www.w3.org/2023/06-Human-like-AI.pdf), talk for Darmstadt Ontology Group
   * 18 April 2023 [Human-Like AI for Artificial General Intelligence](http://www.w3.org/2023/04-Raggett-towards-AGI.pdf), as part of the [Special day on Human-AI interaction, DATE 2023](https://www.date-conference.com/call-for-papers#Special-Day-on-Human-AI-Interaction)
   * 20 February 2023 - [Human-like AI for Artificial General Intelligence - research challenges for the Intelligent Web of Things](https://www.w3.org/2023/02-Raggett-towards-AGI.pdf))
