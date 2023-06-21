@@ -5,7 +5,7 @@ A swarm is a useful way of thinking about a collection of agents that need to wo
 
 One use case is for managing a distribution warehouse where robot forklifts are used to transfer pallets from incoming to outgoing trucks using warehouse racking for buffering. An orthographic web-based demo is being developed as a proof of concept
 
-* [Ant foraging demo](https://www.w3.org/Data/demos/foraging/)
+* [SimSwarm: warehouse](https://www.w3.org/Data/demos/chunks/warehouse/))
 
 One of the challenges is to plan routes for the robot forklifts. This prompted work on web-based demos for different approaches:
 
