@@ -23,9 +23,9 @@ Work is now underway on a different approach based upon defining lanes and junct
 
 In centralised control, the swarm coordinator allocates tasks, tracks where everything is, and computes routes for mobile agents. Messages are exchanged between the swarm coordinator and swarm participants on a one to one basis. This approach is perhaps simpler in respect to monitoring and control, but is subject to a single point of failure.
 
-With decentralised control, tasks are allocated in a distributed way.
+With decentralised control, tasks are allocated in a distributed way:
 1. request for service
-2. offers of service
+2. bids with offers of service
 3. requester makes a choice and notifies winning bid
 
 Offers can specify a future time, e.g. when a given forklift expects to finish its current job.  This approach uses topic based message distribution, enabling service providers to listen on topics pertinent to the services the agents can provide. Messages can be limited to agents within a the same region or within a given distance.
