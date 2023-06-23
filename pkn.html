@@ -80,6 +80,10 @@
 
 <section id="data-types">
   <h2>Data Types</h2>
+  <p>PKN documents use the following restricted set of data types. See <a href="#grammar"></a> for a formal definition of their serialization.</p>
+
+  <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
+  <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=].</p>
 </section>
 
 <section id="statements">
