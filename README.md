@@ -75,7 +75,9 @@ We are hoping to arrange a series of recorded webinars and invite contributions,
 
 ## Program of work
 
-The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. We also are working on a [formal specification of the chunk data and rules format](https://w3c.github.io/cogai/) with a view to its standardisation.
+The initial focus is to describe the aims for a sequence of demonstrators, to collaborate on the scenarios, detailed use cases, and associated datasets, and to identify and discuss questions that arise in this work. In relationt to this, we are working on a [formal specification of the chunk data and rules format](https://w3c.github.io/cogai/) with a view to its standardisation.
+
+A further line of work deals with the means to express and reason with imperfect knowledge, that is, everyday knowledge subject to uncertainty, imprecision, incompleteness and inconsistencies. See the draft specifcation for the [plausible knowledge notation](https://w3c.github.io/cogai/pkn.html) (PKN), and the [web-based PKN demonstrator](https://www.w3.org/Data/demos/chunks/reasoning/). This is based upon work on guidelines for effective argumentation by a long line of philosophers since the days of Ancient Greece. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.
 
 ## Positioning relative to existing approaches to AI
 
