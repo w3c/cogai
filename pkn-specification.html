@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Plausible Knowledge Notation (PKN)</title>
+  <script async class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
+  <script class="remove">
+    var respecConfig = {
+      shortName: "chunks",
+      specStatus: "CG-DRAFT",
+      noRecTrack: true,
+      format: "markdown",
+      edDraftURI: "https://w3c.github.io/cogai/",
+      editors:  [
+        {
+          name: "Dave Raggett",
+          company: "W3C",
+          companyURL: "https://www.w3.org/",
+          w3cid: "2682"
+        }
+      ],
+      group: "cogai",
+      github: {
+        repoURL: "https://github.com/w3c/cogai/",
+        branch: "master"
+      }
+    };
+  </script>
+  <style>
+    .railroad {
+      margin-top: 1em;
+      margin-bottom: 2em;
+    }
+  </style>
+</head>
+<body>
+  <section id="abstract">
+    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that may be uncertain, imprecise, incomplete and inconsistent. PKN was inspired by the work of Alan Collins and co-workers in the 1980s. PKN consists of queries, properties, relations, implications and analogies. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge that corresponds to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
+  </section>
+
+  <section id="sotd">
+    <p>This document is at early stages of development. Feedback is welcome through <a href="https://github.com/w3c/cogai/issues">GitHub issues</a> or on the <a href="mailto:public-cogai@w3.org">public-cogai@w3.org</a> mailing-list (with <a href="https://lists.w3.org/Archives/Public/public-cogai/">public archives</a>).</p>
+  </section>
+  
+  <section class="informative">
+    <h2>Introduction</h2>
+    <p>This specification defines a notation for imperfect knowledge, i.e. knowledge that may be uncertain, imprecise, incomplete and inconsistent. The approach is modelled on human argumentation, something that a long line of philosophers have investigated since the days of Ancient Greece. Traditional logic assumes perfect knowledge and provides mathematical proof for entailments. Unfortunately, knowledge is rarely perfect, but is nonetheless amenable to reasoning using guidelines for effective arguments.  As an example consider the statement: <em>if it is raining then it is cloudy</em>.  This is generally true, but you can also infer that it is somewhat likely to be raining if it is cloudy. This is plausible based upon your knowledge of weather patterns. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.</p>
+    
+    <figure id="inferences">
+      <img src="inferences.png" alt="" style="width:60%"/>
+      <figcaption>Inferring likely properties and relations across relations</figcaption>
+    </figure>
+    
+    <p>The above figure shows how properties and relations involving a class may be likely to apply to a sub-class as a specialisation of the parent class. Likewise, properties and relations holding for a sub-class may be likely to apply to the parent class as a generalisation. The likelihood of such inferences is influenced by the available metadata. Inferences can also be based on implication rules, and analogies between concepts with matching structural relationships. PKN further supports imprecise concepts:</p>
+    
+    <ul>
+       <li>fuzzy terms, e.g. <em>cold, warm</em> and <em>hot</em>, which form a scalar range with overlapping meanings.</li>
+       <li>fuzzy modifiers, e.g. <em>very</em> old, where such terms are relative to the context they apply to.</li>
+       <li>fuzzy quantifiers, e.g. <em>few</em> and <em>many</em>, for queries akin to SPARQL.</li>
+    </ul>
+  </section>
+
+<section id="conformance">
+    <p>The grammatical rules in this document are to be interpreted as described in [[[RFC5234]]] [[RFC5234]].</p>
+    <section>
+      <h3>Conformance classes</h3>
+      <p>Conformance to this specification is defined for four conformance classes:</p>
+      <dl>
+        <dt><dfn>PKN document</dfn></dt>
+        <dd>A serialization of a [=PKN graph=] as a file. A [=PKN document=] is conformant to this specification if it follows the grammar described in <a href="#grammar"></a>.</dd>
+        <dt><dfn>Authoring tool</dfn></dt>
+        <dd>An application that writes a [=PKN document=]. An [=authoring tool=] is conformant to this specification if it writes conforming [=PKN documents=].</dd>
+        <dt><dfn>Parser</dfn></dt>
+        <dd>A [=parser=] transforms a [=PKN document=] into another representation. A [=parser=] is conformant to this specification if it accepts any conforming [=PKN document=].</dd>
+        <dt><dfn>Rule engine</dfn></dt>
+        <dd>A processing application that operates on PKN statements. A [=rule engine=] is conformant to this specification if it follows the algorithms defined in <a href="#rule-execution"></a>.</dd>
+      </dl>
+    </section>
+</section>
+
+<section id="data-types">
+  <h2>Data Types</h2>
+</section>
+
+<section id="statements">
+  <h2>PKN Statements</h2>
+
+  <section id="metadata">
+    <h3>Statement MetaData</h3>
+  </section>
+
+  <section id="properties">
+    <h3>Property Statements</h3>
+  </section>
+
+  <section id="relations">
+    <h3>Relation Statements</h3>
+  </section>
+
+  <section id="analogies">
+    <h3>Analogy Statements</h3>
+  </section>
+
+  <section id="queries">
+    <h3>Query Statements</h3>
+  </section>
+</section>
+
+
+<section id="documents">
+  <h2>PKN Documents</h2>
+  
+  <p>A PKN document is a sequence of PKN statements.</p>
+  
+  <section>
+    <h3>PKN Graphs</h3>
+    <p>A <dfn data-lt="pkn-graph">PKN Graph</dfn> is an abstract representation of a PKN document as a graph in which statement are the vertices and names are the edges.</p>
+  </section>
+  
+  <section id="grammar">
+    <h3>PKN Grammar</h3>
+  </section>  
+  
+  <section id="railroad-diagrams">
+    <h3>Railroad Diagrams</h3>
+  </section>  
+  
+  <section id="pkn-rdf" class="informative">
+    <h3>PKN and RDF</h3>
+  </section>  
+</section>
+
+<section id="rule-execution">
+  <h2>PKN Rule Execution</h2>
+  
+  <section id="query-execution">
+    <h3>Computing with Relations</h3>
+  </section>  
+  
+  <section id="query-execution">
+    <h3>Computing with Implications</h3>
+  </section>  
+  
+  <section id="query-execution">
+    <h3>Computing with Queries</h3>
+  </section>  
+  
+  <section id="certainty">
+    <h3>Computing Certainty</h3>
+  </section>  
+</section>
+
+</body>
