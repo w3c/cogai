@@ -112,10 +112,10 @@ You can experiment with chunks and rules in your web browser, with the means to 
 
 This page provides an informal introduction. We're also working on a formal specification with a view to publishing it as a Community Group report.
 
-* [Raw markup](https://github.com/w3c/cogai/blob/master/index.html)
-* [Viewable page](https://w3c.github.io/cogai/)
+* [Raw markup](https://github.com/w3c/cogai/blob/master/chunks-and-rules.html)
+* [Viewable page](https://w3c.github.io/cogai/chunks-and-rules.html)
 
-The specification is at early stages of development. Feedback is welcome through [GitHub issues](https://github.com/w3c/cogai/issues) or on the [public-cogai@w3.org](public-cogai@w3.org) mailing-list (with [public archives](https://lists.w3.org/Archives/Public/public-cogai/)).
+The specification is at an early stage of development. Feedback is welcome through [GitHub issues](https://github.com/w3c/cogai/issues) or on the [public-cogai@w3.org](public-cogai@w3.org) mailing-list (with [public archives](https://lists.w3.org/Archives/Public/public-cogai/)).
 
 
 ## Mapping names to RDF
