@@ -242,7 +242,7 @@ a s1 {
     <section>
       <h3>Links between chunks</h3>
       <p>In this document, a <dfn>link</dfn> is a directed and labeled connection between two [=chunks=]. A [=link=] is automatically created whenever a chunk property [=value=] is a [=name=] that references an existing chunk [=identifier=].</p>
-      <p>The <dfn>subject</dfn> of the [=link=] identifies the [=chunk=] at the origin of the connection. The <dfn>object</dfn> of the [=link=] identifies the [=chunk=] targeted by the connection. The <dfn>label</dfn> of the [=link=] is the property [=name=].</p>
+      <p>The <dfn>subject</dfn> of the [=link=] identifies the [=chunk=] at the origin of the connection. The <dfn>object</dfn> of the [=link=] identifies the [=chunk=] targeted by the connection. The <dfn class="lint-ignore">label</dfn> of the [=link=] is the property [=name=].</p>
       <aside class="example" title="A link between two chunks">
 <pre><code>friend f34 {
   name Joan
@@ -424,7 +424,7 @@ person {@module facts; friends ?friends}
    => item {@module goal; @for ?friends; @from 1; @to 2}</pre>
             <p>which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g.</p>
             <pre>item {value Suzy; @index 1; @more true}</pre>
-            <p>The action's properties are copied over apart from those starting with an <code>@</code>. The item index in the list is copied into the chunk as [=@index=]. You can then use <code>@do next</code> in an action to load the next item into the buffer. The [=@more=] property is set to true in the buffer if there is more to come, and false for the last property in the iteration. Action chunks should use either [=@do=] or [=@for=], but not both. Neither implies <code>@do update</code>.</p>
+            <p>The action's properties are copied over apart from those starting with an <code>@</code>. The item index in the list is copied into the chunk as [=@index=]. You can then use [=@do next=] in an action to load the next item into the buffer. The [=@more=] property is set to true in the buffer if there is more to come, and false for the last property in the iteration. Action chunks should use either [=@do=] or [=@for=], but not both. Neither implies <code>@do update</code>.</p>
           </aside>
         </section>
 
@@ -460,7 +460,7 @@ penguin p6 { name Pingou }</code></pre>
           <p>This is used with [=@compile=] and [=@uncompile=] to reference a chunk of type [=@map=] that defines a map for property names and their meanings.</p>
           <aside class="example" title="term map for rule (un)compilation">
             <pre><code>@map map1 {do @do; condition @condition; action @action; module @module}</code></pre>
-            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as <code>@do</code>, <code>condition</code> is to be interpreted as <code>@condition</code>, and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a [=chunk=] such as the following:</p>
+            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as [=@do=], <code>condition</code> is to be interpreted as [=@condition=], <code>action</code> is to be interpreted as [=@action=], and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a [=chunk=] such as the following:</p>
             <pre><code>rule r1 {condition g1; action a1, a2, a3}</code></pre>
 which is mapped to:
             <pre><code>rule r1 {@condition g1; @action a1, a2, a3}</code></pre>
@@ -589,22 +589,22 @@ digits { @shift 0, @to list }</code></pre>
 
         <p>The [=rule engine=] operates on a module's [=graph of chunks=] through its [=module buffer=].</p>
 
-        <p>A [=module buffer=] has a <dfn data-dfn-for="module buffer">status</dfn>, (accessible via <code>@status</code>), whose value is initially [=status/okay=], and which reflects the outcome of the last [=action=] held and performed by the [=module buffer=]. Values can be:</p>
+        <p>A [=module buffer=] has a <dfn data-dfn-for="module buffer">status</dfn>, (accessible via [=@status=]), whose value is initially [=status/okay=], and which reflects the outcome of the last [=action=] held and performed by the [=module buffer=]. Values can be:</p>
         <dl>
-          <dt><dfn><code>pending</code></dfn></dt>
+          <dt><dfn class="lint-ignore"><code>pending</code></dfn></dt>
           <dd>The operation is still pending.</dd>
           <dt><dfn><code>okay</code></dfn></dt>
           <dd>The operation completed successfully.</dd>
           <dd><p class="issue">Switch to <code>ok</code>? This seems more common in technologies (e.g. HTTP) than <code>okay</code>.</p></dd>
-          <dt><dfn><code>forbidden</code></dfn></dt>
+          <dt><dfnclass="lint-ignore"><code>forbidden</code></dfn></dt>
           <dd>The operation was not allowed.</dd>
-          <dt><dfn><code>nomatch</code></dfn></dt>
-          <dd>The operation failed because there was no [=matching chunk=] for the [=action=] in the targeted [=module=].</dd>
-          <dt><dfn><code>failed</code></dfn></dt>
+          <dt><dfnclass="lint-ignore"><code>nomatch</code></dfn></dt>
+          <dd>The operation [=failed=] because there was no [=matching chunk=] for the [=action=] in the targeted [=module=].</dd>
+          <dt><dfn class="lint-ignore"><code>failed</code></dfn></dt>
           <dd>The operation failed.</dd>
         </dl>
         
-        <p>This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use <code>@tag</code> in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via <code>@tag</code> in a rule condition.</p>
+        <p>This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use [=@tag=] in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via [=@tag=] in a rule condition.</p>
 
         <p>A [=module buffer=] has a <dfn>queue</dfn>, which is a set of [=chunks=], initially empty. Each chunk in the [=queue=] has a <dfn>priority</dfn>, represented by an integer from 1 to 10, with 10 the highest priority. The default [=priority=] is 5. [=Chunks=] are ordered by descending [=priority=] in a [=queue=]. When [=priorities=] match, [=chunks=] are ordered by insertion order (first in, first out).</p>
 
@@ -637,12 +637,12 @@ digits { @shift 0, @to list }</code></pre>
         </section>
 
         <section>
-          <h5>The <dfn><code>@do delete</code></dfn> operation</h5>
-          <p>Forgets [=matching chunks=] in the [=graph of chunks=].</p>
+          <h5>The <dfn class="lint-ignore"><code>@do delete</code></dfn> operation</h5>
+          <p>Removes [=matching chunks=] from the [=graph of chunks=].</p>
         </section>
 
         <section>
-          <h5>The <dfn><code>@do get</code></dfn> operation</h5>
+          <h5>The <dfn class="lint-ignore"><code>@do get</code></dfn> operation</h5>
           <p>Looks for a [=matching chunk=] in the module's [=graph of chunks=] and puts a copy of it in the [=module buffer=] if found. Modifying the [=properties=] of a [=chunk=] copied from a [=graph of chunks=] (e.g. through a [=@do update=] operation) will not alter the underlying [=graph of chunks=]. To save an updated [=chunk=], a [=@do put=] or [=@do patch=] command needs to be issued.</p>
         </section>
 
@@ -704,7 +704,7 @@ bar {loop prop18; name ?name; value ?value}
     <section>
       <h3>The variable operator <code>?</code></h3>
 
-      <p>The <dfn>variable operator</dfn> <code>?</code> may be prepended to a [=name=] when used as a [=property=] value to turn the [=name=] into a <dfn>variable</dfn> which represents a symbolic name to a [=value=]. A [=variable=] gets <dfn>bound</dfn> to a [=value=] in a [=condition=]. The [=value=] can then be referenced in [=actions=] using the [=variable=]'s name. Effectively, [=variables=] allow applications to copy information from rule [=conditions=] to rule [=actions=].</p>
+      <p>The <dfn class="lint-ignore">variable operator</dfn> <code>?</code> may be prepended to a [=name=] when used as a [=property=] value to turn the [=name=] into a <dfn>variable</dfn> which represents a symbolic name to a [=value=]. A [=variable=] gets <dfn>bound</dfn> to a [=value=] in a [=condition=]. The [=value=] can then be referenced in [=actions=] using the [=variable=]'s name. Effectively, [=variables=] allow applications to copy information from rule [=conditions=] to rule [=actions=].</p>
 
       <p>[=Variables=] are scoped to the [=rule=] where they appear.</p>
 
@@ -773,7 +773,7 @@ bar {loop prop18; name ?name; value ?value}
 
     <section>
       <h3>The negation operator <code>!</code></h3>
-      <p>The <dfn data-lt="negative operation">negation operator</dfn> <code>!</code> may be prepended to [=names=] to <dfn>negate</dfn> the outcome of their evaluation. The [=negation operator=] may be used in one of the following cases:</p>
+      <p>The <dfn data-lt="negative operation">negation operator</dfn> <code>!</code> may be prepended to [=names=] to <dfn class="lint-ignore">negate</dfn> the outcome of their evaluation. The [=negation operator=] may be used in one of the following cases:</p>
       <ul>
         <li>
           In a [=rule=] in front of a [=condition=] to negate it. A rule with a negated [=condition=] !|cond| applies if and only if |cond| does not hold true.
@@ -852,7 +852,7 @@ person { @id John }</code></pre>
 
     <section>
       <h3>The reserved name operator <code>@</code></h3>
-      <p>The <dfn>reserved name operator</dfn> <code>@</code> may be prepended to a [=name=] to denote a <dfn>reserved name</dfn> with specific meaning. Most [=reserved names=] are to be used as [=property=] names, typically in [=conditions=] and [=actions=] to control their behavior (see [[[#properties-for-conditions-and-actions]]]). Some of them may be used as chunk [=types=] to denote a chunk with specific meaning (see [[[#mapping-to-rdf]]]).</p>
+      <p>The <dfn class="lint-ignore">reserved name operator</dfn> <code>@</code> may be prepended to a [=name=] to denote a <dfn>reserved name</dfn> with specific meaning. Most [=reserved names=] are to be used as [=property=] names, typically in [=conditions=] and [=actions=] to control their behavior (see [[[#properties-for-conditions-and-actions]]]). Some of them may be used as chunk [=types=] to denote a chunk with specific meaning (see [[[#mapping-to-rdf]]]).</p>
     </section>
   </section>
 
