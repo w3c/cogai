@@ -384,10 +384,10 @@ memory a2 { @module facts }</code></pre>
 
         <section>
           <h5>The <dfn><code>@compile</code></dfn> property</h5>
-          <p>This used in a rule action to compile a set of chunks in declarative memory into a set of rules in procedural memory</p>
+          <p>This used in a rule action to compile a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.</p>
           <aside class="example" title="Looks for a chunk in a given context">
             <pre><code>put {@compile rule1; @map map1}</code></pre>
-            <p>The above [=action=] looks for a chunk with ID <code>rule1</code> in the default module and compiles it using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is. Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.f</p>
+            <p>The above [=action=] looks for a chunk with ID <code>rule1</code> in the default module and compiles it using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is. Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.</p>
           </aside>
         </section>
 
@@ -443,7 +443,7 @@ penguin p6 { name Pingou }</code></pre>
           <p>This is used with <code>@compile</code> and <code>@uncompile</code> to reference a chunk of type <code>@map</code> that defines a map for property names and their meanings.</p>
           <aside class="example" title="term map for rule (un)compilation">
             <pre><code>@map map1 {do @do; condition @condition; action @action; module @module}</code></pre>
-            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as <code>@do</code>, <code>condition</code> is to be interpreted as <code>@condition</code>, and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a rule chunk such as the following:</p>
+            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as <code>@do</code>, <code>condition</code> is to be interpreted as <code>@condition</code>, and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a chunk such as the following:</p>
             <pre><code>rule r1 {condition g1; action a1, a2, a3}</code></pre>
 which is mapped to:
             <pre><code>rule r1 {@condition g1; @action a1, a2, a3}</code></pre>
@@ -536,10 +536,10 @@ digits { @shift 0, @to list }</code></pre>
 
         <section>
           <h5>The <dfn><code>@uncompile</code></dfn> property</h5>
-          <p>This used in a rule action to copy a set of rules in procedural memory to a set of chunks in declarative memory into a set of rules in procedural memory</p>
+          <p>This used in a rule action to copy a set of rules in procedural memory to a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@uncompile</code> may cite a list of IDs for chunks to be uncompiled.</p>
           <aside class="example" title="Looks for a chunk in a given context">
             <pre><code>get {@uncompile rule1; @map map1}</code></pre>
-            <p>The above [=action=] looks for a rule chunk with ID <code>rule1</code> in the rule module and copies the associated chunks to the default module using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is. Note that <code>@uncompile</code> may cite a list of IDs for chunks to be uncompiled.</p>
+            <p>The above [=action=] looks for a rule chunk with ID <code>rule1</code> in the rule module and copies the associated chunks to the default module using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is.</p>
           </aside>
         </section>
 
