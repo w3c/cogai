@@ -387,7 +387,7 @@ memory a2 { @module facts }</code></pre>
           <p>This used in a rule action to compile a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.</p>
           <aside class="example" title="Looks for a chunk in a given context">
             <pre><code>put {@compile rule1; @map map1}</code></pre>
-            <p>The above [=action=] looks for a chunk with ID <code>rule1</code> in the default module and compiles it using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is. Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.</p>
+            <p>The above [=action=] looks for a chunk with ID <code>rule1</code> in the default module and compiles it using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is.</p>
           </aside>
         </section>
 
