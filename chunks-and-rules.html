@@ -414,11 +414,28 @@ memory a2 { @module facts }</code></pre>
         <section>
           <h5>The <dfn><code>@from</code></dfn> property</h5>
           <p>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</p>
+            <aside class="example" title="copy rule from procedural memory to declarative memory">
+            <pre># a chunk in the facts module
+person {name Wendy; friends Michael, Suzy, Janet, John}
+
+# after having recalled the person chunk, the
+# following rule iterates over the friends
+person {@module facts; friends ?friends}
+   => item {@module goal; @for ?friends; @from 1; @to 2}</pre>
+            <p>which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g.</p>
+            <pre>item {value Suzy; @index 1; @more true}</pre>
+            <p>The action's properties are copied over apart from those starting with an <code>@</code>. The item index in the list is copied into the chunk as [=@index=]. You can then use <code>@do next</code> in an action to load the next item into the buffer. The [=@more=] property is set to true in the buffer if there is more to come, and false for the last property in the iteration. Action chunks should use either [=@do=] or [=@for=], but not both. Neither implies <code>@do update</code>.</p>
+          </aside>
         </section>
 
         <section>
           <h5>The <dfn><code>@id</code></dfn> property</h5>
-          <p>[=Matches=] a [=chunk=]'s [=identifier=], or binds a variable to the [=chunk=]'s [=identifier=].</p>
+          <p>This is used in rule actions together with a value specify the chunk ID, e.g. to get a chunk with a given ID, or to add, update or replace an existing chunk with that ID.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@index</code></dfn> property</h5>
+          <p>Used as part of an iteration over the values in a comma separated list with [=@for=].</p>
         </section>
 
         <section>
@@ -440,10 +457,10 @@ penguin p6 { name Pingou }</code></pre>
 
         <section>
           <h5>The <dfn><code>@map</code></dfn> property and chunk type</h5>
-          <p>This is used with <code>@compile</code> and <code>@uncompile</code> to reference a chunk of type <code>@map</code> that defines a map for property names and their meanings.</p>
+          <p>This is used with [=@compile=] and [=@uncompile=] to reference a chunk of type [=@map=] that defines a map for property names and their meanings.</p>
           <aside class="example" title="term map for rule (un)compilation">
             <pre><code>@map map1 {do @do; condition @condition; action @action; module @module}</code></pre>
-            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as <code>@do</code>, <code>condition</code> is to be interpreted as <code>@condition</code>, and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a chunk such as the following:</p>
+            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as <code>@do</code>, <code>condition</code> is to be interpreted as <code>@condition</code>, and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a [=chunk=] such as the following:</p>
             <pre><code>rule r1 {condition g1; action a1, a2, a3}</code></pre>
 which is mapped to:
             <pre><code>rule r1 {@condition g1; @action a1, a2, a3}</code></pre>
@@ -476,7 +493,12 @@ digits { @pop list, @to item }</code></pre>
           </aside>
         </section>
 
-        <section>
+         <section>
+          <h5>The <dfn><code>@priority</code></dfn> property</h5>
+          <p>The @priority property lets actions set the [=priority=] of a [=chunk=] when they add it to the queue for a module buffer (see [=module buffer=]).</p>
+        </section>
+
+       <section>
           <h5>The <dfn><code>@push</code></dfn> property</h5>
           <p>An [=action=] property that pushes an [=atomic value=] to the end of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
           <p>In the absence of a [=@to=] property, this operation has no effect.</p>
@@ -511,6 +533,11 @@ digits { @shift list, @to item }</code></pre>
         </section>
 
         <section>
+          <h5>The <dfn><code>@tag</code></dfn> property</h5>
+          <p>This property provides a means for rule conditions to test a module buffer for the result from a preceding action. Use <code>@tag</code> in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via <code>@tag</code> in a rule condition.</p>
+        </section>
+
+        <section>
           <h5>The <dfn><code>@to</code></dfn> property</h5>
           <p>Companion [=action=] property used in [=@do properties=], [=@for=], [=@pop=], [=@push=], [=@shift=], [=@unshift=] operations.</p>
           <p>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a [=@for=] operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a [=@do properties=] operation, the property specifies the name of the [=module buffer=] onto which to write the current [=chunk=].</p>
@@ -539,11 +566,9 @@ digits { @shift 0, @to list }</code></pre>
           <p>This used in a rule action to copy a set of rules in procedural memory to a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@uncompile</code> may cite a list of IDs for chunks to be uncompiled.</p>
           <aside class="example" title="copy rule from procedural memory to declarative memory">
             <pre><code>get {@uncompile rule1; @map map1}</code></pre>
-            <p>The above [=action=] looks for a rule chunk with ID <code>rule1</code> in the rule module and copies the associated chunks to the default module using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is.</p>
+            <p>The above [=action=] looks for a rule chunk with ID <code>rule1</code> in the rule module and copies the associated chunks to the default module using the mappings specified in the chunk with ID <code>map1</code> as specified with [=@map=]. The chunk type and ID are copied as is.</p>
           </aside>
         </section>
-
-        <p class="ednote">TODO: Complete list with additional reserved names: <code>@undefined</code>, <code>@unique</code>, <code>@index</code>, <code>@priority</code>, <code>@source</code>, <code>@tag</code>, <code>@undefine</code>.</p>
       </section>
     </section>
 
@@ -564,7 +589,7 @@ digits { @shift 0, @to list }</code></pre>
 
         <p>The [=rule engine=] operates on a module's [=graph of chunks=] through its [=module buffer=].</p>
 
-        <p>A [=module buffer=] has a <dfn data-dfn-for="module buffer">status</dfn>, whose value is initially [=status/okay=], and which reflects the outcome of the last [=action=] held and performed by the [=module buffer=]. Values can be:</p>
+        <p>A [=module buffer=] has a <dfn data-dfn-for="module buffer">status</dfn>, (accessible via <code>@status</code>), whose value is initially [=status/okay=], and which reflects the outcome of the last [=action=] held and performed by the [=module buffer=]. Values can be:</p>
         <dl>
           <dt><dfn><code>pending</code></dfn></dt>
           <dd>The operation is still pending.</dd>
@@ -578,10 +603,12 @@ digits { @shift 0, @to list }</code></pre>
           <dt><dfn><code>failed</code></dfn></dt>
           <dd>The operation failed.</dd>
         </dl>
+        
+        <p>This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use <code>@tag</code> in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via <code>@tag</code> in a rule condition.</p>
 
         <p>A [=module buffer=] has a <dfn>queue</dfn>, which is a set of [=chunks=], initially empty. Each chunk in the [=queue=] has a <dfn>priority</dfn>, represented by an integer from 1 to 10, with 10 the highest priority. The default [=priority=] is 5. [=Chunks=] are ordered by descending [=priority=] in a [=queue=]. When [=priorities=] match, [=chunks=] are ordered by insertion order (first in, first out).</p>
 
-        <p>The <dfn><code>@priority</code></dfn> property lets [=actions=] set the [=priority=] of a [=chunk=] when they add it to a [=queue=].</p>
+        <p>The [=@priority=] property lets [=actions=] set the [=priority=] of a [=chunk=] when they add it to a [=queue=].</p>
 
         <aside class="note" title="Queue and sub-goals">
           <p>A [=queue=] may be useful to create sub-goals. For instance, whilst [=@do update=] operations allow applications to switch to a new goal, they may prefer [=rules=] to propose multiple sub-goals instead. [=Queues=] enable this through [=@do queue=] operations which push the [=chunk=] specified by an [=action=] to the [=queue=] of a [=module buffer=].</p>
