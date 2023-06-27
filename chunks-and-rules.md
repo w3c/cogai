@@ -1,1218 +1,579 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Chunks and Rules</title>
-  <script async class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
-  <script class="remove">
-    var respecConfig = {
-      shortName: "chunks",
-      specStatus: "CG-DRAFT",
-      noRecTrack: true,
-      edDraftURI: "https://w3c.github.io/cogai/",
-      editors:  [
-        {
-          name: "François Daoust",
-          company: "W3C",
-          companyURL: "https://www.w3.org/",
-          w3cid: "41989"
-        },
-        {
-          name: "Dave Raggett",
-          company: "W3C",
-          companyURL: "https://www.w3.org/",
-          w3cid: "2682"
-        }
-      ],
-      group: "cogai",
-      github: {
-        repoURL: "https://github.com/w3c/cogai/",
-        branch: "master"
-      },
-      localBiblio: {
-        "CHUNKS-INTRO": {
-          title: "Introduction to chunks and rules",
-          href: "https://www.w3.org/Data/demos/chunks/chunks.html",
-          authors: [
-            "Dave Raggett"
-          ]
-        },
-        "CHUNKS-DEMOS": {
-          title: "Chunk Demonstrators",
-          href: "https://github.com/w3c/cogai/blob/master/demos/README.md",
-          authors: [
-            "Dave Raggett"
-          ]
-        },
-        "IEEE-754-2019": {
-          title: "IEEE 754-2019: IEEE Standard for Floating-Point Arithmetic. Institute of Electrical and Electronic Engineers, New York (2019)"
-        }
-      }
-    };
-  </script>
-  <style>
-    .railroad {
-      margin-top: 1em;
-      margin-bottom: 2em;
-    }
-  </style>
-</head>
-<body>
-  <section id="abstract">
-    <p>This specification defines a cognitive database model based on graphs, rules that operate on them in conjunction with highly scalable graph algorithms, suitable for handling big data, and a format to serialize graphs. The model is designed with the aim of facilitating machine learning for vocabularies and rules, and inspired by advances in the cognitive sciences on the organisation of the mammalian brain.</p>
-  </section>
+# Chunks and Rules
 
-  <section id="sotd">
-    <p>This document is at early stages of development. Feedback is welcome through <a href="https://github.com/w3c/cogai/issues">GitHub issues</a> or on the <a href="mailto:public-cogai@w3.org">public-cogai@w3.org</a> mailing-list (with <a href="https://lists.w3.org/Archives/Public/public-cogai/">public archives</a>).</p>
-  </section>
+*This document describes the syntax and semantics for the chunk graph and rules format. A [formal specification](#formal-specification) is in preparation for publication as a Community Group Report.*
 
-  <section class="informative">
-    <h2>Introduction</h2>
-    <p>This specification defines a cognitive database model based on graphs and rules that operate on them, modeled after the organisation of the mammalian brain, as described by cognitive sciences, with the aim of facilitating machine learning processing of big data.</p>
+## Table of Contents
+- [Introduction](#introduction)
+- [Sandbox for learning Chunks and Rules](#sandbox-for-learning-chunks-and-rules)
+- [Formal specification](#formal-specification)
+- [Mapping names to RDF](#mapping-names-to-rdf)
+- [Chunk Rules](#chunk-rules)
+    - [Built-in actions](#built-in-actions)
+    - [Iteration over matching chunks](#iteration-over-matching-chunks)
+    - [Iteration over properties](#iteration-over-properties)
+    - [Operations on comma separated lists](#operations-on-comma-separated-lists)
+    - [More complex queries](#more-complex-queries)
+- [Statements about statements](#statements-about-statements)
+- [Tasks](#tasks)
+- [Ebbinghaus forgetting curve](#ebbinghaus-forgetting-curve)
+- [Test Suite](#test-suite)
+- [Boosting performance](#boosting-performance)
+- [Relationship to other rule languages](#relationship-to-other-rule-languages)
+    - [Minimalist chunks](#minimalist-chunks)
+    - [OPS5](#ops5)
+    - [N3](#n3)
 
-    <figure id="cog-arch">
-      <img src="demos/chunks/arch.png" alt="" />
-      <figcaption>Architecture of the cognitive database model</figcaption>
-    </figure>
+## Introduction
 
-    <p>At its heart, the model is based on [=graphs of chunks=] composed of a collection of [=chunks=], where each [=chunk=] represents a collection of basic familiar units that have been grouped together and stored in memory. To ease manipulation of procedural knowledge as declarative knowledge, [=chunks=] are used to model both declarative knowledge (i.e. data) as well as procedural knowledge (i.e. rules). See [[CHUNKS-INTRO]] for details.</p>
+The chunks and rules format is designed for use in mimicking the cortico-basal ganglia circuit, which functions as a sequential rule engine:
 
-    <p>The [=rule engine=] operates on a set of [=modules=], where each [=module=] has a [=graph of chunks=] and supports a <a data-lt="built-in operations">common set of operations</a> on chunks. Each module also has a single [=module buffer=] that the [=rule engine=] can process and that can hold one and only one [=chunk=] at a time.</p>
+![Image of cognitive architecture for cognition](https://www.w3.org/Data/demos/chunks/arch.png?)
 
-    <p>This specification also defines a <a href="#chunks-documents">serialization format</a> for graphs of chunks, used in examples throughout this specification.</p>
-  </section>
+The cortex consists of a set of modules that hold collections of chunks and are accessed via buffers. Each buffer holds a single chunk and represents the current state of a bundle of nerve fibres connecting to a particular cortical region. The rule engine matches rule conditions to the current state of the buffers, and the rule actions can either directly update the buffers or invoke module operations that indirectly update the buffers. The module buffers can be likened to HTTP clients while the cortical modules can be likened to HTTP servers. This architecture originates in John Anderson's work on [ACT-R](http://act-r.psy.cmu.edu/about/).
 
-  <section id="conformance">
-    <p>The grammatical rules in this document are to be interpreted as described in [[[RFC5234]]] [[RFC5234]].</p>
-    <section>
-      <h3>Conformance classes</h3>
-      <p>Conformance to this specification is defined for four conformance classes:</p>
-      <dl>
-        <dt><dfn>Chunks document</dfn></dt>
-        <dd>A serialization of a [=graph of chunks=] as a file. A [=chunks document=] is conformant to this specification if it follows the grammar described in <a href="#chunks-grammar"></a>.</dd>
-        <dt><dfn>Authoring tool</dfn></dt>
-        <dd>An application that writes a [=chunks document=]. An [=authoring tool=] is conformant to this specification if it writes conforming [=chunks documents=].</dd>
-        <dt><dfn>Parser</dfn></dt>
-        <dd>A [=parser=] transforms a [=chunks document=] into another representation. A [=parser=] is conformant to this specification if it accepts any conforming [=chunks document=].</dd>
-        <dt><dfn>Rule engine</dfn></dt>
-        <dd>A processing application that operates on graphs of chunks and rules, organized following the cognitive agent architecture described in this specification. A [=rule engine=] is conformant to this specification if it follows the algorithms defined in <a href="#rule-engine-execution"></a>.</dd>
-      </dl>
-    </section>
-  </section>
+Each chunk is a named typed collection of properties, whose values are names (e.g. for other chunks), numbers, booleans (true or false), ISO8601 dates, string literals or comma separated lists thereof. This can be contrasted with a [minimal approach](minimalist.md) in which property values are restricted to names.
 
-  <section>
-    <h2>Data types</h2>
-    <p>This document uses the following restricted set of data types to describe [=chunks=]. See <a href="#chunks-grammar"></a> for a formal definition of their serialization.</p>
+Here is an example of a chunk where each property is given on a separate line:
 
-    <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
-
-    <p>A <dfn>boolean</dfn> represents a logical entity having two values. It is serialized as either the literal name <code>true</code>, which gets interpreted as a truthy value, or the literal name <code>false</code>, which gets interpreted as a falsy value.</p>
-
-    <p>A <dfn>date</dfn> is an [[ISO8601]] string that represents a date. A [=date=] value implicitly creates a read-only chunk whose type is <code>iso8601</code> with properties that match actual date components.</p>
-
-    <aside class="example" title="Date example">
-      <p>Here is an example of a chunk that describes Albert Einstein's birth date:</p>
-<pre><code>person Albert_Einstein {
-  birthdate 1879-03-14
-}</code></pre>
-      <p>This chunk implicitly creates the following chunk definition:</p>
-<pre><code>iso8601 1879-03-14 {
-  year 1879
-  month 3
-  day 14
-}
-</code></pre>
-    </aside>
-
-    <p class="issue">Clarify that only a subset of ISO8601 is supported (see <a href="https://github.com/w3c/cogai/issues/8">issue #8</a>).</p>
-
-    <p class="issue">To prepend <code>iso8601</code> and related properties with <code>@</code> or not to prepend with <code>@</code>, that is the question (see <a href="https://github.com/w3c/cogai/issues/2">issue #2</a>).</p>
-
-    <p>A <dfn>string literal</dfn> is an arbitrary set of characters. It is serialized enclosed in double quotes, following the same grammar as <a data-cite="RFC8259#section-7">strings in JSON</a> [[RFC8259]].</p>
-
-    <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=], a [=boolean=]. Additionally, depending on the context under which it is used, a [=name=] may start with one of the name operators (see [[[#name-operators]]]).</p>
-  </section>
-</section>
-
-  <section>
-    <h2>Chunks and graphs</h2>
-    <p>A <dfn>chunk</dfn> is a named typed collection of [=properties=]. A [=chunk=] is used to model both declarative knowledge and procedural knowledge as a collection of basic familiar units that have been grouped together and stored in memory.</p>
-    <p>A [=chunk=] has a [=type=] and an optional [=identifier=].</p>
-
-    <aside class="note" title="Serialization of a chunk">
-      <p>When serialized in a [=chunks document=], the declaration of a [=chunk=] always starts with a chunk [=type=], followed by an optional chunk [=identifier=], and a set of [=properties=] enclosed in braces (<code>{}</code>). Lists are represented as comma separated values. Whitespaces may appear anywhere between constructs. See <a href="#chunks-grammar"></a> for details.</p>
-    </aside>
-    <aside class="example" title="A chunk to describe a dog">
-<pre><code>dog dog1 {
-  name "Fido"
+```
+dog dog1 {
+  name "fido"
   age 4
-}</code></pre>
-      <p>This [=chunk=] describes a dog named "Fido" that is 4 years old. The chunk [=type=] is <code>dog</code>. Its [=identifier=] is <code>dog1</code> and uniquely identifies this chunk within the graph it is defined in. The chunk has two [=properties=]:</p>
-      <ul>
-        <li><code>name</code> whose value is the [=string literal=] <code>"Fido"</code></li>
-        <li><code>age</code> whose value is the [=number=] <code>4</code></li>
-      </ul>
-      
-      <p>The interpretation of <em>age</em> as being stated in years is application dependent. Applications could choose to declare the units with an associated [=property=], e.g. <em>age-units</em> as an application dependent solution.  A more general approach is proposed in the section [[[#data-models]]].</p>
-    </aside>
-
-    <section>
-      <h3>Chunk type</h3>
-      <p>A chunk <dfn>type</dfn> is a [=name=] that documents the nature of a chunk. The [=type=] is used to group and index chunks. [=Rules=] typically apply to chunks of a given [=type=].</p>
-      <aside class="example" title="A chunk of type &quot;person&quot;">
-<pre><code>person Dave {
-  knows Francois
-}</code></pre>
-      </aside>
-      <p>As a special case, the [=type=] may be formed by a single asterisk (<code>*</code>), which is used to describe a [=condition=] or [=action=] that matches any chunk [=type=].</p>
-    </section>
-
-    <section>
-      <h3>Chunk identifier</h3>
-      <p>The chunk <dfn>identifier</dfn> is a [=name=] that uniquely identifies a chunk within the graph it is defined in.</p>
-      <p>The chunk [=identifier=] is optional.</p>
-    </section>
-
-    <section>
-      <h3>Chunk properties</h3>
-      <p>A chunk <dfn>property</dfn> is a [=name=]/[=value=] pair that describes a chunk across the particular dimension identified by the property name.</p>
-
-      <p>A <dfn>value</dfn> is either an [=atomic value=] or an ordered list of [=atomic values=] (values are comma-separated in serialized form).</p>
-
-      <p>An <dfn>atomic value</dfn> is either:</p>
-      <ul>
-        <li>a [=name=], which can for instance be used to reference other chunks</li>
-        <li>a [=number=]</li>
-        <li>a [=boolean=] (<code>true</code> or <code>false</code>)</li>
-        <li>a [=date=]</li>
-        <li>a [=string literal=]</li>
-      </ul>
-
-      <p>A property [=value=] |a| <dfn>equals</dfn> property [=value=] |b| when the following algorithm returns <code>true</code>:</p>
-      <ul>
-        <li>If |a| is the [=wild card operator=] <code>*</code>, return <code>true</code>.</li>
-        <li>If |b| is the [=wild card operator=] <code>*</code>, return <code>true</code>.</li>
-        <li>If |a| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
-        <li>If |b| is the [=negation operator=] <code>!</code>, return <code>false</code>.</li>
-        <li>If |a| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if !|a| [=equals=] |b|, <code>true</code> otherwise.</li>
-        <li>If |b| is a [=name=] that starts with the [=negation operator=] <code>!</code>, return <code>false</code> if |a| [=equals=] !|b|, <code>true</code> otherwise.</li>
-        <li>If |a| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
-        <li>If |b| is a [=variable=] that is not yet [=bound=] to a value, return <code>true</code>.</li>
-        <li>If |a| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |v| [=equals=] |b|, <code>false</code> otherwise.</li>
-        <li>If |b| is a [=variable=] [=bound=] to a value |v|, return <code>true</code> if |a| [=equals=] |v|, <code>false</code> otherwise.</li>
-        <li>If |a| and |b| are identical [=atomic values=], return <code>true</code>.</li>
-        <li>If |a] and |b| are lists of [=atomic values=], both lists have the same length, and [=atomic values=] at the same position in |a| and |b| are [=equal=], return <code>true</code>.</li>
-        <li>Otherwise, return <code>false</code>.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h3>Chunk context</h3>
-      <p>A [=chunk=] may be scoped to a <dfn>context</dfn>, which identifies the specific situation under which the [=chunk=] should be considered to be true. This mechanism allows [=chunks=] to describe things that are only true in hypothetical situations.</p>
-
-      <p>[=Contexts=] can be used to express situations that involve the use of statements about statements, including beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns. They are also useful for episodic memory when one wants to describe facts that are true in a given situation, for instance an even when a peson visited a restaurant for lunch, sat by the window, and had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.</p>
-
-      <p>A [=chunk=] gets associated with a specific [=context=] through an [=@context=] [=property=].</p>
-
-      <p>A [=chunk=] that is not explicitly associated with a [=context=] (i.e. in the absence of an [=@context=] property) belongs to the <dfn>default context</dfn>.</p>
-
-      <aside class="example" title="Expressing a belief">
-        <p>Here is an example from John Sowa's <a href="http://www.jfsowa.com/pubs/arch.htm">Architectures for Intelligent Systems</a>:</p>
-        <p><cite>Tom believes that Mary wants to marry a sailor.</cite></p>
-        <p>This example involves talking about a statement <cite>Mary wants to marry a sailor</cite> that is only known to be true according to Tom's belief. When represented as [=chunks=], the statement needs to be associated with a [=context=] that identifies Tom's belief, so that we cannot directly assert that the statement is true in general.</p>
-        <p>Similarly, the statement <cite>to marry a sailor</cite> is only known to be true according to Mary's desire. When represented as [=chunks=], the statement also needs to be associated with a [=context=] that identifies Mary's desire.</p>
-
-        <p>Here is one possible way to represent the overall statement with [=chunks=]:</p>
-        <pre><code>believes {
-  @subject tom
-  proposition tom-belief-1
 }
-wants {
-  @context tom-belief-1
-  @subject mary
-  situation mary-desire-1
+```
+
+Which describes a dog named *fido* that is 4 years old. The chunk name, (i.e. its ID) is *dog1*. This uniquely identifies this chunk within the graph it is defined in. You can also use the following syntax with semicolon as punctuation instead of newline e.g.:
+
+```
+dog dog1 {name "fido"; age 4}
+```
+
+The chunk ID is optional, and if missing, will be automatically assigned when adding the chunk to a graph. If the graph already has a chunk with the same ID, it will be replaced by this one. You are free to use whitespace as you please, modulo the need for punctuation. String literals apart from URIs must be enclosed in double quote marks.
+
+The notion of type is a loose one and provides a way to name a collection of chunks that have something in common. It may be the case that all such chunks must satisfy some ontological constraint, on the other hand, it could be an informal grouping. This corresponds to the distinction between an intensional definition and an extensional definition. Inductive reasoning provides a way to learn models that describe regularities across members of groups. 
+
+Names are used for chunk types, chunk IDs, chunk property names and for chunk property values. Names can include the following character classes: letters, digits, period, and hyphen. Names starting with @ are reserved. A special case is the name formed by a single asterisk which is used to match any chunk type. 
+
+Numbers are the same as for JSON, i.e. integers or floating point numbers. Dates can be given using a [common subset of ISO8601](https://www.w3.org/TR/NOTE-datetime) and are treated as identifiers for read-only chunks of type *iso8601* with properties for the year, month, day etc., e.g.
+
+```
+# Albert Einstein's birth date
+iso8601 1879-03-14 {
+   year 1879
+   month 3
+   day 14
 }
-married-to {
-  @context mary-desire-1
-  @subject mary
-  @object s1
+```
+which also illustrates the use of single line comments that start with a #.
+
+A similar approach is under consideration for numerical values with units of measure, e.g. `1.2cm` and `9v` which would map respectively to `measure 1.2cm {value 1.2; units cm}` and `measure 9v {value 9; units v}`.
+
+Sometimes you just want to indicate that a named relationship applies between two concepts. This can expressed conveniently as follows:
+
+```
+John likes Mary
+```
+
+which is interpreted as the following chunk:
+
+```
+likes {
+  @subject John
+  @object Mary
 }
-a s1 {
-  @context mary-desire-1
-  profession sailor
-}</code></pre>
-      </aside>
+```
+Chunk properties can be promoted to relationships as in the following example:
 
-      <p>As illustrated in the previous example, [=contexts=] can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, thus creating a tree of [=contexts=].</p>
-
-      <p>Practically speaking, [=contexts=] make it possible to filter out non relevant [=chunks=] in [=conditions=] and [=actions=]. Two [=chunks=] may only [=match=] when they belong to the same context. For instance, a [=chunk=] that belongs to the context <code>tom-belief-1</code> can only [=match=] [=chunks=] that also belong to that context, and de facto cannot match [=chunks=] that belong to the [=default context=]. In particular, a [=chunk=] that belongs to the [=default context=] can only [=match=] [=chunks=] that also belong to the [=default context=].</p>
-    </section>
-
-    <section>
-      <h3>Links between chunks</h3>
-      <p>In this document, a <dfn>link</dfn> is a directed and labeled connection between two [=chunks=]. A [=link=] is automatically created whenever a chunk property [=value=] is a [=name=] that references an existing chunk [=identifier=].</p>
-      <p>The <dfn>subject</dfn> of the [=link=] identifies the [=chunk=] at the origin of the connection. The <dfn>object</dfn> of the [=link=] identifies the [=chunk=] targeted by the connection. The <dfn class="lint-ignore">label</dfn> of the [=link=] is the property [=name=].</p>
-      <aside class="example" title="A link between two chunks">
-<pre><code>friend f34 {
-  name Joan
-}
-friend f35 {
-  name Jenny
-  likes f34
-}</code></pre>
-        <p>The above definition creates a link between <code>f35</code> and <code>f34</code> with the relationship <code>likes</code>.</p>
-      </aside>
-
-      <p>When a [=chunk=] links to another [=chunk=], this implicitly creates a third [=chunk=] whose [=type=] is the name of the [=property=] that creates the [=link=], and that has two [=properties=]:</p>
-      <ul>
-        <li><dfn><code>@subject</code></dfn>: references the [=subject=] of a [=link=]</li>
-        <li><dfn><code>@object</code></dfn>: references the [=object=] of a [=link=]</li>
-      </ul>
-
-      <aside class="example" title="Links as chunks">
-<pre><code>animal dog {
-  kindof mammal
-}</code></pre>
-
-<p>The previous definition implicitly creates the following [=chunk=]:</p>
-
-<pre><code>kindof {
-  @subject dog
-  @object mammal
-}</code></pre>
-      </aside>
-
-      <aside class="note" title="Compact format for links">
-        <p>The <a href="#chunks-grammar">grammar</a> allows to express [=links=] in a compact format in a [=chunks document=], e.g.:</p>
-<pre><code>dog kindof mammal
-cat kindof mammal</code></pre>
-        <p>This is equivalent to:</p>
-        <pre><code>kindof {
-  @subject dog
-  @object mammal
-}
-kindof {
-  @subject cat
-  @object mammal
-}</code></pre>
-      </aside>
-    </section>
-
-    <section>
-      <h3>Graph of chunks</h3>
-      <p>A <dfn data-lt="graphs of chunks">graph of chunks</dfn> is simply a collection of [=chunks=]. The vertices of the graph are the [=chunks=]. The edges of the graph are the [=links=] between the chunks.</p>
-      <p>Since [=links=] are directed, a [=graph of chunks=] is a directed graph.</p>
-    </section>
-  </section>
-
-  <section>
-    <h2>Rules and modules</h2>
-    <section>
-      <h3>Rules</h3>
-      <p>A <dfn>rule</dfn> is a [=chunk=] whose [=type=] is <code>rule</code> and that has:</p>
-      <ul>
-        <li>an <dfn><code>@condition</code></dfn> [=property=], whose value is a chunk [=identifier=] or a list thereof, and which is used to reference the rule's [=conditions=].</li>
-        <li>an <dfn><code>@action</code></dfn> [=property=], whose value is a chunk [=identifier=] or a list thereof, and which is used to reference the rule's [=actions=].</li>
-      </ul>
-
-      <p>A [=rule=] represents a unit of procedural knowledge. Rules consist of [=conditions=] and [=actions=].</p>
-
-      <aside class="example" title="Basic rule definition">
-        <p>The following [=rule=] has one [=condition=] (that holds true when the <code>goal</code> [=module buffer=] contains a [=chunk=] whose [=type=] is <code>remember</code>), and two [=actions=] that clears the <code>goal</code> [=module buffer=] and that loads a [=chunk=] whose type is <code>memory</code> in the <code>facts</code> [=module=]:</p>
-        <pre><code>rule r1 {
-  @condition c1
-  @action a1, a2
+```
+# chunk for a sports player
+Player p413 {
+    name "Lionel Messi"
+    dob 1987-06-24
+    # PlaysFor t87
 }
 
-remember c1 {}
-next a1 { @do clear }
-memory a2 { @module facts }</code></pre>
-      </aside>
+# chunk for a relationship
+PlaysFor r45 {
+    @subject p413
+    @object t87
+     since 2001-02
+     contract 2021
+}
+```
+where property `PlaysFor` has been promoted to a relationship in order to annotate it with properties of its own. More generally, this design pattern can be used whenever you want to have properties that apply to other properties.
 
-      <aside class="note" title="Compact format for rules">
-        <p>The <a href="#chunks-grammar">grammar</a> allows to express [=rules=] in a compact format in a [=chunks document=]. For instance, the previous example may be written as:</p>
-<pre><code>remember {}
-  => next { @do clear },
-     memory { @module facts }</code></pre>
-        <p>This compact format makes the link between [=conditions=] and [=actions=] more explicit and avoids the need to provide chunk [=identifiers=].</p>
-      </aside>
+## Sandbox for learning Chunks and Rules
 
-      <section>
-        <h4>Conditions</h4>
-        <p>A <dfn>condition</dfn> is a [=chunk=] that describes the premises that must hold true for a [=rule=] to apply. A [=condition=] identifies which [=module=] it relates to through an [=@module=] property, defaulting to the <code>goal</code> module. A [=condition=] holds true when the [=chunk=] in the related [=module buffer=] is a [=matching chunk=] for the [=condition=].</p>
-      </section>
+You can experiment with chunks and rules in your web browser, with the means to single step rule execution, to explore several tutorials and to edit the initial goal, facts and rules, and to save them across browser sessions.
 
-      <section>
-        <h4>Actions</h4>
-        <p>An <dfn>action</dfn> is a [=chunk=] that can directly update [=module buffers=], or can do so indirectly, e.g. by sending messages to the [=module=] to invoke graph algorithms, such as graph queries and updates, or to carry out operations, e.g. instructing a robot to move its arm. When the algorithm or operation is complete, a response can be sent back to update the module's buffer. This in turn can trigger further rules as needed.</p>
-        <p>In many cases, the actual operation that an [=action=] will carry out will appear as an [=@do=] property. Built-in operations are always supported (see <a href="#built-in-operations"></a>). Additional actions may be supported.</p>
-      </section>
+* https://www.w3.org/Data/demos/chunks/sandbox/
 
-      <section>
-        <h4>Matching chunks</h4>
+## Formal Specification
 
-        <p>A [=chunk=] |A| <dfn data-lt="matching chunk">matches</dfn> [=chunk=] |B| if the conditions below are all met:</p>
-        <ul>
-          <li><i>Context</i>. One of the following conditions holds true:
-            <ul>
-              <li>Neither |A| nor |B| have [=@context=] properties.</li>
-              <li>Both |A| and |B| have [=@context=] properties and |A|'s [=@context=] property [=value=] [=equals=] |B|'s [=@context=] property [=value=].</li>
-            </ul>
-          </li>
-          <li><i>Identifier</i>. One of the following conditions holds true:
-            <ul>
-              <li>|A| has an [=@id=] property whose [=value=] is an [=atomic value=] that [=equals=] |B|'s [=identifier=].</li>
-              <li>|A| does not have an [=@id=] property.</li>
-            </ul>
-          </li>
-          <li><i>Inheritance</i>. One of the following conditions holds true:
-            <ul>
-              <li>|A| has an [=@kindof=] property whose [=value=] |V| is an [=atomic value=], and |B|'s [=type=] is a subclass of |V|, meaning that |B|'s [=type=] is |V| or there exists a chain of <code>kindof</code> links between |V| and |B|'s [=type=].</li>
-              <li>|A| does not have an [=@kindof=] property.</li>
-            </ul>
-          </li>
-          <li><i>Properties</i>. For each [=property=] |p| in |A| whose [=name=] does not start with <code>@</code>, either of the following holds true:
-            <ul>
-              <li>|p|'s [=value=] is <code>!</code> and there is no [=property=] in |B| with |p|'s [=name=].</li>
-              <li>|p|'s [=value=] is not <code>!</code> and there exits a [=property=] in |B| with the same [=name=] and [=equal=] [=value=] as |p|.</li>
-            </ul>
-          </li>
-          <li><i>Type</i>. One of the following conditions holds true:
-            <ul>
-              <li>|A| has an [=@type=] property whose [=value=] is an [=atomic value=] that [=equals=] |B|'s [=type=].</li>
-              <li>|A| does not have an [=@type=] property, and |A|'s [=type=] is <code>*</code>.</li>
-              <li>|A| does not have an [=@type=] property, and |A|'s [=type=] and |B|'s [=type=] are identical.</li>
-            </ul>
-          </li>
-        </ul>
-      </section>
+This page provides an informal introduction. We're also working on a formal specification with a view to publishing it as a Community Group report.
 
-      <section>
-        <h4>@-properties for conditions and actions</h4>
-        <p>The [=reserved names=] defined in this section may be used as [=property=] names in [=conditions=] and [=actions=] to control their behavior.</p>
+* [Raw markup](https://github.com/w3c/cogai/blob/master/index.html)
+* [Viewable page](https://w3c.github.io/cogai/)
 
-        <section>
-          <h5>The <dfn><code>@compile</code></dfn> property</h5>
-          <p>This used in a rule action to compile a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.</p>
-          <aside class="example" title="compile rule from declarative memory to procedural memory">
-            <pre><code>put {@compile rule1; @map map1}</code></pre>
-            <p>The above [=action=] looks for a chunk with ID <code>rule1</code> in the default module and compiles it using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is.</p>
-          </aside>
-        </section>
+The specification is at early stages of development. Feedback is welcome through [GitHub issues](https://github.com/w3c/cogai/issues) or on the [public-cogai@w3.org](public-cogai@w3.org) mailing-list (with [public archives](https://lists.w3.org/Archives/Public/public-cogai/)).
 
-        <section>
-          <h5>The <dfn><code>@context</code></dfn> property</h5>
-          <p>When used in a regular [=chunk=], identifies a chunk's [=context=]. When used in a [=condition=] or in an [=action=], [=matches=] a [=chunk=]'s [=context=].</p>
-          <aside class="example" title="Looks for a chunk in a given context">
-            <pre><code>recall { lunch ?restaurant }
-     => lookup { @module facts; @do get; @type lunch; @context ?restaurant }</code></pre>
-            <p>The above [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>lunch</code> and whose [=context=] is the identifier of the lunch matched by the <code>recall</code> [=condition=].</p>
-          </aside>
-        </section>
 
-        <section>
-          <h5>The <dfn><code>@do</code></dfn> property</h5>
-          <p>Specifies the graph algorithm or operation to execute. See <a href="#built-in-operations"></a> for a list of common operations that are supported across modules.</p>
-        </section>
+## Mapping names to RDF
 
-        <section>
-          <h5>The <dfn><code>@for</code></dfn> property</h5>
-          <p>Iterates over a set of items in a comma separated list. The [=@from=] and [=@to=] properties may be used to restrict the iteration range.</p>
-        </section>
+To relate names used in chunks to RDF, you should use @rdfmap. For instance:
 
-        <section>
-          <h5>The <dfn><code>@from</code></dfn> property</h5>
-          <p>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</p>
-            <aside class="example" title="copy rule from procedural memory to declarative memory">
-            <pre># a chunk in the facts module
+```
+@rdfmap {
+  dog http://example.com/ns/dog
+  cat http://example.com/ns/cat
+}
+```
+You can use @base to set a default URI for names that are not explicitly declared in an @rdfmap
+```
+@rdfmap {
+  @base http://example.org/ns/
+  dog http://example.com/ns/dog
+  cat http://example.com/ns/cat
+}
+```
+which will map *mouse* to http://example.org/ns/mouse.
+
+You can likewise use @prefix for defining URI prefixes, e.g.
+```
+@prefix p1 {
+  ex: http://example.com/ns/
+}
+@rdfmap {
+  @prefix p1
+  dog ex:dog
+  cat ex:cat
+}
+```
+Sometimes it will be more convenient to refer to an external collection of mappings rather than inlining them, e.g.
+
+```
+@rdfmap {
+  @from http://example.org/mappings
+}
+```
+where `@from` is used with a URI for a file that contains `@rdfmap` and `@prefix` declarations.
+
+If there are multiple conflicting definitions, the most recent will override earlier ones.
+
+Note: people familiar with JSON-LD would probably suggest using @context instead of @rdfmap, however, that would be confusing given that the term @context is needed in respect to reasoning in multiple contexts and modelling the theory of mind.
+
+RDF is based upon a formal theory which relates expressions to interpretations. In particular:
+
+<blockquote>    
+A model-theoretic semantics for a language assumes that the language refers to a 'world', and describes the minimal conditions that a world must satisfy in order to assign an appropriate meaning for every expression in the language. A particular world is called an interpretation, so that model theory might be better called 'interpretation theory'. The idea is to provide an abstract, mathematical account of the properties that any such interpretation must have, making as few assumptions as possible about its actual nature or intrinsic structure. Model theory tries to be metaphysically and ontologically neutral. It is typically couched in the language of set theory simply because that is the normal language of mathematics - for example, this semantics assumes that names denote things in a set called the 'universe' - but the use of set-theoretic language here is not supposed to imply that the things in the universe are set-theoretic in nature. The chief utility of such a semantic theory is not to suggest any particular processing model, or to provide any deep analysis of the nature of the things being described by the language (in our case, the nature of resources), but rather to provide a technical tool to analyze the semantic properties of proposed operations on the language; in particular, to provide a way to determine when they preserve meaning. Model theory is usually most relevant to implementation via the notion of entailment, described later, and by making it possible to define valid inference rules.
+</blockquote>
+
+For more details see the [RDF 1.1 Semantics](https://www.w3.org/TR/rdf11-mt/).
+
+Formal semantics seeks to understand meaning by constructing precise mathematical models that can determine which statements are true or false in respect to the assumptions and inference rules given in any particular example. The Web Ontology Language (OWL) is formalised in terms of description logic, which is midway between propositional logic and first order logic in its expressive power. OWL can be used to describe a domain in terms of classes, individuals and properties, along with formal entailment, and well understood complexity and decidability. See, e.g. Ian Horrock's [Description Logic: A Formal Foundation for Ontology Languages and Tools](http://www.cs.ox.ac.uk/people/ian.horrocks/Seminars/download/Horrocks_Ian_pt1.pdf).
+
+Chunks, by contrast, makes no claims to formal semantics, reflecting the lack of certainty, incomplete knowledge and inconsistencies found in many everyday situations. Instead of logical entailment, the facts are updated by rules in ways that have practical value for specific tasks, e.g. turning the heating on when a room is observed to be too cold, or directing a robot to pick up an empty bottle, fill it, cap it and place it into a box. Rules are designed or learnt to carry out tasks on the basis of what is found to be effective in practice.
+
+## Chunk Rules
+
+*  [Web based sandbox for editing and single stepping through rules, using local storage for persistence](https://www.w3.org/Data/demos/chunks/sandbox/)
+
+Applications can utilise a low level graph API or a high level rule language. The chunk rule language can be used to access and manipulate chunks held in one or more cognitive modules, where each module has a chunk graph and a chunk buffer that holds a single chunk. These modules are equivalent to different regions in the cerebral  cortex, where the buffer corresponds to the bundle of nerve fibres connecting to that region. The concurrent firing pattern across these fibres encodes the chunk as a semantic pointer in a noisy space with a high number of dimensions.
+
+Each rule has one or more conditions and one or more actions. These are all formed from chunks. Each condition specifies which module it matched against, and likewise each rule action specifies which module it effects. The rule actions can either directly update the module buffers, or they can invoke asynchonous operations exposed by the module. These may in turn update the module's buffer, leading to a fresh wave of rule activation. If multiple rules match the current state of the buffers, a selection process will pick one of them for execution. This is a stochastic process that takes into account previous experience.
+
+Here is an example of a rule with one condition and two actions:
+
+```
+count {state start; from ?num1; to ?num2}
+   => count {state counting},
+      increment {@module facts; @do get; number ?num1}
+```
+The condition matches the goal buffer, as this is the default if you omit the *@module* declaration to name the module. It matches a chunk of type *count*, with a *state* property whose value must be *start*.  The chunk also needs to define the *from* and *to* properties. The condition binds their values to the variables *?num1* and *?num2* respectively. Variables allow you to copy information from rule conditions to rule actions.
+
+The rule's first action updates the goal buffer so that the *state* property takes the value *counting*. This will allow us to trigger a second rule. The second action applies to the *facts* module, and initiates recall of a chunk of type *increment* with a property named *number* with the value given by the *?num1* variable as bound in the condition. The *get* operation directs the facts module to search its graph for a matching chunk and place it in the facts module buffer. This also is a stochastic process that selects from amongst the matching chunks according to statistical weights that indicate the chunk's utility based upon previous experience.
+
+The above rule would work with chunks in the facts graph that indicate the successor to a given number:
+
+```
+increment {number 1 successor 2}
+increment {number 2 successor 3}
+increment {number 3 successor 4}
+increment {number 4 successor 5}
+increment {number 5 successor 6}
+...
+```
+
+You can use a comma separated list of chunks for goals and for actions. Alternatively you can write out the chunks in full using their IDs and the @condition and @action properties in the rule chunk. The above rule could be written as follows:
+
+```
+count c1 {
+   state start
+   from ?num1
+   to ?num2
+}
+
+rule r1 {
+   @condition c1
+   @action a1, a2
+}
+
+count a1 {
+   state counting
+}
+
+increment a2 {
+   @module facts
+   @do get
+   number ?num1
+}
+```
+
+Whilst normally, the condition property must match the buffered chunk property, sometimes you want a rule to apply only if the condition property doesn't match the buffered chunk property. For this you insert an exclamation mark (`!`) as a prefix to the condition's property value. You can further test that a property is undefined by using `!` on its own in place of a value. In an action you can use `!` on its own to set a property to be undefined.
+
+In the following rule, the first condition checks that the *from* and *to* properties in the goal buffer are distinct.
+
+```
+# count up one at a time
+count {@module goal; state counting; from ?num1; to !?num1},
+increment {@module facts; number ?num1; successor ?num3}
+   =>
+     count {@module goal; @do update; from ?num3},
+     increment {@module facts; @do get; number ?num3},
+     console {@module output; @do log; value ?num3}
+```
+For properties whose values are names, numbers or booleans, the values can be matched directly. For ISO8601 dates, the value corresponds to an ID for the iso8601 date chunk, and hence date values are compared in the same way as for names. For values which are comma separated lists, the lists must be the same length and each of their items must match as above.
+
+You can write rules that apply when an action such as retrieving a chunk from memory has failed. To do this place an exclamation mark before the chunk type of the condition chunk, e.g.
+
+```
+!present {@module facts; person Mary; room room1}
+```
+
+which will match the facts module buffer after a failure to *get* a chunk of type *present* with the corresponding properties. See below for details of response status codes.
+
+When a condition has a property whose value is a list, the corresponding property value in the module buffer must be a list of the same length, and each item in the two lists must match. You can use `!` before an item in the condition's list when you want to check that the buffer's list item isn't a particular value. You can use `*` for an item in the condition's list when you don't care about the corresponding value of the the buffer's list item.
+
+Both conditions and actions can use *@id* to bind to a chunk ID.
+
+### Built-in actions
+
+Modules must support the following actions:
+
+* **@do clear** to clear the module's buffer and pop the queue
+* **@do update** to directly update the module's buffer
+* **@do queue** to push a chunk to the queue for the module's buffer
+* **@do get** to recall a chunk with matching type and properties
+* **@do put** to save the buffer as a new chunk to the module's graph
+* **@do patch** to use the buffer to patch a chunk in the module's graph
+* **@do delete** to forget chunks with matching type and properties
+* **@do next** to load the next matching chunk in an implementation dependent order
+* **@do properties** to iterate over the set of properties in a buffer
+* **@for** to iterate over the items in a comma separated list
+
+Apart from *clear*, *update* and *queue*, all actions are asynchronous, and when complete set the buffer status to reflect their outcome. Rules can query the status using *@status*. The value can be *pending*, *okay*, *forbidden*, *nomatch* and *failed*. This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use *@tag* in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via *@tag* in a rule condition.
+
+Actions can be used in combination with *@id* to specify the chunk ID, e.g. to get a chunk with a given ID. Additional operations are supported for operations over property values that are comma separated lists of items, see below. The default action is *@do update*. This updates the properties given in the action, leaving existing properties unchanged. You can use *@do clear* to clear all properties in the buffer.
+
+Whilst *@do update* allows you to switch to a new goal, sometimes you want rules to propose multiple sub-goals. You can set a sub-goal using *@do queue* which pushes the chunk specified by an action to the queue for the module's buffer. You can use *@priority* to specify the priority as an integer in the range 1 to 10 with 10 the highest priority. The default priority is 5. The buffer is automatically cleared (*@do clear*) when none of the buffers matched in a rule have been updated by that rule. This pops the queue if it is not already empty.
+
+Actions that directly update the buffer do so in the order that the action appears in the rule. In other words, if multiple actions update the same property, the property will have the value set by the last such action.
+
+The *@do get* action copies the chunk into the buffer. Changing the values of properties in the buffer won't alter the graph until you use *@do put* or *@do patch* to save the buffer to the graph. Put creates a new chunk, or completely overwrites an existing one with the same ID as set with *@id*. Patch, by contrast will just overwrite the properties designated in the action.
+
+Applications can define additional operations when initialising a module. This is used in the example demos, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning. Applications cannot replace the built-in actions listed above.
+
+NOTE: the goal buffer is automatically cleared after executing a rule's actions if those actions have not updated any of the buffers used in that rule's conditions. This avoids the rule being immediately reapplied, but doesn't preclude other kinds of looping behaviours. Future work will look at how to estimate the utility of individual rules via reinforcement learning, and how much time is anticipated to achieve certain tasks. This will be used to detect looping rulesets and to switch to other tasks.
+
+### Iteration over matching chunks
+
+You can iterate over chunks with a given type and properties with *@do next* in a rule action, which has the effect of loading the next matching chunk into the module's buffer in an implementation dependent sequence. To see how this works consider the following list of towns and the counties they are situated in:
+
+```
+town ascot {county berkshire}
+town earley {county berkshire}
+town newbury {county berkshire}
+town newquay {county cornwall}
+town truro {county cornwall}
+town penzance {county cornwall}
+town bath {county somerset}
+town wells { county somerset}
+town yeovil {county somerset}
+```
+
+We could list which towns are in Cornwall by setting a start goal to trigger the following ruleset:
+
+```
+start {}
+   => 
+     town {@module facts; @do next; county cornwall},
+     next {}
+     
+next {}, town {@module facts; @id ?town; @more true} 
+   => 
+     console {@do log; message ?town},
+     town {@module facts; @do next}
+next {}, town {@module facts; @id ?town; @more false} 
+   => 
+     console {@do log; message ?town},
+     console {@do log; message "That's all!"},
+     town {@module facts; @do clear}
+```
+The start goal initiates an iteration on the facts module for chunks with type *town* and having *cornwall* for their *county* property. The goal buffer is then set to next.  When the facts buffer is updated with the town chunk, the next rule fires. This invokes an external action to log the town, and instructs the facts module to load the next matching town chunk for the county of Cornwall, taking into account the current chunk in the facts module buffer. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last chunk in the iteration.
+
+A more complex example could be used to count chunks matching some given condition. For this you could keep track of the count in the goal buffer, and invoke a ruleset to increment it before continuing with the iteration. To do that you could save the ID of the last matching chunk in the goal and then cite it in the action chunk, e.g.
+
+```
+next {prev ?prev}
+   =>
+     town {@module facts; @do next; @id ?prev; county cornwall}
+```
+which instructs the facts module to set the buffer to the next town chunk where county is cornwall, following the chunk with the given ID.
+
+Note if you add to, or remove matching chunks during an iteration, then you are not guaranteed to visit all matching chunks.  A further consideration is that chunks are associated with statistical weights reflecting their expected utility based upon past experience. Chunks that are very rarely used may become inaccessible.
+
+### Iteration over properties
+
+You can iterate over each of the properties in a buffer by using *@do properties* in an action for that buffer. The following example first sets the facts buffer to *foo {a 1; c 2}* and then initiates an iteration over all of the buffer's properties that don't begin with '@':
+
+```
+run {}
+  =>
+    foo {@module facts; a 1; c 2}, # set facts buffer to foo {a 1; c 2}
+    bar {@module facts; @do properties; step 8; @to goal} # launch iteration
+    
+# this rule is invoked with the name and value for each property
+# note that 'step 8' is copied over from the initiating chunk
+
+bar {step 8; name ?name; value ?value}
+  =>
+    console {@do log; message ?name, is, ?value},
+    bar {@do next}  # to load the next instance from the iteration
+```
+
+Each property is mapped to a new chunk with the same type as the action (in this case *bar*). The action's properties are copied over (in this example *step 8*), and *name* and *value* properties are used to pass the property name and value respectively. The *@more* property is given the value *true* unless this is the final chunk in the iteration, in which case *@more* is given the value *false*. By default, the iteration is written to the same module's buffer as designated by the action that initiated it. However, you can designate a different module with the *@to* property. In the example, this is used to direct the iteration to the goal buffer. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.
+
+### Operations on comma separated lists
+
+You can iterate over the values in a comma separated list with the *@for*. This has the effect of loading the module's buffer with the first item in the list. You can optionally specify the index range with *@from* and *@to*, where the first item in the list has index 0, just like JavaScript.
+
+```
+# a chunk in the facts module
 person {name Wendy; friends Michael, Suzy, Janet, John}
 
 # after having recalled the person chunk, the
 # following rule iterates over the friends
 person {@module facts; friends ?friends}
-   => item {@module goal; @for ?friends; @from 1; @to 2}</pre>
-            <p>which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g.</p>
-            <pre>item {value Suzy; @index 1; @more true}</pre>
-            <p>The action's properties are copied over apart from those starting with an <code>@</code>. The item index in the list is copied into the chunk as [=@index=]. You can then use [=@do next=] in an action to load the next item into the buffer. The [=@more=] property is set to true in the buffer if there is more to come, and false for the last property in the iteration. Action chunks should use either [=@do=] or [=@for=], but not both. Neither implies <code>@do update</code>.</p>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@id</code></dfn> property</h5>
-          <p>This is used in rule actions together with a value specify the chunk ID, e.g. to get a chunk with a given ID, or to add, update or replace an existing chunk with that ID.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@index</code></dfn> property</h5>
-          <p>Used as part of an iteration over the values in a comma separated list with [=@for=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@kindof</code></dfn> property</h5>
-          <p>[=Matches=] a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
-          <aside class="example" title="Matching subclasses in a taxonomy">
-            <p>Given the following facts in a <code>facts</code> [=module=]:</p>
-            <pre><code>penguin kindof bird
-eagle kindof bird
-penguin p6 { name Pingou }</code></pre>
-
-            <p>The following [=condition=] would match the [=chunk=] <code>p6</code> if it was in the [=module buffer=] of the <code>facts</code> [=module=]:</p>
-            <pre><code>* cond1 {
-  @module facts
-  @kindof bird
-}</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@map</code></dfn> property and chunk type</h5>
-          <p>This is used with [=@compile=] and [=@uncompile=] to reference a chunk of type [=@map=] that defines a map for property names and their meanings.</p>
-          <aside class="example" title="term map for rule (un)compilation">
-            <pre><code>@map map1 {do @do; condition @condition; action @action; module @module}</code></pre>
-            <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as [=@do=], <code>condition</code> is to be interpreted as [=@condition=], <code>action</code> is to be interpreted as [=@action=], and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a [=chunk=] such as the following:</p>
-            <pre><code>rule r1 {condition g1; action a1, a2, a3}</code></pre>
-which is mapped to:
-            <pre><code>rule r1 {@condition g1; @action a1, a2, a3}</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@module</code></dfn> property</h5>
-          <p>References the [=module=] a [=condition=] or [=action=] relates to. Value must be the [=module name=] of the targeted [=module=]. In the absence of an [=@module=] property, [=conditions=] and [=actions=] apply to the <code>goal</code> module.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@more</code></dfn> property</h5>
-          <p>Queries the [=boolean=] flag set to <code>true</code> by the [=rule engine=] on the current [=chunk=] in [=@for=] and [=@do properties=] iterations when there are remaining [=chunks=] to iterate over.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@pop</code></dfn> property</h5>
-          <p>An [=action=] property that removes the last [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
-          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
-          <aside class="example" title="Remove the last element from a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-digits { @pop list, @to item }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits {
-  list 0, 1, 2, 3, 4, 5, 6, 7, 8
-  item 9
-}</code></pre>
-          </aside>
-        </section>
-
-         <section>
-          <h5>The <dfn><code>@priority</code></dfn> property</h5>
-          <p>The @priority property lets actions set the [=priority=] of a [=chunk=] when they add it to the queue for a module buffer (see [=module buffer=]).</p>
-        </section>
-
-       <section>
-          <h5>The <dfn><code>@push</code></dfn> property</h5>
-          <p>An [=action=] property that pushes an [=atomic value=] to the end of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
-          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
-          <aside class="example" title="Add an element to the end of a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
-digits { @push 9, @to list }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@shift</code></dfn> property</h5>
-          <p>An [=action=] property that removes the first [=atomic value=] from a [=value=]. If the [=value=] to process is already an [=atomic value=], the underlying property is removed.</p>
-          <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
-          <aside class="example" title="Remove the first element from a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-digits { @shift list, @to item }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits {
-  list 1, 2, 3, 4, 5, 6, 7, 8, 9
-  item 0
-}</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@status</code></dfn> property</h5>
-          <p>Queries the [=module buffer/status=] of a [=module buffer=]. The [=rule engine=] sets the status of a [=module buffer=] with the outcome of the [=rule=]'s execution. Most operations are asynchronous, except [=@do clear=], [=@do update=] and [=@do queue=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@tag</code></dfn> property</h5>
-          <p>This property provides a means for rule conditions to test a module buffer for the result from a preceding action. Use <code>@tag</code> in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via <code>@tag</code> in a rule condition.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@to</code></dfn> property</h5>
-          <p>Companion [=action=] property used in [=@do properties=], [=@for=], [=@pop=], [=@push=], [=@shift=], [=@unshift=] operations.</p>
-          <p>Meaning and value constraints depend on the operation. See individual operations for details. For instance, when used in a [=@for=] operation, the property specifies the zero-based ending index of the iteration. Value must be an integer. When used in a [=@do properties=] operation, the property specifies the name of the [=module buffer=] onto which to write the current [=chunk=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@type</code></dfn> property</h5>
-          <p>[=Matches=] a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@unshift</code></dfn> property</h5>
-          <p>An [=action=] property that pushes an [=atomic value=] to the beginning of the [=value=] of the property identified by a companion [=@to=] property. If the targeted property does not exist yet, it is created.</p>
-          <p>In the absence of a [=@to=] property, this operation has no effect.</p>
-          <aside class="example" title="Add an element to the beginning of a list">
-            <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
-digits { @shift 0, @to list }</code></pre>
-            <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@uncompile</code></dfn> property</h5>
-          <p>This used in a rule action to copy a set of rules in procedural memory to a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@uncompile</code> may cite a list of IDs for chunks to be uncompiled.</p>
-          <aside class="example" title="copy rule from procedural memory to declarative memory">
-            <pre><code>get {@uncompile rule1; @map map1}</code></pre>
-            <p>The above [=action=] looks for a rule chunk with ID <code>rule1</code> in the rule module and copies the associated chunks to the default module using the mappings specified in the chunk with ID <code>map1</code> as specified with [=@map=]. The chunk type and ID are copied as is.</p>
-          </aside>
-        </section>
-      </section>
-      
-      <p class="issue">Is there a need for a means to map chunk IDs for use with [=@compile=] and [=@uncompile=]? A potential solution would be to introduce <code>@map-id</code> by analogy to [=@map=].</p>
-    </section>
-
-    <section>
-      <h3>Modules</h3>
-      <p>A <dfn>module</dfn> is a [=graph of chunks=] associated with one and only one [=module buffer=]. A [=module=] has a <dfn>module name</dfn> that follows the [=name=] data type, and that is typically used to target the [=module=] in [=@module=] properties.</p>
-
-      <p>A [=module=] supports [=built-in operations=], and may support additional operations defined by the application when the [=module=] is initialized.</p>
-      <p>A [=module=] represents a cognitive database on which the [=rule engine=] may operate. It may be viewed as a region in the cerebral cortex, where the [=module buffer=] corresponds to the bundle of nerve fibres connecting to that region.</p>
-
-      <p>The [=rule engine=] automatically creates a module named <code>goal</code>, which will therefore always exist in a rule execution context.</p>
-
-      <p>The [=@module=] property allows [=conditions=] and [=actions=] to reference the [=module name=] of the [=module=] they relate to. In the absence of an [=@module=] property, [=conditions=] and [=actions=] apply to the <code>goal</code> module.</p>
-
-      <section>
-        <h4>Module buffers</h4>
-        <p>A <dfn>module buffer</dfn> is a container for at most one [=chunk=]. The mammalian brain is richly connected locally, and weakly remotely. A [=module buffer=] mimics the constrained communication capacity of the mammalian brains for such long range communication.</p>
-
-        <p>The [=rule engine=] operates on a module's [=graph of chunks=] through its [=module buffer=].</p>
-
-        <p>A [=module buffer=] has a <dfn data-dfn-for="module buffer">status</dfn>, (accessible via [=@status=]), whose value is initially [=status/okay=], and which reflects the outcome of the last [=action=] held and performed by the [=module buffer=]. Values can be:</p>
-        <dl>
-          <dt><dfn class="lint-ignore"><code>pending</code></dfn></dt>
-          <dd>The operation is still pending.</dd>
-          <dt><dfn><code>okay</code></dfn></dt>
-          <dd>The operation completed successfully.</dd>
-          <dd><p class="issue">Switch to <code>ok</code>? This seems more common in technologies (e.g. HTTP) than <code>okay</code>.</p></dd>
-          <dt><dfnclass="lint-ignore"><code>forbidden</code></dfn></dt>
-          <dd>The operation was not allowed.</dd>
-          <dt><dfnclass="lint-ignore"><code>nomatch</code></dfn></dt>
-          <dd>The operation [=failed=] because there was no [=matching chunk=] for the [=action=] in the targeted [=module=].</dd>
-          <dt><dfn class="lint-ignore"><code>failed</code></dfn></dt>
-          <dd>The operation failed.</dd>
-        </dl>
-        
-        <p>This is analogous to the hypertext transfer protocol (HTTP) and allows rule engines to work with remote cognitive databases. To relate particular request and response pairs, use [=@tag=] in the action to pass an identifier to the subsequent asynchronous response where it can be accessed via [=@tag=] in a rule condition.</p>
-
-        <p>A [=module buffer=] has a <dfn>queue</dfn>, which is a set of [=chunks=], initially empty. Each chunk in the [=queue=] has a <dfn>priority</dfn>, represented by an integer from 1 to 10, with 10 the highest priority. The default [=priority=] is 5. [=Chunks=] are ordered by descending [=priority=] in a [=queue=]. When [=priorities=] match, [=chunks=] are ordered by insertion order (first in, first out).</p>
-
-        <p>The [=@priority=] property lets [=actions=] set the [=priority=] of a [=chunk=] when they add it to a [=queue=].</p>
-
-        <aside class="note" title="Queue and sub-goals">
-          <p>A [=queue=] may be useful to create sub-goals. For instance, whilst [=@do update=] operations allow applications to switch to a new goal, they may prefer [=rules=] to propose multiple sub-goals instead. [=Queues=] enable this through [=@do queue=] operations which push the [=chunk=] specified by an [=action=] to the [=queue=] of a [=module buffer=].</p>
-        </aside>
-
-        <p>A [=module buffer=] is automatically cleared when the [=actions=] associated with the [=rule=] it contained did not update the contents of targeted [=module buffers=]. This pops the [=queue=] if it is not already empty.</p>
-      </section>
-
-      <section>
-        <h4>Built-in operations</h4>
-        <p>The [=@do=] property lets an [=action=] specify the graph algorithm or operation to execute. The default operation is to update the [=module buffer=], similar to calling [=@do update=].</p>
-
-        <p>All [=modules=] support the <dfn>built-in operations</dfn> defined in this section.</p>
-
-        <p>All [=modules=] also support the [=@for=] property to iterate over a set of items in a comma separated list. This has the effect of loading the [=module buffer=] with the first item in the list. The index range can optionally be specified with [=@from=] and [=@to=], where the first item in the list has index <code>0</code>.</p>
-
-        <aside class="note" title="Application-defined operations">
-          <p>Applications can define additional operations when initialising a [=module=]. This can be used to perform a variety of operations, e.g. to allow rules to command a robot to move its arm, by passing it the desired position and direction of the robot's hand. Operations can be defined to allow messages to be spoken aloud or to support complex graph algorithms, e.g. for data analytics and machine learning.</p>
-
-          <p>Applications cannot replace the [=built-in operations=].</p>
-        </aside>
-
-        <section>
-          <h5>The <dfn><code>@do clear</code></dfn> operation</h5>
-          <p>Clears the [=module buffer=] and pops the [=queue=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn class="lint-ignore"><code>@do delete</code></dfn> operation</h5>
-          <p>Removes [=matching chunks=] from the [=graph of chunks=].</p>
-        </section>
-
-        <section>
-          <h5>The <dfn class="lint-ignore"><code>@do get</code></dfn> operation</h5>
-          <p>Looks for a [=matching chunk=] in the module's [=graph of chunks=] and puts a copy of it in the [=module buffer=] if found. Modifying the [=properties=] of a [=chunk=] copied from a [=graph of chunks=] (e.g. through a [=@do update=] operation) will not alter the underlying [=graph of chunks=]. To save an updated [=chunk=], a [=@do put=] or [=@do patch=] command needs to be issued.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do next</code></dfn> operation</h5>
-          <p>Loads the next [=matching chunk=] to the targeted [=module buffer=] in an implementation dependent order.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do patch</code></dfn> operation</h5>
-          <p>If the [=chunk=] in the targeted [=module buffer=] has the same [=identifier=] as a [=chunk=] in the underlying [=graph of chunks=], patches the [=chunk=] in the [=graph of chunks=] with the [=properties=] that appear in the [=module buffer=], excluding [=properties=] prefixed with an <code>@</code> character.</p>
-          <p class="issue">What is the expected behavior when the action has an <code>@id</code> property?</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do properties</code></dfn> operation</h5>
-          <p>Initiates an iteration over the [=properties=] of the [=matching chunk=] that do not begin with <code>@</code>. Each [=property=] is mapped to a new [=chunk=] with the same [=type=] as the [=action=]. The action's properties are copied over, and <code>name</code> and <code>value</code> properties are used to pass the [=property=] name and value respectively. The [=@more=] property is given the value <code>true</code> unless this is the final [=chunk=] in the iteration, in which case [=@more=] is given the value false. By default, the iteration is written to the same [=module buffer=] as designated by the [=action=] that initiated it. However, you can designate a different [=module buffer=] with the [=@to=] property. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.</p>
-          <aside class="example" title="Iterate over properties">
-            <p>The following example first sets the <code>facts</code> [=module buffer=] to a [=chunk=] of [=type=] <code>foo</code>, and then initiates an iteration over all of the [=chunk=]'s properties:</p>
-            <pre><code>run {}
-  =>
-    foo {@module facts; a 1; c 2}, # set facts buffer to foo {a 1; c 2}
-    bar {@module facts; @do properties; loop prop18; @to goal} # launch iteration
-
-# this rule is invoked with the name and value for each property
-# note that 'loop prop18' is copied over from the initiating chunk
-# (also note that "@do log" is an hypothetical operation to log a message)
-bar {loop prop18; name ?name; value ?value}
-  =>
-    console {@do log; message ?name, is, ?value},
-    bar {@do next}  # to load the next instance from the iteration</code></pre>
-          </aside>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do put</code></dfn> operation</h5>
-          <p>Saves the contents of the [=module buffer=] as a [=chunk=] to the module's [=graph of chunks=]. If the [=action=] has an [=@id=] property, this operation will overwrite the [=chunk=] with the same [=identifier=] or will create a new [=chunk=] with the given [=identifier=] if it does not exist already. This operation will also create a new [=chunk=] in the absence of an [=@id=] property.</p>
-          <p class="issue">If a chunk was loaded with <code>@do get</code>, then updated with <code>@do update</code>, would a call to <code>@do patch</code> create a new chunk if <code>@id</code> is not set? Or would it rather update the chunk in the graph?</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do queue</code></dfn> operation</h5>
-          <p>Pushes a [=chunk=] to the [=queue=] for the [=module buffer=]. If a [=@priority=] property is set to an integer value between 1 and 10, the [=priority=] of the [=chunk=] in the [=queue=] is set to that value.</p>
-        </section>
-
-        <section>
-          <h5>The <dfn><code>@do update</code></dfn> operation</h5>
-          <p>Directly updates the [=module buffer=] if the chunk [=type=] for the [=action=] is the same as the [=chunk=] currently held in the [=module buffer=]. The operation updates the properties given in the [=action=], leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk [=type=] for the action is not the same as the [=chunk=] currently held in the [=module buffer=], a new [=chunk=] is created with the properties given in the [=action=], excluding properties prefixed with an <code>@</code> character. This is the default action when an [=action=] has neither an [=@do=] property nor an [=@for=] property.</p>
-          <p class="issue">How can one update the properties prefixed with an <code>@</code> character in a [=chunk=] such as [=@context=], [=@subject=] or [=@object=]?</p>
-        </section>
-      </section>
-    </section>
-  </section>
-
-  <section>
-    <h2>Name operators</h2>
-    <p>Operators defined in this section may be used on their own as [=names=] or in front of [=names=] to alter their meaning.</p>
-
-    <section>
-      <h3>The variable operator <code>?</code></h3>
-
-      <p>The <dfn class="lint-ignore">variable operator</dfn> <code>?</code> may be prepended to a [=name=] when used as a [=property=] value to turn the [=name=] into a <dfn>variable</dfn> which represents a symbolic name to a [=value=]. A [=variable=] gets <dfn>bound</dfn> to a [=value=] in a [=condition=]. The [=value=] can then be referenced in [=actions=] using the [=variable=]'s name. Effectively, [=variables=] allow applications to copy information from rule [=conditions=] to rule [=actions=].</p>
-
-      <p>[=Variables=] are scoped to the [=rule=] where they appear.</p>
-
-      <aside class="example" title="Variable binding and referencing">
-        <pre><code>count { state start; from ?num1; to ?num2 }
-=> increment { @module facts; @do get; number ?num1 }</code></pre>
-        <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=]. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk, and the value of the [=variable=] <code>?num2</code> to the [=value=] of the <code>to</code> [=property=].</p>
-        <p>The [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>increment</code> and that has a [=property=] named <code>number</code> and whose [=value=] equals the value of the <code>?num1</code> [=variable=].</p>
-      </aside>
-
-      <p>[=Variables=] are [=bound=] to a [=value=] the first time they appear in a [=condition=]. Subsequent occurrences of the same [=variable=] in a [=condition=] reference their [=value=].</p>
-
-      <aside class="example" title="Variable binding and referencing in the same condition">
-        <pre><code>count { state start; from ?num1; to ?num1 }
-=> console { @do log; message ?num1 }</code></pre>
-        <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=] that have identical values. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk.</p>
-      </aside>
-
-      <p>[=Variables=] may represent any type of [=value=]. In particular, a [=variable=] that [=matches=] a property whose value is a list of [=atomic values=] gets bound to the list of [=atomic values=].</p>
-
-      <aside class="example" title="Variable binding to a list of atomic values">
-        <pre><code>basket { fruit ?f }
-=> console { @do log; message ?f }</code></pre>
-        <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>basket</code> and that has a <code>fruit</code> [=property=]. Given the following [=chunk=] in the <code>goal</code> [=module buffer=], the [=condition=] binds variable <code>?f</code> to <code>apple, banana, orange</code>:</p>
-        <pre><code>basket { fruit apple, banana, orange }</code></pre>
-      </aside>
-
-      <p>A [=condition=] that contains a [=property=] with a list of [=variables=] [=matches=] a list of [=atomic values=] that has the same length. The [=condition=] does not [=match=] when the lengths of the lists differ.</p>
-
-      <aside class="example" title="Variable binding to atomic values in a list">
-        <pre><code>basket { fruit ?a, ?b, ?o }
-=> console { @do log; message ?a, ?b, ?o }</code></pre>
-        <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>basket</code> and that has a <code>fruit</code> [=property=] whose value is a list of <em>three</em> atomic values. Given the following [=chunk=] in the <code>goal</code> [=module buffer=], the [=condition=] binds variable <code>?a</code> to <code>apple</code>, <code>?b</code> to <code>banana</code>, and <code>?o</code> to <code>orange</code>:</p>
-        <pre><code>basket { fruit apple, banana, orange }</code></pre>
-      </aside>
-    </section>
-
-    <section>
-      <h3>The wild card operator <code>*</code></h3>
-      <p>The <dfn>wild card operator</dfn> <code>*</code> may be used on its own in lieu of a [=name=] in one of the following cases:</p>
-      <ul>
-        <li>
-          As the [=type=] of a [=condition=] or [=action=] to denote that [=condition=] or [=action=] matches a [=chunk=] regardless of its [=type=].
-          <aside class="example" title="Condition that matches any chunk">
-            <pre><code>* {} => ...</code></pre>
-            <p>The <code>* {}</code> [=condition=] [=matches=] a [=chunk=] regardless of its [=type=] and [=properties=].</p>
-          </aside>
-        </li>
-        <li>
-          In a [=condition=] as the [=value=] of a [=property=] |p| to have the [=condition=] [=match=] a [=chunk=] that has a [=property=] whose [=name=] equals |p|'s [=name=], regardless of its [=value=].
-          <aside class="example" title="Match a property regardless of its value">
-            <pre><code>basket { fruit * } => ...</code></pre>
-            <p>The [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] .</p>
-          </aside>
-          <p class="note">A [=variable=] may also be used to [=match=] on any [=value=]. The [=wild card operator=] avoids the need to provide a name for the [=variable=] when the actual [=value=] does not need to be captured.</p>
-        </li>
-        <li>
-          In a [=condition=] as an [=atomic value=] in a list to [=match=] any [=atomic value=] at the same position in a [=chunk=].
-          <aside class="example" title="Match an atomic value in a list">
-            <pre><code>basket { fruit apple, *, * } => ...</code></pre>
-            <p>The [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] whose [=value=] is a list of three [=atomic values=] starting with <code>apple</code>.</p>
-          </aside>
-        </li>
-      </ul>
-    </section>
-
-    <section>
-      <h3>The negation operator <code>!</code></h3>
-      <p>The <dfn data-lt="negative operation">negation operator</dfn> <code>!</code> may be prepended to [=names=] to <dfn class="lint-ignore">negate</dfn> the outcome of their evaluation. The [=negation operator=] may be used in one of the following cases:</p>
-      <ul>
-        <li>
-          In a [=rule=] in front of a [=condition=] to negate it. A rule with a negated [=condition=] !|cond| applies if and only if |cond| does not hold true.
-          <aside class="example" title="Negate a rule condition">
-            <pre><code># Rule with a negated condition
-rule {
-@condition !c1
-@action a1
-}
-person c1 { @id John }
-console a1 { @do log; message "Type is not person or id is not John" }
-
-# Same rule defined using the compact format
-!person { @id John }
-=> console { @do log; message "Type is not person or id is not John" }</code></pre>
-            <p>The above example illustrates two equivalent ways to define a rule with a negated condition. In this example, the condition |c1| [=matches=] a [=chunk=] whose [=type=] is <code>person</code> and whose [=identifier=] is <code>John</code>. As such, the negated condition [=matches=] a [=chunk=] whose [=type=] is <em>not</em> <code>person</code> <em>or</em> whose [=identifier=] is <em>not</em> <code>John</code>.</p>
-          </aside>
-        </li>
-        <li>
-          In a [=condition=] in front of a [=property=] value to negate the result of a [=match=]. A negated [=property=] value !|val1| [=equals=] another [=property=] value |val2| if and only if |val1| does not [=equal=] |val2|.
-          <aside class="example" title="Negate a value match">
-            <pre><code>person { @id !John }
-=> console { @do log; message "Type is person but id is not John" }</code></pre>
-            <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>person</code> and whose [=identifier=] is <em>not</em> <code>John</code>.</p>
-          </aside>
-          <aside class="example" title="Negate an atomic value in a list">
-            <pre><code>basket { fruit ?a, !banana, ?o }
-=> console { @do log; message "No banana in second position" }</code></pre>
-            <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] whose [=value=] is a list of three [=atomic values=]. First and third [=atomic values=] in that list can be anything. Second [=atomic value=] must <em>not</em> be <code>banana</code>.</p>
-          </aside>
-        </li>
-        <li>
-          On its own as a [=property=] value in a [=condition=] to test that a [=property=] is undefined. A [=condition=] with a [=property=] |p| whose value is <code>!</code> [=matches=] a [=chunk=] if and only if the [=chunk=] does not have a [=property=] whose [=name=] is |p|'s [=name=].
-          <aside class="example" title="Test that a property is undefined">
-            <pre><code>basket { fruit ! }
-=> console { @do log; message "Basket without fruits" }</code></pre>
-            <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which does not have a <code>fruit</code> [=property=].</p>
-          </aside>
-        </li>
-        <li>
-          On its own as a [=property=] value in a [=@do patch=], [=@do update=] or similar [=action=] that updates a [=chunk=] to unset a [=property=].
-          <aside class="example" title="Unset a chunk property">
-            <pre><code># Given the following chunk in the module buffer
-basket { fruit apple, banana, orange }
-
-# ... the following rule drops the fruit property
-* {} => basket { @do update; fruit ! }
-
-# Resulting chunk
-basket {}</code></pre>
-          </aside>
-        </li>
-      </ul>
-
-      <p>The [=negation operator=] cannot be prepended to a [=variable=] that has not yet been [=bound=]. Similarly, the [=negation operator=] cannot be used on its own as an [=atomic value=] in a list. More generally, the [=negation operator=] cannot be used elsewhere than in the cases detailed above.</p>
-      <aside class="example" title="Some invalid uses of the negation operator">
-        <pre><code># Invalid: variable ?num1 is unbound
-count { state counting; start !?num1 } => ...
-
-# Invalid: on its own in a list
-basket { fruit ?a, !, ?o } => ...
-
-# Invalid: in an update action but not on its own
-* {} => basket { @do update; fruit !apple }</code></pre>
-      </aside>
-
-      <p>A second [=negation operator=] prepended to a [=name=] that starts with a [=negation operator=] cancels the effect of the first [=negation operator=].</p>
-      <aside class="example" title="Double negation">
-        <pre><code># The following condition
-person { @id !!John }
-
-# ... is the same as this one:
-person { @id John }</code></pre>
-      </aside>
-    </section>
-
-    <section>
-      <h3>The reserved name operator <code>@</code></h3>
-      <p>The <dfn class="lint-ignore">reserved name operator</dfn> <code>@</code> may be prepended to a [=name=] to denote a <dfn>reserved name</dfn> with specific meaning. Most [=reserved names=] are to be used as [=property=] names, typically in [=conditions=] and [=actions=] to control their behavior (see [[[#properties-for-conditions-and-actions]]]). Some of them may be used as chunk [=types=] to denote a chunk with specific meaning (see [[[#mapping-to-rdf]]]).</p>
-    </section>
-  </section>
-
-  <section>
-    <h2>Rule engine execution</h2>
-    <p class="ednote">TODO: Describe algorithms for the [=rule engine=].</p>
-  </section>
-
-  <section>
-    <h2>Chunks documents</h2>
-
-    <section>
-      <h3>Parsing a chunks document</h3>
-      <p class="ednote">TODO: Formally describe parsing algorithm</p>
-      <p>If multiple chunk definitions share the same [=identifier=] in a set of chunks, the last definition overrides former definitions.</p>
-    </section>
-
-    <section>
-      <h3>Chunks grammar</h3>
-      <p>A [=chunks document=] MUST follow the grammar defined below.</p>
-
-<pre><code class="abnf" data-include="grammar/chunks.abnf" data-include-format="text"></code></pre>
-    </section>
-
-    <section class="informative">
-      <h3>Railroad diagrams</h3>
-      <p>This section presents an informative view of the tokens that the grammar defines, in the form of railroad diagrams. These diagrams are provided solely to make it easier to get an intuitive grasp of the syntax of each token.</p>
-      <div data-include="grammar/rr.html" data-include-replace="true"></div>
-    </section>
-  </section>
-
-  <section>
-    <h2>Mapping to RDF</h2>
-
-    <p>Linked Data [[LINKED-DATA]], at the basis of RDF [[RDF11-CONCEPTS]], is a way to create a network of standards-based machine interpretable data across different documents and Web sites. It allows an application to start at one piece of Linked Data, and follow embedded links to other pieces of Linked Data that are hosted on different sites across the Web.
-
-    <p>[=Names=] used in [=chunks=] are local to the [=graph of chunks=] in which they appear. For [=names=] to be usable as linked data, there needs to be a way to associate them to global identifiers. [=Reserved names=] defined in this section may be used to create such a mapping.</p>
-
-    <p>In turn, this mechanism can be used to map a [=graph of chunks=] to an <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> and vice versa.</p>
-
-    <p class="note">Algorithms to serialize/deserialize a [=graph of chunks=] to an <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> and vice versa are out of scope of this document but may be specified in future revisions of it.</p>
-
-    <aside class="example" title="Mapping a graph of chunks to an RDF graph">
-      <p>Given the following [=graph of chunks=]:</p>
-      <pre><code>@rdfmap {
-  dog http://example.com/ns/dog
-  cat http://example.com/ns/cat
-  age http://example.com/ns/age
-  name http://example.com/ns/name
-}
-
-dog { name "Youki"; age 5 }
-cat { name "Isidore"; age 3 }</code></pre>
-      <p>The [=@rdfmap=] [=chunk=] creates a mapping between local names and a URL. This [=graph of chunks=] is equivalent to the following <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> expressed in Turtle [[TURTLE]]:</p>
-      <pre><code>&lt;http://example.org/ns/dog&gt;
-  &lt;http://example.org/ns/name&gt; "Youki";
-  &lt;http://example.org/ns/age&gt; 5.
-
-&lt;http://example.org/ns/cat&gt;
-  &lt;http://example.org/ns/name&gt; "Isidore";
-  &lt;http://example.org/ns/age&gt; 3.</code></pre>
-    </aside>
-
-    <section>
-      <h3>The <dfn><code>@rdfmap</code></dfn> type</h3>
-      <p>The [=@rdfmap=] chunk [=type=] identifies a chunk that defines a mapping between [=names=] and <abbr title="Internationalized Resource Identifiers">IRIs</abbr> [[IRI]]. Each [=property=] it defines whose [=name=] does not start with one of the name operators (see [[[#name-operators]]]) creates a mapping between this [=name=] and the property [=value=], interpreted as an <abbr title="Internationalized Resource Identifier">IRI</abbr>.</p>
-
-      <aside class="example" title="Mapping a name to the schema.org vocabulary">
-        <pre><code># Maps the name "thing" to the "Thing" item type in schema.org
-@rdfmap {
-  thing http://schema.org/Thing
-}</code></pre>
-      </aside>
-
-      <p class="note">The [=@rdfmap=] keyword plays the same role in [=chunks=] as the <code>@context</code> keyword in JSON-LD. See the notion of <a data-cite="JSON-LD#the-context">Context in JSON-LD</a> for details [[JSON-LD]]. The term [=context=] and the [=@context=] keyword have a different meaning in [=chunks=] where they identify the specific situation under which a [=chunk=] should be considered to be true. A distinct [=@rdfmap=] keyword is used here to avoid any confusion.</p>
-
-      <p>If multiple [=@rdfmap=] chunks create a mapping for the same [=name=], the last definition in overrides previous ones.</p>
-
-      <aside class="example" title="Conflicting mapping">
-        <pre><code># Creates a mapping from image to the example.org namespace
-@rdfmap { image http://example.org/ns/image }
-
-# "image" gets mapped to http://schema.org/image
-# due to the second mapping definition below that
-# overrides the initial mapping defined above.
-thing { image img1 }
-
-# New mapping definition for image, overrides former one
-@rdfmap { image http://schema.org/image }</code></pre>
-      </aside>
-
-      <p>An [=@rdfmap=] chunk may also contain a [=@base=] property to create a default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for [=names=] and [=@prefix=] properties to define prefixes for compact <abbr title="Internationalized Resource Identifiers">IRIs</abbr>.</p>
-    </section>
-
-    <section>
-      <h3>The <dfn><code>@base</code></dfn> property</h3>
-      <p>The [=@base=] [=property=] defines a default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for [=names=] that are not explicitly declared in an [=@rdfmap=].</p>
-
-      <aside class="example" title="Define a default IRI namespace">
-        <pre><code>@rdfmap {
-  @base http://schema.org/
-  dog http://example.org/ns/dog
-}
-
-dog { name "Youki"; birthDate 2021-07-09 }</code></pre>
-        <p>In this example, the [=@rdfmap=] chunk maps:</p>
-        <ul>
-          <li><code>dog</code> to <code>http://example.org/ns/dog</code></li>
-          <li><code>name</code> to <code>http://schema.org/name</code></li>
-          <li><code>birthDate</code> to <code>http://schema.org/birthDate</code></li>
-        </ul>
-      </aside>
-
-      <p>There can be only one default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for a given [=graph of chunks=]. If [=@base=] is used in multiple [=@rdfmap=] chunks, the last definition overrides previous ones.</p>
-
-      <aside class="example" title="Conflicting default namespaces">
-        <pre><code># Sets example.org as default namespace
-@rdfmap {
-  @base http://example.org/ns/
-}
-
-# Names actually get mapped to schema.org namespace
-# due to override below
-Thing { name "Desktop" }
-
-# Re-defines default namespace to use schema.org
-@rdfmap {
-  @base http://schema.org/
-}</code></pre>
-      </aside>
-    </section>
-
-    <section>
-      <h3>The <dfn><code>@prefix</code></dfn> property</h3>
-      <p>The [=@prefix=] [=property=] can be used in an [=@rdfmap=] chunk to reference a [=chunk=] that defines <abbr title="Internationalized Resource Identifier">IRI</abbr> prefixes, which in turn allow the use of compact <abbr title="Internationalized Resource Identifiers">IRIs</abbr> in the [=@rdfmap=] chunk.</p>
-
-      <p>The actual [=chunk=] that defines prefixes can have any [=type=]. Each [=property=] it defines whose [=name=] does not start with one of the name operators (see [[[#name-operators]]]) creates a prefix between the property [=name=] and the property [=value=], interpreted as an <abbr title="Internationalized Resource Identifier">IRI</abbr>.</p>
-
-      <aside class="example" title="Use compact IRIs in @rdfmap">
-        <pre><code>prefix p1 {
-  dcterms http://purl.org/dc/terms/
-  foaf http://xmlns.com/foaf/0.1/
-}
-
-@rdfmap {
-  @prefix p1
-  title dcterms:title
-  topic foaf:topic
-}
-
-book {
-  title "Chunks of life"
-  topic "Mammalian rules"
-}</code></pre>
-        <p>The [=@rdfmap=] chunk in this example maps:</p>
-        <ul>
-          <li><code>title</code> to the compact <abbr title="Internationalized Resource Identifier">IRI</abbr> <code>dcterms:title</code>, which gets expanded to <code>http://purl.org/dc/terms/title</code> through the [=@prefix=] property</li>
-          <li><code>topic</code> to the compact <abbr title="Internationalized Resource Identifier">IRI</abbr> <code>foaf:topic</code>, which gets expanded to <code>http://xmlns.com/foaf/0.1/topic</code> through the [=@prefix=] property</li>
-        </ul>
-      </aside>
-
-      <p>As with [=@base=], in case of conflicts, the definition that gets referenced last overrides former definitions.</p>
-
-      <aside class="example" title="">
-        <pre><code>prefix last { foaf http://xmlns.com/foaf/0.1/ }
-prefix first { foaf http://example.org/ns/ }
-
-@rdfmap { @prefix first; nick foaf:nick }
-@rdfmap { @prefix last }</code></pre>
-        <p>The last [=@rdfmap=] definition makes the <code>foaf</code> prefix map to <code>http://xmlns.com/foaf/0.1/</code>, overriding the previous mapping to <code>http://example.org/ns/</code>. The <code>nick</code> [=name=] gets mapped to <code>http://xmlns.com/foaf/0.1/nick</code> as a consequence.</p>
-      </aside>
-    </section>
-  </section>
-  
-    <section class="informative">
-    <h2>Data Models</h2>
-    
-    <p>This section describes potential ways for using [=chunks=] to declare the properties and values expected for a given chunk [=type=]. Here is an example for a chunk type for a bottle:</p>
-    
-    <aside class="example" title="">
-        <pre><code># bottle
-thing bottle {properties level, capped}
-type level {isa number; min 0; max 100; initial 0}
-type capped {isa boolean; initial false}</code></pre>
-    </aside>
-    
-    <p>The first chunk declares that chunks of [=type=] <em>bottle</em> have two properties: <em>level</em> and <em>capped</em>. The following chunks provide metadata for those [=properties=]. You can declare the data type for the property along with its initial value. You can provide the minimum and maximum value for numeric property values. This approach is useful for properties whose meaning and data model is the same regardless of the chunk [=type=] they are used in.</p>
-    
-    <p>Here is a further example that introduces additional data types, along with the means to describe properties  specific to a given chunk [=type=],</p>
-    
-    <aside class="example" title="">
-        <pre><code># belts
-thing belt {properties x, y, length, moving, items}
-
-type length {isa integer}
-type moving {isa boolean; initial false}
-
-# belts hold a list of items with a position and width
-type items {isa list; contains item}
-thing item {properties position, p2}
-type position {isa number}
-
-# instead of type width {isa number; min 0}
-# you can restrict the specific property
-# when properties with the same name for
-# different things have different metadata
-
-property p2 {name width; isa number; min 0}</code></pre>
-    </aside>
-    
-    <p>The values for <code>properties</code> can either be the name of a property, e.g. <em>position</em> or a chunk ID for a chunk of [=type=] <em>property</em>, that names the property in question and describes its data model.</p>
-    
-    <p>For properties whose value is either a name or a sequence of names, you can use <code>min</code> and <code>max</code> to specify constraints on the length of the sequence, e.g. <code>min 1; max 1</code> to require a single value for the associated property.</p>
-    
-    <section>
-      <h3>Validation and Richer Queries</h3>
-      
-      <p>Data models can be used to check that a [=graph of chunks=] conforms to the constraints defined by the data model. In principle, a new [=@do=] action could be defined to invoke such checks. Such a command is not standardised in this specification, but could be readily implemented as an application defined action, see section [[[#scripting-api]]].</p>
-      
-      <p>The built-in <code>@</code> actions provide standard ways to query and update chunk graphs.  Rich queries could generate chunk graphs as a result of their execution. Such queries can be expressed as a set of chunks and executed using application defined graph algorithms implemented using the [[[#scripting-api]]]. The built-in <code>@</code> actions can then be used to access the graphs generated by richer queries.</p>
-    </section>
-	</section>
-	
-	<section class="informative">
-    <h2>Scripting API</h2>
-    
-	<p>This section describes the scripting API exposed by the original JavaScript library for chunks and rules, see [[CHUNKS-DEMOS]]. The starting point is to create a graph from a text string containing the source of the chunks that make up the graph. The following code creates two graphs: one for facts from "facts.chk", and another for rules from "rules.chk".</p>
-
-	<pre><code>
-	let facts, rules;
-	fetch("facts.chk")
-	.then((response) => response.text())
-	.then(function (source) {
-		facts = new ChunkGraph(source);
-		fetch("rules.chk")
-		.then((response) => response.text())
-		.then(function (source) {
-			rules = new ChunkGraph(source);
-		});
-	});</code>
-	</pre>
-
-	<p>Here are some operations you perform on a graph:</p>
-	<dl>
-	<dt><code>new ChunkGraph(source)</code></dt>
-	<dd>Create a new graph from a text string containing the chunks and links.</dd>
-
-	<dt><code>graph.chunks[id]</code></dt>
-	<dd>Find a chunk given its id.</dd>
-
-	<dt><code>graph.types[type]</code></dt>
-	<dd>Find the list of chunks with a given type.</dd>
-
-	<dt><code>graph.forall(kind, handler, context)</code></dt>
-	<dd>Apply a function to all chunks whose type has the <code>kindof</code> relationship to the given <code>kind</code>. This applies recursively to chains of <code>kindof</code> relationships. The handler is a function that is passed the chunk and the <code>context</code>.<dd>
-
-	<dt><code>graph.get(type, values)</code></dt>
-	<dd>Recall a chunk with a given type, and matching values as denoted by a JavaScript object with a set of named properties. Note that this is stochastic and returns the 'best' chunk when there are multiple matches.</dd>
-	</dl>
-
-	<dt><code>graph.put(type, values, id)</code></dt>
-	<dd>Remember (i.e. create and store) a chunk with a given type, and matching values as denoted by a JavaScript object with a set of named properties. The chunk id will be assigned automatically if not supplied.</dd>
-
-	<dt><code>graph.delete(type, values, id)</code></dt>
-	<dd>Remove the chunk with a given ID if provided, otherwise forget the set of chunks with the given type and matching values.</dd>
-
-	<dt><code>graph.parse(source)</code></dt>
-	<dd>Parse source as chunks and add to this graph.</dd>
-
-	<dt><code>graph.add(chunk)</code></dt>
-	<dd>Adds a chunk or link to the graph, see below for ways to create chunks and links. If the chunk is currently part of another graph, it will be removed from that graph before being added to this one.</dd>
-
-	<dt><code>graph.remove(chunk)</code></dt>
-	<dd>Remove a chunk or link from the graph.</dd>
-	</dl>
-
-	<p>Here are some operations you perform on a chunk:</p>
-
-	<dl>
-	<dt><code>new Chunk(type, id)</code></dt>
-	<dd>Create a new chunk for a given type and id. The id is optional and will be assigned automatically when the chunk is added to a graph if not supplied.</dd>
-
-	<dt><code>new Link(subject, predicate, object)</code></dt>
-	<dd>Create a new Link as a subclass of chunk where the chunk type is given by the predicate. The chunk id will be assigned automatically when the Link is added to a graph.</dd>
-
-	<dt><code>chunk.id</code></dt>
-	<dd>Access the chunk's id.</dd>
-
-	<dt><code>chunk.type</code></dt>
-	<dd>Access the chunk's type.</dd>
-
-	<dt><code>chunk.properties[name]</code></dt>
-	<dd>Access a chunk property value given the property's name.</dd>
-
-	<dt><code>chunk.setValue(name, value)</code></dt>
-	<dd>Overwrite the value of a named property</dd>
-
-	<dt><code>chunk.addValue(name, value)</code></dt>
-	<dd>Add a value for named property. An array is used only if the property value has multiple values.</dd>
-
-	<dt><code>chunk.removeValue(name)</code></dt>
-	<dd>Remove a value from the named property - this is the inverse of <code>addValue</code>.</dd>
-
-	<dt><code>chunk.hasValue(name, value)</code></dt>
-	<dd>Returns <em>true</em> or <em>false</em> according to whether the named property contains the given value, i.e. the property is either that value or it is a list, one of whose items is that value. If the property is undefined for this chunk, then the return value is <em>false</em>.</dd>
-
-	<dt><code>chunk.toString()</code></dt>
-	<dd>Returns a pretty printed version of the chunk.</dd>
-	</dl>
-
-	<p>The following describes the API for rule engines:</p>
-
-	<dl>
-	<dt><code>new RuleEngine()</code></dt>
-	<dd>Create a new rule engine.</dd>
-
-	<dt><code>engine.addModule(name, graph[, backend])</code></dt>
-	<dd><p>Registers a new local module with its name, graph and an optional backend for graph algorithms.</p>
-
-	<p>The backend is declared as an object whose property values are functions that implement the algorithm identified by the property's name. The algorithm's name can then used with <code>@do</code> in rule actions for this module. The action is passed a single argument that is an object whose property values are the bindings for the variables identified by the object's property names.</p>
-
-	<p>The backend functions can be used to override the default actions for <em>recall, remember</em> and <em>update</em>. Note that "rules" and "goals" are required modules. The rules module is used to hold procedural knowledge as a set of rules. By default, the "goals" module is initialised to an empty graph. A separate method is envisaged for adding remote modules.</p></dd>
-
-	<dt><code>engine.getModule(name)</code></dt>
-	<dd>Return the module created by calling <code>engine.addModule</code>.</dd>
-
-	<dt><code>engine.start(rules, facts[, initial_goal])</code></dt>
-	<dd>A convenience function to set the rules and facts modules, along with an optional initial chunk, that is provided as a chunk, i.e. as source text. Note: <code>rules</code> is a graph containing the rules that define procedural knowledge, and <code>facts</code> is a graph containing a set of chunks that define declarative knowledge. The goal is not used until you call engine.next().</dd>
-
-	<dt><code>engine.next()</code></dt>
-	<dd>Find and execute the next matching rule.</dd>
-
-	<dt><code>engine.setGoal(source)</code></dt>
-	<dd>Parse the source for a chunk and load it into the goal module's buffer.</dd>
-
-	<dt><code>engine.setBuffer(name, source)</code></dt>
-	<dd>Parse the source for a chunk and add it to the named module's graph, then load it into the module's buffer.</dd>
-
-	<dt><code>engine.setBuffer(name, chunk)</code></dt>
-	<dd>Load the chunk into the named module's buffer.</dd>
-
-	<dt><code>engine.getBuffer(name)</code></dt>
-	<dd>Return the chunk in the named module's buffer.</dd>
-
-	<dt><code>engine.addListener(listener)</code></dt>
-	<dd>Register a listener function that will be called when any of the module buffers are updated. The listener is passed a single argument identifying the module by name.</dd>
-	</dl>
-	</section>
-  <section id="index" class="appendix">
-  </section>
-</body>
-</html>
+   => item {@module goal; @for ?friends; @from 1; @to 2}
+```
+which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g. 
+
+```
+item {value Suzy; @index 1; @more true}
+```
+
+The action's properties are copied over apart from those starting with an '@'. The item index in the list is copied into the chunk as *@index*. You can then use *@do next* in an action to load the next item into the buffer. The *@more* property is set to *true* in the buffer if there is more to come, and *false* for the last property in the iteration. Action chunks should use either *@do* or *@for*, but not both. Neither implies *@do update*.
+
+You can append a value to a property using *@push* with the value, and *@to* with the name of the property, e.g.
+
+```
+person {name Wendy} => person {@push Emma; @to friends}
+```
+which will push Emma to the end of the list of friends in the goal buffer. 
+
+```
+person {name Wendy} => person {@pop friends; @to ?friend}
+```
+
+will pop the last item in the list of friends to the variable *?friend*.
+
+Similarly you can prepend a value to a property using *@unshift* with the value, and *@to* with the name of the property, e.g.
+
+```
+person {name Wendy} => person {@unshift Emma; @to friends}
+```
+will push Emma to the start of the list of friends in the goal buffer. 
+
+```
+person {name Wendy} => person {@shift friends; @to ?friend}
+```
+
+will pop the first item in the list of friends to the variable *?friend*.
+
+**Note** This uses the same rather confusing terminology as for JavaScript arrays. We could use *append* and *prepend* in place of *push* and *unshift*, but then what names should we use in place of *pop* and *shift*?
+
+Further experience is needed before committing to further built-in capabilities.
+
+### More complex queries
+
+Modules may provide support for more complex queries that are specified as chunks in the module's graph, and either apply an operation to matching chunks, or generate a result set of chunks in the graph and pass this to the module buffer for rules to iterate over. In this manner, chunk rules can have access to complex queries capable of set operations over many chunks, analogous to RDF's SPARQL query language.  The specification of such a chunk query language is left to future work, and could build upon existing work on [representing SPARQL queries directly in RDF](https://www.w3.org/Data/demos/chunks/patterns.html).
+
+A further opportunity would be to explore queries and rules where the conditions are expressed in terms of augmented transition networks (ATNs), which loosely speaking are analogous to RDF's SHACL graph constraint language. ATNs were developed in the 1970's for use with natural language and lend themselves to simple graphical representations. This has potential for rules that apply transformations to sets of sub-graphs rather than individual chunks, and could build upon existing work on the [RDF shape rules language](https://www.w3.org/WoT/demos/shrl/test.html) (SHRL).
+
+## Statements about statements
+
+Beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns involve the use of statements about statements. How can these be expressed as chunks and what else is needed?
+
+Here is an example from John Sowa's [Architectures for Intelligent Systems](http://www.jfsowa.com/pubs/arch.htm):
+
+<blockquote>
+Tom believes that Mary wants to marry a sailor
+</blockquote>
+
+This involves talking about things that are only true in some specific context, as well as the means to refer to an unknown person who is a sailor. The latter can be easily handled given the determiner "a" which implies there is someone or something that has certain attributes, i.e. using a name as a variable for a quantifier. The former is a little harder, as we need a way to separate chunks according to the context, so that we don't confuse what's true in general from what's true in a given context.
+
+One approach is use separate graphs for each context. This means that a cognitive module would have a set of graphs, and that we will need a means to refer to them individually. Another approach is to provide a way to indicate which context a given chunk belongs to, and to make the context part of the mechanism for retrieving and updating chunks. This would allow chunks for different contexts to be stored as part of the same graph.
+
+The idea to be explored is to use `@context` as a property that names the context and to use this in rules as a basis for reasoning.  In the above example, we need one variable for the sailor, and another pair of variables for the hypothetical situations implicit in the subordinate clauses.
+
+Here is one possible way to represent the above example:
+
+```
+believes s1 {@subject tom; proposition s2}
+wants s3 {@context s2; person mary; situation s4}
+married-to s5 {@context s4; @subject mary; @object s6}
+a s6 {@context s4; isa person; profession sailor}
+```
+This works with the existing rule language, provided that we assume a default context so that a `@do get` action without `@context` won't match a chunk in a named context other than the default context.
+
+Contexts are also useful for episodic memory when you want to describe facts that are true in a given situation, e.g. when visiting restaurant for lunch, you sat by the window, you had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.
+
+If such contexts are widely used, then the implementation would benefit from a means to index by context for faster retrieval. This should be addressed when re-implementing the rule engine using a discrimination network for mapping module buffers to applicable rules.
+
+In principle, contexts can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, i.e. forming a tree of contexts.
+
+Note: when mapping chunks to RDF, contexts can be mapped to named graphs.
+
+## Tasks
+
+Tasks allow you to write rules that are only applicable to specific tasks. Tasks are associated with modules, and a given module can have multiple active tasks at the same time. You can use *@task* to name a task in a rule condition. This will succeed if the named task is currently active for the module for that condition. The set of active tasks are held independently of the module's buffer. Clearing the buffer doesn't clear the tasks. In rule actions you can use *@enter* with the name of a task to enter, and *@leave* with the name of a task to leave. You can enter or leave multiple tasks by using comma separated lists of task names.
+
+Tasks and contexts are complementary. You use *@context* to name a particular event/situation, e.g. having dinner at a restaurant, and *@task* to segregate rules for different tasks within the overall plan for having dinner (finding a table, reviewing the menu, ordering, paying the bill).
+
+*It will often be convenient when leaving a task to automatically leave any of its sub-tasks. One idea would be to use @task to name a currently active task, and @subtask to enter a subtask for that task. If @task is missing, or doesn't name a currently active task, then @subtask would have the same semantics as @enter. We need to try this out to see how useful sub-tasks are in practice.*
+
+## Ebbinghaus forgetting curve
+
+In any large knowledgebase we only want to recall what is relevant to the current situation based upon past experience.
+
+* Our ability to recall information drops off over time unless boosted by repetition
+* Closely spaced repetitions have less effect (the so called *spacing effect*)
+* Spreading activation – concepts are easier to recall on account of their relationship with other concepts
+
+![forgetting curve](https://www.w3.org/Data/demos/chunks/forgetting.jpg)
+
+This is modelled by using a chunk strength parameter which is boosted whenever a chunk is recalled or updated, and decays exponentially over time. This decay process only operates when the cognitive system is active. Spreading activation is modelled by a wave initiated when recalling or updating a chunk. The wave spreads through the chunk's properties to related chunks. The more such properties the weaker the wave energy given to each property. This energy boosts the chunk's strength as it passes them.
+
+Chunk retrieval is stochastic with respect to chunk strengths, thus most of the time the strongest matching chunk is retrieved, but occasionally a weaker matching chunk will be returned instead. If two chunks have equal strengths they will have equal chances of being recalled.
+
+The above figure shows a sigmoidal curve for learning and exponential decay for forgetting. ACT-R uses a more complex model, and further exploration is needed to evaluate the trade off between the complexity of the model, the computational cost, and the effect on machine learning, see [Said et al](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0158832).
+
+A starting point would be to model forgetting with a leaky capacitor, and learning as the injection of charge, where the amount of charge is smaller for short time intervals, but levels out as the interval increases. This can be modelled with the logistic function. For recall, we return the strongest matching chunk, subject to a minimum threshold, after multiplying the chunk strength by a random factor that is in the range 0 to ∞, and averages around 1. The factor is computed as e<sup>x</sup> where x is from a gaussian distribution centred on zero with a standard deviation of 0.2. The threshold ensures that recall will sometimes fail to return any chunks. This approach involves associating each chunk with a strength and a timestamp. Other ideas are welcomed!
+
+The spacing effect describes the finding that long-term learning is more effective when learning events are spaced out in time, rather than presented in immediate succession. This also helps with the acquisition and generalisation of new concepts, perhaps because relevant features are reinforced whilst irrelevant features are more likely to be forgotten. An algorithmic approach to forgetting is thus related to the role of the brain as a prediction machine seeking order out of chaos.
+
+* See: [Distributing Learning Over Time: The Spacing Effect in
+Children’s Acquisition and Generalization of Science Concepts](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3399982/pdf/nihms365124.pdf), Haley Vlach and Catherine Sandhofer
+
+## [Test Suite](demos/testing/README.md)
+
+* https://www.w3.org/Data/demos/chunks/test-suite/
+
+A web-based test suite for the major features of the chunks and rules format.
+
+## Boosting performance
+
+Forward chaining production rules involve testing the conditions for all of the rules against the current state of working memory. This gets increasingly expensive as the number of rules and the number of facts in working memory increases. It would be impractical to scale to really large memories with very large numbers of rules.
+
+The brain solves this by first applying rules to a comparatively small number of chunk buffers, and second, by compiling rule conditions into a discrimination network *(the Striatum)* whose input is the chunk buffers, and whose output is the set of matching rules. This is followed by a second stage *(the Pallidum)* that selects which rule to use, and a third stage *(the Thalamus)* that applies that rule's actions. This approach was re-invented as the [Rete algorithm](https://en.wikipedia.org/wiki/Rete_algorithm) by Charles Forgy, see below.
+
+There are further opportunities for exploiting efficient graph algorithms such as Levinson and Ellis's solution for searching a lattice of graphs in logarithmic time, see John Sowa's [summary of graph algorithms](http://www.jfsowa.com/pubs/arch.htm). A further consideration is how to support distributed graph algorithms across multiple cognitive modules that may be remote from one another. This relates to work by Sharon Thompson-Schill on a hub and spoke model for how the anterior temporal lobe integrates unimodal information from different cortical regions.
+
+n.b. nature also invented the [page rank algorithm](https://en.wikipedia.org/wiki/PageRank) as a basis for ranking memories for recall from the cortex based upon spreading activation from other memories.
+
+## Relationship to other rule languages
+
+This relates chunk rules to a few other rule languages:
+
+### Minimalist chunks
+
+A simpler version of chunks that restricts property values to names on the grounds of greater cognitive plausibility, see [minimalist approach to chunks](minimalist.md). It is an open question whether the minimalist approach will be better suited to machine learning of procedural knowledge.
+
+### OPS5
+
+OPS5 is a forward chaining rule language developed by Charles Forgy, using his Rete algorithm for efficient application of rules. 
+
+Here is an example:
+
+```
+(p find-colored-block
+    (goal                       ; If there is a goal
+        ^status active          ; which is active
+        ^type find              ; to find
+        ^object block           ; a block
+        ^color <z>)             ; of a cetain color
+    (block                      ; And there is a block
+        ^color <z>              ; of that color
+        ^name <block>)
+    -->
+    (make result                ; Then make an element
+        ^pointer <block>)       ; to point to the block
+    (modify 1                   ; And change the goal
+        ^status satisfied))     ; marking it satisfied
+```
+* See [OPS5 User's Manual](https://apps.dtic.mil/dtic/tr/fulltext/u2/a106558.pdf), Charles Forgy, 1981
+
+*Comment:*
+
+OPS5 marks goals as being active or satisfied, allowing multiple active goals at any one time. In chunks rules are triggered when they match the current state of the buffers. Chunks can be queued to the buffers for deferred processing when current thread of rule execution ends. The queue helps the cognitive system to avoid losing track when several things happen close together in time, e.g. two alerts from the sensory system. A more flexible approach is to keep explicit track of tasks in a graph, and reason about when and how to handle them.
+
+#### N3
+
+Notation3 (N3) is a rule language for RDF that can be used to express rules based upon first order logic that operate over RDF triples. N3 supports quantifiers (@forAll and @forSome) and variables.
+
+Here is an example involving cited graphs:
+
+```
+:John :says {:Kurt :knows :Albert.}.
+
+{:Kurt :knows :Albert.} => {:Albert :knows :Kurt.}.
+```
+
+The first statement signifies that *John says that Kurt knows Albert*. The second statement is a rule that says that if Kurt knows Albert then we can infer that Albert knows Kurt.  Whilst we know from the above that John says that Kurt knows Albert, we can't be sure of whether Kurt does in fact know Albert.  We could add a rule to the effect that John only speaks the truth, e.g.
+
+```
+{:John :says ?x.} => ?x.
+```
+
+Here is an example that deduces if someone has an uncle:
+
+```
+{
+  ?X hasParent ?P .
+  ?P hasBrother ?B .
+} => {
+  ?X hasUncle ?B
+}.
+```
+
+* [Notation3 (N3): A readable RDF syntax](https://www.w3.org/TeamSubmission/n3/) 28 March 2011
+* [Notation3 as the Unifying Logic for the Semantic Web](https://www.researchgate.net/publication/337101990_Notation3_as_the_Unifying_Logic_for_the_Semantic_Web) Dörthe Arndt's Ph.D thesis, 2019.
+
+*Comment:*
+
+One way to express first example in chunks as follows:
+
+```
+says {@subject John; @object s1}
+knows s1 {@context c1; @subject Albert; @object Kurt}
+```
+
+which places what John says in a named context to keep what he says distinct from what is generally true.
+
+The second example could be rewritten as an inference rule, e.g.
+
+```
+knows {@subject ?s; @object o} => knows {@subject o; @object s}
+```
+
+The third example involves the logical join of two facts and would be harder to express as chunk rules. One solution would involve iterating over the *hasParent* facts and then iterating over the corresponding *hasBrother* facts. This is where it would be easier to express the rule declaratively and invoke a graph algorithm to search over all matching facts, see [more complex queries](#more-complex-queries).
