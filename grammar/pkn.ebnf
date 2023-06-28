@@ -1,0 +1,44 @@
+STATEMENTS ::= statement*
+	
+statement ::= (property | relation | implication) ("for" scope)? meta?
+    scope ::= name (',' name)*
+    meta ::= '(' param (',' param)* ')'
+    param ::= name value
+       
+property ::= descriptor "of" argument operator referent
+    descriptor ::= name | variable
+    argument ::= name | variable
+    operator ::= "includes" | "excludes" | "is" | name
+    value ::= name | number
+    referent ::= (value (',' value)*) | variable
+
+relation ::= subject relationship object
+    subject ::= name | variable
+    relationship ::= name | variable
+    object ::= name | variable
+
+implication ::= terms "implies" terms
+    terms ::= term ("and" term)*
+    term ::= property | relation
+
+ANALOGY ::= concept ":" concept "::" concept ":" concept
+    concept ::= name | variable
+
+QUERY ::= quantifier variable ("where" conditions)? "from" conditions
+    quantifier ::= "no" | "all" | "any" | "few" | "many" | "most"| "which" | "count"
+    conditions ::= condition ("and" condition)*
+    condition ::= property | relation
+
+variable ::= "?" name?
+name ::= letter (letter | digit | "-")* (":" (letter | digit | "-")+)*
+number ::= ("-" | "+")? digit+ ("." digit+)?
+	
+letter ::= 
+    "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
+    "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" |
+    "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | 
+    "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
+    "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | 
+    "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+
+digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
