@@ -38,12 +38,6 @@
       }
     };
   </script>
-  <style>
-    .railroad {
-      margin-top: 1em;
-      margin-bottom: 2em;
-    }
-  </style>
 </head>
 <body>
   <section id="abstract">
@@ -70,7 +64,7 @@
        <li>fuzzy modifiers, e.g. <em>very</em> old, where such terms are relative to the context they apply to.</li>
        <li>fuzzy quantifiers, e.g. <em>few</em> and <em>many</em>, for queries akin to SPARQL.</li>
     </ul>
-
+    
     <p>For a web-based demonstrator for PKN, see [[PKN-demo]].</p>
   </section>
 
@@ -87,24 +81,29 @@
         <dt><dfn>Parser</dfn></dt>
         <dd>A [=parser=] transforms a [=PKN document=] into another representation. A [=parser=] is conformant to this specification if it accepts any conforming [=PKN document=].</dd>
         <dt><dfn>Rule engine</dfn></dt>
-        <dd>A processing application that operates on PKN statements. A [=rule engine=] is conformant to this specification if it follows the algorithms defined in <a href="#rule-execution"></a>.</dd>
+        <dd>A processing application that operates on PKN statements. A [=rule engine=] is conformant to this specification if it follows the algorithms defined in <a href="#inferencing"></a>.</dd>
       </dl>
     </section>
 </section>
 
 <section id="data-types">
   <h2>Data Types</h2>
+  
   <p>PKN documents use the following restricted set of data types. See <a href="#grammar"></a> for a formal definition of their serialization.</p>
 
-  <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
-  <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=].</p>
+    <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
+    
+    <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=].</p>
 </section>
 
 <section id="statements">
   <h2>PKN Statements</h2>
+  
+  <p>PKN supports several kinds of statements as defined below.</p>
 
   <section id="metadata">
     <h3>Statement MetaData</h3>
+    
   </section>
 
   <section id="properties">
@@ -137,10 +136,21 @@
   
   <section id="grammar">
     <h3>PKN Grammar</h3>
+    <p>A [=PKN document=] MUST follow the grammar defined below.</p>
+
+    <pre><code class="abnf" data-include="grammar/pkn.ebnf" data-include-format="text"></code></pre>
+
+    <p>Comment start with '#' and continue to the end of the current line or the end of the file, whichever comes first. White space is permitted between tokens. One exception is between '?' and the name token for a variable. Another exception is between the sign ('+' and '-') and the digits that form a number.</p>
+    
+    <p class="issue">Should the grammar notation be switched from EBNF to ABNF for consistency with W3C practice, noting that EBNF is easier to understand?</p>
   </section>  
   
-  <section id="railroad-diagrams">
+  <section id="railroad-diagrams" class="informative">
     <h3>Railroad Diagrams</h3>
+    
+    <p>This section presents a visualisation of the grammar in the form of railroad diagrams. These diagrams are provided solely to make it easier to get an intuitive grasp of the syntax of each token.</p>
+    
+    <div data-include="grammar/pkn-rr.html" data-include-replace="true"></div>
   </section>  
   
   <section id="pkn-rdf" class="informative">
@@ -148,8 +158,10 @@
   </section>  
 </section>
 
-<section id="rule-execution">
-  <h2>PKN Rule Execution</h2>
+<section id="inferencing">
+  <h2>PKN Inferencing</h2>
+  
+  <p>This section describes how PKN statements can be used to compute inferences along with their estimated certainty, as the basis for constructing arguments both for and against a given premise.</p>
   
   <section id="query-execution">
     <h3>Computing with Relations</h3>
@@ -169,3 +181,4 @@
 </section>
 
 </body>
+</html>
