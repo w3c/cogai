@@ -26,6 +26,7 @@
     polygon.regexp        {fill: #FFF4C7; stroke: #332900; stroke-width: 1;}
   </style>
 
+
 <dl>
 <dt id="rr-STATEMENTS">STATEMENTS</dt>
 <dd class="railroad"><svg width="185" height="57">
@@ -38,7 +39,7 @@
          <polygon points="175 51 167 47 167 55"/></svg></dd>
 
 <dt id="rr-statement">statement</dt>
-<dd class="railroad"><svg width="473" height="125">
+<dd class="railroad"><svg width="473" height="169">
          <polygon points="9 17 1 13 1 21"/>
          <polygon points="17 17 9 13 9 21"/><a href="#rr-property" title="property">
             <rect x="51" y="3" width="74" height="32"/>
@@ -49,7 +50,10 @@
             <text class="nonterminal" x="59" y="65">relation</text></a><a href="#rr-implication" title="implication">
             <rect x="51" y="91" width="88" height="32"/>
             <rect x="49" y="89" width="88" height="32" class="nonterminal"/>
-            <text class="nonterminal" x="59" y="109">implication</text></a><rect x="199" y="35" width="38" height="32" rx="10"/>
+            <text class="nonterminal" x="59" y="109">implication</text></a><a href="#rr-analogy" title="analogy">
+            <rect x="51" y="135" width="70" height="32"/>
+            <rect x="49" y="133" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="153">analogy</text></a><rect x="199" y="35" width="38" height="32" rx="10"/>
          <rect x="197" y="33" width="38" height="32" class="terminal" rx="10"/>
          <text class="terminal" x="207" y="53">for</text><a href="#rr-scope" title="scope">
             <rect x="257" y="35" width="56" height="32"/>
@@ -57,7 +61,7 @@
             <text class="nonterminal" x="265" y="53">scope</text></a><a href="#rr-meta" title="meta">
             <rect x="373" y="35" width="52" height="32"/>
             <rect x="371" y="33" width="52" height="32" class="nonterminal"/>
-            <text class="nonterminal" x="381" y="53">meta</text></a><path class="line" d="m17 17 h2 m20 0 h10 m74 0 h10 m0 0 h14 m-128 0 h20 m108 0 h20 m-148 0 q10 0 10 10 m128 0 q0 -10 10 -10 m-138 10 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m68 0 h10 m0 0 h20 m-118 -10 v20 m128 0 v-20 m-128 20 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m88 0 h10 m40 -88 h10 m0 0 h124 m-154 0 h20 m134 0 h20 m-174 0 q10 0 10 10 m154 0 q0 -10 10 -10 m-164 10 v12 m154 0 v-12 m-154 12 q0 10 10 10 m134 0 q10 0 10 -10 m-144 10 h10 m38 0 h10 m0 0 h10 m56 0 h10 m40 -32 h10 m0 0 h62 m-92 0 h20 m72 0 h20 m-112 0 q10 0 10 10 m92 0 q0 -10 10 -10 m-102 10 v12 m92 0 v-12 m-92 12 q0 10 10 10 m72 0 q10 0 10 -10 m-82 10 h10 m52 0 h10 m23 -32 h-3"/>
+            <text class="nonterminal" x="381" y="53">meta</text></a><path class="line" d="m17 17 h2 m20 0 h10 m74 0 h10 m0 0 h14 m-128 0 h20 m108 0 h20 m-148 0 q10 0 10 10 m128 0 q0 -10 10 -10 m-138 10 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m68 0 h10 m0 0 h20 m-118 -10 v20 m128 0 v-20 m-128 20 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m88 0 h10 m-118 -10 v20 m128 0 v-20 m-128 20 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m70 0 h10 m0 0 h18 m40 -132 h10 m0 0 h124 m-154 0 h20 m134 0 h20 m-174 0 q10 0 10 10 m154 0 q0 -10 10 -10 m-164 10 v12 m154 0 v-12 m-154 12 q0 10 10 10 m134 0 q10 0 10 -10 m-144 10 h10 m38 0 h10 m0 0 h10 m56 0 h10 m40 -32 h10 m0 0 h62 m-92 0 h20 m72 0 h20 m-112 0 q10 0 10 10 m92 0 q0 -10 10 -10 m-102 10 v12 m92 0 v-12 m-92 12 q0 10 10 10 m72 0 q10 0 10 -10 m-82 10 h10 m52 0 h10 m23 -32 h-3"/>
          <polygon points="463 17 471 13 471 21"/>
          <polygon points="463 17 455 13 455 21"/></svg></dd>
 
@@ -296,7 +300,442 @@
          <polygon points="163 17 171 13 171 21"/>
          <polygon points="163 17 155 13 155 21"/></svg></dd>
 
-<dt id="rr-ANALOGY">ANALOGY</dt>
+<dt id="rr-analogy">analogy</dt>
+<dd class="railroad"><svg width="529" height="37">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-concept" title="concept">
+            <rect x="31" y="3" width="68" height="32"/>
+            <rect x="29" y="1" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="21">concept</text></a><rect x="119" y="3" width="24" height="32" rx="10"/>
+         <rect x="117" y="1" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="127" y="21">:</text><a href="#rr-concept" title="concept">
+            <rect x="163" y="3" width="68" height="32"/>
+            <rect x="161" y="1" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="171" y="21">concept</text></a><rect x="251" y="3" width="30" height="32" rx="10"/>
+         <rect x="249" y="1" width="30" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="259" y="21">::</text><a href="#rr-concept" title="concept">
+            <rect x="301" y="3" width="68" height="32"/>
+            <rect x="299" y="1" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="309" y="21">concept</text></a><rect x="389" y="3" width="24" height="32" rx="10"/>
+         <rect x="387" y="1" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="397" y="21">:</text><a href="#rr-concept" title="concept">
+            <rect x="433" y="3" width="68" height="32"/>
+            <rect x="431" y="1" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="441" y="21">concept</text></a><path class="line" d="m17 17 h2 m0 0 h10 m68 0 h10 m0 0 h10 m24 0 h10 m0 0 h10 m68 0 h10 m0 0 h10 m30 0 h10 m0 0 h10 m68 0 h10 m0 0 h10 m24 0 h10 m0 0 h10 m68 0 h10 m3 0 h-3"/>
+         <polygon points="519 17 527 13 527 21"/>
+         <polygon points="519 17 511 13 511 21"/></svg></dd>
+
+<dt id="rr-concept">concept</dt>
+<dd class="railroad"><svg width="169" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-variable" title="variable">
+            <rect x="51" y="47" width="70" height="32"/>
+            <rect x="49" y="45" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">variable</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h14 m-110 0 h20 m90 0 h20 m-130 0 q10 0 10 10 m110 0 q0 -10 10 -10 m-120 10 v24 m110 0 v-24 m-110 24 q0 10 10 10 m90 0 q10 0 10 -10 m-100 10 h10 m70 0 h10 m23 -44 h-3"/>
+         <polygon points="159 17 167 13 167 21"/>
+         <polygon points="159 17 151 13 151 21"/></svg></dd>
+
+<dt id="rr-QUERY">QUERY</dt>
+<dd class="railroad"><svg width="631" height="69">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-quantifier" title="quantifier">
+            <rect x="31" y="3" width="80" height="32"/>
+            <rect x="29" y="1" width="80" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="21">quantifier</text></a><a href="#rr-variable" title="variable">
+            <rect x="131" y="3" width="70" height="32"/>
+            <rect x="129" y="1" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="139" y="21">variable</text></a><rect x="241" y="35" width="62" height="32" rx="10"/>
+         <rect x="239" y="33" width="62" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="249" y="53">where</text><a href="#rr-conditions" title="conditions">
+            <rect x="323" y="35" width="84" height="32"/>
+            <rect x="321" y="33" width="84" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="331" y="53">conditions</text></a><rect x="447" y="3" width="52" height="32" rx="10"/>
+         <rect x="445" y="1" width="52" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="455" y="21">from</text><a href="#rr-conditions" title="conditions">
+            <rect x="519" y="3" width="84" height="32"/>
+            <rect x="517" y="1" width="84" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="527" y="21">conditions</text></a><path class="line" d="m17 17 h2 m0 0 h10 m80 0 h10 m0 0 h10 m70 0 h10 m20 0 h10 m0 0 h176 m-206 0 h20 m186 0 h20 m-226 0 q10 0 10 10 m206 0 q0 -10 10 -10 m-216 10 v12 m206 0 v-12 m-206 12 q0 10 10 10 m186 0 q10 0 10 -10 m-196 10 h10 m62 0 h10 m0 0 h10 m84 0 h10 m20 -32 h10 m52 0 h10 m0 0 h10 m84 0 h10 m3 0 h-3"/>
+         <polygon points="621 17 629 13 629 21"/>
+         <polygon points="621 17 613 13 613 21"/></svg></dd>
+
+<dt id="rr-quantifier">quantifier</dt>
+<dd class="railroad"><svg width="159" height="345">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/>
+         <rect x="51" y="3" width="36" height="32" rx="10"/>
+         <rect x="49" y="1" width="36" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="21">no</text>
+         <rect x="51" y="47" width="36" height="32" rx="10"/>
+         <rect x="49" y="45" width="36" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="65">all</text>
+         <rect x="51" y="91" width="44" height="32" rx="10"/>
+         <rect x="49" y="89" width="44" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="109">any</text>
+         <rect x="51" y="135" width="44" height="32" rx="10"/>
+         <rect x="49" y="133" width="44" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="153">few</text>
+         <rect x="51" y="179" width="56" height="32" rx="10"/>
+         <rect x="49" y="177" width="56" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="197">many</text>
+         <rect x="51" y="223" width="52" height="32" rx="10"/>
+         <rect x="49" y="221" width="52" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="241">most</text>
+         <rect x="51" y="267" width="60" height="32" rx="10"/>
+         <rect x="49" y="265" width="60" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="285">which</text>
+         <rect x="51" y="311" width="58" height="32" rx="10"/>
+         <rect x="49" y="309" width="58" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="329">count</text>
+         <path class="line" d="m17 17 h2 m20 0 h10 m36 0 h10 m0 0 h24 m-100 0 h20 m80 0 h20 m-120 0 q10 0 10 10 m100 0 q0 -10 10 -10 m-110 10 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m36 0 h10 m0 0 h24 m-90 -10 v20 m100 0 v-20 m-100 20 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m44 0 h10 m0 0 h16 m-90 -10 v20 m100 0 v-20 m-100 20 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m44 0 h10 m0 0 h16 m-90 -10 v20 m100 0 v-20 m-100 20 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m56 0 h10 m0 0 h4 m-90 -10 v20 m100 0 v-20 m-100 20 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m52 0 h10 m0 0 h8 m-90 -10 v20 m100 0 v-20 m-100 20 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m60 0 h10 m-90 -10 v20 m100 0 v-20 m-100 20 v24 m100 0 v-24 m-100 24 q0 10 10 10 m80 0 q10 0 10 -10 m-90 10 h10 m58 0 h10 m0 0 h2 m23 -308 h-3"/>
+         <polygon points="149 17 157 13 157 21"/>
+         <polygon points="149 17 141 13 141 21"/></svg></dd>
+
+<dt id="rr-conditions">conditions</dt>
+<dd class="railroad"><svg width="177" height="81">
+         <polygon points="9 61 1 57 1 65"/>
+         <polygon points="17 61 9 57 9 65"/><a href="#rr-condition" title="condition">
+            <rect x="51" y="47" width="78" height="32"/>
+            <rect x="49" y="45" width="78" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">condition</text></a><rect x="51" y="3" width="44" height="32" rx="10"/>
+         <rect x="49" y="1" width="44" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="21">and</text>
+         <path class="line" d="m17 61 h2 m20 0 h10 m78 0 h10 m-118 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -24 q0 -10 10 -10 m98 44 l20 0 m-20 0 q10 0 10 -10 l0 -24 q0 -10 -10 -10 m-98 0 h10 m44 0 h10 m0 0 h34 m23 44 h-3"/>
+         <polygon points="167 61 175 57 175 65"/>
+         <polygon points="167 61 159 57 159 65"/></svg></dd>
+
+<dt id="rr-condition">condition</dt>
+<dd class="railroad"><svg width="173" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-property" title="property">
+            <rect x="51" y="3" width="74" height="32"/>
+            <rect x="49" y="1" width="74" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">property</text></a><a href="#rr-relation" title="relation">
+            <rect x="51" y="47" width="68" height="32"/>
+            <rect x="49" y="45" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">relation</text></a><path class="line" d="m17 17 h2 m20 0 h10 m74 0 h10 m-114 0 h20 m94 0 h20 m-134 0 q10 0 10 10 m114 0 q0 -10 10 -10 m-124 10 v24 m114 0 v-24 m-114 24 q0 10 10 10 m94 0 q10 0 10 -10 m-104 10 h10 m68 0 h10 m0 0 h6 m23 -44 h-3"/>
+         <polygon points="163 17 171 13 171 21"/>
+         <polygon points="163 17 155 13 155 21"/></svg></dd>
+
+<dt id="rr-variable">variable</dt>
+<dd class="railroad"><svg width="201" height="69">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/>
+         <rect x="31" y="3" width="26" height="32" rx="10"/>
+         <rect x="29" y="1" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="39" y="21">?</text><a href="#rr-name" title="name">
+            <rect x="97" y="35" width="56" height="32"/>
+            <rect x="95" y="33" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="105" y="53">name</text></a><path class="line" d="m17 17 h2 m0 0 h10 m26 0 h10 m20 0 h10 m0 0 h66 m-96 0 h20 m76 0 h20 m-116 0 q10 0 10 10 m96 0 q0 -10 10 -10 m-106 10 v12 m96 0 v-12 m-96 12 q0 10 10 10 m76 0 q10 0 10 -10 m-86 10 h10 m56 0 h10 m23 -32 h-3"/>
+         <polygon points="191 17 199 13 199 21"/>
+         <polygon points="191 17 183 13 183 21"/></svg></dd>
+
+<dt id="rr-name">name</dt>
+<dd class="railroad"><svg width="505" height="263">
+         <polygon points="9 139 1 135 1 143"/>
+         <polygon points="17 139 9 135 9 143"/><a href="#rr-letter" title="letter">
+            <rect x="31" y="125" width="54" height="32"/>
+            <rect x="29" y="123" width="54" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="143">letter</text></a><a href="#rr-letter" title="letter">
+            <rect x="125" y="91" width="54" height="32"/>
+            <rect x="123" y="89" width="54" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="133" y="109">letter</text></a><a href="#rr-digit" title="digit">
+            <rect x="125" y="47" width="48" height="32"/>
+            <rect x="123" y="45" width="48" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="133" y="65">digit</text></a><rect x="125" y="3" width="26" height="32" rx="10"/>
+         <rect x="123" y="1" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="133" y="21">-</text>
+         <rect x="259" y="125" width="24" height="32" rx="10"/>
+         <rect x="257" y="123" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="267" y="143">:</text><a href="#rr-letter" title="letter">
+            <rect x="343" y="125" width="54" height="32"/>
+            <rect x="341" y="123" width="54" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="351" y="143">letter</text></a><a href="#rr-digit" title="digit">
+            <rect x="343" y="169" width="48" height="32"/>
+            <rect x="341" y="167" width="48" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="351" y="187">digit</text></a><rect x="343" y="213" width="26" height="32" rx="10"/>
+         <rect x="341" y="211" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="351" y="231">-</text>
+         <path class="line" d="m17 139 h2 m0 0 h10 m54 0 h10 m20 0 h10 m0 0 h64 m-94 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -14 q0 -10 10 -10 m74 34 l20 0 m-20 0 q10 0 10 -10 l0 -14 q0 -10 -10 -10 m-74 0 h10 m54 0 h10 m-84 10 l0 -44 q0 -10 10 -10 m84 54 l0 -44 q0 -10 -10 -10 m-74 0 h10 m48 0 h10 m0 0 h6 m-84 10 l0 -44 q0 -10 10 -10 m84 54 l0 -44 q0 -10 -10 -10 m-74 0 h10 m26 0 h10 m0 0 h28 m60 122 h10 m24 0 h10 m40 0 h10 m54 0 h10 m-94 0 h20 m74 0 h20 m-114 0 q10 0 10 10 m94 0 q0 -10 10 -10 m-104 10 v24 m94 0 v-24 m-94 24 q0 10 10 10 m74 0 q10 0 10 -10 m-84 10 h10 m48 0 h10 m0 0 h6 m-84 -10 v20 m94 0 v-20 m-94 20 v24 m94 0 v-24 m-94 24 q0 10 10 10 m74 0 q10 0 10 -10 m-84 10 h10 m26 0 h10 m0 0 h28 m-114 -88 l20 0 m-1 0 q-9 0 -9 -10 l0 -12 q0 -10 10 -10 m114 32 l20 0 m-20 0 q10 0 10 -10 l0 -12 q0 -10 -10 -10 m-114 0 h10 m0 0 h104 m-198 32 l20 0 m-1 0 q-9 0 -9 -10 l0 -28 q0 -10 10 -10 m198 48 l20 0 m-20 0 q10 0 10 -10 l0 -28 q0 -10 -10 -10 m-198 0 h10 m0 0 h188 m-238 48 h20 m238 0 h20 m-278 0 q10 0 10 10 m258 0 q0 -10 10 -10 m-268 10 v102 m258 0 v-102 m-258 102 q0 10 10 10 m238 0 q10 0 10 -10 m-248 10 h10 m0 0 h228 m23 -122 h-3"/>
+         <polygon points="495 139 503 135 503 143"/>
+         <polygon points="495 139 487 135 487 143"/></svg></dd>
+
+<dl>
+<dt id="rr-STATEMENTS">STATEMENTS</dt>
+<dd class="railroad"><svg width="185" height="57">
+         <polygon points="9 51 1 47 1 55"/>
+         <polygon points="17 51 9 47 9 55"/><a href="#rr-statement" title="statement">
+            <rect x="51" y="3" width="86" height="32"/>
+            <rect x="49" y="1" width="86" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">statement</text></a><path class="line" d="m17 51 h2 m20 0 h10 m0 0 h96 m-126 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -14 q0 -10 10 -10 m106 34 l20 0 m-20 0 q10 0 10 -10 l0 -14 q0 -10 -10 -10 m-106 0 h10 m86 0 h10 m23 34 h-3"/>
+         <polygon points="175 51 183 47 183 55"/>
+         <polygon points="175 51 167 47 167 55"/></svg></dd>
+
+<dt id="rr-statement">statement</dt>
+<dd class="railroad"><svg width="473" height="169">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-property" title="property">
+            <rect x="51" y="3" width="74" height="32"/>
+            <rect x="49" y="1" width="74" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">property</text></a><a href="#rr-relation" title="relation">
+            <rect x="51" y="47" width="68" height="32"/>
+            <rect x="49" y="45" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">relation</text></a><a href="#rr-implication" title="implication">
+            <rect x="51" y="91" width="88" height="32"/>
+            <rect x="49" y="89" width="88" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="109">implication</text></a><a href="#rr-analogy" title="analogy">
+            <rect x="51" y="135" width="70" height="32"/>
+            <rect x="49" y="133" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="153">analogy</text></a><rect x="199" y="35" width="38" height="32" rx="10"/>
+         <rect x="197" y="33" width="38" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="207" y="53">for</text><a href="#rr-scope" title="scope">
+            <rect x="257" y="35" width="56" height="32"/>
+            <rect x="255" y="33" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="265" y="53">scope</text></a><a href="#rr-meta" title="meta">
+            <rect x="373" y="35" width="52" height="32"/>
+            <rect x="371" y="33" width="52" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="381" y="53">meta</text></a><path class="line" d="m17 17 h2 m20 0 h10 m74 0 h10 m0 0 h14 m-128 0 h20 m108 0 h20 m-148 0 q10 0 10 10 m128 0 q0 -10 10 -10 m-138 10 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m68 0 h10 m0 0 h20 m-118 -10 v20 m128 0 v-20 m-128 20 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m88 0 h10 m-118 -10 v20 m128 0 v-20 m-128 20 v24 m128 0 v-24 m-128 24 q0 10 10 10 m108 0 q10 0 10 -10 m-118 10 h10 m70 0 h10 m0 0 h18 m40 -132 h10 m0 0 h124 m-154 0 h20 m134 0 h20 m-174 0 q10 0 10 10 m154 0 q0 -10 10 -10 m-164 10 v12 m154 0 v-12 m-154 12 q0 10 10 10 m134 0 q10 0 10 -10 m-144 10 h10 m38 0 h10 m0 0 h10 m56 0 h10 m40 -32 h10 m0 0 h62 m-92 0 h20 m72 0 h20 m-112 0 q10 0 10 10 m92 0 q0 -10 10 -10 m-102 10 v12 m92 0 v-12 m-92 12 q0 10 10 10 m72 0 q10 0 10 -10 m-82 10 h10 m52 0 h10 m23 -32 h-3"/>
+         <polygon points="463 17 471 13 471 21"/>
+         <polygon points="463 17 455 13 455 21"/></svg></dd>
+
+<dt id="rr-scope">scope</dt>
+<dd class="railroad"><svg width="155" height="81">
+         <polygon points="9 61 1 57 1 65"/>
+         <polygon points="17 61 9 57 9 65"/><a href="#rr-name" title="name">
+            <rect x="51" y="47" width="56" height="32"/>
+            <rect x="49" y="45" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">name</text></a><rect x="51" y="3" width="24" height="32" rx="10"/>
+         <rect x="49" y="1" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="21">,</text>
+         <path class="line" d="m17 61 h2 m20 0 h10 m56 0 h10 m-96 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -24 q0 -10 10 -10 m76 44 l20 0 m-20 0 q10 0 10 -10 l0 -24 q0 -10 -10 -10 m-76 0 h10 m24 0 h10 m0 0 h32 m23 44 h-3"/>
+         <polygon points="145 61 153 57 153 65"/>
+         <polygon points="145 61 137 57 137 65"/></svg></dd>
+
+<dt id="rr-meta">meta</dt>
+<dd class="railroad"><svg width="251" height="81">
+         <polygon points="9 61 1 57 1 65"/>
+         <polygon points="17 61 9 57 9 65"/>
+         <rect x="31" y="47" width="26" height="32" rx="10"/>
+         <rect x="29" y="45" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="39" y="65">(</text><a href="#rr-param" title="param">
+            <rect x="97" y="47" width="60" height="32"/>
+            <rect x="95" y="45" width="60" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="105" y="65">param</text></a><rect x="97" y="3" width="24" height="32" rx="10"/>
+         <rect x="95" y="1" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="105" y="21">,</text>
+         <rect x="197" y="47" width="26" height="32" rx="10"/>
+         <rect x="195" y="45" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="205" y="65">)</text>
+         <path class="line" d="m17 61 h2 m0 0 h10 m26 0 h10 m20 0 h10 m60 0 h10 m-100 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -24 q0 -10 10 -10 m80 44 l20 0 m-20 0 q10 0 10 -10 l0 -24 q0 -10 -10 -10 m-80 0 h10 m24 0 h10 m0 0 h36 m20 44 h10 m26 0 h10 m3 0 h-3"/>
+         <polygon points="241 61 249 57 249 65"/>
+         <polygon points="241 61 233 57 233 65"/></svg></dd>
+
+<dt id="rr-param">param</dt>
+<dd class="railroad"><svg width="189" height="37">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="31" y="3" width="56" height="32"/>
+            <rect x="29" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="21">name</text></a><a href="#rr-value" title="value">
+            <rect x="107" y="3" width="54" height="32"/>
+            <rect x="105" y="1" width="54" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="115" y="21">value</text></a><path class="line" d="m17 17 h2 m0 0 h10 m56 0 h10 m0 0 h10 m54 0 h10 m3 0 h-3"/>
+         <polygon points="179 17 187 13 187 21"/>
+         <polygon points="179 17 171 13 171 21"/></svg></dd>
+
+<dt id="rr-property">property</dt>
+<dd class="railroad"><svg width="481" height="37">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-descriptor" title="descriptor">
+            <rect x="31" y="3" width="84" height="32"/>
+            <rect x="29" y="1" width="84" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="21">descriptor</text></a><rect x="135" y="3" width="32" height="32" rx="10"/>
+         <rect x="133" y="1" width="32" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="143" y="21">of</text><a href="#rr-argument" title="argument">
+            <rect x="187" y="3" width="82" height="32"/>
+            <rect x="185" y="1" width="82" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="195" y="21">argument</text></a><a href="#rr-operator" title="operator">
+            <rect x="289" y="3" width="74" height="32"/>
+            <rect x="287" y="1" width="74" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="297" y="21">operator</text></a><a href="#rr-referent" title="referent">
+            <rect x="383" y="3" width="70" height="32"/>
+            <rect x="381" y="1" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="391" y="21">referent</text></a><path class="line" d="m17 17 h2 m0 0 h10 m84 0 h10 m0 0 h10 m32 0 h10 m0 0 h10 m82 0 h10 m0 0 h10 m74 0 h10 m0 0 h10 m70 0 h10 m3 0 h-3"/>
+         <polygon points="471 17 479 13 479 21"/>
+         <polygon points="471 17 463 13 463 21"/></svg></dd>
+
+<dt id="rr-descriptor">descriptor</dt>
+<dd class="railroad"><svg width="169" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-variable" title="variable">
+            <rect x="51" y="47" width="70" height="32"/>
+            <rect x="49" y="45" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">variable</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h14 m-110 0 h20 m90 0 h20 m-130 0 q10 0 10 10 m110 0 q0 -10 10 -10 m-120 10 v24 m110 0 v-24 m-110 24 q0 10 10 10 m90 0 q10 0 10 -10 m-100 10 h10 m70 0 h10 m23 -44 h-3"/>
+         <polygon points="159 17 167 13 167 21"/>
+         <polygon points="159 17 151 13 151 21"/></svg></dd>
+
+<dt id="rr-argument">argument</dt>
+<dd class="railroad"><svg width="169" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-variable" title="variable">
+            <rect x="51" y="47" width="70" height="32"/>
+            <rect x="49" y="45" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">variable</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h14 m-110 0 h20 m90 0 h20 m-130 0 q10 0 10 10 m110 0 q0 -10 10 -10 m-120 10 v24 m110 0 v-24 m-110 24 q0 10 10 10 m90 0 q10 0 10 -10 m-100 10 h10 m70 0 h10 m23 -44 h-3"/>
+         <polygon points="159 17 167 13 167 21"/>
+         <polygon points="159 17 151 13 151 21"/></svg></dd>
+
+<dt id="rr-operator">operator</dt>
+<dd class="railroad"><svg width="177" height="169">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/>
+         <rect x="51" y="3" width="76" height="32" rx="10"/>
+         <rect x="49" y="1" width="76" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="21">includes</text>
+         <rect x="51" y="47" width="78" height="32" rx="10"/>
+         <rect x="49" y="45" width="78" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="65">excludes</text>
+         <rect x="51" y="91" width="30" height="32" rx="10"/>
+         <rect x="49" y="89" width="30" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="109">is</text><a href="#rr-name" title="name">
+            <rect x="51" y="135" width="56" height="32"/>
+            <rect x="49" y="133" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="153">name</text></a><path class="line" d="m17 17 h2 m20 0 h10 m76 0 h10 m0 0 h2 m-118 0 h20 m98 0 h20 m-138 0 q10 0 10 10 m118 0 q0 -10 10 -10 m-128 10 v24 m118 0 v-24 m-118 24 q0 10 10 10 m98 0 q10 0 10 -10 m-108 10 h10 m78 0 h10 m-108 -10 v20 m118 0 v-20 m-118 20 v24 m118 0 v-24 m-118 24 q0 10 10 10 m98 0 q10 0 10 -10 m-108 10 h10 m30 0 h10 m0 0 h48 m-108 -10 v20 m118 0 v-20 m-118 20 v24 m118 0 v-24 m-118 24 q0 10 10 10 m98 0 q10 0 10 -10 m-108 10 h10 m56 0 h10 m0 0 h22 m23 -132 h-3"/>
+         <polygon points="167 17 175 13 175 21"/>
+         <polygon points="167 17 159 13 159 21"/></svg></dd>
+
+<dt id="rr-value">value</dt>
+<dd class="railroad"><svg width="167" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-number" title="number">
+            <rect x="51" y="47" width="68" height="32"/>
+            <rect x="49" y="45" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">number</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h12 m-108 0 h20 m88 0 h20 m-128 0 q10 0 10 10 m108 0 q0 -10 10 -10 m-118 10 v24 m108 0 v-24 m-108 24 q0 10 10 10 m88 0 q10 0 10 -10 m-98 10 h10 m68 0 h10 m23 -44 h-3"/>
+         <polygon points="157 17 165 13 165 21"/>
+         <polygon points="157 17 149 13 149 21"/></svg></dd>
+
+<dt id="rr-referent">referent</dt>
+<dd class="railroad"><svg width="193" height="125">
+         <polygon points="9 61 1 57 1 65"/>
+         <polygon points="17 61 9 57 9 65"/><a href="#rr-value" title="value">
+            <rect x="71" y="47" width="54" height="32"/>
+            <rect x="69" y="45" width="54" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="79" y="65">value</text></a><rect x="71" y="3" width="24" height="32" rx="10"/>
+         <rect x="69" y="1" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="79" y="21">,</text><a href="#rr-variable" title="variable">
+            <rect x="51" y="91" width="70" height="32"/>
+            <rect x="49" y="89" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="109">variable</text></a><path class="line" d="m17 61 h2 m40 0 h10 m54 0 h10 m-94 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -24 q0 -10 10 -10 m74 44 l20 0 m-20 0 q10 0 10 -10 l0 -24 q0 -10 -10 -10 m-74 0 h10 m24 0 h10 m0 0 h30 m-114 44 h20 m114 0 h20 m-154 0 q10 0 10 10 m134 0 q0 -10 10 -10 m-144 10 v24 m134 0 v-24 m-134 24 q0 10 10 10 m114 0 q10 0 10 -10 m-124 10 h10 m70 0 h10 m0 0 h24 m23 -44 h-3"/>
+         <polygon points="183 61 191 57 191 65"/>
+         <polygon points="183 61 175 57 175 65"/></svg></dd>
+
+<dt id="rr-relation">relation</dt>
+<dd class="railroad"><svg width="317" height="37">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-subject" title="subject">
+            <rect x="31" y="3" width="66" height="32"/>
+            <rect x="29" y="1" width="66" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="21">subject</text></a><a href="#rr-relationship" title="relationship">
+            <rect x="117" y="3" width="94" height="32"/>
+            <rect x="115" y="1" width="94" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="125" y="21">relationship</text></a><a href="#rr-object" title="object">
+            <rect x="231" y="3" width="58" height="32"/>
+            <rect x="229" y="1" width="58" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="239" y="21">object</text></a><path class="line" d="m17 17 h2 m0 0 h10 m66 0 h10 m0 0 h10 m94 0 h10 m0 0 h10 m58 0 h10 m3 0 h-3"/>
+         <polygon points="307 17 315 13 315 21"/>
+         <polygon points="307 17 299 13 299 21"/></svg></dd>
+
+<dt id="rr-subject">subject</dt>
+<dd class="railroad"><svg width="169" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-variable" title="variable">
+            <rect x="51" y="47" width="70" height="32"/>
+            <rect x="49" y="45" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">variable</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h14 m-110 0 h20 m90 0 h20 m-130 0 q10 0 10 10 m110 0 q0 -10 10 -10 m-120 10 v24 m110 0 v-24 m-110 24 q0 10 10 10 m90 0 q10 0 10 -10 m-100 10 h10 m70 0 h10 m23 -44 h-3"/>
+         <polygon points="159 17 167 13 167 21"/>
+         <polygon points="159 17 151 13 151 21"/></svg></dd>
+
+<dt id="rr-relationship">relationship</dt>
+<dd class="railroad"><svg width="169" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-variable" title="variable">
+            <rect x="51" y="47" width="70" height="32"/>
+            <rect x="49" y="45" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">variable</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h14 m-110 0 h20 m90 0 h20 m-130 0 q10 0 10 10 m110 0 q0 -10 10 -10 m-120 10 v24 m110 0 v-24 m-110 24 q0 10 10 10 m90 0 q10 0 10 -10 m-100 10 h10 m70 0 h10 m23 -44 h-3"/>
+         <polygon points="159 17 167 13 167 21"/>
+         <polygon points="159 17 151 13 151 21"/></svg></dd>
+
+<dt id="rr-object">object</dt>
+<dd class="railroad"><svg width="169" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-name" title="name">
+            <rect x="51" y="3" width="56" height="32"/>
+            <rect x="49" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">name</text></a><a href="#rr-variable" title="variable">
+            <rect x="51" y="47" width="70" height="32"/>
+            <rect x="49" y="45" width="70" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">variable</text></a><path class="line" d="m17 17 h2 m20 0 h10 m56 0 h10 m0 0 h14 m-110 0 h20 m90 0 h20 m-130 0 q10 0 10 10 m110 0 q0 -10 10 -10 m-120 10 v24 m110 0 v-24 m-110 24 q0 10 10 10 m90 0 q10 0 10 -10 m-100 10 h10 m70 0 h10 m23 -44 h-3"/>
+         <polygon points="159 17 167 13 167 21"/>
+         <polygon points="159 17 151 13 151 21"/></svg></dd>
+
+<dt id="rr-implication">implication</dt>
+<dd class="railroad"><svg width="279" height="37">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-terms" title="terms">
+            <rect x="31" y="3" width="56" height="32"/>
+            <rect x="29" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="39" y="21">terms</text></a><rect x="107" y="3" width="68" height="32" rx="10"/>
+         <rect x="105" y="1" width="68" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="115" y="21">implies</text><a href="#rr-terms" title="terms">
+            <rect x="195" y="3" width="56" height="32"/>
+            <rect x="193" y="1" width="56" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="203" y="21">terms</text></a><path class="line" d="m17 17 h2 m0 0 h10 m56 0 h10 m0 0 h10 m68 0 h10 m0 0 h10 m56 0 h10 m3 0 h-3"/>
+         <polygon points="269 17 277 13 277 21"/>
+         <polygon points="269 17 261 13 261 21"/></svg></dd>
+
+<dt id="rr-terms">terms</dt>
+<dd class="railroad"><svg width="149" height="81">
+         <polygon points="9 61 1 57 1 65"/>
+         <polygon points="17 61 9 57 9 65"/><a href="#rr-term" title="term">
+            <rect x="51" y="47" width="50" height="32"/>
+            <rect x="49" y="45" width="50" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">term</text></a><rect x="51" y="3" width="44" height="32" rx="10"/>
+         <rect x="49" y="1" width="44" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="21">and</text>
+         <path class="line" d="m17 61 h2 m20 0 h10 m50 0 h10 m-90 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -24 q0 -10 10 -10 m70 44 l20 0 m-20 0 q10 0 10 -10 l0 -24 q0 -10 -10 -10 m-70 0 h10 m44 0 h10 m0 0 h6 m23 44 h-3"/>
+         <polygon points="139 61 147 57 147 65"/>
+         <polygon points="139 61 131 57 131 65"/></svg></dd>
+
+<dt id="rr-term">term</dt>
+<dd class="railroad"><svg width="173" height="81">
+         <polygon points="9 17 1 13 1 21"/>
+         <polygon points="17 17 9 13 9 21"/><a href="#rr-property" title="property">
+            <rect x="51" y="3" width="74" height="32"/>
+            <rect x="49" y="1" width="74" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="21">property</text></a><a href="#rr-relation" title="relation">
+            <rect x="51" y="47" width="68" height="32"/>
+            <rect x="49" y="45" width="68" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="59" y="65">relation</text></a><path class="line" d="m17 17 h2 m20 0 h10 m74 0 h10 m-114 0 h20 m94 0 h20 m-134 0 q10 0 10 10 m114 0 q0 -10 10 -10 m-124 10 v24 m114 0 v-24 m-114 24 q0 10 10 10 m94 0 q10 0 10 -10 m-104 10 h10 m68 0 h10 m0 0 h6 m23 -44 h-3"/>
+         <polygon points="163 17 171 13 171 21"/>
+         <polygon points="163 17 155 13 155 21"/></svg></dd>
+
+<dt id="rr-analogy">analogy</dt>
 <dd class="railroad"><svg width="529" height="37">
          <polygon points="9 17 1 13 1 21"/>
          <polygon points="17 17 9 13 9 21"/><a href="#rr-concept" title="concept">
@@ -459,24 +898,36 @@
          <polygon points="495 139 487 135 487 143"/></svg></dd>
 
 <dt id="rr-number">number</dt>
-<dd class="railroad"><svg width="429" height="129">
-         <polygon points="9 33 1 29 1 37"/>
-         <polygon points="17 33 9 29 9 37"/>
-         <rect x="51" y="51" width="26" height="32" rx="10"/>
-         <rect x="49" y="49" width="26" height="32" class="terminal" rx="10"/>
-         <text class="terminal" x="59" y="69">-</text>
-         <rect x="51" y="95" width="30" height="32" rx="10"/>
-         <rect x="49" y="93" width="30" height="32" class="terminal" rx="10"/>
-         <text class="terminal" x="59" y="113">+</text><a href="#rr-digit" title="digit">
-            <rect x="141" y="19" width="48" height="32"/>
-            <rect x="139" y="17" width="48" height="32" class="nonterminal"/>
-            <text class="nonterminal" x="149" y="37">digit</text></a><rect x="249" y="19" width="24" height="32" rx="10"/>
-         <rect x="247" y="17" width="24" height="32" class="terminal" rx="10"/>
-         <text class="terminal" x="257" y="37">.</text><a href="#rr-digit" title="digit">
-            <rect x="313" y="19" width="48" height="32"/>
-            <rect x="311" y="17" width="48" height="32" class="nonterminal"/>
-            <text class="nonterminal" x="321" y="37">digit</text></a><path class="line" d="m17 33 h2 m20 0 h10 m0 0 h40 m-70 0 h20 m50 0 h20 m-90 0 q10 0 10 10 m70 0 q0 -10 10 -10 m-80 10 v12 m70 0 v-12 m-70 12 q0 10 10 10 m50 0 q10 0 10 -10 m-60 10 h10 m26 0 h10 m0 0 h4 m-60 -10 v20 m70 0 v-20 m-70 20 v24 m70 0 v-24 m-70 24 q0 10 10 10 m50 0 q10 0 10 -10 m-60 10 h10 m30 0 h10 m40 -76 h10 m48 0 h10 m-88 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -12 q0 -10 10 -10 m68 32 l20 0 m-20 0 q10 0 10 -10 l0 -12 q0 -10 -10 -10 m-68 0 h10 m0 0 h58 m40 32 h10 m24 0 h10 m20 0 h10 m48 0 h10 m-88 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -12 q0 -10 10 -10 m68 32 l20 0 m-20 0 q10 0 10 -10 l0 -12 q0 -10 -10 -10 m-68 0 h10 m0 0 h58 m-152 32 h20 m152 0 h20 m-192 0 q10 0 10 10 m172 0 q0 -10 10 -10 m-182 10 v14 m172 0 v-14 m-172 14 q0 10 10 10 m152 0 q10 0 10 -10 m-162 10 h10 m0 0 h142 m23 -34 h-3"/>
-         <polygon points="419 33 427 29 427 37"/>
-         <polygon points="419 33 411 29 411 37"/></svg></dd>
-
-</dl>
+<dd class="railroad"><svg width="755" height="163">
+         <polygon points="9 51 1 47 1 55"/>
+         <polygon points="17 51 9 47 9 55"/>
+         <rect x="51" y="69" width="26" height="32" rx="10"/>
+         <rect x="49" y="67" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="87">-</text>
+         <rect x="51" y="113" width="30" height="32" rx="10"/>
+         <rect x="49" y="111" width="30" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="59" y="131">+</text><a href="#rr-digit" title="digit">
+            <rect x="141" y="37" width="48" height="32"/>
+            <rect x="139" y="35" width="48" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="149" y="55">digit</text></a><rect x="249" y="37" width="24" height="32" rx="10"/>
+         <rect x="247" y="35" width="24" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="257" y="55">.</text><a href="#rr-digit" title="digit">
+            <rect x="313" y="3" width="48" height="32"/>
+            <rect x="311" y="1" width="48" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="321" y="21">digit</text></a><rect x="461" y="37" width="28" height="32" rx="10"/>
+         <rect x="459" y="35" width="28" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="469" y="55">e</text>
+         <rect x="461" y="81" width="28" height="32" rx="10"/>
+         <rect x="459" y="79" width="28" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="469" y="99">E</text>
+         <rect x="549" y="69" width="26" height="32" rx="10"/>
+         <rect x="547" y="67" width="26" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="557" y="87">-</text>
+         <rect x="549" y="113" width="30" height="32" rx="10"/>
+         <rect x="547" y="111" width="30" height="32" class="terminal" rx="10"/>
+         <text class="terminal" x="557" y="131">+</text><a href="#rr-digit" title="digit">
+            <rect x="639" y="37" width="48" height="32"/>
+            <rect x="637" y="35" width="48" height="32" class="nonterminal"/>
+            <text class="nonterminal" x="647" y="55">digit</text></a><path class="line" d="m17 51 h2 m20 0 h10 m0 0 h40 m-70 0 h20 m50 0 h20 m-90 0 q10 0 10 10 m70 0 q0 -10 10 -10 m-80 10 v12 m70 0 v-12 m-70 12 q0 10 10 10 m50 0 q10 0 10 -10 m-60 10 h10 m26 0 h10 m0 0 h4 m-60 -10 v20 m70 0 v-20 m-70 20 v24 m70 0 v-24 m-70 24 q0 10 10 10 m50 0 q10 0 10 -10 m-60 10 h10 m30 0 h10 m40 -76 h10 m48 0 h10 m-88 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -12 q0 -10 10 -10 m68 32 l20 0 m-20 0 q10 0 10 -10 l0 -12 q0 -10 -10 -10 m-68 0 h10 m0 0 h58 m40 32 h10 m24 0 h10 m20 0 h10 m0 0 h58 m-88 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -14 q0 -10 10 -10 m68 34 l20 0 m-20 0 q10 0 10 -10 l0 -14 q0 -10 -10 -10 m-68 0 h10 m48 0 h10 m-152 34 h20 m152 0 h20 m-192 0 q10 0 10 10 m172 0 q0 -10 10 -10 m-182 10 v14 m172 0 v-14 m-172 14 q0 10 10 10 m152 0 q10 0 10 -10 m-162 10 h10 m0 0 h142 m60 -34 h10 m28 0 h10 m-68 0 h20 m48 0 h20 m-88 0 q10 0 10 10 m68 0 q0 -10 10 -10 m-78 10 v24 m68 0 v-24 m-68 24 q0 10 10 10 m48 0 q10 0 10 -10 m-58 10 h10 m28 0 h10 m40 -44 h10 m0 0 h40 m-70 0 h20 m50 0 h20 m-90 0 q10 0 10 10 m70 0 q0 -10 10 -10 m-80 10 v12 m70 0 v-12 m-70 12 q0 10 10 10 m50 0 q10 0 10 -10 m-60 10 h10 m26 0 h10 m0 0 h4 m-60 -10 v20 m70 0 v-20 m-70 20 v24 m70 0 v-24 m-70 24 q0 10 10 10 m50 0 q10 0 10 -10 m-60 10 h10 m30 0 h10 m40 -76 h10 m48 0 h10 m-88 0 l20 0 m-1 0 q-9 0 -9 -10 l0 -12 q0 -10 10 -10 m68 32 l20 0 m-20 0 q10 0 10 -10 l0 -12 q0 -10 -10 -10 m-68 0 h10 m0 0 h58 m-286 32 h20 m286 0 h20 m-326 0 q10 0 10 10 m306 0 q0 -10 10 -10 m-316 10 v90 m306 0 v-90 m-306 90 q0 10 10 10 m286 0 q10 0 10 -10 m-296 10 h10 m0 0 h276 m23 -110 h-3"/>
+         <polygon points="745 51 753 47 753 55"/>
+         <polygon points="745 51 737 47 737 55"/></svg></dd>
