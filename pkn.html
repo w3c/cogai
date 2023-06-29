@@ -25,6 +25,16 @@
         branch: "master"
       },
       localBiblio: {
+        "CORE THEORY": {
+          title: "The logic of plausible reasoning: A core theory",
+          year: 1989,
+          publication: "Cognitive Science, 13(1), 1–49",
+          href: "https://psycnet.apa.org/record/1989-38822-001",
+          authors: [
+            "Collins, A.",
+            "Michalski, R."
+          ]
+        },
         "IEEE-754-2019": {
           title: "IEEE 754-2019: IEEE Standard for Floating-Point Arithmetic. Institute of Electrical and Electronic Engineers, New York (2019)"
         },
@@ -41,7 +51,7 @@
 </head>
 <body>
   <section id="abstract">
-    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that may be uncertain, imprecise, incomplete and inconsistent. PKN was inspired by the work of Alan Collins and co-workers in the 1980s. PKN consists of queries, properties, relations, implications and analogies. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge that corresponds to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
+    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that is uncertain, imprecise, incomplete and inconsistent. PKN was inspired by the work of Alan Collins and co-workers in the 1980s, see [[CORE THEORY]]. PKN consists of queries, properties, relations, implications and analogies. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge corresponding to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
   </section>
 
   <section id="sotd">
@@ -50,7 +60,7 @@
   
   <section class="informative">
     <h2>Introduction</h2>
-    <p>This specification defines a notation for imperfect knowledge, i.e. knowledge that may be uncertain, imprecise, incomplete and inconsistent. The approach is modelled on human argumentation, something that a long line of philosophers have investigated since the days of Ancient Greece. Traditional logic assumes perfect knowledge and provides mathematical proof for entailments. Unfortunately, knowledge is rarely perfect, but is nonetheless amenable to reasoning using guidelines for effective arguments.  As an example consider the statement: <em>if it is raining then it is cloudy</em>.  This is generally true, but you can also infer that it is somewhat likely to be raining if it is cloudy. This is plausible based upon your knowledge of weather patterns. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.</p>
+    <p>This specification defines a notation for imperfect knowledge, such as everyday knowledge that is uncertain, imprecise, incomplete and inconsistent. The approach is modelled on human argumentation, something that a long line of philosophers have investigated since the days of Ancient Greece. Traditional logic assumes perfect knowledge and provides mathematical proof for entailments. Unfortunately, knowledge is rarely perfect, but is nonetheless amenable to reasoning using guidelines for effective arguments.  As an example consider the statement: <em>if it is raining then it is cloudy</em>.  This is generally true, but you can also infer that it is somewhat likely to be raining if it is cloudy. This is plausible based upon your rough knowledge of weather patterns. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.</p>
     
     <figure id="inferences">
       <img src="images/inferences.png" alt="" style="width:60%"/>
@@ -65,7 +75,7 @@
        <li>fuzzy quantifiers, e.g. <em>few</em> and <em>many</em>, for queries akin to SPARQL.</li>
     </ul>
     
-    <p>For a web-based demonstrator for PKN, see [[PKN-demo]].</p>
+    <p>For a web-based demonstrator, see [[PKN-demo]].</p>
   </section>
 
 <section id="conformance">
@@ -79,9 +89,9 @@
         <dt><dfn>Authoring tool</dfn></dt>
         <dd>An application that writes a [=PKN document=]. An [=authoring tool=] is conformant to this specification if it writes conforming [=PKN documents=].</dd>
         <dt><dfn>Parser</dfn></dt>
-        <dd>A [=parser=] transforms a [=PKN document=] into another representation. A [=parser=] is conformant to this specification if it accepts any conforming [=PKN document=].</dd>
+        <dd>A [=parser=] transforms a [=PKN document=] into another representation. A [=parser=] is conformant to this specification if it can do so for any conforming [=PKN document=].</dd>
         <dt><dfn>Rule engine</dfn></dt>
-        <dd>A processing application that operates on PKN statements. A [=rule engine=] is conformant to this specification if it follows the algorithms defined in <a href="#inferencing"></a>.</dd>
+        <dd>A processing application that operates on PKN statements. A [=rule engine=] is conformant to this specification if it follows the algorithms defined in Section <a href="#reasoning"></a>.</dd>
       </dl>
     </section>
 </section>
@@ -104,25 +114,136 @@
   <section id="metadata">
     <h3>Statement MetaData</h3>
     
+    <p>Property, relation and implication statements optionally have a scope and a set of parameters. The scope is one or more names that indicate the context in which the statement applies, e.g. ducks are similar to geese in that they are birds with relatively long necks when compared to other bird species. Each parameter consists of a name and a value. Parameters represent prior knowledge as an informal qualitative feeling. Predefined parameters include:</p>
+    
+    <dl>
+    <dt><dfn>certainty</dfn></dt>
+    <dd>The confidence in the associated statement being true.</dd>
+    <dt><dfn>strength</dfn></dt>
+    <dd>The confidence in the consequents being true for an implication statement, i.e. the likelihood of the consequents holding if the antecedents hold.</dd>
+    <dt><dfn>inverse</dfn></dt>
+    <dd>The confidence in the antecedents being true when using an implication statement in reverse, i.e. the likelihood of the antecedents holding if the consequents hold.</dd>
+    <dt><dfn>typicality</dfn></dt>
+    <dd>The likelihood that a given instance of a class is typical for that class, e.g. that a Robin is a typical song bird.</dd>
+    <dt><dfn>similarity</dfn></dt>
+    <dd>The extent to which one thing is similar to another, e.g. the extent that they have some of the same properties.</dd>
+    <dt><dfn>dominance</dfn></dt>
+    <dd>The relative importance of an instance of a class as compared to other instances. For a country, for instance, this could relate to the size of its population or the size of its economy.</dd>
+    </dl>
+    
+    <p>See section [[[#reasoning]]] for the role of statement parameters in argumentation.</p>
+    
   </section>
 
   <section id="properties">
     <h3>Property Statements</h3>
+    
+    <p>These are used either to declare properties of things, or as conditions and actions in implication and query statements. A property statement has four parts: the descriptor, an argument, an operator and a referent. Here is an example:</p> 
+    
+    <aside class="example" title="Property Statements">
+      <pre><code>flowers of Netherlands includes daffodils, tulips (certainty high)</code></pre>
+      <p>Here <em>flowers</em> is the descriptor, <em>Netherlands</em> is the argument, <em>includes</em> is the operator, and <em>daffodils, tulips</em> is the referent. In other words, daffodils and tulips are amongst the flowers found in the Netherlands. The meta data indicates that this statement has a high certainty.</p>
+    </aside>
+    
+    <p>The following operators are predefined:</p>
+    <dl>
+    <dt>includes</dt>
+    <dd>This implies that the property is not limited to the given referent.</dd>
+    <dt>excludes</dt>
+    <dd>This implies that the property doesn't hold for the given referent.</dd>
+    <dt>is</dt>
+    <dd>This implies that the property is limited to the given referent.</dd>
+    </dl>
+    
+    <p>Note: variables are only permitted within properties that appear as conditions or actions in implication statements or query statements.</p>
+    
+    <p class="issue">Should the the predefined operators include "<code>is not</code>"?</p>
   </section>
 
   <section id="relations">
     <h3>Relation Statements</h3>
+    
+    <p>Relation statements have three parts: the subject, the relationship, and the object. Relations can be used on their own, or as part of implication and query statements. Here are some examples:</p>
+    
+    <aside class="example" title="Relation Statements">
+      <pre><code>tulips kind-of temperate-flowers
+Belgium similar-to Netherlands for latitude
+younger-than equivalent-to less-than for age</code></pre>
+      <p>The first example declares that tulips are a kind of flowers found in countries with temperate climates. The last two examples specify a scope for which the relation holds.</p>
+    </aside>
+
+    <p>Note: variables are only permitted within relations that appear as conditions or actions in implication statements or query statements.</p>
+  </section>
+
+  <section id="implications">
+    <h3>Implication Statements</h3>
+    
+    <p>An implication statement defines one or more consequents, and one or more antecedents, which are properties or relations, and may include variables which are scoped to the implication statement. The consequents are evaluated as a conjunction of conditions. See section [[[#reasoning]]] for details. Here are some examples of implication statements:</p>
+    
+    <aside class="example" title="Implications Statements">
+      <pre><code># rainy weather and cloudy conditions
+weather of ?place includes rainy
+	implies weather of ?place includes cloudy (strength high, inverse low)</code></pre>
+      <p>This example has a single antecedent and a single consequent. Note the use of <code>?place</code> as a variable, and metadata for the confidence in using the statement for forward and backward inferences.</p>
+    </aside>
   </section>
 
   <section id="analogies">
     <h3>Analogy Statements</h3>
+    <p> These relate two pairs of concepts where each pair stands as an analogy for the other pair.</p>
+    
+    <aside class="example" title="Analogy Statements">
+      <pre><code>leaf:tree::petal:flower</code></pre>
+      <p>In this example, a leaf is a part of a tree, whilst a petal is part of a flower. The analogy holds because both pairs of concepts involve the <em>part-of</em> relation.</p>
+    <p>Note that concepts can be replaced by variables when you want to query for a concept that fits the implicit analogy, as shown below.</p>
+    <pre><code>dog:puppy::cat:?</code></pre>
+    </aside>
   </section>
 
   <section id="queries">
     <h3>Query Statements</h3>
+    <p>These have a <em>quantifier</em>, a <em>variable</em>, an optional <em>where clause</em>, and a required <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause. The tests relate to the variable bindings.</p>
+    
+    
+    <aside class="example" title="Query Statements">
+      <pre><code>which ?x where ?x is-a person and age of ?x is very:old
+count ?x where age of ?x greater-than 20 from ?x is-a person
+few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
+      <p>The first query lists the people in the PKN graph who are considered to be very old. See section [[[#fuzzy]]]. The second query counts the number of people older that 20. The third query checks whether there are few yellow roses in the PKN graph.</p>
+    </aside>
+    
+    <p>Queries can use the following quantifiers:</p>
+    
+    <dl>
+    <dt><dfn>no</dfn></dt>
+    <dd>Tests that the PKN graph has no matches for the conditions in the <em>from clause</em>.</dd>
+    <dt><dfn>all</dfn></dt>
+    <dd>Tests that the conditions for the  <em>where clause</em> hold for all of the matches for the conditions in the <em>from clause</em>.</dd>
+    <dt><dfn>any</dfn></dt>
+    <dd>Tests that the conditions for the  <em>where clause</em> hold for at least one of the matches for the conditions in the <em>from clause</em>.</dd>
+    <dt><dfn>few</dfn></dt>
+    <dd>Tests that the conditions for the  <em>where clause</em> hold for few of the matches for the conditions in the <em>from clause</em>.</dd>
+    <dt><dfn>many</dfn></dt>
+    <dd>Tests that the conditions for the  <em>where clause</em> hold for many of the matches for the conditions in the <em>from clause</em>.</dd>
+    <dt><dfn>most</dfn></dt>
+    <dd>Tests that the conditions for the  <em>where clause</em> hold for most of the matches for the conditions in the <em>from clause</em>.</dd>
+    <dt><dfn>which</dfn></dt>
+    <dd>Yields the list of variable bindings that satisfy the conditions.</dd>
+    <dt><dfn>count</dfn></dt>
+    <dd>Yields the length of the list of variable bindings that satisfy the conditions.</dd>
+    </dl>
+    
+    <p>Note that few, many and most are imprecise terms and can be defined in terms of the length of the list of variable bindings that satisfy the conditions. <code>few</code> signifies a small number, <code>many</code> signifies a large number, and <code>most</code> signifies that the number of bindings for the <em>where clause</em> is a large proportion of the number of bindings for the <em>from clause</em>.</p>
+    
+    <p class="issue">Is it necessary to specify few, many and most in more detail?</p>
   </section>
 </section>
 
+<section id="fuzzy">
+	<h2>Fuzzy Knowledge</h2>
+	
+	<p>This section describes how PKN can be used to express fuzzy scalars and fuzzy modifiers.</p>
+</section>
 
 <section id="documents">
   <h2>PKN Documents</h2>
@@ -140,7 +261,7 @@
 
     <pre><code class="abnf" data-include="grammar/pkn.ebnf" data-include-format="text"></code></pre>
 
-    <p>Comment start with '#' and continue to the end of the current line or the end of the file, whichever comes first. White space is permitted between tokens. One exception is between '?' and the name token for a variable. Another exception is between the sign ('+' and '-') and the digits that form a number.</p>
+    <p>Comments start with '#' and continue to the end of the current line or the end of the file, whichever comes first. White space is permitted between tokens. One exception is between '?' and the name token for a variable. Another exception is between the sign ('+' and '-') and the digits that form a number.</p>
     
     <p class="issue">Should the grammar notation be switched from EBNF to ABNF for consistency with W3C practice, noting that EBNF is easier to understand?</p>
   </section>  
@@ -158,25 +279,25 @@
   </section>  
 </section>
 
-<section id="inferencing">
-  <h2>PKN Inferencing</h2>
+<section id="reasoning">
+  <h2>Plausible Reasoning and Argumentation</h2>
   
   <p>This section describes how PKN statements can be used to compute inferences along with their estimated certainty, as the basis for constructing arguments both for and against a given premise.</p>
   
   <section id="query-execution">
-    <h3>Computing with Relations</h3>
+    <h3>Reasoning with Relations</h3>
   </section>  
   
   <section id="query-execution">
-    <h3>Computing with Implications</h3>
+    <h3>Reasoning with Implications</h3>
   </section>  
   
   <section id="query-execution">
-    <h3>Computing with Queries</h3>
+    <h3>Reasoning with Queries</h3>
   </section>  
   
   <section id="certainty">
-    <h3>Computing Certainty</h3>
+    <h3>Estimating Certainty</h3>
   </section>  
 </section>
 
