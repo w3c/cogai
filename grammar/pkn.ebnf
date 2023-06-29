@@ -1,6 +1,6 @@
 STATEMENTS ::= statement*
 	
-statement ::= (property | relation | implication) ("for" scope)? meta?
+statement ::= (property | relation | implication| analogy) ("for" scope)? meta?
     scope ::= name (',' name)*
     meta ::= '(' param (',' param)* ')'
     param ::= name value
@@ -21,7 +21,7 @@ implication ::= terms "implies" terms
     terms ::= term ("and" term)*
     term ::= property | relation
 
-ANALOGY ::= concept ":" concept "::" concept ":" concept
+analogy ::= concept ":" concept "::" concept ":" concept
     concept ::= name | variable
 
 QUERY ::= quantifier variable ("where" conditions)? "from" conditions
@@ -31,7 +31,7 @@ QUERY ::= quantifier variable ("where" conditions)? "from" conditions
 
 variable ::= "?" name?
 name ::= letter (letter | digit | "-")* (":" (letter | digit | "-")+)*
-number ::= ("-" | "+")? digit+ ("." digit+)?
+number ::= ("-" | "+")? digit+ ("." digit*)? (("e"|"E") ("-" | "+")? digit+)?
 	
 letter ::= 
     "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
