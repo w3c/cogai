@@ -35,6 +35,14 @@
             "Michalski, R."
           ]
         },
+        "FUZZY SETS": {
+          title: "Fuzzy Sets",
+          year: 1965,
+          publication: "Information and Control, volume 8, 338-353 (1965)",
+          href: "https://www.scribd.com/document/269570502/Zadeh-L-A-Fuzzy-Sets-1965",
+          authors: [
+            "Lotfi Zadeh"
+          ]        },
         "IEEE-754-2019": {
           title: "IEEE 754-2019: IEEE Standard for Floating-Point Arithmetic. Institute of Electrical and Electronic Engineers, New York (2019)"
         },
@@ -204,7 +212,6 @@ weather of ?place includes rainy
     <h3>Query Statements</h3>
     <p>These have a <em>quantifier</em>, a <em>variable</em>, an optional <em>where clause</em>, and a required <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause. The tests relate to the variable bindings.</p>
     
-    
     <aside class="example" title="Query Statements">
       <pre><code>which ?x where ?x is-a person and age of ?x is very:old
 count ?x where age of ?x greater-than 20 from ?x is-a person
@@ -239,10 +246,44 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
   </section>
 </section>
 
-<section id="fuzzy">
+<section id="fuzzy" class="informative">
 	<h2>Fuzzy Knowledge</h2>
 	
-	<p>This section describes how PKN can be used to express fuzzy scalars and fuzzy modifiers.</p>
+	<p>Plausible reasoning subsumes fuzzy logic as expounded by Lotfi Zadeh in his 1965 paper on fuzzy logic, see [[FUZZY SETS]]. Fuzzy logic includes four parts: fuzzification, fuzzy rules, fuzzy inference and defuzzification.</p>
+	<p>Fuzzification maps a numerical value, e.g., mapping a temperature value into a fuzzy set, where a given temperature could be modelled as 0% cold, 20% warm and 80% hot. This involves transfer functions for each term, and may use a linear ramp or some kind of smooth function for the upper and lower part of the term’s range.</p>
+	<p>Fuzzy rules relate terms from different ranges, e.g., if it is hot, set the fan speed to fast, if it is warm, set the fan speed to slow. The rules can be applied to determine the desired fan speed as a fuzzy set, e.g., 0% stop, 20% slow and 80% fast. Defuzzification maps this back to a numeric value.</p>
+	<p>Fuzzy logic works with fuzzy sets in a way that mimics Boolean logic in respect to the values associated with the terms in the fuzzy sets. Logical AND is mapped to selecting the minimum value, logical OR is mapped to selecting the maximum value, and logical NOT to one minus the value, assuming values are between zero and one.</p>
+	<p>Plausible reasoning expands on fuzzy logic to support a much broader range of inferences, including context dependent concepts, and the means to express fuzzy quantifiers and modifiers.</p>
+	
+	<section>
+	    <h2>Scalar ranges</h2>
+	    <p>Some concepts are characterised by a value that lies in a range. Examples include temperature, age and climate. The temperature of a room may be described as cold, warm or hot. Such terms are imprecise and lack a formally agreed definition. Moreover, the meaning may depend on the context. Someone who is 60 years old will have a very different notion of what "old" means compared to that of an eight year old child.</p>
+	    
+	    <p>The choice of scales for a range may depend on the application. Here are some examples for different types of climate:</p>
+	    
+	    <ul>
+	    <li>dry, temperate, continental and polar</li>
+	    <li>polar, temperate, arid, tropical, mediterranean, mountain</li>
+	    <li><em>Hot:</em> equatorial, tropical, subtropical; <em>Temperate:</em>  mediterranean. chinese, oceanic, continental; <em>Cold:</em> polar, highland</li>
+	    </ul>
+	    
+	    <p>Each of these terms is associated with typical weather patterns for that climate, e.g. in cities like Shanghai, Buenos Aires, Sydney, and Hong Kong there is a so called Chinese climate with mild winters and humid summers with tropical rain.</p>
+	    
+	    <p>This can be modelled using the <em>range</em> property along with a <em>scope</em>. The value of this property is a list of climates. These climates can be treated as arguments for properties that characterise that climate, e.g. in terms of their span on a numerical scale.</p>
+	    
+	    <p>Here is an example for <em>age</em> that lists terms for describing someone's age, along with the associate span in years:</p>
+	    
+    <aside class="example" title="Scalar Ranges">
+      <pre><code>range of age is infant, child, adult for person
+age of infant is 0, 4 for person
+age of child is 5, 17 for person
+age of adult is 18, age-at-death for person</code></pre>
+      <p>.</p>
+    </aside>
+	    
+	</section>
+	
+
 </section>
 
 <section id="documents">
@@ -298,6 +339,10 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
   
   <section id="certainty">
     <h3>Estimating Certainty</h3>
+  </section>  
+  
+  <section id="arguments">
+    <h3>Assessing Multiple Lines of Argumentation</h3>
   </section>  
 </section>
 
