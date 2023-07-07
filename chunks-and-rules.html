@@ -112,11 +112,11 @@
 
     <aside class="example" title="Date example">
       <p>Here is an example of a chunk that describes Albert Einstein's birth date:</p>
-<pre><code>person Albert_Einstein {
+<pre class="chk"><code>person Albert_Einstein {
   birthdate 1879-03-14
 }</code></pre>
       <p>This chunk implicitly creates the following chunk definition:</p>
-<pre><code>iso8601 1879-03-14 {
+<pre class="chk"><code>iso8601 1879-03-14 {
   year 1879
   month 3
   day 14
@@ -143,12 +143,12 @@
       <p>When serialized in a [=chunks document=], the declaration of a [=chunk=] always starts with a chunk [=type=], followed by an optional chunk [=identifier=], and a set of [=properties=] enclosed in braces (<code>{}</code>). Lists are represented as comma separated values. Whitespaces may appear anywhere between constructs. See <a href="#chunks-grammar"></a> for details.</p>
     </aside>
     <aside class="example" title="A chunk to describe a dog">
-<pre><code>dog dog1 {
+<pre class="chk">dog dog1 {
   name "Fido"
   age 4
-}</code></pre>
+}</pre>
       <p>or using the compact syntax:</p>
-<pre class="js">dog dog1 {name "Fido"; age 4}</pre>
+<pre class="chk">dog dog1 {name "Fido"; age 4}</pre>
       <p>This [=chunk=] describes a dog named "Fido" that is 4 years old. The chunk [=type=] is <code>dog</code>. Its [=identifier=] is <code>dog1</code> and uniquely identifies this chunk within the graph it is defined in. The chunk has two [=properties=]:</p>
       <ul>
         <li><code>name</code> whose value is the [=string literal=] <code>"Fido"</code></li>
@@ -162,7 +162,7 @@
       <h3>Chunk type</h3>
       <p>A chunk <dfn>type</dfn> is a [=name=] that documents the nature of a chunk. The [=type=] is used to group and index chunks. [=Rules=] typically apply to chunks of a given [=type=].</p>
       <aside class="example" title="A chunk of type &quot;person&quot;">
-<pre><code>person Dave {
+<pre class="chk"><code>person Dave {
   knows Francois
 }</code></pre>
       </aside>
@@ -225,7 +225,7 @@
         <p>Similarly, the statement <cite>to marry a sailor</cite> is only known to be true according to Mary's desire. When represented as [=chunks=], the statement also needs to be associated with a [=context=] that identifies Mary's desire.</p>
 
         <p>Here is one possible way to represent the overall statement with [=chunks=]:</p>
-        <pre><code>believes {
+        <pre class="chk"><code>believes {
   @subject tom
   proposition tom-belief-1
 }
@@ -255,7 +255,7 @@ a s1 {
       <p>In this document, a <dfn>link</dfn> is a directed and labeled connection between two [=chunks=]. A [=link=] is automatically created whenever a chunk property [=value=] is a [=name=] that references an existing chunk [=identifier=].</p>
       <p>The <dfn>subject</dfn> of the [=link=] identifies the [=chunk=] at the origin of the connection. The <dfn>object</dfn> of the [=link=] identifies the [=chunk=] targeted by the connection. The <dfn class="lint-ignore">label</dfn> of the [=link=] is the property [=name=].</p>
       <aside class="example" title="A link between two chunks">
-<pre><code>friend f34 {
+<pre class="chk"><code>friend f34 {
   name Joan
 }
 friend f35 {
@@ -272,7 +272,7 @@ friend f35 {
       </ul>
 
       <aside class="example" title="Links as chunks">
-<pre><code>animal dog {
+<pre class="chk"><code>animal dog {
   kindof mammal
 }</code></pre>
 
@@ -286,10 +286,10 @@ friend f35 {
 
       <aside class="note" title="Compact format for links">
         <p>The <a href="#chunks-grammar">grammar</a> allows to express [=links=] in a compact format in a [=chunks document=], e.g.:</p>
-<pre><code>dog kindof mammal
+<pre class="chk"><code>dog kindof mammal
 cat kindof mammal</code></pre>
         <p>This is equivalent to:</p>
-        <pre><code>kindof {
+        <pre class="chk"><code>kindof {
   @subject dog
   @object mammal
 }
@@ -333,7 +333,7 @@ memory a2 { @module facts }</pre>
 
       <aside class="note" title="Compact format for rules">
         <p>The <a href="#chunks-grammar">grammar</a> allows to express [=rules=] in a compact format in a [=chunks document=]. For instance, the previous example may be written as:</p>
-<pre><code>remember {} => next { @do clear }, memory { @module facts }</code></pre>
+<pre class="chk"><code>remember {} => next { @do clear },  memory { @module facts }</code></pre>
         <p>This compact format makes the link between [=conditions=] and [=actions=] more explicit and avoids the need to provide chunk [=identifiers=].</p>
       </aside>
 
@@ -395,7 +395,7 @@ memory a2 { @module facts }</pre>
           <h5>The <dfn><code>@compile</code></dfn> property</h5>
           <p>This used in a rule action to compile a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@compile</code> may cite a list of IDs for chunks to be compiled.</p>
           <aside class="example" title="compile rule from declarative memory to procedural memory">
-            <pre><code>put {@compile rule1; @map map1}</code></pre>
+            <pre class="chk">put {@compile rule1; @map map1}</pre>
             <p>The above [=action=] looks for a chunk with ID <code>rule1</code> in the default module and compiles it using the mappings specified in the chunk with ID <code>map1</code> as specified with <code>@map</code>. The chunk type and ID are copied as is.</p>
           </aside>
         </section>
@@ -404,8 +404,8 @@ memory a2 { @module facts }</pre>
           <h5>The <dfn><code>@context</code></dfn> property</h5>
           <p>When used in a regular [=chunk=], identifies a chunk's [=context=]. When used in a [=condition=] or in an [=action=], [=matches=] a [=chunk=]'s [=context=].</p>
           <aside class="example" title="Looks for a chunk in a given context">
-            <pre><code>recall { lunch ?restaurant }
-     => lookup { @module facts; @do get; @type lunch; @context ?restaurant }</code></pre>
+            <pre class="chk">recall { lunch ?restaurant }
+     => lookup { @module facts; @do get; @type lunch; @context ?restaurant }</pre>
             <p>The above [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>lunch</code> and whose [=context=] is the identifier of the lunch matched by the <code>recall</code> [=condition=].</p>
           </aside>
         </section>
@@ -424,7 +424,7 @@ memory a2 { @module facts }</pre>
           <h5>The <dfn><code>@from</code></dfn> property</h5>
           <p>Specifies the zero-based starting index of an [=@for=] iteration. Value must be an integer.</p>
             <aside class="example" title="copy rule from procedural memory to declarative memory">
-            <pre># a chunk in the facts module
+            <pre class="chk"># a chunk in the facts module
 person {name Wendy; friends Michael, Suzy, Janet, John}
 
 # after having recalled the person chunk, the
@@ -432,7 +432,7 @@ person {name Wendy; friends Michael, Suzy, Janet, John}
 person {@module facts; friends ?friends}
    => item {@module goal; @for ?friends; @from 1; @to 2}</pre>
             <p>which will iterate over Suzy and Janet, updating the module buffer by setting properties for the item's value and its index, e.g.</p>
-            <pre>item {value Suzy; @index 1; @more true}</pre>
+            <pre class="chk">item {value Suzy; @index 1; @more true}</pre>
             <p>The action's properties are copied over apart from those starting with an <code>@</code>. The item index in the list is copied into the chunk as [=@index=]. You can then use [=@do next=] in an action to load the next item into the buffer. The [=@more=] property is set to true in the buffer if there is more to come, and false for the last property in the iteration. Action chunks should use either [=@do=] or [=@for=], but not both. Neither implies <code>@do update</code>.</p>
           </aside>
         </section>
@@ -452,12 +452,12 @@ person {@module facts; friends ?friends}
           <p>[=Matches=] a [=chunk=]'s [=type=] when that [=type=] is linked to the value of the [=@kindof=] property through a chain of <code>kindof</code> links. The property should be used in conjunction with a <code>*</code> type to match subclasses of a given class in a taxonomy.</p>
           <aside class="example" title="Matching subclasses in a taxonomy">
             <p>Given the following facts in a <code>facts</code> [=module=]:</p>
-            <pre><code>penguin kindof bird
+            <pre class="chk">penguin kindof bird
 eagle kindof bird
-penguin p6 { name Pingou }</code></pre>
+penguin p6 { name Pingou }</pre>
 
             <p>The following [=condition=] would match the [=chunk=] <code>p6</code> if it was in the [=module buffer=] of the <code>facts</code> [=module=]:</p>
-            <pre><code>* cond1 {
+            <pre class="chk">* cond1 {
   @module facts
   @kindof bird
 }</code></pre>
@@ -468,11 +468,11 @@ penguin p6 { name Pingou }</code></pre>
           <h5>The <dfn><code>@map</code></dfn> property and chunk type</h5>
           <p>This is used with [=@compile=] and [=@uncompile=] to reference a chunk of type [=@map=] that defines a map for property names and their meanings.</p>
           <aside class="example" title="term map for rule (un)compilation">
-            <pre><code>@map map1 {do @do; condition @condition; action @action; module @module}</code></pre>
+            <pre class="chk">@map map1 {do @do; condition @condition; action @action; module @module}</pre>
             <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as [=@do=], <code>condition</code> is to be interpreted as [=@condition=], <code>action</code> is to be interpreted as [=@action=], and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a [=chunk=] such as the following:</p>
-            <pre><code>rule r1 {condition g1; action a1, a2, a3}</code></pre>
+            <pre class="chk">rule r1 {condition g1; action a1, a2, a3}</pre>
 which is mapped to:
-            <pre><code>rule r1 {@condition g1; @action a1, a2, a3}</code></pre>
+            <pre class="chk">rule r1 {@condition g1; @action a1, a2, a3}</pre>
           </aside>
         </section>
 
@@ -492,13 +492,13 @@ which is mapped to:
           <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
           <aside class="example" title="Remove the last element from a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-digits { @pop list, @to item }</code></pre>
+            <pre class="chk">digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+digits { @pop list, @to item }</pre>
             <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits {
+            <pre class="chk">digits {
   list 0, 1, 2, 3, 4, 5, 6, 7, 8
   item 9
-}</code></pre>
+}</pre>
           </aside>
         </section>
 
@@ -513,10 +513,10 @@ digits { @pop list, @to item }</code></pre>
           <p>In the absence of a [=@to=] property, this operation has no effect.</p>
           <aside class="example" title="Add an element to the end of a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
-digits { @push 9, @to list }</code></pre>
+            <pre class="chk">digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8 }
+digits { @push 9, @to list }</pre>
             <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
+            <pre class="chk">digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</pre>
           </aside>
         </section>
 
@@ -526,13 +526,13 @@ digits { @push 9, @to list }</code></pre>
           <p>If a [=@to=] property is also present, the removed [=atomic value=] is assigned to the [=property=] identified by the [=@to=] property. In the absence of a [=@to=] property, the removed [=atomic value=] is discarded.</p>
           <aside class="example" title="Remove the first element from a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-digits { @shift list, @to item }</code></pre>
+            <pre class="chk">digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+digits { @shift list, @to item }</pre>
             <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits {
+            <pre class="chk">digits {
   list 1, 2, 3, 4, 5, 6, 7, 8, 9
   item 0
-}</code></pre>
+}</pre>
           </aside>
         </section>
 
@@ -563,10 +563,10 @@ digits { @shift list, @to item }</code></pre>
           <p>In the absence of a [=@to=] property, this operation has no effect.</p>
           <aside class="example" title="Add an element to the beginning of a list">
             <p>Given the following [=chunk=] and [=action=]:</p>
-            <pre><code>digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
-digits { @shift 0, @to list }</code></pre>
+            <pre class="chk">digits { list 1, 2, 3, 4, 5, 6, 7, 8 }
+digits { @shift 0, @to list }</pre>
             <p>The [=action=] will update the [=chunk=] to:</p>
-            <pre><code>digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</code></pre>
+            <pre class="chk">digits { list 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }</pre>
           </aside>
         </section>
 
@@ -574,7 +574,7 @@ digits { @shift 0, @to list }</code></pre>
           <h5>The <dfn><code>@uncompile</code></dfn> property</h5>
           <p>This used in a rule action to copy a set of rules in procedural memory to a set of chunks in declarative memory into a set of rules in procedural memory. The process starts with the chunk that cites the chunks used for the conditions and actions, and then applies to those chunks.  Note that <code>@uncompile</code> may cite a list of IDs for chunks to be uncompiled.</p>
           <aside class="example" title="copy rule from procedural memory to declarative memory">
-            <pre><code>get {@uncompile rule1; @map map1}</code></pre>
+            <pre class="chk">get {@uncompile rule1; @map map1}</pre>
             <p>The above [=action=] looks for a rule chunk with ID <code>rule1</code> in the rule module and copies the associated chunks to the default module using the mappings specified in the chunk with ID <code>map1</code> as specified with [=@map=]. The chunk type and ID are copied as is.</p>
           </aside>
         </section>
@@ -673,7 +673,7 @@ digits { @shift 0, @to list }</code></pre>
           <p>Initiates an iteration over the [=properties=] of the [=matching chunk=] that do not begin with <code>@</code>. Each [=property=] is mapped to a new [=chunk=] with the same [=type=] as the [=action=]. The action's properties are copied over, and <code>name</code> and <code>value</code> properties are used to pass the [=property=] name and value respectively. The [=@more=] property is given the value <code>true</code> unless this is the final [=chunk=] in the iteration, in which case [=@more=] is given the value false. By default, the iteration is written to the same [=module buffer=] as designated by the [=action=] that initiated it. However, you can designate a different [=module buffer=] with the [=@to=] property. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.</p>
           <aside class="example" title="Iterate over properties">
             <p>The following example first sets the <code>facts</code> [=module buffer=] to a [=chunk=] of [=type=] <code>foo</code>, and then initiates an iteration over all of the [=chunk=]'s properties:</p>
-            <pre><code>run {}
+            <pre class="chk"><code>run {}
   =>
     foo {@module facts; a 1; c 2}, # set facts buffer to foo {a 1; c 2}
     bar {@module facts; @do properties; loop prop18; @to goal} # launch iteration
@@ -720,8 +720,8 @@ bar {loop prop18; name ?name; value ?value}
       <p>[=Variables=] are scoped to the [=rule=] where they appear.</p>
 
       <aside class="example" title="Variable binding and referencing">
-        <pre><code>count { state start; from ?num1; to ?num2 }
-=> increment { @module facts; @do get; number ?num1 }</code></pre>
+        <pre class="chk">count { state start; from ?num1; to ?num2 }
+=> increment { @module facts; @do get; number ?num1 }</pre>
         <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=]. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk, and the value of the [=variable=] <code>?num2</code> to the [=value=] of the <code>to</code> [=property=].</p>
         <p>The [=rule=] defines an [=action=] that looks for a [=chunk=] in the <code>facts</code> [=module=] whose [=type=] is <code>increment</code> and that has a [=property=] named <code>number</code> and whose [=value=] equals the value of the <code>?num1</code> [=variable=].</p>
       </aside>
@@ -729,27 +729,27 @@ bar {loop prop18; name ?name; value ?value}
       <p>[=Variables=] are [=bound=] to a [=value=] the first time they appear in a [=condition=]. Subsequent occurrences of the same [=variable=] in a [=condition=] reference their [=value=].</p>
 
       <aside class="example" title="Variable binding and referencing in the same condition">
-        <pre><code>count { state start; from ?num1; to ?num1 }
-=> console { @do log; message ?num1 }</code></pre>
+        <pre class="chk">count { state start; from ?num1; to ?num1 }
+=> console { @do log; message ?num1 }</pre>
         <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>count</code>, that has a <code>state</code> [=property=] whose value is <code>start</code>, and that has <code>from</code> and <code>to</code> [=properties=] that have identical values. The [=condition=] binds the value of the [=variable=] <code>?num1</code> to the [=value=] of the <code>from</code> [=property=] in the matching chunk.</p>
       </aside>
 
       <p>[=Variables=] may represent any type of [=value=]. In particular, a [=variable=] that [=matches=] a property whose value is a list of [=atomic values=] gets bound to the list of [=atomic values=].</p>
 
       <aside class="example" title="Variable binding to a list of atomic values">
-        <pre><code>basket { fruit ?f }
-=> console { @do log; message ?f }</code></pre>
+        <pre class="chk">basket { fruit ?f }
+=> console { @do log; message ?f }</pre>
         <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>basket</code> and that has a <code>fruit</code> [=property=]. Given the following [=chunk=] in the <code>goal</code> [=module buffer=], the [=condition=] binds variable <code>?f</code> to <code>apple, banana, orange</code>:</p>
-        <pre><code>basket { fruit apple, banana, orange }</code></pre>
+        <pre class="chk">basket { fruit apple, banana, orange }</pre>
       </aside>
 
       <p>A [=condition=] that contains a [=property=] with a list of [=variables=] [=matches=] a list of [=atomic values=] that has the same length. The [=condition=] does not [=match=] when the lengths of the lists differ.</p>
 
       <aside class="example" title="Variable binding to atomic values in a list">
-        <pre><code>basket { fruit ?a, ?b, ?o }
-=> console { @do log; message ?a, ?b, ?o }</code></pre>
+        <pre class="chk">basket { fruit ?a, ?b, ?o }
+=> console { @do log; message ?a, ?b, ?o }</pre>
         <p>The above [=rule=] defines a [=condition=] that [=matches=] a [=chunk=] in the <code>goal</code> [=module buffer=] whose [=type=] is <code>basket</code> and that has a <code>fruit</code> [=property=] whose value is a list of <em>three</em> atomic values. Given the following [=chunk=] in the <code>goal</code> [=module buffer=], the [=condition=] binds variable <code>?a</code> to <code>apple</code>, <code>?b</code> to <code>banana</code>, and <code>?o</code> to <code>orange</code>:</p>
-        <pre><code>basket { fruit apple, banana, orange }</code></pre>
+        <pre class="chk"><code>basket { fruit apple, banana, orange }</code></pre>
       </aside>
     </section>
 
@@ -760,14 +760,14 @@ bar {loop prop18; name ?name; value ?value}
         <li>
           As the [=type=] of a [=condition=] or [=action=] to denote that [=condition=] or [=action=] matches a [=chunk=] regardless of its [=type=].
           <aside class="example" title="Condition that matches any chunk">
-            <pre><code>* {} => ...</code></pre>
+            <pre class="chk">* {} => ...</pre>
             <p>The <code>* {}</code> [=condition=] [=matches=] a [=chunk=] regardless of its [=type=] and [=properties=].</p>
           </aside>
         </li>
         <li>
           In a [=condition=] as the [=value=] of a [=property=] |p| to have the [=condition=] [=match=] a [=chunk=] that has a [=property=] whose [=name=] equals |p|'s [=name=], regardless of its [=value=].
           <aside class="example" title="Match a property regardless of its value">
-            <pre><code>basket { fruit * } => ...</code></pre>
+            <pre class="chk">basket { fruit * } => ...</pre>
             <p>The [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] .</p>
           </aside>
           <p class="note">A [=variable=] may also be used to [=match=] on any [=value=]. The [=wild card operator=] avoids the need to provide a name for the [=variable=] when the actual [=value=] does not need to be captured.</p>
@@ -775,7 +775,7 @@ bar {loop prop18; name ?name; value ?value}
         <li>
           In a [=condition=] as an [=atomic value=] in a list to [=match=] any [=atomic value=] at the same position in a [=chunk=].
           <aside class="example" title="Match an atomic value in a list">
-            <pre><code>basket { fruit apple, *, * } => ...</code></pre>
+            <pre class="chk">basket { fruit apple, *, * } => ...</pre>
             <p>The [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] whose [=value=] is a list of three [=atomic values=] starting with <code>apple</code>.</p>
           </aside>
         </li>
@@ -789,7 +789,7 @@ bar {loop prop18; name ?name; value ?value}
         <li>
           In a [=rule=] in front of a [=condition=] to negate it. A rule with a negated [=condition=] !|cond| applies if and only if |cond| does not hold true.
           <aside class="example" title="Negate a rule condition">
-            <pre><code># Rule with a negated condition
+            <pre class="chk"># Rule with a negated condition
 rule {
 @condition !c1
 @action a1
@@ -799,65 +799,65 @@ console a1 { @do log; message "Type is not person or id is not John" }
 
 # Same rule defined using the compact format
 !person { @id John }
-=> console { @do log; message "Type is not person or id is not John" }</code></pre>
+=> console { @do log; message "Type is not person or id is not John" }</pre>
             <p>The above example illustrates two equivalent ways to define a rule with a negated condition. In this example, the condition |c1| [=matches=] a [=chunk=] whose [=type=] is <code>person</code> and whose [=identifier=] is <code>John</code>. As such, the negated condition [=matches=] a [=chunk=] whose [=type=] is <em>not</em> <code>person</code> <em>or</em> whose [=identifier=] is <em>not</em> <code>John</code>.</p>
           </aside>
         </li>
         <li>
           In a [=condition=] in front of a [=property=] value to negate the result of a [=match=]. A negated [=property=] value !|val1| [=equals=] another [=property=] value |val2| if and only if |val1| does not [=equal=] |val2|.
           <aside class="example" title="Negate a value match">
-            <pre><code>person { @id !John }
-=> console { @do log; message "Type is person but id is not John" }</code></pre>
+            <pre class="chk">person { @id !John }
+=> console { @do log; message "Type is person but id is not John" }</pre>
             <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>person</code> and whose [=identifier=] is <em>not</em> <code>John</code>.</p>
           </aside>
           <aside class="example" title="Negate an atomic value in a list">
-            <pre><code>basket { fruit ?a, !banana, ?o }
-=> console { @do log; message "No banana in second position" }</code></pre>
+            <pre class="chk">basket { fruit ?a, !banana, ?o }
+=> console { @do log; message "No banana in second position" }</pre>
             <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which has a <code>fruit</code> [=property=] whose [=value=] is a list of three [=atomic values=]. First and third [=atomic values=] in that list can be anything. Second [=atomic value=] must <em>not</em> be <code>banana</code>.</p>
           </aside>
         </li>
         <li>
           On its own as a [=property=] value in a [=condition=] to test that a [=property=] is undefined. A [=condition=] with a [=property=] |p| whose value is <code>!</code> [=matches=] a [=chunk=] if and only if the [=chunk=] does not have a [=property=] whose [=name=] is |p|'s [=name=].
           <aside class="example" title="Test that a property is undefined">
-            <pre><code>basket { fruit ! }
-=> console { @do log; message "Basket without fruits" }</code></pre>
+            <pre class="chk">basket { fruit ! }
+=> console { @do log; message "Basket without fruits" }</pre>
             <p>The above [=condition=] [=matches=] a [=chunk=] whose [=type=] is <code>basket</code> and which does not have a <code>fruit</code> [=property=].</p>
           </aside>
         </li>
         <li>
           On its own as a [=property=] value in a [=@do patch=], [=@do update=] or similar [=action=] that updates a [=chunk=] to unset a [=property=].
           <aside class="example" title="Unset a chunk property">
-            <pre><code># Given the following chunk in the module buffer
+            <pre class="chk"># Given the following chunk in the module buffer
 basket { fruit apple, banana, orange }
 
 # ... the following rule drops the fruit property
 * {} => basket { @do update; fruit ! }
 
 # Resulting chunk
-basket {}</code></pre>
+basket {}</pre>
           </aside>
         </li>
       </ul>
 
       <p>The [=negation operator=] cannot be prepended to a [=variable=] that has not yet been [=bound=]. Similarly, the [=negation operator=] cannot be used on its own as an [=atomic value=] in a list. More generally, the [=negation operator=] cannot be used elsewhere than in the cases detailed above.</p>
       <aside class="example" title="Some invalid uses of the negation operator">
-        <pre><code># Invalid: variable ?num1 is unbound
+        <pre class="chk"># Invalid: variable ?num1 is unbound
 count { state counting; start !?num1 } => ...
 
 # Invalid: on its own in a list
 basket { fruit ?a, !, ?o } => ...
 
 # Invalid: in an update action but not on its own
-* {} => basket { @do update; fruit !apple }</code></pre>
+* {} => basket { @do update; fruit !apple }</pre>
       </aside>
 
       <p>A second [=negation operator=] prepended to a [=name=] that starts with a [=negation operator=] cancels the effect of the first [=negation operator=].</p>
       <aside class="example" title="Double negation">
-        <pre><code># The following condition
+        <pre class="chk"># The following condition
 person { @id !!John }
 
 # ... is the same as this one:
-person { @id John }</code></pre>
+person { @id John }</pre>
       </aside>
     </section>
 
@@ -885,7 +885,7 @@ person { @id John }</code></pre>
       <h3>Chunks grammar</h3>
       <p>A [=chunks document=] MUST follow the grammar defined below.</p>
 
-<pre><code class="abnf" data-include="grammar/chunks.abnf" data-include-format="text"></code></pre>
+<pre class="chk"><code class="abnf" data-include="grammar/chunks.abnf" data-include-format="text"></code></pre>
     </section>
 
     <section class="informative">
@@ -908,7 +908,7 @@ person { @id John }</code></pre>
 
     <aside class="example" title="Mapping a graph of chunks to an RDF graph">
       <p>Given the following [=graph of chunks=]:</p>
-      <pre><code>@rdfmap {
+      <pre class="chk">@rdfmap {
   dog http://example.com/ns/dog
   cat http://example.com/ns/cat
   age http://example.com/ns/age
@@ -916,9 +916,9 @@ person { @id John }</code></pre>
 }
 
 dog { name "Youki"; age 5 }
-cat { name "Isidore"; age 3 }</code></pre>
+cat { name "Isidore"; age 3 }</pre>
       <p>The [=@rdfmap=] [=chunk=] creates a mapping between local names and a URL. This [=graph of chunks=] is equivalent to the following <a data-cite="RDF11-CONCEPTS#dfn-rdf-graph">RDF graph</a> expressed in Turtle [[TURTLE]]:</p>
-      <pre><code>&lt;http://example.org/ns/dog&gt;
+      <pre class="chk"><code>&lt;http://example.org/ns/dog&gt;
   &lt;http://example.org/ns/name&gt; "Youki";
   &lt;http://example.org/ns/age&gt; 5.
 
@@ -932,10 +932,10 @@ cat { name "Isidore"; age 3 }</code></pre>
       <p>The [=@rdfmap=] chunk [=type=] identifies a chunk that defines a mapping between [=names=] and <abbr title="Internationalized Resource Identifiers">IRIs</abbr> [[IRI]]. Each [=property=] it defines whose [=name=] does not start with one of the name operators (see [[[#name-operators]]]) creates a mapping between this [=name=] and the property [=value=], interpreted as an <abbr title="Internationalized Resource Identifier">IRI</abbr>.</p>
 
       <aside class="example" title="Mapping a name to the schema.org vocabulary">
-        <pre><code># Maps the name "thing" to the "Thing" item type in schema.org
+        <pre class="chk"># Maps the name "thing" to the "Thing" item type in schema.org
 @rdfmap {
   thing http://schema.org/Thing
-}</code></pre>
+}</pre>
       </aside>
 
       <p class="note">The [=@rdfmap=] keyword plays the same role in [=chunks=] as the <code>@context</code> keyword in JSON-LD. See the notion of <a data-cite="JSON-LD#the-context">Context in JSON-LD</a> for details [[JSON-LD]]. The term [=context=] and the [=@context=] keyword have a different meaning in [=chunks=] where they identify the specific situation under which a [=chunk=] should be considered to be true. A distinct [=@rdfmap=] keyword is used here to avoid any confusion.</p>
@@ -943,7 +943,7 @@ cat { name "Isidore"; age 3 }</code></pre>
       <p>If multiple [=@rdfmap=] chunks create a mapping for the same [=name=], the last definition in overrides previous ones.</p>
 
       <aside class="example" title="Conflicting mapping">
-        <pre><code># Creates a mapping from image to the example.org namespace
+        <pre class="chk"># Creates a mapping from image to the example.org namespace
 @rdfmap { image http://example.org/ns/image }
 
 # "image" gets mapped to http://schema.org/image
@@ -952,7 +952,7 @@ cat { name "Isidore"; age 3 }</code></pre>
 thing { image img1 }
 
 # New mapping definition for image, overrides former one
-@rdfmap { image http://schema.org/image }</code></pre>
+@rdfmap { image http://schema.org/image }</pre>
       </aside>
 
       <p>An [=@rdfmap=] chunk may also contain a [=@base=] property to create a default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for [=names=] and [=@prefix=] properties to define prefixes for compact <abbr title="Internationalized Resource Identifiers">IRIs</abbr>.</p>
@@ -963,12 +963,12 @@ thing { image img1 }
       <p>The [=@base=] [=property=] defines a default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for [=names=] that are not explicitly declared in an [=@rdfmap=].</p>
 
       <aside class="example" title="Define a default IRI namespace">
-        <pre><code>@rdfmap {
+        <pre class="chk">@rdfmap {
   @base http://schema.org/
   dog http://example.org/ns/dog
 }
 
-dog { name "Youki"; birthDate 2021-07-09 }</code></pre>
+dog { name "Youki"; birthDate 2021-07-09 }</pre>
         <p>In this example, the [=@rdfmap=] chunk maps:</p>
         <ul>
           <li><code>dog</code> to <code>http://example.org/ns/dog</code></li>
@@ -980,7 +980,7 @@ dog { name "Youki"; birthDate 2021-07-09 }</code></pre>
       <p>There can be only one default <abbr title="Internationalized Resource Identifier">IRI</abbr> namespace for a given [=graph of chunks=]. If [=@base=] is used in multiple [=@rdfmap=] chunks, the last definition overrides previous ones.</p>
 
       <aside class="example" title="Conflicting default namespaces">
-        <pre><code># Sets example.org as default namespace
+        <pre class="chk"># Sets example.org as default namespace
 @rdfmap {
   @base http://example.org/ns/
 }
@@ -992,7 +992,7 @@ Thing { name "Desktop" }
 # Re-defines default namespace to use schema.org
 @rdfmap {
   @base http://schema.org/
-}</code></pre>
+}</pre>
       </aside>
     </section>
 
@@ -1003,7 +1003,7 @@ Thing { name "Desktop" }
       <p>The actual [=chunk=] that defines prefixes can have any [=type=]. Each [=property=] it defines whose [=name=] does not start with one of the name operators (see [[[#name-operators]]]) creates a prefix between the property [=name=] and the property [=value=], interpreted as an <abbr title="Internationalized Resource Identifier">IRI</abbr>.</p>
 
       <aside class="example" title="Use compact IRIs in @rdfmap">
-        <pre><code>prefix p1 {
+        <pre class="chk">prefix p1 {
   dcterms http://purl.org/dc/terms/
   foaf http://xmlns.com/foaf/0.1/
 }
@@ -1017,7 +1017,7 @@ Thing { name "Desktop" }
 book {
   title "Chunks of life"
   topic "Mammalian rules"
-}</code></pre>
+}</pre>
         <p>The [=@rdfmap=] chunk in this example maps:</p>
         <ul>
           <li><code>title</code> to the compact <abbr title="Internationalized Resource Identifier">IRI</abbr> <code>dcterms:title</code>, which gets expanded to <code>http://purl.org/dc/terms/title</code> through the [=@prefix=] property</li>
@@ -1028,11 +1028,11 @@ book {
       <p>As with [=@base=], in case of conflicts, the definition that gets referenced last overrides former definitions.</p>
 
       <aside class="example" title="">
-        <pre><code>prefix last { foaf http://xmlns.com/foaf/0.1/ }
+        <pre class="chk">prefix last { foaf http://xmlns.com/foaf/0.1/ }
 prefix first { foaf http://example.org/ns/ }
 
 @rdfmap { @prefix first; nick foaf:nick }
-@rdfmap { @prefix last }</code></pre>
+@rdfmap { @prefix last }</pre>
         <p>The last [=@rdfmap=] definition makes the <code>foaf</code> prefix map to <code>http://xmlns.com/foaf/0.1/</code>, overriding the previous mapping to <code>http://example.org/ns/</code>. The <code>nick</code> [=name=] gets mapped to <code>http://xmlns.com/foaf/0.1/nick</code> as a consequence.</p>
       </aside>
     </section>
@@ -1044,10 +1044,10 @@ prefix first { foaf http://example.org/ns/ }
     <p>This section describes potential ways for using [=chunks=] to declare the properties and values expected for a given chunk [=type=]. Here is an example for a chunk type for a bottle:</p>
     
     <aside class="example" title="">
-        <pre><code># bottle
+        <pre class="chk"># bottle
 thing bottle {properties level, capped}
 type level {isa number; min 0; max 100; initial 0}
-type capped {isa boolean; initial false}</code></pre>
+type capped {isa boolean; initial false}</pre>
     </aside>
     
     <p>The first chunk declares that chunks of [=type=] <em>bottle</em> have two properties: <em>level</em> and <em>capped</em>. The following chunks provide metadata for those [=properties=]. You can declare the data type for the property along with its initial value. You can provide the minimum and maximum value for numeric property values. This approach is useful for properties whose meaning and data model is the same regardless of the chunk [=type=] they are used in.</p>
@@ -1055,7 +1055,7 @@ type capped {isa boolean; initial false}</code></pre>
     <p>Here is a further example that introduces additional data types, along with the means to describe properties  specific to a given chunk [=type=],</p>
     
     <aside class="example" title="">
-        <pre><code># belts
+        <pre class="chk"># belts
 thing belt {properties x, y, length, moving, items}
 
 type length {isa integer}
@@ -1071,7 +1071,7 @@ type position {isa number}
 # when properties with the same name for
 # different things have different metadata
 
-property p2 {name width; isa number; min 0}</code></pre>
+property p2 {name width; isa number; min 0}</pre>
     </aside>
     
     <p>The values for <code>properties</code> can either be the name of a property, e.g. <em>position</em> or a chunk ID for a chunk of [=type=] <em>property</em>, that names the property in question and describes its data model.</p>
@@ -1102,7 +1102,7 @@ property p2 {name width; isa number; min 0}</code></pre>
     
 	<p>This section describes the scripting API exposed by the original JavaScript library for chunks and rules, see [[CHUNKS-DEMOS]]. The starting point is to create a graph from a text string containing the source of the chunks that make up the graph. The following code creates two graphs: one for facts from "facts.chk", and another for rules from "rules.chk".</p>
 
-	<pre><code>
+	<pre class="code">
 	let facts, rules;
 	fetch("facts.chk")
 	.then((response) => response.text())
@@ -1113,8 +1113,7 @@ property p2 {name width; isa number; min 0}</code></pre>
 		.then(function (source) {
 			rules = new ChunkGraph(source);
 		});
-	});</code>
-	</pre>
+	});</pre>
 
 	<p>Here are some operations you perform on a graph:</p>
 	<dl>
