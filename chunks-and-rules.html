@@ -46,6 +46,21 @@
         },
         "IEEE-754-2019": {
           title: "IEEE 754-2019: IEEE Standard for Floating-Point Arithmetic. Institute of Electrical and Electronic Engineers, New York (2019)"
+        },
+        "Date and Time Profile": {
+        	title: "Date and Time Formats",
+        	href: "https://www.w3.org/TR/1998/NOTE-datetime-19980827",
+        	authors: [
+        		"Misha Wolf",
+        		"Charles Wicksteed"
+        	]
+        },
+        "Rete Match Algorithm": {
+            title: "Rete: A fast algorithm for the many pattern/many object pattern match problem",
+            href: "https://www.sciencedirect.com/science/article/abs/pii/0004370282900200",
+            authors: [
+            	"Charles L. Forgy"
+            ]
         }
       }
     };
@@ -59,7 +74,7 @@
 </head>
 <body>
   <section id="abstract">
-    <p>This specification defines a cognitive graph database model featuring chunks as collections of properties, and rules that operate on them in conjunction with highly scalable graph algorithms, together with a simple notation for serializing graphs. The model is designed with the aim of facilitating machine learning for vocabularies and rules, and inspired by advances in the cognitive sciences on the organisation of the mammalian brain.</p>
+    <p>This specification defines a cognitive graph database model featuring chunks as collections of properties, and rules that operate on them in conjunction with highly scalable graph algorithms, and a simple notation for serializing graphs. The model is designed with the aim of facilitating machine learning for vocabularies and rules, and inspired by advances in the cognitive sciences on the organisation of the mammalian brain.</p>
   </section>
 
   <section id="sotd">
@@ -104,11 +119,11 @@
     <h2>Data types</h2>
     <p>This document uses the following restricted set of data types to describe [=chunks=]. See <a href="#chunks-grammar"></a> for a formal definition of their serialization.</p>
 
-    <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
+    <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmetic [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
 
     <p>A <dfn>boolean</dfn> represents a logical entity having two values. It is serialized as either the literal name <code>true</code>, which gets interpreted as a truthy value, or the literal name <code>false</code>, which gets interpreted as a falsy value.</p>
 
-    <p>A <dfn>date</dfn> is an [[ISO8601]] string that represents a date. A [=date=] value implicitly creates a read-only chunk whose type is <code>iso8601</code> with properties that match actual date components.</p>
+    <p>A <dfn>date</dfn> is a string that represents a date according to the [[Date and Time Profile]] of the [[ISO8601]] standard. A [=date=] value implicitly creates a read-only chunk whose type is <code>iso8601</code> with properties that match actual date components.</p>
 
     <aside class="example" title="Date example">
       <p>Here is an example of a chunk that describes Albert Einstein's birth date:</p>
@@ -124,9 +139,7 @@
 </code></pre>
     </aside>
 
-    <p class="issue">Clarify that only a subset of ISO8601 is supported (see <a href="https://github.com/w3c/cogai/issues/8">issue #8</a>).</p>
-
-    <p class="issue">To prepend <code>iso8601</code> and related properties with <code>@</code> or not to prepend with <code>@</code>, that is the question (see <a href="https://github.com/w3c/cogai/issues/2">issue #2</a>).</p>
+    <p class="issue">Whether or not to prepend <code>iso8601</code> and its related properties with <code>@</code> (see <a href="https://github.com/w3c/cogai/issues/2">issue #2</a>).</p>
 
     <p>A <dfn>string literal</dfn> is an arbitrary set of characters. It is serialized enclosed in double quotes, following the same grammar as <a data-cite="RFC8259#section-7">strings in JSON</a> [[RFC8259]].</p>
 
@@ -172,7 +185,7 @@
     <section>
       <h3>Chunk identifier</h3>
       <p>The chunk <dfn>identifier</dfn> is a [=name=] that uniquely identifies a chunk within the graph it is defined in.</p>
-      <p>The chunk [=identifier=] is optional.</p>
+      <p>The chunk [=identifier=] is optional. If missing, it will be automatically assigned when the chunk is added to a chunk module.</p>
     </section>
 
     <section>
@@ -212,9 +225,9 @@
       <h3>Chunk context</h3>
       <p>A [=chunk=] may be scoped to a <dfn>context</dfn>, which identifies the specific situation under which the [=chunk=] should be considered to be true. This mechanism allows [=chunks=] to describe things that are only true in hypothetical situations.</p>
 
-      <p>[=Contexts=] can be used to express situations that involve the use of statements about statements, including beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns. They are also useful for episodic memory when one wants to describe facts that are true in a given situation, for instance an even when a peson visited a restaurant for lunch, sat by the window, and had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.</p>
+      <p>[=Contexts=] can be used to express situations that involve the use of statements about statements, including beliefs, stories, reported speech, examples in lessons, abductive reasoning and even search query patterns. They are also useful for episodic memory when one wants to describe facts that are true in a given situation, for instance an episode when a person visited a restaurant for lunch, sat by the window, and had soup for starters followed by mushroom risotto for the main course. A sequence of episodes can then be modelled as relationships between contexts.</p>
 
-      <p>A [=chunk=] gets associated with a specific [=context=] through an [=@context=] [=property=].</p>
+      <p>A [=chunk=] is associated with a specific [=context=] through an [=@context=] [=property=].</p>
 
       <p>A [=chunk=] that is not explicitly associated with a [=context=] (i.e. in the absence of an [=@context=] property) belongs to the <dfn>default context</dfn>.</p>
 
@@ -225,7 +238,7 @@
         <p>Similarly, the statement <cite>to marry a sailor</cite> is only known to be true according to Mary's desire. When represented as [=chunks=], the statement also needs to be associated with a [=context=] that identifies Mary's desire.</p>
 
         <p>Here is one possible way to represent the overall statement with [=chunks=]:</p>
-        <pre class="chk"><code>believes {
+        <pre class="chk">believes {
   @subject tom
   proposition tom-belief-1
 }
@@ -242,12 +255,14 @@ married-to {
 a s1 {
   @context mary-desire-1
   profession sailor
-}</code></pre>
+}</pre>
       </aside>
 
       <p>As illustrated in the previous example, [=contexts=] can be chained, e.g. to describe the beliefs of someone in a fictional story or movie, and to indicate when a context is part of several other contexts, thus creating a tree of [=contexts=].</p>
 
       <p>Practically speaking, [=contexts=] make it possible to filter out non relevant [=chunks=] in [=conditions=] and [=actions=]. Two [=chunks=] may only [=match=] when they belong to the same context. For instance, a [=chunk=] that belongs to the context <code>tom-belief-1</code> can only [=match=] [=chunks=] that also belong to that context, and de facto cannot match [=chunks=] that belong to the [=default context=]. In particular, a [=chunk=] that belongs to the [=default context=] can only [=match=] [=chunks=] that also belong to the [=default context=].</p>
+      
+      <p class="issue">Is there a need for a limited form of automatic inheritance, e.g. when matching chunks in a context for a fictional account, should this also match chunks in the parent context? This would allow general knowledge to apply by default within fictional accounts.</p>
     </section>
 
     <section>
@@ -278,25 +293,25 @@ friend f35 {
 
 <p>The previous definition implicitly creates the following [=chunk=]:</p>
 
-<pre class="js"><code>kindof {
+<pre class="js">kindof {
   @subject dog
   @object mammal
-}</code></pre>
+}</pre>
       </aside>
 
       <aside class="note" title="Compact format for links">
         <p>The <a href="#chunks-grammar">grammar</a> allows to express [=links=] in a compact format in a [=chunks document=], e.g.:</p>
-<pre class="chk"><code>dog kindof mammal
-cat kindof mammal</code></pre>
+<pre class="chk">dog kindof mammal
+cat kindof mammal</pre>
         <p>This is equivalent to:</p>
-        <pre class="chk"><code>kindof {
+        <pre class="chk">kindof {
   @subject dog
   @object mammal
 }
 kindof {
   @subject cat
   @object mammal
-}</code></pre>
+}</pre>
       </aside>
     </section>
 
@@ -321,7 +336,7 @@ kindof {
 
       <aside class="example" title="Basic rule definition">
         <p>The following [=rule=] has one [=condition=] (that holds true when the <code>goal</code> [=module buffer=] contains a [=chunk=] whose [=type=] is <code>remember</code>), and two [=actions=] that clears the <code>goal</code> [=module buffer=] and that loads a [=chunk=] whose type is <code>memory</code> in the <code>facts</code> [=module=]:</p>
-        <pre class="js">rule r1 {
+        <pre class="chk">rule r1 {
   @condition c1
   @action a1, a2
 }
@@ -333,7 +348,7 @@ memory a2 { @module facts }</pre>
 
       <aside class="note" title="Compact format for rules">
         <p>The <a href="#chunks-grammar">grammar</a> allows to express [=rules=] in a compact format in a [=chunks document=]. For instance, the previous example may be written as:</p>
-<pre class="chk"><code>remember {} => next { @do clear },  memory { @module facts }</code></pre>
+<pre class="chk">remember {} => next { @do clear },  memory { @module facts }</pre>
         <p>This compact format makes the link between [=conditions=] and [=actions=] more explicit and avoids the need to provide chunk [=identifiers=].</p>
       </aside>
 
@@ -344,8 +359,8 @@ memory a2 { @module facts }</pre>
 
       <section>
         <h4>Actions</h4>
-        <p>An <dfn>action</dfn> is a [=chunk=] that can directly update [=module buffers=], or can do so indirectly, e.g. by sending messages to the [=module=] to invoke graph algorithms, such as graph queries and updates, or to carry out operations, e.g. instructing a robot to move its arm. When the algorithm or operation is complete, a response can be sent back to update the module's buffer. This in turn can trigger further rules as needed.</p>
-        <p>In many cases, the actual operation that an [=action=] will carry out will appear as an [=@do=] property. Built-in operations are always supported (see <a href="#built-in-operations"></a>). Additional actions may be supported.</p>
+        <p>An <dfn>action</dfn> is a [=chunk=] that can directly update [=module buffers=], or can do so indirectly, e.g. by sending messages to the [=module=] to invoke graph algorithms, such as graph queries and updates, or to carry out operations, e.g. instructing a robot to move its arm. When the algorithm or operation is complete, a response can be sent back to update the module's buffer. This in turn can trigger further rules as needed. An [=action=] identifies which [=module=] it relates to through an [=@module=] property, defaulting to the <code>goal</code> module.</p>
+        <p>In many cases, the actual operation that an [=action=] will carry out will appear as an [=@do=] property. Built-in operations are always supported (see <a href="#built-in-operations"></a>). Other actions may be supported. See section [[[#scripting-api]]] for a means for applications to define additional actions, e.g. as a way to invoke external actions for operating a robot arm or camera.</p>
       </section>
 
       <section>
@@ -466,8 +481,8 @@ penguin p6 { name Pingou }</pre>
 
         <section>
           <h5>The <dfn><code>@map</code></dfn> property and chunk type</h5>
-          <p>This is used with [=@compile=] and [=@uncompile=] to reference a chunk of type [=@map=] that defines a map for property names and their meanings.</p>
-          <aside class="example" title="term map for rule (un)compilation">
+          <p>This is used with [=@compile=] and [=@uncompile=] to reference a chunk of type [=@map=] that defines a map for property names and their meanings. See also the [=@unmap=] property.</p>
+          <aside class="example" title="term map for use in rule compilation and uncompilation">
             <pre class="chk">@map map1 {do @do; condition @condition; action @action; module @module}</pre>
             <p>The above [=chunk=] signifies that <code>do</code> is to be interpreted as [=@do=], <code>condition</code> is to be interpreted as [=@condition=], <code>action</code> is to be interpreted as [=@action=], and so forth. By mapping property names in this way, rules can be used to operate on chunks in declarative memory free of the difficulties posed by properties with the <code>@</code> prefix. The above example would be appropriate for a [=chunk=] such as the following:</p>
             <pre class="chk">rule r1 {condition g1; action a1, a2, a3}</pre>
@@ -555,6 +570,11 @@ digits { @shift list, @to item }</pre>
         <section>
           <h5>The <dfn><code>@type</code></dfn> property</h5>
           <p>[=Matches=] a [=chunk=]'s [=type=], or binds a variable to the [=chunk=]'s [=type=].</p>
+        </section>
+        
+        <section>
+          <h5>The <dfn><code>@unmap</code></dfn> property</h5>
+          <p>This MUST reference a chunk of type [=@map=] that defines a map for property names and their meanings, performing the inverse of the mapping specified by the [=@map=] property.</p>
         </section>
 
         <section>
@@ -665,7 +685,7 @@ digits { @shift 0, @to list }</pre>
         <section>
           <h5>The <dfn><code>@do patch</code></dfn> operation</h5>
           <p>If the [=chunk=] in the targeted [=module buffer=] has the same [=identifier=] as a [=chunk=] in the underlying [=graph of chunks=], patches the [=chunk=] in the [=graph of chunks=] with the [=properties=] that appear in the [=module buffer=], excluding [=properties=] prefixed with an <code>@</code> character.</p>
-          <p class="issue">What is the expected behavior when the action has an <code>@id</code> property?</p>
+          <p class="issue">What is the expected behavior when the action has an <code>@id</code> property? It would seem reasonable for the action to synchronously update the [=identifier=] for the chunk in the module buffer prior to applying that chunk to patch the module's [=graph of chunks=].</p>
         </section>
 
         <section>
@@ -673,7 +693,7 @@ digits { @shift 0, @to list }</pre>
           <p>Initiates an iteration over the [=properties=] of the [=matching chunk=] that do not begin with <code>@</code>. Each [=property=] is mapped to a new [=chunk=] with the same [=type=] as the [=action=]. The action's properties are copied over, and <code>name</code> and <code>value</code> properties are used to pass the [=property=] name and value respectively. The [=@more=] property is given the value <code>true</code> unless this is the final [=chunk=] in the iteration, in which case [=@more=] is given the value false. By default, the iteration is written to the same [=module buffer=] as designated by the [=action=] that initiated it. However, you can designate a different [=module buffer=] with the [=@to=] property. By setting additional properties in the initiating action, you can ensure that the rules used to process the property name and value are distinct from other such iterations.</p>
           <aside class="example" title="Iterate over properties">
             <p>The following example first sets the <code>facts</code> [=module buffer=] to a [=chunk=] of [=type=] <code>foo</code>, and then initiates an iteration over all of the [=chunk=]'s properties:</p>
-            <pre class="chk"><code>run {}
+            <pre class="chk">run {}
   =>
     foo {@module facts; a 1; c 2}, # set facts buffer to foo {a 1; c 2}
     bar {@module facts; @do properties; loop prop18; @to goal} # launch iteration
@@ -684,7 +704,7 @@ digits { @shift 0, @to list }</pre>
 bar {loop prop18; name ?name; value ?value}
   =>
     console {@do log; message ?name, is, ?value},
-    bar {@do next}  # to load the next instance from the iteration</code></pre>
+    bar {@do next}  # to load the next instance from the iteration</pre>
           </aside>
         </section>
 
@@ -702,7 +722,7 @@ bar {loop prop18; name ?name; value ?value}
         <section>
           <h5>The <dfn><code>@do update</code></dfn> operation</h5>
           <p>Directly updates the [=module buffer=] if the chunk [=type=] for the [=action=] is the same as the [=chunk=] currently held in the [=module buffer=]. The operation updates the properties given in the [=action=], leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk [=type=] for the action is not the same as the [=chunk=] currently held in the [=module buffer=], a new [=chunk=] is created with the properties given in the [=action=], excluding properties prefixed with an <code>@</code> character. This is the default action when an [=action=] has neither an [=@do=] property nor an [=@for=] property.</p>
-          <p class="issue">How can one update the properties prefixed with an <code>@</code> character in a [=chunk=] such as [=@context=], [=@subject=] or [=@object=]?</p>
+          <p class="issue">How can one update the properties prefixed with an <code>@</code> character in a [=chunk=] such as [=@context=], [=@subject=] or [=@object=]? A potential solution is to support the [=@map=] property as already supported for [=@compile=] and [=@uncompile=], along with an [=@unmap=] property. This would involve an asynchronous operation.</p>
         </section>
       </section>
     </section>
@@ -869,7 +889,9 @@ person { @id John }</pre>
 
   <section>
     <h2>Rule engine execution</h2>
-    <p class="ednote">TODO: Describe algorithms for the [=rule engine=].</p>
+    <p>The rule engine is invoked whenever any of the module buffers are changed. It then searches for rules whose conditions match the current state of the buffers. If a rule has multiple conditions, they must all match the current state of the buffers. If there are multiple matching rules, a stochastic process is applied to select which one to execute. This process is based upon the activation of the rule's root chunk, i.e. the chunk with [=@condition=] and [=@action=]. The higher the activation, the more likely the rule will be selected. See Section [[[#mimicking-human-memory]]].</p>
+    <p>Executing a rule is a process in which the sequence of actions are applied in the same order that they appear in the rule. Actions are for the most part asynchronous with a few exceptions, see Section [[[#rules]]]. Implementations may index module buffers to speed the process of matching rule conditions to the buffers. One such approach involves a discrimination network akin to Charles Forgy's [[Rete Match Algorithm]]. Note the role of the module [=queue=] for handling a sequence of events in priority order.</p>
+    <p class="issue">Need to define requirements for how the rule engine supports reinforcement learning.</p>
   </section>
 
   <section>
@@ -877,8 +899,7 @@ person { @id John }</pre>
 
     <section>
       <h3>Parsing a chunks document</h3>
-      <p class="ednote">TODO: Formally describe parsing algorithm</p>
-      <p>If multiple chunk definitions share the same [=identifier=] in a set of chunks, the last definition overrides former definitions.</p>
+      <p>Chunk documents are parsed one chunk at a time in document order, and asserted to the [=graph of chunks=] for the given module, see Section [[[#scripting-api]]]. If multiple chunk definitions share the same [=identifier=] in a set of chunks, the last definition overrides former definitions.</p>
     </section>
 
     <section>
