@@ -25,7 +25,7 @@
         branch: "master"
       },
       localBiblio: {
-        "CORE THEORY": {
+        "COLLINS": {
           title: "The logic of plausible reasoning: A core theory",
           year: 1989,
           publication: "Cognitive Science, 13(1), 1–49",
@@ -33,6 +33,52 @@
           authors: [
             "Collins, A.",
             "Michalski, R."
+          ]
+        },
+        "ARGUMENTATION": {
+          title: "Argument and Argumentation",
+          year: 2023,
+          href: "https://plato.stanford.edu/entries/argument/"
+        },
+        "TOULMIN": {
+          title: "The Uses of Argument",
+          year: 1958,
+          publication: "Cambridge University Press, ISBN 0-521-53483-6",
+          href: "https://assets.cambridge.org/97805218/27485/sample/9780521827485ws.pdf",
+          authors: [
+            "Stephen Toulmin"
+          ]
+        },
+        "WALTON": {
+          title: "Argument Schemes for Presumptive Reasoning",
+          year: 1996,
+          publication: "Routledge, ISBN 9780805820720",
+          href: "https://www.routledge.com/Argumentation-Schemes-for-Presumptive-Reasoning/Walton/p/book/9780805820720",
+          authors: [
+            "Douglas Walton"
+          ]
+        },
+        "ASPIC+": {
+          title: "ASPIC-END: Structured Argumentation with Explanations and Natural Deduction",
+          year: 2018,
+          href: "https://homepages.abdn.ac.uk/n.oren/pages/TAFA-17/papers/TAFA-17_paper_15.pdf",
+          authors: [
+          	"Jérémie Dauphin",
+          	"Marcos Cramer"
+          ]
+        },
+        "AIF": {
+          title: "Argument Interchange Format (AIF)",
+          year: 2011,
+          href: "http://www.arg-tech.org/wp-content/uploads/2011/09/aif-spec.pdf"
+        },
+        "HAHN": {
+          title: "The rationality of informal argumentation: A Bayesian approach to reasoning fallacies",
+          year: 2007,
+          href: "https://psycnet.apa.org/record/2007-10421-007",
+          authors: [
+          	"Ulrike Hahn",
+          	"Mike Oaksford"
           ]
         },
         "FUZZY SETS": {
@@ -59,7 +105,7 @@
 </head>
 <body>
   <section id="abstract">
-    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that is uncertain, imprecise, incomplete and inconsistent. PKN was inspired by the work of Alan Collins and co-workers in the 1980s, see [[CORE THEORY]]. PKN consists of queries, properties, relations, implications and analogies. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge corresponding to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
+    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that is uncertain, imprecise, incomplete and inconsistent. PKN was inspired by the work of Alan Collins and co-workers in the 1980s, see [[COLLINS]]. PKN consists of queries, properties, relations, implications and analogies. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge corresponding to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
   </section>
 
   <section id="sotd">
@@ -84,6 +130,35 @@
     </ul>
     
     <p>For a web-based demonstrator, see [[PKN-demo]].</p>
+    
+    <section>
+      <h3>Relationship to Previous Work</h3>
+      
+      <p>The Stanford Encyclopedia of Philosophy page on argument and argumentation [[ARGUMENTATION]] lists five types of arguments: deduction, induction, abduction, analogy and fallacies. Argumentation can be <em>adversarial</em> where one person seeks to beat down another, or <em>cooperative</em> where people collaborate to seek a better joint understanding by exploring arguments for and against a given supposition. The latter may choose to focus on developing a consensus view. Unfortunately, argumentation can sometimes stimulate group polarisation where people's views become further entrenched.</p>
+      
+      <p>Studies of argumentation have been made by a long line of philosophers dating back to Ancient Greece, e.g. Carneades and Aristotle.  More recently, logicians such as Frege, Hilbert and Russell were primarily interested in mathematical reasoning and argumentation. Stephen Toulmin subsequently criticised the presumption that arguments  should be formulated in purely formal deductive terms [[TOULMIN]]. Douglas Walton extended tools from formal logic to cover a wider range of arguments [[WALTON]]. Ulrike Hahn, Mike Oaksford and others applied Bayesian techniques to reasoning and argumentation [[HAHN]], whilst Alan Collins applied a more intuitive approach to plausible reasoning.</p>
+      
+      <p>Formal approaches to argumentation such as [[ASPIC+]] build arguments from axioms and premises as well as strict and defeasible rules. Strict rules logically entail their conclusions, whilst defeasible rules create a presumption in favour of their conclusions, which may need to be withdrawn in the light of new information. Arguments in support of, or counter to, some supposition, build upon the facts in the knowledge graph or the conclusions of previous arguments. Preferences between arguments are derived from preferences between rules with additional considerations in respect to consistency. Counter arguments are classified into three groups. An argument can:</p>
+      <ul>
+      <li><em><strong>undermine</em></strong> another argument when the conclusions of the former contradict premises of the latter.</li>
+      <li><em><strong>undercut</em></strong> another argument by casting doubt on the link between the premises and conclusions of the latter argument.</li>
+      <li><em><strong>rebut</em></strong> another argument when their respective conclusions can be shown to be contradictory.</li>
+      </ul>
+      
+      <p>[[AIF]] is an ontology intended to serve as the basis for an interlingua between different argumentation formats. It covers <em>information</em> (such as propositions and sentences) and <em>schemes</em> (general patterns of reasoning). The latter can be used to model lines of reasoning as argument graphs that reference information as justfication. The ontology provides constraints on valid argument graphs, for example:</p>
+	  <aside class="example">
+      <dl>
+      <dt><em><strong>Scheme for Argument from Expert Opinion</em></strong>:</dt> 
+      <dd><em>premises</em>: E asserts that A is true (false), E is an expert in domain D containing A; <em>conclusion</em>: A is true (false); <em>presumptions</em>: E is a credible expert, A is based on evidence; <em>exceptions</em>: E is not reliable, A is not consistent with what other experts assert.</dd>
+      </dl>
+      </aside>
+
+      <p>Conflict schemes model how one argument conflicts with another, e.g. if an expert is deemed unreliable, then we cannot rely on that expert's opinions. Preference schemes define preferences between one argument and another, e.g. that expert opinions are preferred over popular opinions.</p>
+
+      <p>The AIF Core ontology is available in a number of standard ontology formats (RDF/XML, OWL/XML, Manchester OWL Syntax). A variant of the AIF Core is based upon description logic (AIF-DL).</p>
+
+      <p>PKN defines a simple notation and model for imperfect knowledge. Arguments for and against a supposition are constructed as chains of plausible inferences that are used to generate explanations. PKN draws upon Alan Collins core theory of plausible reasoning in respect to statement metadata corresponding to intuitions/gut feelings based upon prior experience [[COLLINS]]. This is in contrast to Bayesian techniques that rely on the availability of rich statistics, which are unavailable in many everyday situations.</p>
+    </section>
   </section>
 
 <section id="conformance">
@@ -141,6 +216,9 @@
     
     <p>See section [[[#reasoning]]] for the role of statement parameters in argumentation.</p>
     
+    <p class="issue">Where should we describe how names can be used for graphs and statements?</p>
+    
+     <p class="issue">Need to explain the relation to existing argumentation systems, along with formalisms such as AIF and ASPIC, together with questions around correctness, complexity and semantics. Note the need to explain why formal semantics is challenging for imperfect knowledge.</p>
   </section>
 
   <section id="properties">
