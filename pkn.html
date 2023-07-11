@@ -97,6 +97,15 @@
         	year: 2023,
         	href: "https://openai.com/gpt-4"
         },
+        "RDF Semantics": {
+        	title: "RDF 1.1 Semantics",
+        	year: 2014,
+        	href: "http://www.w3.org/TR/rdf11-mt/",
+        	authors: [
+        		"Patrick J. Hayes",
+        		"Peter F. Patel-Schneider"
+        	]
+        },
         "PKN-demo": {
           title: "Demo for plausible reasoning and argumentation",
           href: "https://www.w3.org/Data/demos/chunks/reasoning/",
@@ -241,7 +250,7 @@
     <p>These are used either to declare properties of things, or as conditions and actions in implication and query statements. A property statement has four parts: the descriptor, an argument, an operator and a referent. Here is an example:</p> 
     
     <aside class="example" title="Property Statements">
-      <pre><code>flowers of Netherlands includes daffodils, tulips (certainty high)</code></pre>
+      <pre class="pkn">flowers of Netherlands includes daffodils, tulips (certainty high)</pre>
       <p>Here <em>flowers</em> is the descriptor, <em>Netherlands</em> is the argument, <em>includes</em> is the operator, and <em>daffodils, tulips</em> is the referent. In other words, daffodils and tulips are amongst the flowers found in the Netherlands. The meta data indicates that this statement has a high certainty.</p>
     </aside>
     
@@ -266,9 +275,9 @@
     <p>Relation statements have three parts: the subject, the relationship, and the object. Relations can be used on their own, or as part of implication and query statements. Here are some examples:</p>
     
     <aside class="example" title="Relation Statements">
-      <pre><code>tulips kind-of temperate-flowers
+      <pre class="pkn">tulips kind-of temperate-flowers
 Belgium similar-to Netherlands for latitude
-younger-than equivalent-to less-than for age</code></pre>
+younger-than equivalent-to less-than for age</pre>
       <p>The first example declares that tulips are a kind of flowers found in countries with temperate climates. The last two examples specify a scope for which the relation holds.</p>
     </aside>
 
@@ -281,9 +290,9 @@ younger-than equivalent-to less-than for age</code></pre>
     <p>An implication statement defines one or more consequents, and one or more antecedents, which are properties or relations, and may include variables which are scoped to the implication statement. The consequents are evaluated as a conjunction of conditions. See section [[[#reasoning]]] for details. Here are some examples of implication statements:</p>
     
     <aside class="example" title="Implications Statements">
-      <pre><code># rainy weather and cloudy conditions
+      <pre class="pkn"># rainy weather and cloudy conditions
 weather of ?place includes rainy
-	implies weather of ?place includes cloudy (strength high, inverse low)</code></pre>
+	implies weather of ?place includes cloudy (strength high, inverse low)</pre>
       <p>This example has a single antecedent and a single consequent. Note the use of <code>?place</code> as a variable, and metadata for the confidence in using the statement for forward and backward inferences.</p>
     </aside>
   </section>
@@ -293,10 +302,10 @@ weather of ?place includes rainy
     <p> These relate two pairs of concepts where each pair stands as an analogy for the other pair.</p>
     
     <aside class="example" title="Analogy Statements">
-      <pre><code>leaf:tree::petal:flower</code></pre>
+      <pre class="pkn">leaf:tree::petal:flower</pre>
       <p>In this example, a leaf is a part of a tree, whilst a petal is part of a flower. The analogy holds because both pairs of concepts involve the <em>part-of</em> relation.</p>
     <p>Note that concepts can be replaced by variables when you want to query for a concept that fits the implicit analogy, as shown below.</p>
-    <pre><code>dog:puppy::cat:?</code></pre>
+    <pre class="pkn">dog:puppy::cat:?</pre>
     </aside>
   </section>
 
@@ -305,9 +314,9 @@ weather of ?place includes rainy
     <p>These have a <em>quantifier</em>, a <em>variable</em>, an optional <em>where clause</em>, and a required <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause. The tests relate to the variable bindings.</p>
     
     <aside class="example" title="Query Statements">
-      <pre><code>which ?x where ?x is-a person and age of ?x is very:old
+      <pre class="pkn">which ?x where ?x is-a person and age of ?x is very:old
 count ?x where age of ?x greater-than 20 from ?x is-a person
-few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
+few ?x where color of ?x includes yellow from ?x kind-of rose</pre>
       <p>The first query lists the people in the PKN graph who are considered to be very old. See section [[[#fuzzy]]]. The second query counts the number of people older that 20. The third query checks whether there are few yellow roses in the PKN graph.</p>
     </aside>
     
@@ -367,7 +376,7 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
 	    <p>Here is an example for <em>age</em> that lists terms for describing someone's age, along with the associate span in years:</p>
 	    
     <aside class="example" title="Scalar Ranges">
-      <pre><code>range of age is infant, child, adult for person
+      <pre class="pkn"><code>range of age is infant, child, adult for person
 age of infant is 0, 4 for person
 age of child is 5, 17 for person
 age of adult is 18, age-at-death for person</code></pre>
@@ -406,7 +415,7 @@ age of adult is 18, age-at-death for person</code></pre>
     <h3>PKN Grammar</h3>
     <p>A [=PKN document=] MUST follow the grammar defined below.</p>
 
-    <pre><code class="abnf" data-include="grammar/pkn.ebnf" data-include-format="text"></code></pre>
+    <pre class="pkn"><code class="abnf" data-include="grammar/pkn.ebnf" data-include-format="text"></code></pre>
 
     <p>Comments start with '#' and continue to the end of the current line or the end of the file, whichever comes first. White space is permitted between tokens. One exception is between '?' and the name token for a variable. Another exception is between the sign ('+' and '-') and the digits that form a number.</p>
     
@@ -423,6 +432,15 @@ age of adult is 18, age-at-death for person</code></pre>
   
   <section id="pkn-rdf" class="informative">
     <h3>PKN and RDF</h3>
+    
+    <p>The Resource Description Framework (RDF) [[rdf-concepts]] defines a data model for labelled directed graphs, along with serialisation formats such as Turtle, query expressions with SPARQL, and schemas with RDF-S, OWL and SHACL. RDF identifiers are either globally scoped (IRIs) or locally scoped (blank nodes). RDF literals include numbers, booleans, dates and strings. String literals can be tagged with a language code or a data type IRI.</p>
+    <p>The semantics of RDF graphs is based upon Description Logics, see [[RDF Semantics]] and [[owl2-rdf-based-semantics]]. RDF assumes that everything that is not known to be true should treated as unknown. This can be contrasted with closed contexts where the absence of some statement implies that it is not true.</p>
+    <p>Description Logics are based upon deductive proof, whereas, PKN is based upon defeasible reasoning which involves presumptions in favour of plausible inferences, and estimating the degree to which the conclusions hold true. As such, when PKN graphs are translated into RDF, defeasible semantics are implicit and dependent on how the resulting graphs are interpreted. Existing tools such as SPARQL don't support defeasible reasoning.</p>
+    <p>Consider PKN property statements. The descriptor, argument operator and referent, along with the statement metadata can be mapped to a set of RDF triples where the subject of the triples is a generated blank node corresponding to the property statement. Comma separated lists for referents and scopes can be mapped to RDF collections.</p>
+    <p>PKN relations statements can be handled in a similar manner. It might be tempting to translate the relation's subject, relationship and object into a single RDF triple, but this won't work when the PKN relation is constrained to a scope, or is associated with statement metadata.</p>
+    <p>PKN implication statements are more complex to handle as they involve a sequence of antecedents and a sequence of consequents, as well as locally scoped variables. One possible approach is to first generate a blank node for the statement, and use it as the subject for RDF collections for the variables, antecedents and consequents.</p>
+    <p>PKN analogy statements are simpler, although there is a need to be able to distinguish variables from named concepts, e.g. as in <code>"dog:puppy::cat:?"</code>.</p> 
+    <p class="ednote">Need to explain how PKN encompasses named graphs and statements, along with how these relate to RDF, RDF-star and N3.</p>
   </section>  
 </section>
 
