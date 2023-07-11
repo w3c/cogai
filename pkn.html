@@ -459,7 +459,7 @@ age of adult is 18, age-at-death for person</code></pre>
   
   <section id="certainty">
     <h3>Estimating Certainty</h3>
-  <p>This section describes how PKN statements can be used to compute inferences along with their estimated certainty, as the basis for constructing arguments both for and against a given premise, in terms of chains of inferences.</p>
+  <p>The next few sections describe how PKN statements can be used to compute inferences along with their estimated certainty, as the basis for constructing arguments both for and against a given premise, in terms of chains of inferences.</p>
   <p>In probability theory the conditional probability of event A occurring given an occurrence of event B can be expressed using Bayes theorem:</p>
   
     <figure id="bayes">
@@ -468,10 +468,10 @@ age of adult is 18, age-at-death for person</code></pre>
     </figure>
       
   <p>When applied to inferences, this requires the gathering of lots of statistics which is very challenging from a practical perspective. In the absence of comprehensive statistics, the certainty to which the conclusions hold true can be informally modelled as a number in the range 0 to 1. Qualitative terms such as low, medium and high can be mapped to such numbers for use in estimation algorithms, and later when needed, mapped back into qualitative terms.</p>
-  <p>One such algorithm is where a goal directly matches multiple properties with non-exclusive values, which can then be combined as a set. The more matches, the greater the certainty for establishing the goal.</p>
+  <p>One such algorithm is where a premise directly matches multiple properties with non-exclusive values, which can then be combined as a set. The more matches, the greater the certainty for establishing the goal.</p>
   <p>If c is the average certainty and n is the number of matches, the
 combined certainty is 1.0 - (1.0 - c)/n. If c = 0.5 and n = 1 we get 0.5. If n = 2, we get 0.75. If n = 4, we get 0.85, If n = 256, we get 0.998.</p>
-  <p>Collins et al. suggest a simplified approach to modelling the effects of the various metadata parameters in which each parameter boosts, weakens or has no effect on the estimated certainty, and using the same algorithm for all such parameters.</p>
+  <p>Collins et al. suggest a simplified approach to modelling the effects of the various metadata parameters in which each parameter strengthens, weakens or has no effect on the estimated certainty, and using the same algorithm for all such parameters.</p>
   <p>If the original certainty is zero, the parameters should have no effect, and likewise, the effect of a parameter should be smaller as the parameter’s value tends to zero.</p>
   <p>Treating the effect of a parameter as a multiplier m on the certainty, the number should be in the range 0 to 1/c, where c > 0. If we want to boost c by 25% when c = 0.5, m = 1.25, but this should shrink to 1 when c = 1.</p>
   <p>How much should m increase as c tends to 0? One idea is to use linear interpolation, i.e., 1.5 when c = 0, 1.25 when c = 0.5 and 1 when c = 1. This multiplier shrinks to 1 as the value of the parameter tends to 0 and when c tends to 0. Thus m = 1 + p/2 - p*c/2, where m is the multiplier, p is the parameter value (0 to 1) and c is the certainty (0 to 1).</p>
@@ -484,6 +484,10 @@ combined certainty is 1.0 - (1.0 - c)/n. If c = 0.5 and n = 1 we get 0.5. If n =
   
   <section id="reasoning-implications">
     <h3>Reasoning with Implications</h3>
+  </section>  
+  
+  <section id="reasoning-analogies">
+    <h3>Reasoning with Analogies</h3>
   </section>  
   
   <section id="reasoning-queries">
