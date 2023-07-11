@@ -126,7 +126,7 @@
       <figcaption>Inferring likely properties and relations across relations</figcaption>
     </figure>
     
-    <p>The above figure shows how properties and relations involving a class may be likely to apply to a sub-class as a specialisation of the parent class. Likewise, properties and relations holding for a sub-class may be likely to apply to the parent class as a generalisation. The likelihood of such inferences is influenced by the available metadata. Inferences can also be based on implication rules, and analogies between concepts with matching structural relationships. PKN further supports imprecise concepts:</p>
+    <p>The above figure shows how properties and relations involving a class may be likely to apply to a sub-class as a specialisation of the parent class. Likewise, properties and relations holding for a sub-class may be likely to apply to the parent class as a generalisation. The likelihood of such inferences is influenced by the available metadata, see Section [[[#metadata]]]. Inferences can also be based on implication rules, and analogies between concepts with matching structural relationships. PKN further supports imprecise concepts:</p>
     
     <ul>
        <li>fuzzy terms, e.g. <em>cold, warm</em> and <em>hot</em>, which form a scalar range with overlapping meanings.</li>
@@ -134,8 +134,15 @@
        <li>fuzzy quantifiers, e.g. <em>few</em> and <em>many</em>, for queries akin to SPARQL.</li>
     </ul>
     
-    <p>For a web-based demonstrator, see [[PKN-demo]]. PKN can be used to support question and answering over knowledge graphs, and informed decision making based upon balanced arguments.</p>
+    <p>For a web-based demonstrator, see [[PKN-demo]].</p>
     
+    <figure id="evolution">
+      <img src="./images/evolution.svg" alt="" style="width:80%"/>
+      <figcaption>Evolution of Databases</figcaption>
+    </figure>
+    
+    <p>PKN represents an evolution from graph databases to cognitive databases, that can more flexibly support reasoning over everyday knowledge, embracing uncertainty, imprecision, incompleteness and inconsistencies. Deductive proof is replaced by defeasible reasoning and arguments for and against suppositions.</p>
+
     <section>
       <h3>Relationship to Previous Work</h3>
       
@@ -159,11 +166,10 @@
       </aside>
 
       <p>Conflict schemes model how one argument conflicts with another, e.g. if an expert is deemed unreliable, then we cannot rely on that expert's opinions. Preference schemes define preferences between one argument and another, e.g. that expert opinions are preferred over popular opinions. The AIF Core ontology is available in a number of standard ontology formats (RDF/XML, OWL/XML, Manchester OWL Syntax).</p>
-traditional knowledge engineering techniques.</p>
 
-      <p>PKN defines a simple notation and model for imperfect knowledge. Arguments for and against a supposition are constructed as chains of plausible inferences that are used to generate explanations. PKN draws upon Alan Collins core theory of plausible reasoning in respect to statement metadata corresponding to intuitions/gut feelings based upon prior experience. This is in contrast to Bayesian techniques that rely on the availability of rich statistics, which are unavailable in many everyday situations.</p>
+      <p>PKN defines a simple notation and model for imperfect knowledge. Arguments for and against a supposition are constructed as chains of plausible inferences that are used to generate explanations. PKN draws upon Alan Collins core theory of plausible reasoning [[COLLINS]] in respect to statement metadata corresponding to intuitions and gut feelings based upon prior experience. This is in contrast to Bayesian techniques that rely on the availability of rich statistics, which are unavailable in many everyday situations.</p>
       
-      <p>Recent work on large language models (LLMs), such as [[GPT-4]], have shown impressive capabilities in respect to reasoning and explanations. However, there is a risk of hallucinations, where the system presents convincing yet imaginary results. Symbolic approaches like PKN are expected to play an important and continuing role in supporting semantic interoperability between systems. LLMs are trained on very large datasets, and in principle, could be exploited to generate symbolic models in a way the complements traditional knowledge engineering.</p> 
+      <p>Recent work on large language models (LLMs), such as [[GPT-4]], have shown impressive capabilities in respect to reasoning and explanations. However, there is a risk of hallucinations, where the system presents convincing yet imaginary results. Symbolic approaches like PKN are expected to play an important and continuing role in supporting semantic interoperability between systems and knowledge graphs. LLMs are trained on very large datasets, and in principle, could be exploited to generate symbolic models in a way that complements traditional approaches to knowledge engineering.</p> 
       </section>
   </section>
 
@@ -193,6 +199,8 @@ traditional knowledge engineering techniques.</p>
     <p>A <dfn>number</dfn> represents a double-precision 64-bit format value as specified in the IEEE Standard for Binary Floating-Point Arithmeticis [[IEEE-754-2019]]. It is serialized in base 10 using decimal digits, following the same grammar as <a data-cite="RFC8259#section-6">numbers in JSON</a> [[RFC8259]].</p>
     
     <p>A <dfn>name</dfn> is a string that can include letters, digits, period, hyphen, underscore and slash characters, and that cannot be interpreted as a [=number=].</p>
+    
+    <p class="issue">Should this be expanded to cover additional data types such as ISO8601 dates and string literals?  That might be convenient in some respects, but it would at the same time introduce complications in respect to how to operate on such data types. It might be simpler to handle such data types at the periphery of the system, e.g. mapping dates to a set of properties, and likewise handling string literals via a lexical dictionary.</p>
 </section>
 
 <section id="statements">
@@ -324,9 +332,7 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
     <dd>Yields the length of the list of variable bindings that satisfy the conditions.</dd>
     </dl>
     
-    <p>Note that few, many and most are imprecise terms and can be defined in terms of the length of the list of variable bindings that satisfy the conditions. <code>few</code> signifies a small number, <code>many</code> signifies a large number, and <code>most</code> signifies that the number of bindings for the <em>where clause</em> is a large proportion of the number of bindings for the <em>from clause</em>.</p>
-    
-    <p class="issue">Is it necessary to specify few, many and most in more detail?</p>
+    <p>Note that <em>few, many</em> and <em>most</em> are intentionally imprecise, see Section [[[#fuzzy-quantifiers]]].</p>
   </section>
 </section>
 
@@ -334,16 +340,16 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
 	<h2>Fuzzy Knowledge</h2>
 	
 	<p>Plausible reasoning subsumes fuzzy logic as expounded by Lotfi Zadeh in his 1965 paper on fuzzy logic, see [[FUZZY SETS]]. Fuzzy logic includes four parts: fuzzification, fuzzy rules, fuzzy inference and defuzzification.</p>
-	<p>Fuzzification maps a numerical value, e.g., mapping a temperature value into a fuzzy set, where a given temperature could be modelled as 0% cold, 20% warm and 80% hot. This involves transfer functions for each term, and may use a linear ramp or some kind of smooth function for the upper and lower part of the term’s range.</p>
+	<p>Fuzzification maps a numerical value, e.g. a temperature reading, into a fuzzy set, where a given temperature could be modelled as 0% cold, 20% warm and 80% hot. This involves transfer functions for each term, and may use a linear ramp or some kind of smooth function for the upper and lower part of the term’s range.</p>
 	<p>Fuzzy rules relate terms from different ranges, e.g., if it is hot, set the fan speed to fast, if it is warm, set the fan speed to slow. The rules can be applied to determine the desired fan speed as a fuzzy set, e.g., 0% stop, 20% slow and 80% fast. Defuzzification maps this back to a numeric value.</p>
 	<p>Fuzzy logic works with fuzzy sets in a way that mimics Boolean logic in respect to the values associated with the terms in the fuzzy sets. Logical AND is mapped to selecting the minimum value, logical OR is mapped to selecting the maximum value, and logical NOT to one minus the value, assuming values are between zero and one.</p>
-	<p>Plausible reasoning expands on fuzzy logic to support a much broader range of inferences, including context dependent concepts, and the means to express fuzzy quantifiers and modifiers.</p>
+	<p>Plausible reasoning expands on fuzzy logic to support a much broader range of inferences, including context dependent concepts, and the means to express fuzzy modifiers and fuzzy quantifiers.</p>
 	
 	<section>
 	    <h2>Scalar ranges</h2>
 	    <p>Some concepts are characterised by a value that lies in a range. Examples include temperature, age and climate. The temperature of a room may be described as cold, warm or hot. Such terms are imprecise and lack a formally agreed definition. Moreover, the meaning may depend on the context. Someone who is 60 years old will have a very different notion of what "old" means compared to that of an eight year old child.</p>
 	    
-	    <p>The choice of scales for a range may depend on the application. Here are some examples for different types of climate:</p>
+	    <p>The choice of scales for a range may depend on the application. Here are some examples of scales for different types of climate:</p>
 	    
 	    <ul>
 	    <li>dry, temperate, continental and polar</li>
@@ -355,6 +361,9 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
 	    
 	    <p>This can be modelled using the <em>range</em> property along with a <em>scope</em>. The value of this property is a list of climates. These climates can be treated as arguments for properties that characterise that climate, e.g. in terms of their span on a numerical scale.</p>
 	    
+    
+        <p>Note that descriptions may involve terms describing different aspects, e.g. temperature and humidity, that belong to separate ranges, e.g. cold and wet in contrast to hot and dry.</p>
+
 	    <p>Here is an example for <em>age</em> that lists terms for describing someone's age, along with the associate span in years:</p>
 	    
     <aside class="example" title="Scalar Ranges">
@@ -362,9 +371,22 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</code></pre>
 age of infant is 0, 4 for person
 age of child is 5, 17 for person
 age of adult is 18, age-at-death for person</code></pre>
-      <p>.</p>
+      <p>The <em>range</em> property lists the terms used for different categories. The <em>age</em> property for the terms then specifies the numerical range. Additional properties can be used to define the transfer function.</p>
     </aside>
+    </section>
+    
+    <section>
+	    <h2>Fuzzy Modifiers</h2>
+	    <p>PKN allows terms to be combined with one or more fuzzy modifiers, e.g. <code>very:old</code> where <em>very</em> acts like an adjective when applied to a noun. The meaning of modifiers can be expressed using PKN statements for relations and implications, together with scopes for context sensitivity. In respect to <em>old</em>, "very" could either be defined by reference to a term such as "geriatric" as part of a range for "age", or with respect to the numerical value, e.g. greater than 75 years old.</p>
+	</section>
+	<section>
+	    <h2>Fuzzy Quantifiers</h2>
 	    
+	    <p>These are quantifiers, such as <em>few, many</em> and <em>most</em>, with an imprecise meaning. See Section [[[#queries]]]. Their meaning can be defined in terms of the length of the list of query variable bindings that satisfy the conditions. <code>few</code> signifies a small number, <code>many</code> signifies a large number, and <code>most</code> signifies that the number of bindings for the <em>where clause</em> is a large proportion of the number of bindings for the <em>from clause</em>.</p>
+	    
+	<p class="ednote">Add some examples for how to express the meaning of fuzzy modifiers and fuzzy quantifiers.</p>
+    
+    <p class="issue">Is it necessary to predefine the operational meaning of fuzzy quantifiers and fuzzy modifiers? It may be preferable to require applications to define the meaning according to their needs as the meaning is likely to be context sensitive.</p>
 	</section>
 	
 
