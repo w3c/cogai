@@ -131,7 +131,7 @@
     <p>This specification defines a notation and model for imperfect knowledge, such as everyday knowledge that is uncertain, imprecise, incomplete and inconsistent. The approach is modelled on human argumentation, something that a long line of philosophers have investigated since the days of Ancient Greece. Traditional logic assumes perfect knowledge and provides mathematical proof for entailments. Unfortunately, knowledge is rarely perfect, but is nonetheless amenable to reasoning using guidelines for effective arguments.  As an example consider the statement: <em>if it is raining then it is cloudy</em>.  This is generally true, but you can also infer that it is somewhat likely to be raining if it is cloudy. This is plausible based upon your rough knowledge of weather patterns. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.</p>
     
     <figure id="inferences">
-      <img src="images/inferences.png" alt="" style="width:60%"/>
+      <img src="./images/inferences.png" alt="" style="width:60%"/>
       <figcaption>Inferring likely properties and relations across relations</figcaption>
     </figure>
     
@@ -235,6 +235,8 @@
     <dd>The extent to which one thing is similar to another, e.g. the extent that they have some of the same properties.</dd>
     <dt><dfn>dominance</dfn></dt>
     <dd>The relative importance of an instance of a class as compared to other instances. For a country, for instance, this could relate to the size of its population or the size of its economy.</dd>
+    <dt><dfn>multiplicity</dfn></dt>
+    <dd>The number of items in a given range, e.g. how many different kinds of flowers grow in England, remembering that parameters are qualitative not quantitative.</dd>
     </dl>
     
     <p>See section [[[#reasoning]]] for the role of statement parameters in argumentation.</p>
@@ -444,35 +446,53 @@ age of adult is 18, age-at-death for person</code></pre>
   </section>  
 </section>
 
-<section id="reasoning">
+<section id="reasoning" class="informative">
   <h2>Plausible Reasoning and Argumentation</h2>
   
-  <p>This section describes how PKN statements can be used to compute inferences along with their estimated certainty, as the basis for constructing arguments both for and against a given premise.</p>
-  
-  <section id="query-execution">
-    <h3>Reasoning with Relations</h3>
-  </section>  
-  
-  <section id="query-execution">
-    <h3>Reasoning with Implications</h3>
-  </section>  
-  
-  <section id="query-execution">
-    <h3>Reasoning with Queries</h3>
+  <p>Plausible reasoning is about generating arguments that support or counter a premise, gathering information along the way. The reasoning process is driven by a queue of premises awaiting consideration, plus a record of reasoning so far, which can be modelled as a reasoning graph. The reasoner applies heuristics (strategies and tactics) to determine which potential inferences to apply and in what order to develop the aguments. As reasoning proceeds, the consideration of additional evidence may either boost or weaken earlier conclusions.</p>
+    
+  <section id="explanations">
+    <h3>Generating Explanations</h3>
+    <p>The inference engine can start with the premise in question and  look for directly supporting evidence, and after that, indirect evidence involving inferences using different kinds of PKN statements that pose intermediate premises for consideration. The reasoning process generates a graph that starts from the premises and works back to direct evidence in the knowledge graph. The reasoning graph can then be scanned in the reverse direction to generate explanations that start with the facts and progressively justify the premise via a series of inferences.</p>
+    <p>The reasoning process can try to support an argument via finding additional evidence, or it can try to generate counter arguments that undermine, undercut or rebut other arguments. The explanation then needs to put these arguments into context using the appropriate templates.</p>
   </section>  
   
   <section id="certainty">
     <h3>Estimating Certainty</h3>
+  <p>This section describes how PKN statements can be used to compute inferences along with their estimated certainty, as the basis for constructing arguments both for and against a given premise, in terms of chains of inferences.</p>
+  <p>In probability theory the conditional probability of event A occurring given an occurrence of event B can be expressed using Bayes theorem:</p>
+  
+    <figure id="bayes">
+      <img src="./images/bayes.svg" alt="" style="width:30%"/>
+      <figcaption>Bayes Theorem</figcaption>
+    </figure>
+      
+  <p>When applied to inferences, this requires the gathering of lots of statistics which is very challenging from a practical perspective. In the absence of comprehensive statistics, the certainty to which the conclusions hold true can be informally modelled as a number in the range 0 to 1. Qualitative terms such as low, medium and high can be mapped to such numbers for use in estimation algorithms, and later when needed, mapped back into qualitative terms.</p>
+  <p>One such algorithm is where a goal directly matches multiple properties with non-exclusive values, which can then be combined as a set. The more matches, the greater the certainty for establishing the goal.</p>
+  <p>If c is the average certainty and n is the number of matches, the
+combined certainty is 1.0 - (1.0 - c)/n. If c = 0.5 and n = 1 we get 0.5. If n = 2, we get 0.75. If n = 4, we get 0.85, If n = 256, we get 0.998.</p>
+  <p>Collins et al. suggest a simplified approach to modelling the effects of the various metadata parameters in which each parameter boosts, weakens or has no effect on the estimated certainty, and using the same algorithm for all such parameters.</p>
+  <p>If the original certainty is zero, the parameters should have no effect, and likewise, the effect of a parameter should be smaller as the parameter’s value tends to zero.</p>
+  <p>Treating the effect of a parameter as a multiplier m on the certainty, the number should be in the range 0 to 1/c, where c > 0. If we want to boost c by 25% when c = 0.5, m = 1.25, but this should shrink to 1 when c = 1.</p>
+  <p>How much should m increase as c tends to 0? One idea is to use linear interpolation, i.e., 1.5 when c = 0, 1.25 when c = 0.5 and 1 when c = 1. This multiplier shrinks to 1 as the value of the parameter tends to 0 and when c tends to 0. Thus m = 1 + p/2 - p*c/2, where m is the multiplier, p is the parameter value (0 to 1) and c is the certainty (0 to 1).</p>
+  <p>We also need to deal with multiple lines of argument for and against the premise in question. If the arguments agree, we can aggregate their certainties using the first algorithm above. We are then left with a fuzzy set for the different conclusions, e.g. (true 0.8, false 0.2). Note that arguments may present multiple conclusions rather than true or false, as depending on the query posed to the reasoner.</p>
   </section>  
   
+  <section id="reasoning-relations">
+    <h3>Reasoning with Relations</h3>
+  </section>  
+  
+  <section id="reasoning-implications">
+    <h3>Reasoning with Implications</h3>
+  </section>  
+  
+  <section id="reasoning-queries">
+    <h3>Reasoning with Queries</h3>
+  </section>  
+
   <section id="arguments">
     <h3>Assessing Multiple Lines of Argumentation</h3>
-  </section>  
-  
-  <section id="explanations">
-    <h3>Generating Explanations</h3>
-  </section>  
-  
+  </section> 
 </section>
 
 </body>
