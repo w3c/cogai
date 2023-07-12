@@ -116,6 +116,35 @@
       }
     };
   </script>
+  <style>
+table {
+  border-collapse: collapse;
+  border: 2px solid rgb(200,200,200);
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+
+td, th {
+  border: 1px solid rgb(190,190,190);
+  padding: 10px 20px;
+}
+
+th {
+  background-color: rgb(235,235,235);
+}
+
+td {
+  text-align: center;
+}
+
+tr:nth-child(even) td {
+  background-color: rgb(250,250,250);
+}
+
+tr:nth-child(odd) td {
+  background-color: rgb(245,245,245);
+}
+  </style>
 </head>
 <body>
   <section id="abstract">
@@ -478,8 +507,142 @@ combined certainty is 1.0 - (1.0 - c)/n. If c = 0.5 and n = 1 we get 0.5. If n =
   <p>We also need to deal with multiple lines of argument for and against the premise in question. If the arguments agree, we can aggregate their certainties using the first algorithm above. We are then left with a fuzzy set for the different conclusions, e.g. (true 0.8, false 0.2). Note that arguments may present multiple conclusions rather than true or false, as depending on the query posed to the reasoner.</p>
   </section>  
   
-  <section id="reasoning-relations">
-    <h3>Reasoning with Relations</h3>
+  <section id="reasoning-proprels">
+    <h3>Reasoning with Properties and Relations</h3>
+    
+    <p>The reasoner can be given a property or relationship as a premise that we want to find evidence for and against, for instance, here is a premise expressed as a property:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+flowers of England includes daffodils   
+      </pre>
+      </aside>
+      
+     <p>Its inverse would be:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+flowers of England excludes daffodils
+      </pre>
+      </aside>
+      
+     <p>The reasoner first checks if the premise is a known fact, and if not looks for other ways to gather evidence. One tactic is to generalize the property referent, e.g., by replacing it with a variable as in the following:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+flowers of England includes ?flower
+      </pre>
+      </aside>
+
+     <p>The knowledge graph provides a matching property statement:</p>
+     
+      <aside class="example">
+      <pre class="pkn">
+flowers of England includes temperate-flowers
+      </pre>
+      </aside>
+
+     <p>We then look for ways to relate daffodils to temperate flowers, finding a matching relation statement:</p>
+     
+      <aside class="example">
+      <pre class="pkn">
+daffodils kind-of temperate-flowers
+      </pre>
+      </aside>
+
+     <p>So, we have inferred that daffodils grow in England. Another tactic is to generalize the property argument as in the following:</p>
+     
+      <aside class="example">
+      <pre class="pkn">
+flowers of ?place includes daffodils
+      </pre>
+      </aside>
+
+     <p>We can then look for ways to relate England to similar countries, for example:</p>
+     
+      <aside class="example">
+      <pre class="pkn">
+Netherlands similar-to England for flowers
+      </pre>
+      </aside>
+
+     <p>We find then a match, for example:</p>
+     
+      <aside class="example">
+      <pre class="pkn">
+flowers of Netherlands includes daffodils, tulips, roses
+      </pre>
+      </aside>
+
+     <p>Thus, providing us with a second way to infer that daffodils grow in England. The certainty depends on the parameters, and the [=similarity=] parameter in respect to the similar-to relation. The above uses a property as a premise. You can also use relations as premises, for instance:</p>
+     
+      <aside class="example">
+      <pre class="pkn">
+Peter is young
+      </pre>
+      </aside>
+
+     <p>The reasoner will then look for relevant knowledge on whether Peter is, or is not, young, e.g., Peter’s age, and whether that implies he is a child or an adult, based upon pertinent range statements and associated definitions for their values.</p>
+     
+     <p>In a small knowledge graph, it is practical to exhaustively consider all potentially relevant inferences. This becomes increasingly costly as the size of the knowledge graph increases. One way to address this challenge is to prioritize inferences that seem more certain, and to ignore those that are deemed too weak.</p>
+  
+    <p>See [[[#inferences]]] for an illustration of how properties and relations can be plausibly inferred across relation statements such as <em>kind-of</em> depending on the associated metadata. An instance or subclass of a class can plausibly share properties of that class as a specialisation, especially if that instance or subclass is annotated as being typical of that class, see [=typicality=]. Likewise, a class can plausibly share properties of a subclass as a generalisation.</p>
+    
+    <p>If two concept are similar, then they are likely to share the same properties according to their degree of [=similarity=]. You can restrict this to a named context, e.g. as in:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+duck similar-to goose for neck-length
+duck dissimilar-to goose for sound      
+      </pre>
+      </aside>
+
+    <p>Here are some examples of PKN relationships with their meaning, and whether the meaning is symmetric or asymmetric.</p>
+    
+    <table border>
+    <tr>
+    <th>Relationship Type</th>
+    <th>Meaning</th>
+    <th>Reversible</th>
+    </tr>
+    <tr>
+    <td>kind-of</td>
+    <td>instance of class</td>
+    <td>asymmetric</td>
+    </tr>
+    <tr>
+    <td>is-a</td>
+    <td>instance of class</td>
+    <td>asymmetric</td>
+    </tr>
+    <tr>
+    <td>similar-to</td>
+    <td>similar concepts</td>
+    <td>symmetric</td>
+    </tr>
+    <tr>
+    <td>dissimilar-to</td>
+    <td>dissimilar concepts</td>
+    <td>symmetric</td>
+    </tr>
+    <tr>
+    <td>depends-on</td>
+    <td>instance of class</td>
+    <td>asymmetric</td>
+    </tr>
+    <tr>
+    <td>analogous-to</td>
+    <td>analogous concepts</td>
+    <td>symmetric</td>
+    </tr>
+    <tr>
+    <td>antonym-for</td>
+    <td>opposite meaning</td>
+    <td>asymmetric</td>
+    </tr>
+    </table> 
+    
+    <p class="issue">The reasoner can exploit built-in tactics for reasoning, but it would also be interesting to provide a declarative means to describe such tactics.</p>
   </section>  
   
   <section id="reasoning-implications">
