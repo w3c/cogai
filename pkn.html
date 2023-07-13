@@ -97,6 +97,15 @@
         	year: 2023,
         	href: "https://openai.com/gpt-4"
         },
+        "GENTNER": {
+          title: "Similarity is like analogy: structural alignment in comparison",
+          year: 1995,
+          href: "https://groups.psych.northwestern.edu/gentner/papers/GentnerMarkman95b.pdf",
+          authors: [
+          	"Dedre Gentner",
+          	"Arthur B. Markman"
+          ]
+        },
         "RDF Semantics": {
         	title: "RDF 1.1 Semantics",
         	year: 2014,
@@ -287,11 +296,11 @@ tr:nth-child(odd) td {
     
     <p>The following operators are predefined:</p>
     <dl>
-    <dt>includes</dt>
+    <dt><dfn>includes</dfn></dt>
     <dd>This implies that the property is not limited to the given referent.</dd>
-    <dt>excludes</dt>
+    <dt><dfn>excludes</dfn></dt>
     <dd>This implies that the property doesn't hold for the given referent.</dd>
-    <dt>is</dt>
+    <dt><dfn>is</dfn></dt>
     <dd>This implies that the property is limited to the given referent.</dd>
     </dl>
     
@@ -373,6 +382,8 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</pre>
     </dl>
     
     <p>Note that <em>few, many</em> and <em>most</em> are intentionally imprecise, see Section [[[#fuzzy-quantifiers]]].</p>
+    
+    <p class="issue">What are the implications of allowing a comma separated list of quantifier variables?</p>
   </section>
 </section>
 
@@ -574,7 +585,11 @@ flowers of Netherlands includes daffodils, tulips, roses
       </pre>
       </aside>
 
-     <p>Thus, providing us with a second way to infer that daffodils grow in England. The certainty depends on the parameters, and the [=similarity=] parameter in respect to the similar-to relation. The above uses a property as a premise. You can also use relations as premises, for instance:</p>
+     <p>Thus, providing us with a second way to infer that daffodils grow in England. The certainty depends on the parameters, and the [=similarity=] parameter in respect to the similar-to relation.</p>
+     
+     <p>If the premise is a property whose referent is a variable, then its binding may combine values from lines of evidence, e.g. roses from one line of reasoning, and daffodils and tulips from another. This depends on the property operator, e.g. [=includes=] supports such combination, whereas [=excludes=] precludes combination.</p>
+     
+     <p>Whilst the above uses a property as a premise, you can also use relations as premises, for instance:</p>
      
       <aside class="example">
       <pre class="pkn">
@@ -642,23 +657,193 @@ duck dissimilar-to goose for sound
     </tr>
     </table> 
     
-    <p class="issue">The reasoner can exploit built-in tactics for reasoning, but it would also be interesting to provide a declarative means to describe such tactics.</p>
+    <p class="issue">The reasoner can exploit built-in tactics for reasoning, but it would also be interesting to provide a declarative means to describe such tactics, for instance, as an enabler for machine learning.</p>
   </section>  
   
   <section id="reasoning-implications">
     <h3>Reasoning with Implications</h3>
+    
+    <p>Implication rules are conditioned on conjunctions of antecedents, which can be properties or relations, see the folowing example.</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+?adult is-a adult and age of ?adult less-than 25 implies age of ?adult is very:young
+      </pre>
+      </aside>
+
+    <p>Disjunctions can be modelled using multiple implications. Negatives can expressed using antonyms. The [=strength=] parameter describes the conditional likelihood of the consequents given the antecedents, whilst [=inverse=] describes the conditional likelihood of the antecedents given the consequents.</p>
+      
+    <p>An implication can be chosen for consideration when one of its consequents matches a premise in question, the reasoner then needs to seek evidence to establish all of the antecedents before binding any variables in that premise and updating its estimated certainty. A similar process applies when using the implication in reverse.</p>
   </section>  
   
   <section id="reasoning-analogies">
     <h3>Reasoning with Analogies</h3>
+    <p>Analogies involve comparisons between things or objects where similarities in some respects can suggest the likelihood of similarities in other respects, for instance, in their respective properties and relationships, or in ways to solve related problems. Gentner and Markman proposed a basis for modelling analogies in terms of establishing a structural alignment based on common relational structure for two representations, where the stronger the match, the better the analogy, see [[[GENTNER]]].</p>
+    <p>In some cases, the objects may have the same properties, in other cases, there is a systematic mapping between different properties, e.g., relating electric current to the flow of a liquid in a pipe, and correspondingly, voltage to pressure. If you know that flow increases with pressure, you can infer that current increases with voltage.</p>
+    <p>Analogical reasoning tests often take the form of A is to B as Y is to —, where students are asked to supply the missing term. This can be readily modelled using PKN, for example consider the query:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+# leaf is to tree as petal is to what?
+
+leaf:tree::petal:?
+      </pre>
+      </aside>
+    
+    <p>when applied to the knowledge:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+leaf part-of tree
+petal part-of flower
+      </pre>
+      </aside>
+    
+    <p>The reasoner finds that <em>leaf</em> is related to <em>tree</em> via the <em>part-of</em> relationship, and can then use that to look for a part-of relationship involving petal, yielding the result flower. Now consider:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+like:love::dislike:?
+      </pre>
+      </aside>
+    
+    <p>when applied to the knowledge:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+love more-than like
+hate more-than dislike
+      </pre>
+      </aside>
+    
+    <p>This gives the answer hate by matching the object of the relationship rather than the subject. Here is a more complex example showing the output from the reasoner:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+Premise: mansion:shack::yacht:?
+
+Found: mansion is large for building
+Found: shack is small for building
+
+So contrast is large, small
+
+Found: yacht is large for sailing-boat
+Found: dingy is small for sailing-boat
+
+Therefore mansion:shack::yacht:dingy
+      </pre>
+      </aside>
+      
+    <p>PKN also allows you to reason from known analogies, e.g. given:</p>
+    
+      <aside class="example">
+      <pre class="pkn">
+circuit analogous-to plumbing
+flow increases-with pressure for plumbing
+current increases-with voltage for circuit
+      </pre>
+      </aside>
+    
+    <p>The reasoner can then infer the following:</p>
+
+      <aside class="example">
+      <pre class="pkn">
+voltage corresponds-to pressure
+current corresponds-to flow
+      </pre>
+      </aside>
+
+    <p>Analogies involve a form of inductive reasoning, and is related to learning from examples, and being able to apply past experience to a new situation based upon noticing the similarities and reasoning about the differences. Such reasoning can be simple as in the above examples or more complicated, for instance, when involving causal modelling.</p>
   </section>  
   
   <section id="reasoning-queries">
     <h3>Reasoning with Queries</h3>
+    
+    <p>Query statements are loosely analogous to SPARQL for RDF graphs. The reasoner seeks evidence to bind the quantified variables and applies the quantifier to generate the query results. Consider the example:</p>
+    
+       <aside class="example">
+      <pre class="pkn">
+few ?x where color of ?x includes yellow from ?x kind-of rose
+      </pre>
+      </aside>
+
+    <p>when applied to the following facts:</p>
+    
+       <aside class="example">
+      <pre class="pkn">
+rose-blue-moon kind-of rose
+color of rose-blue-moon includes purple
+rose-pascali kind-of rose
+color of rose-pascali includes white
+rose-lovers-meeting kind-of rose
+color of rose-lovers-meeting includes orange
+rose-ruby-wedding kind-of rose
+color of rose-ruby-wedding includes red
+rose-wendy-cussons kind-of rose
+color of rose-wendy-cussons includes magenta
+rose-fragrant-cloud kind-of rose
+color of rose-fragrant-cloud includes red
+rose-peace kind-of rose
+color of rose-peace includes yellow, pink
+rose-double-delight kind-of rose
+color of rose-double-delight includes white, red
+rose-sublest kind-of rose
+color of rose-sublest includes yellow
+rose-harry-wheatcroft kind-of rose
+color of rose-harry-wheatcroft includes red, yellow
+      </pre>
+      </aside>
+    
+    <p>The variable <code>?x</code> binds to 3 kinds of yellow roses out of a total of 10 known varieties of roses, so for this dataset at least, the query evaluates to true as 3 is small compared to 10. For more details, see Section[[[#queries]]].</p>
+  </section>  
+
+  <section id="reasoning-graphs">
+    <h3>Reasoning about Graphs</h3>
+    
+    <p>Consider the statement: "Mary thinks John loves Joan". We can model this by defining a graph for Mary's beliefs and naming the graph as the object of a relation:</p>
+    
+       <aside class="example">
+      <pre class="pkn">
+Mary believes graph417
+      </pre>
+      </aside>
+    
+    <p>where <code>graph417</code> is the name of the graph for Mary's beliefs.  That graph could be loaded separately via the reasoner's scripting API, and bound to the identifier <code>graph417</code>. However, it may be more convenient to allow individual statements to name which graph they belong to. One potential way to represent this is as follows:</p>
+    
+       <aside class="example">
+      <pre class="pkn">
+John loves Joan for graph417
+      </pre>
+      </aside>
+    
+    <p>which limits the statement to holding in the context <code>X</code>. Alternatively, the PKN syntax could be extended to explicitly name groups of statements, perhaps something like:</p>
+    
+       <aside class="example">
+      <pre class="pkn">
+graph graph417 {
+   # statements that hold in this graph
+   John loves Joan for graph417
+}
+      </pre>
+      </aside>
+    
+
+    <p class="issue">How would this expand to statements like: "Mary thinks John is lying when he says he loves Joan"?</p>
+  </section>  
+
+  <section id="reasoning-meta">
+    <h3>Reasoning about Reasoning</h3>
+    
+    <p>An open challenge is how to declaratively model strategies and tactics for reasoning rather than needing to hard code them as part of the reasoner's implementation. Further work is needed to clarify the requirements and to evaluate different ways to fulfil those requirements using an intuitively understandable syntax. The [[AIF]] ontology would be a useful source of inspiration.</p>
+    
+    <p>This raises the question of how enable machine learning for both knowledge graphs and reasoning strategies and tactics.</p>
+    
+    <p class="issue">Perhaps large scale machine learning is much more tractable using vector space representations instead of symbolic graphs? Large language models have shown impressive reasoning capabilities and can readily handle complex higher order statements, such as above.</p>
   </section>  
 
   <section id="arguments">
     <h3>Assessing Multiple Lines of Argumentation</h3>
+    <p>PKN reasoners can generate arguments for and against a given premise, where each argument is formed from a chain of plausible inferences. The reasoning process estimates the certainty of each argument. Arguments can be grouped for the purposes of generating explanations from the argument graph. If the certainties for and against the premise are roughly similar, then the users are left to draw their own conclusions. The reasoner should provide further details when asked.</p>
   </section> 
 </section>
 
