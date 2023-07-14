@@ -320,7 +320,16 @@ Belgium similar-to Netherlands for latitude
 younger-than equivalent-to less-than for age</pre>
       <p>The first example declares that tulips are a kind of flowers found in countries with temperate climates. The last two examples specify a scope for which the relation holds.</p>
     </aside>
-
+    
+    <p>Use metadata to indicate the strength of a relation, see [=strength=] and [=inverse=].  Use prefixes on the relationship as modifiers, i.e. similar to adjectives when applied to a noun, as in:</p>
+    
+    <aside class="example">
+      <pre class="pkn">
+Paul close:friend-of John</pre></p>
+    </aside>
+    
+    <p class="issue">Is there a need to a separate means to model negation or are prefixes sufficient?</p>
+    
     <p>Note: variables are only permitted within relations that appear as conditions or actions in implication statements or query statements.</p>
   </section>
 
@@ -482,7 +491,7 @@ age of adult is 18, age-at-death for person</code></pre>
     <p>PKN relations statements can be handled in a similar manner. It might be tempting to translate the relation's subject, relationship and object into a single RDF triple, but this won't work when the PKN relation is constrained to a scope, or is associated with statement metadata.</p>
     <p>PKN implication statements are more complex to handle as they involve a sequence of antecedents and a sequence of consequents, as well as locally scoped variables. One possible approach is to first generate a blank node for the statement, and use it as the subject for RDF collections for the variables, antecedents and consequents.</p>
     <p>PKN analogy statements are simpler, although there is a need to be able to distinguish variables from named concepts, e.g. as in <code>"dog:puppy::cat:?"</code>.</p> 
-    <p class="ednote">Need to explain how PKN encompasses named graphs and statements, along with how these relate to RDF, RDF-star and N3.</p>
+    <p class="ednote">Need to explain how PKN relates to RDF-star and N3.</p>
   </section>  
 </section>
 
@@ -800,35 +809,23 @@ color of rose-harry-wheatcroft includes red, yellow
   <section id="reasoning-graphs">
     <h3>Reasoning about Graphs</h3>
     
-    <p>Consider the statement: "Mary thinks John loves Joan". We can model this by defining a graph for Mary's beliefs and naming the graph as the object of a relation:</p>
+    <p>Consider the statement: "Mary thinks John loves Joan". We can model this using a graph for Mary's beliefs as the object of a relation:</p>
     
        <aside class="example">
       <pre class="pkn">
-Mary believes graph417
+Mary believes { John loves Joan }
       </pre>
       </aside>
     
-    <p>where <code>graph417</code> is the name of the graph for Mary's beliefs.  That graph could be loaded separately via the reasoner's scripting API, and bound to the identifier <code>graph417</code>. However, it may be more convenient to allow individual statements to name which graph they belong to. One potential way to represent this is as follows:</p>
+    <p>Here is a more complicated example "Mary thinks John is lying when he says he loves Joan"</p>
     
        <aside class="example">
       <pre class="pkn">
-John loves Joan for graph417
+Mary believes {{John says {John loves Joan}} is-a lie}
       </pre>
       </aside>
-    
-    <p>which limits the statement to holding in the context <code>graph417</code>. Alternatively, the PKN syntax could be extended to explicitly name groups of statements, perhaps something like:</p>
-    
-       <aside class="example">
-      <pre class="pkn">
-graph graph417 {
-   # statements that hold in this graph
-   John loves Joan
-}
-      </pre>
-      </aside>
-    
-
-    <p class="issue">How would this expand to statements like: "Mary thinks John is lying when he says he loves Joan"?</p>
+      
+    <p>Note that you can use a relation or property as a means to refer to a graph from a query or implication statement.</p>
   </section>  
 
   <section id="reasoning-meta">
