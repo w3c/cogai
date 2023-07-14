@@ -10,12 +10,12 @@ property ::= descriptor "of" argument operator referent
     argument ::= name | variable
     operator ::= "includes" | "excludes" | "is" | name
     value ::= name | number
-    referent ::= (value (',' value)*) | variable
+    referent ::= (value (',' value)*) | variable | graph
 
 relation ::= subject relationship object
-    subject ::= name | variable
+    subject ::= name | variable | graph
     relationship ::= name | variable
-    object ::= name | variable
+    object ::= name | variable | graph
 
 implication ::= terms "implies" terms
     terms ::= term ("and" term)*
@@ -32,6 +32,8 @@ QUERY ::= quantifier variable ("where" conditions)? "from" conditions
 variable ::= "?" name?
 name ::= letter (letter | digit | "-")* (":" (letter | digit | "-")+)*
 number ::= ("-" | "+")? digit+ ("." digit*)? (("e"|"E") ("-" | "+")? digit+)?
+
+graph ::= '{' statement* '}'
 	
 letter ::= 
     "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
