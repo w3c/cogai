@@ -253,7 +253,7 @@ tr:nth-child(odd) td {
 <section id="statements">
   <h2>PKN Statements</h2>
   
-  <p>PKN supports several kinds of statements as defined below.</p>
+  <p>PKN supports several kinds of statements as defined below.  PKN further supports named and unnamed collections of statements.</p>
 
   <section id="metadata">
     <h3>Statement MetaData</h3>
@@ -278,8 +278,6 @@ tr:nth-child(odd) td {
     </dl>
     
     <p>See section [[[#reasoning]]] for the role of statement parameters in argumentation.</p>
-    
-    <p class="issue">Where should we describe how names can be used for graphs and statements?</p>
     
      <p class="issue">Need to explain the relation to existing argumentation systems, along with formalisms such as AIF and ASPIC, together with questions around correctness, complexity and semantics. Note the need to explain why formal semantics is challenging for imperfect knowledge.</p>
   </section>
@@ -357,7 +355,7 @@ weather of ?place includes rainy
     <pre class="pkn">dog:puppy::cat:?</pre>
     </aside>
   </section>
-
+  
   <section id="queries">
     <h3>Query Statements</h3>
     <p>These have a <em>quantifier</em>, a <em>variable</em>, an optional <em>where clause</em>, and a required <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause. The tests relate to the variable bindings.</p>
@@ -394,6 +392,25 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</pre>
     
     <p class="issue">What are the implications of allowing a comma separated list of quantifier variables?</p>
   </section>
+  
+  <section id="named-statements">
+    <h3>Named Collections of Statements</h3>
+    <p>This allow properties and relations to refer to named collections of statements, e.g. when modelling reported speech.</p>  
+    
+    <aside class="example" title="Statement Collections">
+      <pre class="pkn">g1: {
+	Fido is-a dog
+	Mia is-a cat
+}
+
+Michael believes g1</pre>
+      <p>This is an example of a named collection of statements where the name is "g1" and the statements assert that Fido is a dog and Mia is a cat. Unnamed collections of statements can be used in place as part of properties and relations.</p>
+    </aside>
+    <aside class="example" title="Unnamed Statement Collections">
+      <pre class="pkn">Peter believes {Wendy likes chocolate}</pre>
+    </aside>
+  </section>
+
 </section>
 
 <section id="fuzzy" class="informative">
@@ -455,7 +472,7 @@ age of adult is 18, age-at-death for person</code></pre>
 <section id="documents">
   <h2>PKN Documents</h2>
   
-  <p>A PKN document is a sequence of PKN statements.</p>
+  <p>A PKN document is a sequence of PKN statements and named collections of statements.</p>
   
   <section>
     <h3>PKN Graphs</h3>
