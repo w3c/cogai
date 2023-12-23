@@ -31,7 +31,8 @@ QUERY ::= quantifier variable ("where" conditions)? "from" conditions
 
 variable ::= "?" name?
 prefix ::= letter (letter | digit | "-")*
-name ::= prefix (":" (letter | digit | "-")+)*
+suffix ::= (":" (letter | digit | "-")+)
+name ::= prefix suffix*
 number ::= ("-" | "+")? digit+ ("." digit*)? (("e"|"E") ("-" | "+")? digit+)?
 
 graph ::= '{' statement* '}'
