@@ -1,4 +1,4 @@
-STATEMENTS ::= statement*
+STATEMENTS ::= (statement | prefix graph)*
 	
 statement ::= (property | relation | implication| analogy) ("for" scope)? meta?
     scope ::= name (',' name)*
@@ -30,7 +30,8 @@ QUERY ::= quantifier variable ("where" conditions)? "from" conditions
     condition ::= property | relation
 
 variable ::= "?" name?
-name ::= letter (letter | digit | "-")* (":" (letter | digit | "-")+)*
+prefix ::= letter (letter | digit | "-")*
+name ::= prefix (":" (letter | digit | "-")+)*
 number ::= ("-" | "+")? digit+ ("." digit*)? (("e"|"E") ("-" | "+")? digit+)?
 
 graph ::= '{' statement* '}'
