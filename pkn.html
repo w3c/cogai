@@ -398,14 +398,16 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</pre>
     <p>This allow properties and relations to refer to named collections of statements, e.g. when modelling reported speech.</p>  
     
     <aside class="example" title="Statement Collections">
-      <pre class="pkn">g1: {
+      <pre class="pkn">
+g1: {
 	Fido is-a dog
 	Mia is-a cat
 }
 
 Michael believes g1</pre>
-      <p>This is an example of a named collection of statements where the name is "g1" and the statements assert that Fido is a dog and Mia is a cat. Unnamed collections of statements can be used in place as part of properties and relations.</p>
+      <p>This is an example of a named collection of statements where the name is "g1" and the statements assert that Fido is a dog and Mia is a cat.</p>
     </aside>
+    <p>Unnamed collections of statements can be used in situ as part of properties and relations, e.g.</p>
     <aside class="example" title="Unnamed Statement Collections">
       <pre class="pkn">Peter believes {Wendy likes chocolate}</pre>
     </aside>
@@ -842,7 +844,17 @@ Mary believes {{John says {John loves Joan}} is-a lie}
       </pre>
       </aside>
       
-    <p>Note that you can use a relation or property as a means to refer to a graph from a query or implication statement.</p>
+    <p>Sometimes it will be more convenient to define a named collection of statements, and use the name to refer to them from PKN statements.</p>
+      
+       <aside class="example">
+      <pre class="pkn">
+g1: {
+	Fido is-a dog
+	Mia is-a cat
+}
+
+Michael believes g1</pre>
+      </aside>
   </section>  
 
   <section id="reasoning-meta">
