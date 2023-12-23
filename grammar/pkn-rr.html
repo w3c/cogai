@@ -1,65 +1,31 @@
-<!DOCTYPE HTML><html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <meta name="generator" content="Railroad Diagram Generator 2.0">
-      <style type="text/css">
-    ::-moz-selection
-    {
-      color: #FFFCF0;
-      background: #0F0C00;
-    }
-    ::selection
-    {
-      color: #FFFCF0;
-      background: #0F0C00;
-    }
-    body
-    {
-      font: normal 12px Verdana, sans-serif;
-      color: #0F0C00;
-      background: #FFFCF0;
-    }
-    .ebnf a
-    {
-      text-decoration: none;
-    }
-    .ebnf a:hover
-    {
-      color: #050400;
-      text-decoration: underline;
-    }
-    .signature
-    {
-      color: #806600;
-      font-size: 11px;
-      text-align: right;
-    }
-    a:link, a:visited
-    {
-      color: #0F0C00;
-    }
-    a:link.signature, a:visited.signature
-    {
-      color: #806600;
-    }
-    div.ebnf
-    {
-      padding: 10px;
-      background: #FFF6D1;
-      width: 992px;
-    }
-    .ebnf div
-    {
-      padding-left: 13ch;
-      text-indent: -13ch;
-    }
-    .ebnf code
-    {
-      font:12px SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
-    }
+  <style type="text/css">
+    @namespace "http://www.w3.org/2000/svg";
+    .line                 {fill: none; stroke: #332900; stroke-width: 1;}
+    .bold-line            {stroke: #141000; shape-rendering: crispEdges; stroke-width: 2;}
+    .thin-line            {stroke: #1F1800; shape-rendering: crispEdges}
+    .filled               {fill: #332900; stroke: none;}
+    text.terminal         {font-family: Verdana, Sans-serif;
+                            font-size: 12px;
+                            fill: #141000;
+                            font-weight: bold;
+                          }
+    text.nonterminal      {font-family: Verdana, Sans-serif;
+                            font-size: 12px;
+                            fill: #1A1400;
+                            font-weight: normal;
+                          }
+    text.regexp           {font-family: Verdana, Sans-serif;
+                            font-size: 12px;
+                            fill: #1F1800;
+                            font-weight: normal;
+                          }
+    rect, circle, polygon {fill: #332900; stroke: #332900;}
+    rect.terminal         {fill: #FFDB4D; stroke: #332900; stroke-width: 1;}
+    rect.nonterminal      {fill: #FFEC9E; stroke: #332900; stroke-width: 1;}
+    rect.text             {fill: none; stroke: none;}
+    polygon.regexp        {fill: #FFF4C7; stroke: #332900; stroke-width: 1;}
   </style>
-   </head>
-   <body>
+
       <p style="font-size: 14px; font-weight:bold"><a name="STATEMENTS">STATEMENTS:</a></p><img border="0" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22311%22%20height%3D%22113%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%40namespace%20%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3B%20.line%20%7Bfill%3A%20none%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%20.bold-line%20%7Bstroke%3A%20%23141000%3B%20shape-rendering%3A%20crispEdges%3B%20stroke-width%3A%202%3B%7D%20.thin-line%20%7Bstroke%3A%20%231F1800%3B%20shape-rendering%3A%20crispEdges%7D%20.filled%20%7Bfill%3A%20%23332900%3B%20stroke%3A%20none%3B%7D%20text.terminal%20%7Bfont-family%3A%20Verdana%2C%20Sans-serif%3B%20font-size%3A%2012px%3B%20fill%3A%20%23141000%3B%20font-weight%3A%20bold%3B%20%7D%20text.nonterminal%20%7Bfont-family%3A%20Verdana%2C%20Sans-serif%3B%20font-size%3A%2012px%3B%20fill%3A%20%231A1400%3B%20font-weight%3A%20normal%3B%20%7D%20text.regexp%20%7Bfont-family%3A%20Verdana%2C%20Sans-serif%3B%20font-size%3A%2012px%3B%20fill%3A%20%231F1800%3B%20font-weight%3A%20normal%3B%20%7D%20rect%2C%20circle%2C%20polygon%20%7Bfill%3A%20%23332900%3B%20stroke%3A%20%23332900%3B%7D%20rect.terminal%20%7Bfill%3A%20%23FFDB4D%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%20rect.nonterminal%20%7Bfill%3A%20%23FFEC9E%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%20rect.text%20%7Bfill%3A%20none%3B%20stroke%3A%20none%3B%7D%20polygon.regexp%20%7Bfill%3A%20%23FFF4C7%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cpolygon%20points%3D%229%2033%201%2029%201%2037%22%2F%3E%3Cpolygon%20points%3D%2217%2033%209%2029%209%2037%22%2F%3E%3Crect%20x%3D%2291%22%20y%3D%2219%22%20width%3D%2286%22%20height%3D%2232%22%2F%3E%3Crect%20x%3D%2289%22%20y%3D%2217%22%20width%3D%2286%22%20height%3D%2232%22%20class%3D%22nonterminal%22%2F%3E%3Ctext%20class%3D%22nonterminal%22%20x%3D%2299%22%20y%3D%2237%22%3Estatement%3C%2Ftext%3E%3Crect%20x%3D%2291%22%20y%3D%2263%22%20width%3D%2256%22%20height%3D%2232%22%2F%3E%3Crect%20x%3D%2289%22%20y%3D%2261%22%20width%3D%2256%22%20height%3D%2232%22%20class%3D%22nonterminal%22%2F%3E%3Ctext%20class%3D%22nonterminal%22%20x%3D%2299%22%20y%3D%2281%22%3Eprefix%3C%2Ftext%3E%3Crect%20x%3D%22167%22%20y%3D%2263%22%20width%3D%2256%22%20height%3D%2232%22%2F%3E%3Crect%20x%3D%22165%22%20y%3D%2261%22%20width%3D%2256%22%20height%3D%2232%22%20class%3D%22nonterminal%22%2F%3E%3Ctext%20class%3D%22nonterminal%22%20x%3D%22175%22%20y%3D%2281%22%3Egraph%3C%2Ftext%3E%3Cpath%20class%3D%22line%22%20d%3D%22m17%2033%20h2%20m60%200%20h10%20m86%200%20h10%20m0%200%20h46%20m-172%200%20h20%20m152%200%20h20%20m-192%200%20q10%200%2010%2010%20m172%200%20q0%20-10%2010%20-10%20m-182%2010%20v24%20m172%200%20v-24%20m-172%2024%20q0%2010%2010%2010%20m152%200%20q10%200%2010%20-10%20m-162%2010%20h10%20m56%200%20h10%20m0%200%20h10%20m56%200%20h10%20m-192%20-44%20l20%200%20m-1%200%20q-9%200%20-9%20-10%20l0%20-12%20q0%20-10%2010%20-10%20m192%2032%20l20%200%20m-20%200%20q10%200%2010%20-10%20l0%20-12%20q0%20-10%20-10%20-10%20m-192%200%20h10%20m0%200%20h182%20m-232%2032%20h20%20m232%200%20h20%20m-272%200%20q10%200%2010%2010%20m252%200%20q0%20-10%2010%20-10%20m-262%2010%20v58%20m252%200%20v-58%20m-252%2058%20q0%2010%2010%2010%20m232%200%20q10%200%2010%20-10%20m-242%2010%20h10%20m0%200%20h222%20m23%20-78%20h-3%22%2F%3E%3Cpolygon%20points%3D%22301%2033%20309%2029%20309%2037%22%2F%3E%3Cpolygon%20points%3D%22301%2033%20293%2029%20293%2037%22%2F%3E%3C%2Fsvg%3E" height="113" width="311" usemap="#STATEMENTS.map"><map name="STATEMENTS.map"><area shape="rect" coords="89,17,175,49" href="#statement" title="statement"><area shape="rect" coords="89,61,145,93" href="#prefix" title="prefix"><area shape="rect" coords="165,61,221,93" href="#graph" title="graph"></map><p>
          <div class="ebnf"><code>
                <div><a href="#STATEMENTS" title="STATEMENTS">STATEMENTS</a></div>
@@ -459,17 +425,4 @@
             <li><a href="#prefix" title="prefix">prefix</a></li>
             <li><a href="#suffix" title="suffix">suffix</a></li>
          </ul>
-      </p><br><hr>
-      <p>
-         <table border="0" class="signature">
-            <tr>
-               <td style="width: 100%">&nbsp;</td>
-               <td valign="top">
-                  <nobr class="signature">... generated by <a name="Railroad-Diagram-Generator" class="signature" title="https://www.bottlecaps.de/rr/ui" href="https://www.bottlecaps.de/rr/ui" target="_blank">RR - Railroad Diagram Generator</a></nobr>
-               </td>
-               <td><a name="Railroad-Diagram-Generator" title="https://www.bottlecaps.de/rr/ui" href="https://www.bottlecaps.de/rr/ui" target="_blank"><img border="0" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%40namespace%20%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3B%20.line%20%7Bfill%3A%20none%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%20.bold-line%20%7Bstroke%3A%20%23141000%3B%20shape-rendering%3A%20crispEdges%3B%20stroke-width%3A%202%3B%7D%20.thin-line%20%7Bstroke%3A%20%231F1800%3B%20shape-rendering%3A%20crispEdges%7D%20.filled%20%7Bfill%3A%20%23332900%3B%20stroke%3A%20none%3B%7D%20text.terminal%20%7Bfont-family%3A%20Verdana%2C%20Sans-serif%3B%20font-size%3A%2012px%3B%20fill%3A%20%23141000%3B%20font-weight%3A%20bold%3B%20%7D%20text.nonterminal%20%7Bfont-family%3A%20Verdana%2C%20Sans-serif%3B%20font-size%3A%2012px%3B%20fill%3A%20%231A1400%3B%20font-weight%3A%20normal%3B%20%7D%20text.regexp%20%7Bfont-family%3A%20Verdana%2C%20Sans-serif%3B%20font-size%3A%2012px%3B%20fill%3A%20%231F1800%3B%20font-weight%3A%20normal%3B%20%7D%20rect%2C%20circle%2C%20polygon%20%7Bfill%3A%20%23332900%3B%20stroke%3A%20%23332900%3B%7D%20rect.terminal%20%7Bfill%3A%20%23FFDB4D%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%20rect.nonterminal%20%7Bfill%3A%20%23FFEC9E%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%20rect.text%20%7Bfill%3A%20none%3B%20stroke%3A%20none%3B%7D%20polygon.regexp%20%7Bfill%3A%20%23FFF4C7%3B%20stroke%3A%20%23332900%3B%20stroke-width%3A%201%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22scale%280.178%29%22%3E%3Ccircle%20cx%3D%2245%22%20cy%3D%2245%22%20r%3D%2245%22%20style%3D%22stroke%3Anone%3B%20fill%3A%23FFCC00%22%2F%3E%3Ccircle%20cx%3D%2245%22%20cy%3D%2245%22%20r%3D%2242%22%20style%3D%22stroke%3A%23332900%3B%20stroke-width%3A2px%3B%20fill%3A%23FFCC00%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%2215%22%20x2%3D%2275%22%20y2%3D%2275%22%20stroke%3D%22%23332900%22%20style%3D%22stroke-width%3A9px%3B%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%2275%22%20x2%3D%2275%22%20y2%3D%2215%22%20stroke%3D%22%23332900%22%20style%3D%22stroke-width%3A9px%3B%22%2F%3E%3Ctext%20x%3D%227%22%20y%3D%2254%22%20style%3D%22font-size%3A26px%3B%20font-family%3AArial%2C%20Sans-serif%3B%20font-weight%3Abold%3B%20fill%3A%20%23332900%22%3ER%3C%2Ftext%3E%3Ctext%20x%3D%2264%22%20y%3D%2254%22%20style%3D%22font-size%3A26px%3B%20font-family%3AArial%2C%20Sans-serif%3B%20font-weight%3Abold%3B%20fill%3A%20%23332900%22%3ER%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E" height="16" width="16"></a></td>
-            </tr>
-         </table>
       </p>
-   </body>
-</html>
