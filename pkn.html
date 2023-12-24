@@ -396,6 +396,7 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</pre>
   <section id="named-statements">
     <h3>Named Collections of Statements</h3>
     <p>This allow properties and relations to refer to named collections of statements, e.g. when modelling reported speech.</p>  
+    
     <aside class="example" title="Statement Collections">
       <pre class="pkn">
 g1: {
@@ -474,7 +475,7 @@ age of adult is 18, age-at-death for person</code></pre>
   <h2>PKN Documents</h2>
   
   <p>A PKN document is a sequence of PKN statements and named collections of statements.</p>
-  
+
   <section>
     <h3>PKN Graphs</h3>
     <p>A <dfn data-lt="pkn-graph">PKN Graph</dfn> is an abstract representation of a PKN document as a graph in which statement are the vertices and names are the edges.</p>
@@ -482,8 +483,10 @@ age of adult is 18, age-at-death for person</code></pre>
   
   <section id="grammar">
     <h3>PKN Grammar</h3>
-    <p>A [=PKN document=] MUST follow the grammar defined below.</p>
+    <p>A [=PKN document=] MUST follow the grammar defined below. White space MAY be included between terms, and MUST be used when needed to separate adjacent terms, e.g. a name followed by a value. White space is NOT permitted within names or numbers, e.g. between a prefix and a suffix.</p>
 
+    <p class="issue">Should the grammar explicitly define where white space is optional or required?</p>
+  
     <pre class="pkn"><code class="abnf" data-include="grammar/pkn.ebnf" data-include-format="text"></code></pre>
 
     <p>Comments start with '#' and continue to the end of the current line or the end of the file, whichever comes first. White space is permitted between tokens. One exception is between '?' and the name token for a variable. Another exception is between the sign ('+' and '-') and the digits that form a number.</p>
