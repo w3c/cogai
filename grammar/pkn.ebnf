@@ -34,7 +34,7 @@ name ::= id (":" id)*
 id ::= letter (letter | digit | "-")*
 number ::= ("-" | "+")? digit+ ("." digit*)? (("e"|"E") ("-" | "+")? digit+)?
 
-graph ::= '{' statement* '}'
+graph ::= '{' STATEMENTS '}'
 	
 letter ::= 
     "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
