@@ -157,16 +157,16 @@ tr:nth-child(odd) td {
 </head>
 <body>
   <section id="abstract">
-    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that is uncertain, imprecise, incomplete and inconsistent. PKN was inspired by the work of Alan Collins and co-workers in the 1980s, see [[COLLINS]]. PKN consists of queries, properties, relations, implications and analogies. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge corresponding to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
+    <p>This specification defines the plausible knowledge notation (PKN) as a lightweight syntax for expressing imperfect knowledge, i.e. knowledge that is uncertain, imprecise, incomplete, inconsistent and likely to change. PKN was inspired by the work of Alan Collins and co-workers in the 1980s, see [[COLLINS]]. PKN consists of queries, properties, relations, implications and analogies, together with named and unnamed collections of statements. PKN embraces fuzzy scalars, fuzzy modifiers and fuzzy quantifiers. PKN statements can be associated with metadata that models sub-symbolic knowledge corresponding to intuitive notations such as the strength of a statement, and the typicality of a sub-class in respect to its parent class.</p>
   </section>
 
   <section id="sotd">
-    <p>This document is at early stages of development. Feedback is welcome through <a href="https://github.com/w3c/cogai/issues">GitHub issues</a> or on the <a href="mailto:public-cogai@w3.org">public-cogai@w3.org</a> mailing-list (with <a href="https://lists.w3.org/Archives/Public/public-cogai/">public archives</a>).</p>
+    <p>This document is subject to change. Feedback is welcome through <a href="https://github.com/w3c/cogai/issues">GitHub issues</a> or on the <a href="mailto:public-cogai@w3.org">public-cogai@w3.org</a> mailing-list (with <a href="https://lists.w3.org/Archives/Public/public-cogai/">public archives</a>).</p>
   </section>
   
   <section class="informative">
     <h2>Introduction</h2>
-    <p>This specification defines a notation and model for imperfect knowledge, such as everyday knowledge that is uncertain, imprecise, incomplete and inconsistent. The approach is modelled on human argumentation, something that a long line of philosophers have investigated since the days of Ancient Greece. Traditional logic assumes perfect knowledge and provides mathematical proof for entailments. Unfortunately, knowledge is rarely perfect, but is nonetheless amenable to reasoning using guidelines for effective arguments.  As an example consider the statement: <em>if it is raining then it is cloudy</em>.  This is generally true, but you can also infer that it is somewhat likely to be raining if it is cloudy. This is plausible based upon your rough knowledge of weather patterns. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.</p>
+    <p>This specification defines a notation and model for imperfect knowledge, such as everyday knowledge that is uncertain, imprecise, incomplete and inconsistent. The approach is modelled on human argumentation, something that a long line of philosophers have investigated since the days of Ancient Greece. Traditional logic assumes perfect unchanging knowledge, and provides mathematical proof for entailments. Unfortunately, knowledge is rarely perfect, but is nonetheless amenable to reasoning using guidelines for effective arguments.  As an example consider the statement: <em>if it is raining then it is cloudy</em>.  This is generally true, but you can also infer that it is somewhat likely to be raining if it is cloudy. This is plausible based upon your rough knowledge of weather patterns. In place of logical proof, we have multiple lines of argument for and against the premise in question just like in courtrooms and everyday reasoning.</p>
     
     <figure id="inferences">
       <img src="./images/inferences.png" alt="" style="width:60%"/>
@@ -520,18 +520,11 @@ age of adult is 18, age-at-death for person</code></pre>
   <h2>Plausible Reasoning and Argumentation</h2>
   
   <p>Plausible reasoning is about generating arguments that support or counter a premise, gathering information along the way. The reasoning process is driven by a queue of premises awaiting consideration, plus a record of reasoning so far, which can be modelled as a reasoning graph. The reasoner applies heuristics (strategies and tactics) to determine which potential inferences to apply and in what order to develop the arguments. As reasoning proceeds, the consideration of additional evidence may either strengthen or weaken earlier conclusions.</p>
-  <p>Guidelines for effective arguments have been studied by a long line of philosphers all the way back to Ancient Greece, e.g. work by Carneades and Arstotle on classical rhetorical approaches, e.g. <em>ethos</em> (credibility), <em>pathos</em> (emotion), <em>logos</em> (logic), <em>kairos</em> (opportune) together withrhetorical questions.</p>
     
   <section id="explanations">
     <h3>Generating Explanations</h3>
     <p>The inference engine can start with the premise in question and  look for direct evidence, and after that, indirect evidence involving inferences using different kinds of PKN statements that pose intermediate premises for consideration. The reasoning process generates a graph that starts from the premises and works back to direct evidence in the knowledge graph. The reasoning graph can then be scanned in the reverse direction to generate explanations that start with the facts and progressively justify the premise via a series of inferences.</p>
     <p>The reasoning process can try to support an argument via finding additional evidence, or it can try to generate counter arguments that undermine, undercut or rebut other arguments. The explanation then needs to put these arguments into context using the appropriate templates.</p>
-    <p>Counter arguments can be classified into three groups:</p>
-<ul>
-    <li><strong>undermining</strong> another argument when the conclusions of the former contradict premises of the latter.</li>
-    <li><strong>undercutting</strong> another argument by casting doubt on the link between the premises and conclusions of the latter argument.</li>
-    <li><strong>rebutting</strong> another argument when their respective conclusions can be shown to be contradictory.</li>
-</ul>
   </section>  
   
   <section id="certainty">
