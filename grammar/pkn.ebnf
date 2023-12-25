@@ -1,14 +1,14 @@
-STATEMENTS ::= (statement | (name ":" graph))*
+STATEMENTS ::= (statement | (name ':' graph))*
 	
-statement ::= (property | relation | implication| analogy) ("for" scope)? meta?
+statement ::= (property | relation | implication| analogy) ('for' scope)? meta?
     scope ::= name (',' name)*
     meta ::= '(' param (',' param)* ')'
     param ::= name value
        
-property ::= descriptor "of" argument operator referent
+property ::= descriptor 'of' argument operator referent
     descriptor ::= name | variable
     argument ::= name | variable
-    operator ::= "includes" | "excludes" | "is" | name
+    operator ::= 'includes' | 'excludes' | 'is' | name
     value ::= name | number
     referent ::= (value (',' value)*) | variable | graph
 
@@ -17,31 +17,31 @@ relation ::= subject relationship object
     relationship ::= name | variable
     object ::= name | variable | graph
 
-implication ::= terms "implies" terms
-    terms ::= term ("and" term)*
+implication ::= terms 'implies' terms
+    terms ::= term ('and' term)*
     term ::= property | relation
 
-analogy ::= concept ":" concept "::" concept ":" concept
+analogy ::= concept ':' concept '::' concept ':' concept
     concept ::= name | variable
 
-QUERY ::= quantifier variable ("where" conditions)? "from" conditions
-    quantifier ::= "no" | "all" | "any" | "few" | "many" | "most"| "which" | "count"
-    conditions ::= condition ("and" condition)*
+QUERY ::= quantifier variable ('where' conditions)? 'from' conditions
+    quantifier ::= 'no' | 'all' | 'any' | 'few' | 'many' | 'most'| 'which' | 'count'
+    conditions ::= condition ('and' condition)*
     condition ::= property | relation
 
-variable ::= "?" name?
-name ::= id (":" id)*
-id ::= letter (letter | digit | "-")*
-number ::= ("-" | "+")? digit+ ("." digit*)? (("e"|"E") ("-" | "+")? digit+)?
+variable ::= '?' name?
+name ::= id (':' id)*
+id ::= letter (letter | digit | '-')*
+number ::= ('-' | '+')? digit+ ('.' digit*)? (('e'|'E') ('-' | '+')? digit+)?
 
 graph ::= '{' STATEMENTS '}'
 	
 letter ::= 
-    "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
-    "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" |
-    "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | 
-    "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
-    "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | 
-    "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+    'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' |
+    'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' |
+    'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' | 
+    'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' |
+    'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 
+    's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
 
-digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+digit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
