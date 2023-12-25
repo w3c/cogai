@@ -198,7 +198,10 @@ tr:nth-child(odd) td {
       
       <p>Studies of argumentation have been made by a long line of philosophers dating back to Ancient Greece, e.g. Carneades and Aristotle.  More recently, logicians such as Frege, Hilbert and Russell were primarily interested in mathematical reasoning and argumentation. Stephen Toulmin subsequently criticised the presumption that arguments  should be formulated in purely formal deductive terms [[TOULMIN]]. Douglas Walton extended tools from formal logic to cover a wider range of arguments [[WALTON]]. Ulrike Hahn, Mike Oaksford and others applied Bayesian techniques to reasoning and argumentation [[HAHN]], whilst Alan Collins applied a more intuitive approach to plausible reasoning [[COLLINS]].</p>
       
+      <p>Aristotle provides guidelines for rhetorical arguments in terms of <em>ethos</em> (establishing credibility), <em>pathos</em> (appeal to emotion), <em>logos</em> (appeal to rationality), <em>kairos</em> (opportune arguments with topical references that the given audience will appreciate) together with rhetorical questions chosen to stimulate a discourse, or to draw attention and emphasise specific points. An effective argument will often involve all of these.</p> 
+
       <p>Formal approaches to argumentation such as [[ASPIC+]] build arguments from axioms and premises as well as strict and defeasible rules. Strict rules logically entail their conclusions, whilst defeasible rules create a presumption in favour of their conclusions, which may need to be withdrawn in the light of new information. Arguments in support of, or counter to, some supposition, build upon the facts in the knowledge graph or the conclusions of previous arguments. Preferences between arguments are derived from preferences between rules with additional considerations in respect to consistency. Counter arguments can be classified into three groups. An argument can:</p>
+      
       <ul>
       <li><em><strong>undermine</em></strong> another argument when the conclusions of the former contradict premises of the latter.</li>
       <li><em><strong>undercut</em></strong> another argument by casting doubt on the link between the premises and conclusions of the latter argument.</li>
@@ -206,6 +209,7 @@ tr:nth-child(odd) td {
       </ul>
       
       <p>[[AIF]] is an ontology intended to serve as the basis for an interlingua between different argumentation formats. It covers <em>information</em> (such as propositions and sentences) and <em>schemes</em> (general patterns of reasoning). The latter can be used to model lines of reasoning as argument graphs that reference information as justfication. The ontology provides constraints on valid argument graphs, for example:</p>
+      
 	  <aside class="example">
       <dl>
       <dt><em><strong>Scheme for Argument from Expert Opinion</em></strong>:</dt> 
@@ -682,9 +686,9 @@ duck dissimilar-to goose for sound
     <td>symmetric</td>
     </tr>
     <tr>
-    <td>antonym-for</td>
+    <td>opposite-to</td>
     <td>opposite meaning</td>
-    <td>asymmetric</td>
+    <td>symmetric</td>
     </tr>
     </table> 
     
@@ -702,7 +706,7 @@ duck dissimilar-to goose for sound
       </pre>
       </aside>
 
-    <p>Disjunctions can be modelled using multiple implications. Negatives can expressed using antonyms. The [=strength=] parameter describes the conditional likelihood of the consequents given the antecedents, whilst [=inverse=] describes the conditional likelihood of the antecedents given the consequents.</p>
+    <p>Disjunctions can be modelled using multiple implications. Negatives can expressed using antonyms (terms with an opposite meaning to a given term). The [=strength=] parameter describes the conditional likelihood of the consequents given the antecedents, whilst [=inverse=] describes the conditional likelihood of the antecedents given the consequents.</p>
       
     <p>An implication can be chosen for consideration when one of its consequents matches a premise in question, the reasoner then needs to seek evidence to establish all of the antecedents before binding any variables in that premise and updating its estimated certainty. A similar process applies when using the implication in reverse.</p>
   </section>  
