@@ -347,6 +347,8 @@ weather of ?place includes rainy
 	implies weather of ?place includes cloudy (strength high, inverse low)</pre>
       <p>This example has a single antecedent and a single consequent. Note the use of <code>?place</code> as a variable, and metadata for the confidence in using the statement for forward and backward inferences.</p>
     </aside>
+    
+    <p class="issue">Whilst disjunctions can be handled via separate rules or relations, would it make sense to directly support disjunctions in rule antecedents? How would that generalise further, taking imprecision and fuzzyness into account?</p>
   </section>
 
   <section id="analogies">
@@ -859,6 +861,14 @@ g2: {
 }
 
 Joan said g2</pre>
+      </aside>
+      
+    <p>Here is an example of a query involving a graph:</p>
+
+       <aside class="example">
+      <pre class="pkn">
+which ?x where Joan said {?x likes tea}
+      </pre>
       </aside>
   </section>  
 
