@@ -873,6 +873,11 @@ which ?x where Joan said {?x likes tea}
     <p>A more complex case is where reasoning is in the context of a fictional world in which some things are specific to that world whilst most things are the same as in our world. An example is the world of the Harry Potter novels where magic is real, but only some people can use it.  This then involves reasoning across multiple graphs according to their relationships. This is also the case for reasoning about the future, e.g. when developing plans for how to achieve a goal, and for abductive reasoning about the likely causes of some  observations, where we need to deal with what might be true given some plausible assumptions.</p>
   </section>  
 
+  <section id="arguments">
+    <h3>Assessing Multiple Lines of Argumentation</h3>
+    <p>PKN reasoners can generate arguments for and against a given premise, where each argument is formed from a chain of plausible inferences. The reasoning process estimates the certainty of each argument. Arguments can be grouped for the purposes of generating explanations from the argument graph. If the certainties for and against the premise are roughly similar, then the users are left to draw their own conclusions. The reasoner should provide further details when asked.</p>
+  </section> 
+
   <section id="reasoning-meta">
     <h3>Reasoning about Reasoning</h3>
     
@@ -880,13 +885,8 @@ which ?x where Joan said {?x likes tea}
     
     <p>This raises the question of how enable machine learning for both knowledge graphs and reasoning strategies and tactics.</p>
     
-    <p class="issue">Perhaps large scale machine learning is much more tractable using vector space representations instead of symbolic graphs? Large language models have shown impressive reasoning capabilities and can readily handle complex higher order statements, such as above.</p>
+    <p>Advances in large language models have shown impressive reasoning capabilities and can readily handle complex higher order statements, such as above. This suggests that large scale machine learning is much more tractable using vector space representations instead of symbolic graphs. On the other hand, symbolic knowledge has a continuing role in relation to transparency and semantic interoperability. How can the two approaches be combined to support collaborative knowledge engineering using neurosymbolic information systems?</p>
   </section>  
-
-  <section id="arguments">
-    <h3>Assessing Multiple Lines of Argumentation</h3>
-    <p>PKN reasoners can generate arguments for and against a given premise, where each argument is formed from a chain of plausible inferences. The reasoning process estimates the certainty of each argument. Arguments can be grouped for the purposes of generating explanations from the argument graph. If the certainties for and against the premise are roughly similar, then the users are left to draw their own conclusions. The reasoner should provide further details when asked.</p>
-  </section> 
 </section>
 
 </body>
