@@ -118,6 +118,8 @@ Image of cognitive architecture for deliberative reasoning (System 2)</p>
 
 This has been implemented as an open source JavaScript library and used as the basis for an [evolving suite of demos](demos/README.md).
 
+New work is underway on vector space approaches inspired by human cognition and the advances in generative AI. This will mimic human language processing (sequential, hierarchical and predictive), implicit and explicit memory, continual learning, and type 1 and 2 cognition. This is being implemented in Python and PyTorch.
+
 ## Long Term Aims
 
 In the long run, the mission of the Cognitive AI Community Group is to enable cognitive agents that:
