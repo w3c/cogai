@@ -79,7 +79,7 @@ A further line of work deals with the means to express and reason with imperfect
 
 Both PKN and chunks & rules can be considered in relation to RDF. RDF is a framework for symbolic graphs based upon labelled directed graph edges (aka *triples*). Compared to RDF, PKN and chunks & rules are higher level with additional semantics, and designed for use in human-like AI applications. Furthermore, both notations are designed to be easy to read and author compared with RDF serialisations such as RDF/XML, Turtle and even JSON-LD. See also the [Notation3 (N3) Language](https://w3c.github.io/N3/spec/) which is an assertion and logic language defined as a superset of RDF.
 
-Future work is anticipated on vector-space representations of knowledge using artificial neural networks. Advances with generative AI have shown the huge potential of vector-space representations in combination with deep learning. However, there is a long way to go to better model many aspects of human cognition, e.g. continuous learning using a blend of type 1 and type 2 cognition, episodic memory, and the role of emotions and feelings in directing cognition. Symbolic models will continue to serve an important role for semantic interoperability.  Neurosymbolic systems combine the complementary strengths of vector space and symbolic approaches.
+Future work is anticipated on vector-space representations of knowledge using artificial neural networks. Advances with generative AI have shown the huge potential of vector-space representations in combination with deep learning. However, there is a long way to go to better model many aspects of human cognition, e.g. continual learning using a blend of type 1 and type 2 cognition, episodic memory, and the role of emotions and feelings in directing cognition. Symbolic models will continue to serve an important role for semantic interoperability.  Neurosymbolic systems combine the complementary strengths of vector space and symbolic approaches.
 
 ## Positioning relative to existing approaches to AI
 
@@ -126,7 +126,7 @@ In the long run, the mission of the Cognitive AI Community Group is to enable co
 
 * Are knowledgeable, general purpose, creative, collaborative, empathic, sociable and trustworthy
 * Can apply metacognition and past experience to reason about new situations
-* Support continuous learning based upon curiosity about the unexpected
+* Support continual learning based upon curiosity about the unexpected
 * Have a level of self awareness in respect to current state, goals and actions
 * Have an awareness of others in respect to their beliefs, desires and intents
 * Are multilingual and can interact with people using their own language
