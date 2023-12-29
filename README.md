@@ -40,8 +40,6 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
 
 We are using GitHub for documents, issue tracking and open source components. We have a [public mailing list](https://lists.w3.org/Archives/Public/public-cogai/), and an [IRC channel](https://www.w3.org/wiki/IRC) **#cogai**.
 
-We have a weekly zoom teleconference slot every Monday at 5pm Paris local time. An agenda will be sent in advance when a meeting is scheduled. This is open to all members of the Cognitive AI Community Group. The zoom URL is given on the [member only page for the meeting details](https://lists.w3.org/Archives/Member/internal-cogai/2021Jun/0000.html). To access that page, you will need to log in using your W3C account. Please don't share the Zoom URL on any public media.
-
 ## Webinars
 
 We are hoping to arrange a series of recorded webinars and invite contributions, see [webinar planning](webinars/README.md)
