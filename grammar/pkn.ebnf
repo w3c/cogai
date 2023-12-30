@@ -24,7 +24,7 @@ implication ::= terms 'implies' terms
 analogy ::= concept ':' concept '::' concept ':' concept
     concept ::= name | variable
 
-QUERY ::= quantifier variable ('where' conditions)? 'from' conditions
+QUERY ::= quantifier variable 'where' conditions ('from' conditions)?
     quantifier ::= 'no' | 'all' | 'any' | 'few' | 'many' | 'most'| 'which' | 'count'
     conditions ::= condition ('and' condition)*
     condition ::= property | relation
