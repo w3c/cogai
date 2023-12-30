@@ -365,7 +365,7 @@ weather of ?place includes rainy
   
   <section id="queries">
     <h3>Query Statements</h3>
-    <p>These have a <em>quantifier</em>, a <em>variable</em>, a required <em>where clause</em>, and an optional <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause. The tests relate to the variable bindings.</p>
+    <p>These have a <em>quantifier</em>, a <em>variable</em>, a required <em>where clause</em>, and an optional <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause if present, otherwise against the PKN statement graph. The tests relate to the variable bindings.</p>
     
     <aside class="example" title="Query Statements">
       <pre class="pkn">which ?x where ?x is-a person and age of ?x is very:old
