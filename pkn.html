@@ -365,7 +365,7 @@ weather of ?place includes rainy
   
   <section id="queries">
     <h3>Query Statements</h3>
-    <p>These have a <em>quantifier</em>, a <em>variable</em>, a required <em>where clause</em>, and an optional <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the from clause are evaluated against the PKN statement graph. The conditions for the where clause are evaluated against the matches found with the from clause if present, otherwise against the PKN statement graph. The tests relate to the variable bindings.</p>
+    <p>These have a <em>quantifier</em>, a <em>variable</em>, a required <em>where clause</em>, and an optional <em>from clause</em>. Variables are scoped to the query statement. The where and from clauses involve a conjunction of one or more conditions, which are properties or relations. The conditions for the <em>from</em> clause are evaluated against the PKN statement graph. The conditions for the <em>where</em> clause are evaluated against the matches found with the <em>from</em> clause if present, otherwise against the PKN statement graph. The tests relate to the variable bindings.</p>
     
     <aside class="example" title="Query Statements">
       <pre class="pkn">which ?x where ?x is-a person and age of ?x is very:old
@@ -395,7 +395,7 @@ few ?x where color of ?x includes yellow from ?x kind-of rose</pre>
     <dd>Yields the length of the list of variable bindings that satisfy the conditions.</dd>
     </dl>
     
-    <p>Note that <em>few, many</em> and <em>most</em> are intentionally imprecise, see Section [[[#fuzzy-quantifiers]]].</p>
+    <p>The meaning of the quantifiers is for the most part heuristically determined by the relative size of the sets of variable bindings for the <em>where</em> and <em>from</em> clauses respectively. The exceptions are <em>no, which</em> and <em>count</em>. Note that <em>few, many</em> and <em>most</em> are intentionally imprecise, see Section [[[#fuzzy-quantifiers]]].</p>
     
     <p class="issue">What are the implications of allowing a comma separated list of quantifier variables?</p>
   </section>
@@ -829,7 +829,9 @@ color of rose-harry-wheatcroft includes red, yellow
       </pre>
       </aside>
     
-    <p>The variable <code>?x</code> binds to 3 kinds of yellow roses out of a total of 10 known varieties of roses, so for this dataset at least, the query evaluates to true as 3 is small compared to 10. For more details, see Section[[[#queries]]].</p>
+    <p>The variable <code>?x</code> binds to 3 kinds of yellow roses out of a total of 10 known varieties of roses, so for this dataset at least, the query evaluates to true as 3 is small compared to 10. For more details, see Section [[[#queries]]].</p>
+    
+    <p>Further work is needed to support queries involving superlatives, e.g. what is the <em>highest</em> mountain in the world?. The associated scalars (in this case "height") may be associated with antonyms, e.g. low/high, short/tall, small/large. A counter example is "sweetness", i.e. how sugary some drink or food is perceived to be.  We can ask which is the sweetest fruit, but there is no word that describes its opposite. In principle, such queries could be enabled through statements that declare the superlative for a given term, e.g. <em>shortest is-superlative-for short</em>.</p>
   </section>  
 
   <section id="reasoning-graphs">
