@@ -85,7 +85,7 @@ This will be a series of demos focusing on techniques for learning knowledge gra
     - [Introduction to ontology matching and alignment](https://exmo.inria.fr/teaching/swc/ontoalign.pdf)
     - [EDOAL: Expressive and Declarative Ontology Alignment Language](https://moex.gitlabpages.inria.fr/alignapi/edoal.html)
 
-    A possible application demonstartor can show a simple ontology-to-ontology concept matching and/or concept extension for a specific domain (e.g., extending  the [MedDRA](https://bioportal.bioontology.org/ontologies/MEDDRA) ontology using another biomedical ontology). Some resources and examples of ontology extension in different domains:
+    A possible application demonstrator can show a simple ontology-to-ontology concept matching and/or concept extension for a specific domain (e.g., extending  the [MedDRA](https://bioportal.bioontology.org/ontologies/MEDDRA) ontology using another biomedical ontology). Some resources and examples of ontology extension in different domains:
     - [Biomedical Domain](https://bioportal.bioontology.org/ontologies)
     - [Chemical Domain](https://arxiv.org/abs/2109.09202)
     - [Marine Environmental Domain](https://ceur-ws.org/Vol-679/paper11.pdf)
