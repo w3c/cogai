@@ -81,6 +81,14 @@ This will be a series of demos focusing on techniques for learning knowledge gra
 * [One-shot learning](https://en.wikipedia.org/wiki/One-shot_learning) aims to learn information about object categories from one, or only a few, training samples/images.
 * [Taxonomy vs Ontology: Machine learning breakthroughs](https://www.dataversity.net/taxonomy-vs-ontology-machine-learning-breakthroughs/) - a brief introduction.
 * [Knowledge Graph Refinement](http://semantic-web-journal.net/system/files/swj1167.pdf) - a survey of approaches and evaluation methods.
+* [Ontology Alignment](https://en.wikipedia.org/wiki/Ontology_alignment) - aims to explore startegies and methods to match terms from different ontologies and extend domain ontologies. Additional ontology alignment resources:
+    - [Introduction to ontology matching and alignment](https://exmo.inria.fr/teaching/swc/ontoalign.pdf)
+    - [EDOAL: Expressive and Declarative Ontology Alignment Language](https://moex.gitlabpages.inria.fr/alignapi/edoal.html)
+
+    A possible application demonstartor can show a simple ontology-to-ontology concept matching and/or concept extension for a specific domain (e.g., extending  the [MedDRA](https://bioportal.bioontology.org/ontologies/MEDDRA) ontology using another biomedical ontology). Some resources and examples of ontology extension in different domains:
+    - [Biomedical Domain](https://bioportal.bioontology.org/ontologies)
+    - [Chemical Domain](https://arxiv.org/abs/2109.09202)
+    - [Marine Environmental Domain](https://ceur-ws.org/Vol-679/paper11.pdf)
 
 ### Learning Rulesets for Tasks
 
