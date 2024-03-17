@@ -46,9 +46,9 @@ The US system has:
 
 Developing skills for elementary mathematics would be a good test of the neural architecture and algorithms, and could be followed by better resourced work on integrating commonsense and everyday reasoning using much larger datasets distilled from LLMs.  Support for richer mathematics would involve extending the tokeniser to support a subset of LaTex expressions. See [MathJax](https://docs.mathjax.org/en/latest/basic/mathjax.html) for rendering in web pages and [writing mathematical expressions](https://en.wikibooks.org/wiki/LaTeX/Mathematics) in GitHub Markdown.
 
-#### Neural Modules
+## Neural Modules
 
-A language encoder translates textual input to latent semantics. This is manipulated by a sequential reasoner associated with a vector database for explicit memory.  Language output decodes the latent semantics and is triggered by the reasoner.
+A language encoder translates textual input to latent semantics (aka *working memory*). This is manipulated by a sequential reasoner associated with a vector database for explicit memory.  Language output decodes the latent semantics and is triggered by the reasoner.
 
 * Tokenisations as words, symbols and digits
   * Separate digits to avoid an unlimited number of numeric tokens
@@ -66,8 +66,26 @@ A language encoder translates textual input to latent semantics. This is manipul
 * Multi-step reasoning
   * Including working with factual knowledge from the memory module
   * Trained using model-based deep reinforcement learning with a parameterised decision tree and a means to assess progress.  A potential refinement would be to store failed approaches in episodic memory in case they can be successfully applied to different examples.
+ 
+### Language Encoder
 
-##### Plan of action
+This mimics human language processing, which has been shown to be sequential, hierarchical and predictive. Text input is processed sequentially, token by token, using a small sliding window along with relative positional encoding to mimic the resource constraints of the phonological buffer, see [Baddeley and Hitch](https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory) (1974). To enable context senstive decisions on part of speech, word sense, etc., the transformer layer output is retained and blended with the layer's input for the next step. This can be contrasted with conventional language models which are strictly feedforward and rely on a fixed context width. During training, the proposed architecture incrementally updates the computed loss, step by step, and initiates back propagation after every sentence.
+
+### Language Decoder
+
+This generates text output sequentially, token by token based upon the latent semantics, updating the latent semantics to indicate progress. Text generation is initiated by the reasoner and is executed asynchronously.
+
+### Explicit Memory
+
+Explicit memory is based upon a vector database whose operations are executed asynchronously, and update the latent semantics held in working memory. Explicit memory can be contrasted with implicit memory provided by the language model parameters. The operations include query, retrieval and update as well as the means to iterative through complex query results.
+
+### Sequential Reasoner
+
+The reasoner is implemented as a feedforward network that is conditioned by the current state of working memory. Actions update working memory or initiate external actions, e.g. queries to explicit memory, or text generation. This is functionally equivalent to a production rule system.
+
+The reasoner is trained through deep reinforcement learning. The details are to be elucidated based upon study of the research literature on reinforcement learning. I envisage a model-based approach that can support reflective reasoning, e.g. to assess progress and decide when to abandon the current approach in favour of a potentially better approach, and how to break tasks down into subtasks, based upon a task taxonomy. In a symbolic system, this could be done using a decision tree with actions that include creating and mutating the rules as part of rule-sets.
+
+## Plan of action
 
 1. Develop a script to train the language model used for encoding and decoding latent semantics.
 2. Implement the tokeniser
