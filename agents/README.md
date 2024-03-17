@@ -77,7 +77,7 @@ This generates text output sequentially, token by token based upon the latent se
 
 ### Explicit Memory
 
-Explicit memory is based upon a vector database whose operations are executed asynchronously, and update the latent semantics held in working memory. Explicit memory can be contrasted with implicit memory provided by the language model parameters. The operations include query, retrieval and update as well as the means to iterative through complex query results. Memories are subject to decay unless boosted, thereby mimicking the characteristics of human memory. This ensures that memories are more likely to be recalled in they have proven useful in the past.
+Explicit memory is based upon a vector database whose operations are executed asynchronously, and update the latent semantics held in working memory. Explicit memory can be contrasted with implicit memory provided by the language model parameters. The operations include query, retrieval and update as well as the means to iterative through complex query results. Memories are subject to decay unless boosted, thereby mimicking the characteristics of human memory. This ensures that memories are more likely to be recalled if they have proven useful in the past.
 
 ### Sequential Reasoner
 
