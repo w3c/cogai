@@ -44,7 +44,7 @@ The US system has:
 - Grade 7: Ratios and proportional relationships, and arithmetic of rational numbers
 - Grade 8: Linear algebra and linear functions
 
-Developing skills for elementary mathematics would be a good test of the neural architecture and algorithms, and could be followed by better resourced work on integrating commonsense and everyday reasoning using much larger datasets distilled from LLMs.  Support for richer mathematics would involve extending the tokeniser to support a subset of LaTex expressions. See [MathJax](https://docs.mathjax.org/en/latest/basic/mathjax.html) for rendering in web pages and writing mathematical expressions in GitHub Markdown.
+Developing skills for elementary mathematics would be a good test of the neural architecture and algorithms, and could be followed by better resourced work on integrating commonsense and everyday reasoning using much larger datasets distilled from LLMs.  Support for richer mathematics would involve extending the tokeniser to support a subset of LaTex expressions. See [MathJax](https://docs.mathjax.org/en/latest/basic/mathjax.html) for rendering in web pages and [writing mathematical expressions](https://en.wikibooks.org/wiki/LaTeX/Mathematics) in GitHub Markdown.
 
 #### Neural Modules
 
