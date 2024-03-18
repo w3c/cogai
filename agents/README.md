@@ -56,7 +56,7 @@ A language encoder translates textual input to latent semantics (aka *working me
   * Separate digits to avoid an unlimited number of numeric tokens
   * Decoder inserts a space between tokens with a few exceptions
 * Language model for encoding and asynchronous decoding
-  * Retained feedbackward connections for unlimited context
+  * Retained feedbackward connections for context sensitivity
   * Using masking and model dropouts for initial training
 * Factual knowledge for rote memorisation
   * Using the embedding learned for the language model
@@ -71,7 +71,7 @@ A language encoder translates textual input to latent semantics (aka *working me
  
 ### Language Encoder
 
-This mimics human language processing, which has been shown to be sequential, hierarchical and predictive. Text input is processed sequentially, token by token, using a small sliding window along with relative positional encoding to mimic the resource constraints of the phonological buffer, see [Baddeley and Hitch](https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory) (1974). To enable context sensitive decisions on part of speech, word sense, etc., the transformer layer output is retained and blended with the layer's input for the next step. This can be contrasted with conventional language models which are strictly feedforward and rely on a fixed context width. During training, the proposed architecture incrementally updates the computed loss, step by step, and initiates back propagation after every sentence.
+This mimics human language processing, which has been shown to be sequential, hierarchical and predictive. Text input is processed sequentially, token by token, using a small sliding window along with relative positional encoding to mimic the resource constraints of the phonological buffer, see [Baddeley and Hitch](https://en.wikipedia.org/wiki/Baddeley%27s_model_of_working_memory) (1974). To enable context sensitive decisions on part of speech, word sense, etc., the transformer layer output is retained and blended with the layer's input for the next step, mimicking human short term memory. This can be contrasted with conventional language models which are strictly feedforward and rely on a fixed context width. During training, the proposed architecture incrementally updates the computed loss, step by step, and initiates back propagation after every sentence.
 
 ### Language Decoder
 
