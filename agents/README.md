@@ -81,7 +81,7 @@ Explicit memory is based upon a vector database whose operations are executed as
 
 ### Sequential Reasoner
 
-The reasoner is implemented as a feedforward network that is conditioned by the current state of working memory. Actions update working memory or initiate external actions, e.g. queries to explicit memory, or text generation. This is functionally equivalent to a production rule system.
+The reasoner is implemented as a feedforward network that is conditioned by the current state of working memory. Actions update working memory or initiate external actions, e.g. queries to explicit memory, or text generation. This is functionally equivalent to a production rule system. The reasoner is triggered by significant changes to working memory, e.g. when new input has been processed by the language encoder, or when working memory is updated by recall from explicit memory.
 
 The reasoner is trained through deep reinforcement learning. The details are to be elucidated based upon study of the research literature on reinforcement learning. I envisage a model-based approach that can support reflective reasoning, e.g. to assess progress and decide when to abandon the current approach in favour of a potentially better approach, and how to break tasks down into subtasks, based upon a task taxonomy. In a symbolic system, this could be done using a decision tree with actions that include creating and mutating the rules as part of rule-sets.
 
