@@ -17,7 +17,7 @@ Spatial reasoning and a grasp of everyday physics would involve a richer neural 
 
 It may be possible to provide worksheets as an alternative to visual perception and reasoning. This would be loosely equivalent to pencil and paper, enabling the cognitive agent to retrieve and augment structured information on the worksheet. Further study is needed to clarify how this would work, e.g. tokenisation and embeddings.
 
-## Elementary Mathematics as a tractible domain
+## Elementary Mathematics as a tractable domain
 
 What seems practical is the way children are tought elementary mathematics, provided we exclude  instructions and exercises that involve diagrams, e.g. graphs and geometry. 
 
