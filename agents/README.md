@@ -15,6 +15,8 @@ My first thought was to look at teaching materials for young children, and to co
 
 Spatial reasoning and a grasp of everyday physics would involve a richer neural architecture and a large dataset for recognising objects, understanding scenes, and learning spatial manipulation skills. That is something for much better resourced research teams!  We therefore should to limit ourselves to text-based semantics, and enabling learning through a combination of memorisation and manipulation.
 
+It may be possible to provide worksheets as an alternative to visual perception and reasoning. This would be loosely equivalent to pencil and paper, enabling the cognitive agent to retrieve and augment structured information on the worksheet. Further study is needed to clarify how this would work, e.g. tokenisation and embeddings.
+
 ## Elementary Mathematics as a tractible domain
 
 What seems practical is the way children are tought elementary mathematics, provided we exclude  instructions and exercises that involve diagrams, e.g. graphs and geometry. 
