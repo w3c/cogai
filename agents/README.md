@@ -52,7 +52,7 @@ A language encoder translates textual input to latent semantics (aka *working me
 
 * Tokenisations as words, symbols and digits
   * Separate digits to avoid an unlimited number of numeric tokens
-  * Decoder inserts a space between tokens except between digits or a digit followed by "."
+  * Decoder inserts a space between tokens with a few exceptions
 * Language model for encoding and asynchronous decoding
   * Retained feedbackward connections for unlimited context
   * Using masking and model dropouts for initial training
