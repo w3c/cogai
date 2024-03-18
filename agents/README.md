@@ -104,7 +104,9 @@ The tokeniser splits lines on line breaks, discarding empty lines. Tokens are sp
 
 An open question is whether to use words or digits for numbers, e.g.  "three hundred and seventy" vs "370".  I am inclined to use words since it is how we say numbers. However, we write them down as digits, and digits are needed for mathematical expressions. It would make sense to cover both.
 
-To start with counting, simple addition and multiplication of single digits, e.g.
+Children learn about numbers by sorting objects by size, colour and shape, and identifying the number of objects in collections. A way to mimic that using simple collections of objects with differing characteristics would be helpful.
+
+Counting, simple addition and multiplication of single digits, e.g.
 
 > Question: say 130? Answer: one hundred and thirty<br>
 > Question: what is one hundred and thirty? Answer: 130<br>
