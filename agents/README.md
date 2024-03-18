@@ -15,7 +15,7 @@ My first thought was to look at teaching materials for young children, and to co
 
 Spatial reasoning and a grasp of everyday physics would involve a richer neural architecture and a large dataset for recognising objects, understanding scenes, and learning spatial manipulation skills. That is something for much better resourced research teams!  We therefore should to limit ourselves to text-based semantics, and enabling learning through a combination of memorisation and manipulation.
 
-It may be possible to provide worksheets as an alternative to visual perception and reasoning. This would be loosely equivalent to pencil and paper, enabling the cognitive agent to retrieve and augment structured information on the worksheet. Further study is needed to clarify how this would work, e.g. tokenisation and embeddings.
+It may be possible to provide digital worksheets as an alternative to visual perception and reasoning. This would be loosely equivalent to pencil and paper, enabling the cognitive agent to retrieve and augment structured information on the worksheet. Further study is needed to clarify how this would work, e.g. tokenisation and embeddings.
 
 ## Elementary Mathematics as a tractable domain
 
@@ -108,7 +108,7 @@ An open question is whether to use words or digits for numbers, e.g.  "three hun
 
 Children learn about numbers by sorting objects by size, shape and colour, and identifying the number of objects in collections. A way to mimic that using simple collections of objects with differing characteristics would be helpful and points to a role for taxonomic knowledge.
 
-A further challenge is enabling the cognitive agent to represent and manipulate the digits forming large numbers, e.g. units, tens, hundreds and thousands, along with intermediate results and carries. Children are shown how do this visually with pencil and paper. We need a non-visual alternative suitable for cognitive agents.
+A further challenge is enabling the cognitive agent to represent and manipulate the digits forming large numbers, e.g. units, tens, hundreds and thousands, along with intermediate results and carries. Children are shown how do this visually with pencil and paper. We need digital worksheets as a non-visual alternative for cognitive agents. 
 
 Counting, simple addition and multiplication of single digits, e.g.
 
@@ -161,8 +161,8 @@ Microsoft Copilot explains how to break down the addition of 158,764 and 73 step
    Write down the 6 in the ten thousands place.
 7. No more digits, so the sum of 158,764 and 73 is 158,837
 
-The worksheet for this needs three lines for the pair of numbers to be added and the working result. The columns need to be associated with their role. We also need to remember the carry over from the previous column. The reasoner needs to be able to initialise the worksheet, and to access and update its values as the algorithm proceeds.
+The digital worksheet for this needs three lines for the pair of numbers to be added and the working result. The columns need to be associated with their role. We also need to remember the carry over from the previous column. The reasoner needs to be able to initialise the worksheet, and to access and update its values as the algorithm proceeds.
 
-The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?
+The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and digital worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?
 
 *to be continued...*
