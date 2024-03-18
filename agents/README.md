@@ -96,9 +96,10 @@ The reasoner is trained through deep reinforcement learning. The details are to 
 5. Implement and test the reasoner
 6. Develop script for testing the memory module
 7. Implement and test the memory module
-8. Develop the script for multi-step reasoning dataset
-9. Implement model-based deep reinforcement learning and test
-10. Seek help with writing a paper to report the work
+8. Implement and test support for digital worksheets
+9. Develop the script for multi-step reasoning dataset
+10. Implement model-based deep reinforcement learning and test
+11. Seek help with writing a paper to report the work
 
 ## Dataset for training initial language model
 
