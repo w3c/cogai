@@ -13,7 +13,7 @@ Learning can be viewed as a combination of observation, instruction, experience 
 
 My first thought was to look at teaching materials for young children, and to consider the potential for using suitably prompted LLMs to generate training examples that can be supplemented as needed. Unfortunately, the generated examples assume a breadth of knowledge that implies a much larger dataset than is practical for my initial work.  Moreover, the teaching materials make frequent use of pictures and physical manipulation, something far too ambitious for my purpose.
 
-Spatial reasoning and a grasp of everyday physics would involve a richer neural architecture and a large dataset for recognising objects, understanding scenes, and learning spatial manipulation skills. That is something for much better resourced research teams!  We therefore should to limit ourselves to text-based semantics, and enabling learning through a combination of memorisation and manipulation.
+Spatial reasoning and a grasp of everyday physics would involve a richer neural architecture and a large dataset for recognising objects, understanding scenes, and learning spatial manipulation skills. That is something for much better resourced research teams!  We therefore should limit ourselves to text-based semantics, and enabling learning through a combination of memorisation and manipulation.
 
 It should be possible to provide digital worksheets as an alternative to visual perception and reasoning. This would be loosely equivalent to pencil and paper, enabling the cognitive agent to retrieve and augment structured information on the worksheet. Further study is needed to clarify how this would work, e.g. tokenisation and embeddings.
 
