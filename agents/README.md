@@ -106,6 +106,8 @@ An open question is whether to use words or digits for numbers, e.g.  "three hun
 
 Children learn about numbers by sorting objects by size, shape and colour, and identifying the number of objects in collections. A way to mimic that using simple collections of objects with differing characteristics would be helpful and points to a role for taxonomic knowledge.
 
+A further challenge is enabling the cognitive agent to represent and manipulate the digits forming large numbers, e.g. units, tens, hundreds and thousands, along with intermediate results and carries. Children are show how do this visually with pencil and paper. We need a non-visual alternative suitable for cognitive agents.
+
 Counting, simple addition and multiplication of single digits, e.g.
 
 > Question: say 130? Answer: one hundred and thirty<br>
