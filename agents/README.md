@@ -87,7 +87,7 @@ The reasoner is trained through deep reinforcement learning. The details are to 
 
 ## Plan of action
 
-1. Develop a script to train the language model used for encoding and decoding latent semantics.
+1. Develop a script to generate the dataset for training the language encoder and decoder
 2. Implement the tokeniser
 3. Implement and test the language encoder and decoder
 4. Develop script for the single-step reasoning dataset
