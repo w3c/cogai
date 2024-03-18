@@ -66,7 +66,7 @@ A language encoder translates textual input to latent semantics (aka *working me
   * Simple transformations on the latent semantics
   * Trained via masked input
 * Multi-step reasoning
-  * Including working with factual knowledge from the memory module
+  * Including working with factual knowledge from the memory module and relevant digital worksheets
   * Trained using model-based deep reinforcement learning with a parameterised decision tree and a means to assess progress.  A potential refinement would be to store failed approaches in episodic memory in case they can be successfully applied to different examples.
  
 ### Language Encoder
