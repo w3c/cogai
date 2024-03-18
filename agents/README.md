@@ -139,6 +139,30 @@ How can worked examples be given step by step, e.g. for multi-digit addition?
 
 > To add 5 to 17. 17 has 1 for tens and 7 for units. We start with adding the units. Add 5 to 7 yielding 12.  This more than 10, so we find the remainder after substracting 10, yielding 2 carry 1.  We put 2 as the units for the answer. We move to the tens and add the value carried over from the previous step (i.e. 1). 1 + 1 is 2. We put 2 as the tens for the answer. Combining units tens yields the final answer 22.
 
-That is far from ideal!   We first need to explain how to interpret digit sequences in terms of units, tens, hundreds, thousands, etc.  We need to explain how to treat this as a sequence of columns. 
+That is far from ideal!   We first need to explain how to interpret digit sequences in terms of units, tens, hundreds, thousands, etc.  We need to explain how to treat this as a sequence of columns, single digit additions and carry overs. This is where the idea of worksheets may be helpful, serving in place of pencil and paper.
+
+Microsoft Copilot explains how to break down the addition of 158,764 and 73 step by step as follows:
+
+1. Write the numbers vertically
+2. Start from the rightmost digit (units)
+   Add 4 and 3: (4 + 3 = 7).
+   Write down the 7 in the units place.
+3. Move to the next digit (tens)
+   Add 6 and 7: (6 + 7 = 13).
+   Write down the 3 in the tens place and carry over the 1.
+4. Continue to the next digit (hundreds)
+   Add 8, 1 (from the carryover), and 3: (8 + 1 + 3 = 12).
+   Write down the 2 in the hundreds place and carry over the 1.
+5. Move to the thousands place
+   Add 7, 1 (from the carryover), and 7: (7 + 1 + 7 = 15).
+   Write down the 5 in the thousands place and carry over the 1.
+6. Finally add the ten thousands place
+   Add 5 and 1 (from the carryover): (5 + 1 = 6).
+   Write down the 6 in the ten thousands place.
+7. No more digits, so the sum of 158,764 and 73 is 158,837
+
+The worksheet for this needs three lines for the pair of numbers to be added and the working result. The columns need to be associated with their role. We also need to remember the carry over from the previous column. The reasoner needs to be able to initialise the worksheet, and to access and update its values as the algorithm proceeds.
+
+The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?
 
 *to be continued...*
