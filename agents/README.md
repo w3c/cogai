@@ -92,7 +92,7 @@ The reasoner is trained through deep reinforcement learning. The details are to 
 3. Implement and test the language encoder and decoder
 4. Develop script for the single-step reasoning dataset
 5. Implement and test the reasoner
-6. Developer script for testing the memory module
+6. Develop script for testing the memory module
 7. Implement and test the memory module
 8. Develop the script for multi-step reasoning dataset
 9. Implement model-based deep reinforcement learning and test
