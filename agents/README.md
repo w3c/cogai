@@ -107,7 +107,7 @@ The tokeniser splits lines on line breaks, discarding empty lines. Tokens are sp
 
 An open question is whether to use words or digits for numbers, e.g.  "three hundred and seventy" vs "370".  I am inclined to use words since it is how we say numbers. However, we write them down as digits, and digits are needed for mathematical expressions. It would make sense to cover both.
 
-Children learn about numbers by sorting objects by size, shape and colour, and identifying the number of objects in clusters. A way to mimic that using simple collections of objects with differing characteristics would be helpful and points to a role for taxonomic knowledge.
+Children learn about numbers by sorting objects by size, shape and colour, and identifying the number of objects in clusters. A way to mimic that using simple collections of objects with differing characteristics would be helpful and points to a role for taxonomic knowledge. A notion of digital worksheets could provide a basis for sorting and counting objects,
 
 A further challenge is enabling the cognitive agent to represent and manipulate the digits forming large numbers, e.g. units, tens, hundreds and thousands, along with intermediate results and carries. Children are shown how do this visually with pencil and paper. We need digital worksheets as a non-visual alternative for cognitive agents. 
 
@@ -116,7 +116,7 @@ Counting, simple addition and multiplication of single digits, e.g.
 > Question: say 130? Answer: one hundred and thirty<br>
 > Question: what is one hundred and thirty? Answer: 130<br>
 > Question: count up from 1 to 10? Answer: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10<br>
-> Question: count up by 10 from 10 to 50? 10, 20, 30, 40, 50, 60, 70, 80, 90, 100<br>
+> Question: count up by 10 from 10 to 100? 10, 20, 30, 40, 50, 60, 70, 80, 90, 100<br>
 >
 > Assert: 1 + 1 is 2<br>
 > Assert: 2 + 2 is 4<br>
