@@ -116,7 +116,7 @@ Counting, simple addition and multiplication of single digits, e.g.
 > Question: say 130? Answer: one hundred and thirty<br>
 > Question: what is one hundred and thirty? Answer: 130<br>
 > Question: count up from 1 to 10? Answer: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10<br>
-> Question: count up by 10 from 10 to 100? 10, 20, 30, 40, 50, 60, 70, 80, 90, 100<br>
+> Question: count up by 10 from 10 to 100? Answer: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100<br>
 >
 > Assert: 1 + 1 is 2<br>
 > Assert: 2 + 2 is 4<br>
