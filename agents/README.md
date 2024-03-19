@@ -164,6 +164,6 @@ Microsoft Copilot explains how to break down the addition of 158,764 and 73 step
 
 The digital worksheet for this needs three lines for the pair of numbers to be added and the working result. The columns need to be associated with their role. We also need to remember the carry over from the previous column. The reasoner needs to be able to initialise the worksheet, and to access and update its values as the algorithm proceeds.
 
-The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and digital worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?
+The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and digital worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?  This should cover the use of worked examples as instructions for how to solve the exercises provided on the worksheet.
 
 *to be continued...*
