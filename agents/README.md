@@ -166,4 +166,23 @@ The digital worksheet for this needs three lines for the pair of numbers to be a
 
 The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and digital worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?  This should cover the use of worked examples as instructions for how to solve the exercises provided on the worksheet.
 
-*to be continued...*
+## Implementation Notes
+* See [agent.py](agent.py)
+
+I've made a start on implementing a neural cognitive agent with an encoder and decoder. The idea is to pretrain the language model from a set of examples before integrating the reasoner and memory modules. The agent is trained one sample at a time, where each sample corresponds to one line of text in the source file. The tokeniser splits the line into words, and expands integers to their constituent digits.
+
+The language encoder's forward method is passed a list of integer tokens (the input window). This vector represents the phonological buffer, and currently is just 5 tokens long, i.e. two tokens before and two tokens after the current token. That is very different from conventional language models that pass in batches of fixed length lists of tokens where the length is very large and determines the context width for semantic dependencies.
+
+My encoder processes text token by token rather than in parallel. To provide a rich context for part of speech and word sense selection, etc., I have introduced retained feedbackward connections across each Transformer block. In other words, I retain the block's output and blend it with the block's input for processing the next token.  This can be considered as a form of short term memory. The blending factor (a constant) is related to how quickly memories decay unless they are boosted, at least that's the intention.
+
+An open question is how to deal with positional encoding. For now, I will try the conventional algorithm, but recognise that relative positions might work better, provided we shift the position one step forward as the input window is advanced to the next token. We shall see!
+
+A much bigger challenge is the language decoder. This is intended to work asynchronously from working memory. The idea is that cognition updates working memory and then triggers the decoder to produce an utterance. This is very different from conventional language models which generate text token by token, appending tokens to the model input as they do so. The context is computed afresh from the input by running the model forward. This happens on every token.
+
+This is more akin to how the latent semantics for text prompts are used to generate images via a denoising process. I need a means to update working memory to indicate the position of the next token to generate. As far as I am aware, I am the first person to attempt this, so it may take a while to figure out!  I suspect that positional encoding will be important, and that the relative positioning scheme should help.
+
+To train the language model, we run the encoder on a text sample, and then run the decoder as a separate step. The output of the decoder is the probability distribution across the vocabulary for the next token.  This can be compared with the target token and used to compute the aggregate loss over the utterance. I will need a special token to indicate the end of the utterance. The aggregate loss is then used in a backward pass across the model for both decoder and encoder. This should result in a gradient descent through the model parameter space. I look forward to tweaking the hyperparameters to see how that effects the learning process.
+
+***This is still at a very early stage of development, and my immediate next step is to fix the positional encoding for the language encoder. I will then need some inspiration for getting the decoder to work as needed._****
+
+***to be continued...***
