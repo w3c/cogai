@@ -183,6 +183,6 @@ What I want is more akin to how the latent semantics for text prompts are used t
 
 To train the language model, we run the encoder on a text sample, and then run the decoder as a separate step. The output of the decoder is the probability distribution across the vocabulary for the next token.  This can be compared with the target token and used to compute the aggregate loss over the utterance. I will need a special token to indicate the end of the utterance. The aggregate loss is then used in a backward pass across the model for both decoder and encoder. This should result in a gradient descent through the model parameter space. I look forward to tweaking the hyperparameters to see how that effects the learning process.
 
-***This is still at a very early stage of development, and my immediate next step is to fix the positional encoding for the language encoder. I will then need some inspiration for getting the decoder to work as needed._****
+***This is still at a very early stage of development, and my immediate next step is to fix the positional encoding for the language encoder. I will then need some inspiration for getting the decoder to work as needed.***
 
 ***to be continued...***
