@@ -177,7 +177,7 @@ class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(vocab_size, d_model)
-        self.pos_encoder = PositionalEncoding(d_model, 5)
+        self.pos_encoder = PositionalEncoding(d_model, 10)
         self.clear_retained()
         self.blocks = nn.ModuleList([
         Transformer(d_model, num_heads, d_hidden, dropout)
