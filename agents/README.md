@@ -180,8 +180,8 @@ The encoder retains the output of the Transformer blocks and blends this into th
 
 Human language processing has been shown to be sequential, hierarchical and predictive. When you read text you hear an inner voice speaking the words as you read them, This is subject to the constraints of the phonological loop, i.e. one to two seconds. This can be mimicked using a small window that is advanced across the input tokens, to process the input token by token, taking into account a few tokens before and after the current position. The encoder output shape would be *window size, model dimension*. The retained feedback described in the previous paragraph should allow decisions to be sensitive to the results of processing previous tokens even if they are now beyond the beginning of the window.
 
-Human language generation is likely to involve a combination of feedforward and feedbackward connections. The verb is likely to be selected early on even if it won't appear until later in the utterance. Each step in the process clarifies the details, akin to denoising when generating images from text prompts. I will want to explore this at some stage, but it isn't a high priority.
+Human language generation is likely to involve a combination of feedforward and feedbackward connections. The verb is likely to be selected early on even if it won't appear until later in the utterance. Each step in the process clarifies the details, somewhat akin to iterative denoising when generating images from text prompts. I will want to explore this at some stage, but it isn't a high priority. A potentially relevant paper is [PLANNER: Generating Diversified Paragraph via Latent Language Diffusion Model](https://arxiv.org/abs/2306.02531), 2023 Zhang et al.
 
-To get training to converge better, it looks like I need a much bigger and more varied dataset. 
+To get training to converge better, it looks like I need a much bigger and more varied dataset. That's the next challenge!
 
 ***to be continued...***
