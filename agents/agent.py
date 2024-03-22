@@ -17,9 +17,9 @@ d_model         = 512       # model's vector dimension
 num_heads       = 4         # number of attention heads
 d_hidden        = 2048      # dimension of non linear layer
 dropout         = 0.1       # fraction of entries to zero
-num_blocks      = 4         # number of transformer blocks
+num_blocks      = 2         # number of transformer blocks
 learning_rate   = 1e-3      # initial learning rate (was 1e-4)
-epochs          = 500       # number of training epochs
+epochs          = 50        # number of training epochs
 gen_interval    = 5         # epochs per generated example
 eval_interval   = 10        # epochs per validation loss
 
@@ -106,7 +106,7 @@ class Transformer(nn.Module):
         x = self.norm2(x + self.dropout2(ff_output))
         return x
         
-# neural module to generate utterance from current state of working memory
+# Decoder generates utterance from current state of working memory
 
 class Decoder(nn.Module):
     def __init__(self):
@@ -125,12 +125,10 @@ class Decoder(nn.Module):
         return mask
 
     def forward(self, x):
-        for i in range(num_blocks):
-            block = self.blocks[i] 
+        for block in self.blocks:
             x = block(x, None)
             #x = block(x,self.generate_mask(x.size(0)))
-        x = self.linear(x)
-        return self.softmax(x)
+        return self.linear(self.softmax(x))
         
     def generate(self, working_memory):
         for _ in range(max_new_tokens):            
@@ -155,18 +153,18 @@ class PositionalEncoding(nn.Module):
     
     def forward(self, x):
         return x + self.pe[:x.size(0), :]
-    
-# process input text token by token to initialise working memory
+        
+# Encoder maps input tokens to latent semantics
+# features retained feedback across Transformer blocks
 
 class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(vocab_size, d_model)
         self.pos_encoder = PositionalEncoding(d_model, seq_len)
-        #self.clear_retained()
+        self.clear_retained()
         self.blocks = nn.ModuleList([
-        Transformer(d_model, num_heads, d_hidden, dropout)
-            for _ in range(num_blocks)
+            Transformer(d_model, num_heads, d_hidden, dropout) for _ in range(num_blocks)
         ])
     
     def forward(self, x):
@@ -176,13 +174,12 @@ class Encoder(nn.Module):
             block = self.blocks[i]
             x = (1-feedback)*x + feedback*self.retained[i]
             x = block(x, None)
-            self.retained[i] = x.clone()       
+            self.retained[i] = x.clone().detach()   
         return x
-    
-    # encoder output holds latent semantics
-    def output(self):
+        
+    def get_retained():
         return self.retained[num_blocks-1]
-
+    
     def clear_retained(self):
         self.retained = [torch.zeros((seq_len, d_model), dtype=torch.long)] * num_blocks
         
@@ -208,24 +205,25 @@ class Agent(nn.Module):
         super(Agent, self).__init__()
         self.encoder = Encoder()
         self.decoder = Decoder()
+        #self.test = Test()
         self.train()
         
     def learn(self, sample):
-        self.encoder.clear_retained() # clear retained outputs
         data, target = prepare_sample(sample)
         optimizer.zero_grad()
-        self.working_memory = self.encoder.forward(data)
-        logits = self.decoder.forward(self.working_memory)
+        logits = self.decoder(self.encoder(data))
         loss = criterion(logits, target)
         loss.backward()
         optimizer.step()
         return loss
     
+    def retained_encoding():
+        return self.encoder.get_retained()
+        
     def clear_retained():
         self.encoder.clear_retained()
             
 agent = Agent() # create instance of Agent class
-agent.train() # set it to training mode, use agent.eval() to disable dropouts
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(agent.parameters(), lr=0.001)
 
@@ -237,11 +235,12 @@ print(f"\nThe agent model has {count_parameters(agent):,} trainable parameters\n
 
 # loop over epochs, adjusting the learning rate as we go
 
+best_loss = float('inf')
+
 for epoch in range(epochs):
-    best_loss = float('inf')
     for sample in samples:
         agent.zero_grad()
         loss = agent.learn(sample)
         if loss < best_loss:
             best_loss = loss
-    print(f"epoch {epoch+1} best loss {best_loss}")
+    print(f"epoch {epoch+1} best loss {best_loss}, lost {loss}")
