@@ -173,6 +173,8 @@ I've made a start on implementing a neural cognitive agent with an encoder and d
 
 To keep things simple, the encoder and decoder work assume a fixed width sample size, padding input to that length. Some time in the future I will want to try to mimic human language processing for encoding and decoding, but for now simple Transformers should be good enough for learning elementary mathematics given the limited use of language for assertions, questions and answers.
 
+The encoder retains the output of the Transformer blocks and blends this into the block's input. In principle, this should allow attention to latent semantics beyond the sequence length, and to things placed in working memory by the operations of the reasoner and memory modules.
+
 The agent will use a reasoner to update the latent semantics as initialised by the input text. The reasoner triggers the decoder to generate the text that is most representative of the latent semantics. I think this means, the decoder doesn't need the masking for autoregressive predictions.
 
 To get training to converge, it looks like I need a much bigger and more varied dataset. 
