@@ -169,14 +169,19 @@ The memory module is used for rote memorisation such as addition of single digit
 ## Implementation Notes
 * See [agent.py](agent.py)
 
+
+The agent will use a reasoner to update the latent semantics as initialised by the encoder from input text. The reasoner triggers the decoder to generate the text that is most representative of the latent semantics. I think this means that the decoder doesn't need to worry about autoregressive predictions. I may be wrong, but it would be a simple fix.
+
 I've made a start on implementing a neural cognitive agent with an encoder and decoder. The idea is to pretrain the language model from a set of examples before integrating the reasoner and memory modules. The agent is trained one sample at a time, where each sample corresponds to one line of text in the source file. The tokeniser splits the line into words, and expands integers to their constituent digits.
 
 To keep things simple, the encoder and decoder work assume a fixed width sample size, padding input to that length. Some time in the future I will want to try to mimic human language processing for encoding and decoding, but for now simple Transformers should be good enough for learning elementary mathematics given the limited use of language for assertions, questions and answers.
 
-The encoder retains the output of the Transformer blocks and blends this into the block's input. In principle, this should allow attention to latent semantics beyond the sequence length, and to things placed in working memory by the operations of the reasoner and memory modules.
+The encoder retains the output of the Transformer blocks and blends this into the block's input. In principle, this should allow attention to latent semantics associated with previous input, as well as to things placed in working memory by the operations of the reasoner and memory modules.
 
-The agent will use a reasoner to update the latent semantics as initialised by the input text. The reasoner triggers the decoder to generate the text that is most representative of the latent semantics. I think this means, the decoder doesn't need the masking for autoregressive predictions.
+Human language processing has been shown to be sequential, hierarchical and predictive. When you read text you hear an inner voice speaking the words as you read them, This is subject to the constraints of the phonological loop, i.e. one to two seconds. This can be mimicked using a small window that is advanced across the input tokens, to process the input token by token, taking into account a few tokens before and after the current position. The encoder output shape would be *window size, model dimension*. The retained feedback described in the previous paragraph should allow decisions to be sensitive to the results of processing previous tokens even if they are now beyond the beginning of the window.
 
-To get training to converge, it looks like I need a much bigger and more varied dataset. 
+Human language generation is likely to involve a combination of feedforward and feedbackward connections. The verb is likely to be selected early on even if it won't appear until later in the utterance. Each step in the process clarifies the details, akin to denoising when generating images from text prompts. I will want to explore this at some stage, but it isn't a high priority.
+
+To get training to converge better, it looks like I need a much bigger and more varied dataset. 
 
 ***to be continued...***
