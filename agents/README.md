@@ -184,4 +184,14 @@ Human language generation is likely to involve a combination of feedforward and 
 
 To get training to converge better, it looks like I need a much bigger and more varied dataset. That's the next challenge!
 
+### Better Learning Algorithms
+*I suspect that conventional deep learning won't work well for the elementary math domain as the numbers used are from an open ended large set, and will only make sense when the model has learned to do the math! I need to find a learning framework that supports incremental learning with small datasets*
+
+Learning language is based upon learning the hidden parsing and generation rules, and their statistical distributions.  This may involve instruction, e.g. pointing to examples of numbers with different digits.  It may also involve observation and self-guided learning, e.g. where the aim is to predict masked tokens. It may involve supervised learning where an oracle says whether a given attempt is good or bad.
+
+Learning would work faster bottom up looking for regularities, e.g. numbers as digit sequences. This requires defining a learning metric separate from the masking technique used for large language models.  This will involve looking for regularities at progressively higher levels. What kind of network model could support that?  That also relates to learning generalisations across episodes. In principle, bottom up techniques can be made to work better with top down attention.
+
+I am therefore searching the literature for some practical ideas I can readily implement. One source of inspiration is [A Complementary Learning Systems Approach to Temporal Difference Learning](https://arxiv.org/pdf/1905.02636.pdf), 2019, Sam Blakeman and Denis Mareschal.
+
+
 ***to be continued...***
