@@ -1,7 +1,7 @@
 # Reflections
 Some reflections on research challenges:
 
-TLDR: _we need an alternative to back propagation that supports continual learning from very few examples_
+TL;DR: _we need an alternative to back propagation that supports continual learning from very few examples_
 
 Humans learn from single examples, but back propagation requires large numbers of examples to learn effectively, and is illsuited to **continual learning**. The brain is believed to combine short term learning with the hippocampus and long term learning with the neocortex. How can we mimic that using artificial neural networks?
 
