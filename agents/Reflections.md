@@ -9,7 +9,9 @@ Individual biological neurons are error prone. This can be compensated through r
 
 In a symbolic representation, we can use explicit counts and make localised decisions according to what is most likely given what we currently know. A neural network could perhaps use limited statistics to commit to particular decisions rather than an open ended approach that leaves the decisions to the last moment.
 
-Hebbian learning is bottom up, altering relative connection weights based upon the level of activation. How can this be appplied to learning single examples of token sequences? How can this be further extended to support learning generalisations for groups of tokens and their interrelationships?
+Hebbian learning is bottom up, altering relative connection weights based upon the level of activation. How can this be appplied to learning single examples of token sequences? How can this be further extended to support learning generalisations for groups of tokens and their interrelationships?  How can this take advantage of knowledge gained through instruction (rote learning) and through experience (reinforcement learning)?
+
+Our brains are like prediction machines continually comparing the world to our internal predictions and paying attention to discrepancies. How can this be implemented as a model of curiosity driven learning? That suggests a combination of autonomous bottom-up learning and top-down deliberative attention.
 
 ## Further details
 
