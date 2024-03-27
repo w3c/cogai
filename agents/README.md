@@ -162,7 +162,7 @@ Microsoft Copilot explains how to break down the addition of 158,764 and 73 step
 >   Write down the 9 in the thousands place.<br>
 > Putting it all together, the sum of 158,764 and 73 is 158,837.
 
-Note that Copilot gets the correct answer but makes mistakes along the way! A teacher would spot this and inform the student. We need a means to do the same for the worksheet from the cognitive agent.
+Note that Copilot reports the correct answer but hallucinates along the way! A teacher would spot this and inform the student. We need a means to do the same for the worksheet from the cognitive agent so that it can learn what's expected for each step.
 
 The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and digital worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?  This should cover the use of worked examples as instructions for how to solve the exercises provided on the worksheet.
 
