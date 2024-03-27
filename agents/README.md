@@ -3,7 +3,7 @@ This describes work in progress on designing, implementing and testing artificia
 
 * See [reflections on research challenges](Reflections.md)
 
-Large language models (LLMs) require vast training sets to cover the breadth of everyday knowledge needed for reasoning and prediction of text continuations.  This is impractical on a small budget which limits model sizes to what can be trained with a modest dataset.  The aim is to demonstrate neural architectures for memory, deliberative reasoning and continual learning. The training data uses constrained language and semantics to enable effective learning with a modest dataset and model size.
+Large language models (LLMs) require vast training sets to cover the breadth of everyday knowledge needed for reasoning and prediction of text continuations. This is impractical to replicate on a small budget. The research goal is to demonstrate neural architectures for memory, deliberative reasoning and continual learning. To achieve that the training data is limited to constrained language and semantics as a means to enable effective learning with a modest dataset and model size.
 
 * ***We still have a lot to learn about learning!***
   
