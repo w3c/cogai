@@ -3,7 +3,7 @@ This describes work in progress on designing, implementing and testing artificia
 
 * See [reflections on research challenges](Reflections.md)
 
-Large language models (LLMs) require vast training sets to cover the breadth of everyday knowledge needed for reasoning and prediction of text continuations.  I can't afford that and am limited to what can be achieved with a modest dataset.  My aim is to demonstrate neural architectures for memory, deliberative reasoning and continual learning. I therefore need to train on data based upon constrained language and semantics that will enable effective learning with a modest dataset and model size.
+Large language models (LLMs) require vast training sets to cover the breadth of everyday knowledge needed for reasoning and prediction of text continuations.  This is impractical on a small budget limiting models to what can be achieved with a modest dataset.  The aim is to demonstrate neural architectures for memory, deliberative reasoning and continual learning. Training will involve data based upon constrained language and semantics that will enable effective learning with a modest dataset and model size.
 
 * ***We still have a lot to learn about learning!***
   
@@ -11,9 +11,9 @@ A gap of around 3-5 orders of magnitude exists between estimated human language 
 
 See [Bridging the data gap between children and large language models](https://osf.io/qzbgx/download/), 2023, Michael C. Frank
 
-Learning can be viewed as a combination of observation, instruction, experience and reflection. Cognitive agents can benefit from experience in trying to solve problems, guided by step by step examples, rather than relying only on autoregressive training, i.e. masking to predict the next word given only the previous words.  I want to explore this using reinforcement learning, along with some measure of reflective thinking.
+Learning can be viewed as a combination of observation, instruction, experience and reflection. Cognitive agents can benefit from experience in trying to solve problems, guided by step by step examples, rather than relying only on autoregressive training, i.e. masking to predict the next word given only the previous words.  We want to explore this using reinforcement learning, along with some measure of reflective thinking.
 
-My first thought was to look at teaching materials for young children, and to consider the potential for using suitably prompted LLMs to generate training examples that can be supplemented as needed. Unfortunately, the generated examples assume a breadth of knowledge that implies a much larger dataset than is practical for my initial work.  Moreover, the teaching materials make frequent use of pictures and physical manipulation, something far too ambitious for my purpose.
+The first thought was to look at teaching materials for young children, and to consider the potential for using suitably prompted LLMs to generate training examples that can be supplemented as needed. Unfortunately, the generated examples assume a breadth of knowledge that implies a much larger dataset than is practical for my initial work.  Moreover, the teaching materials make frequent use of pictures and physical manipulation, something far too ambitious for my purpose.
 
 Spatial reasoning and a grasp of everyday physics would involve a richer neural architecture and a large dataset for recognising objects, understanding scenes, and learning spatial manipulation skills. That is something for much better resourced research teams!  We therefore should limit ourselves to text-based semantics, and enabling learning through a combination of memorisation and manipulation.
 
