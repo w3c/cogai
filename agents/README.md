@@ -147,25 +147,23 @@ That is far from ideal!   We first need to explain how to interpret digit sequen
 
 Microsoft Copilot explains how to break down the addition of 158,764 and 73 step by step as follows:
 
-1. Write the numbers vertically
-2. Start from the rightmost digit (units)
-   Add 4 and 3: (4 + 3 = 7).
-   Write down the 7 in the units place.
-3. Move to the next digit (tens)
-   Add 6 and 7: (6 + 7 = 13).
-   Write down the 3 in the tens place and carry over the 1.
-4. Continue to the next digit (hundreds)
-   Add 8, 1 (from the carryover), and 3: (8 + 1 + 3 = 12).
-   Write down the 2 in the hundreds place and carry over the 1.
-5. Move to the thousands place
-   Add 7, 1 (from the carryover), and 7: (7 + 1 + 7 = 15).
-   Write down the 5 in the thousands place and carry over the 1.
-6. Finally add the ten thousands place
-   Add 5 and 1 (from the carryover): (5 + 1 = 6).
-   Write down the 6 in the ten thousands place.
-7. No more digits, so the sum of 158,764 and 73 is 158,837
+> Let’s break down the addition of 158,764 and 73 step by step:<br>
+> <br>
+> 1. Ones Place Value:<br>
+>   Add the ones place digits: 4 + 3 = 7.<br>
+>   Write down the 7 in the ones place.<br>
+> 2. Tens Place Value:<br>
+>   Add the tens place digits: 6 + 7 = 13.<br>
+>   Write down the 3 in the tens place and carry over the 1 to the hundreds place.<br>
+> 3. Hundreds Place Value:<br>
+>   Add the hundreds place digits along with the carried-over value: 8 + 1 + 3 = 12.<br>
+>   Write down the 2 in the hundreds place and carry over the 1 to the thousands place.<br>
+> 4. Thousands Place Value:<br>
+>   Add the thousands place digits along with the carried-over value: 1 + 7 + 1 = 9.<br>
+>   Write down the 9 in the thousands place.<br>
+> Putting it all together, the sum of 158,764 and 73 is 158,837.
 
-The digital worksheet for this needs three lines for the pair of numbers to be added and the working result. The columns need to be associated with their role. We also need to remember the carry over from the previous column. The reasoner needs to be able to initialise the worksheet, and to access and update its values as the algorithm proceeds.
+Note that Copilot gets the correct answer but makes mistakes along the way! A teacher would spot this and inform the student. We need a means to do the same for the worksheet from the cognitive agent.
 
 The memory module is used for rote memorisation such as addition of single digits, whilst the worksheets supplement working memory. How can we train the reasoner to use explicit memory and digital worksheets? How can we preload a worksheet, analogous to the teacher handing out printed sheets of paper?  This should cover the use of worked examples as instructions for how to solve the exercises provided on the worksheet.
 
