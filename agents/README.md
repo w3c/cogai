@@ -33,6 +33,7 @@ See the [UK mathematics curriculum for year 1 to 6](https://www.gov.uk/governmen
 
 The starting point involves assertions, questions and answers:
 
+* Numbers with units, tens, hundreds, thousands, etc.
 * Counting in ones, twos, threes, fives and tens
 * Working out the number that is one more or one less than a given number
 * Adding and subtracting single digits
