@@ -1,6 +1,8 @@
 # Human Inspired Cognitive Agents
 This describes work in progress on designing, implementing and testing artificial neural networks that mimic human cognition. Datasets and Python code resources will be added to this repository as work proceeds.
 
+* See [reflections on research challenges](Reflections.md)
+
 Large language models (LLMs) require vast training sets to cover the breadth of everyday knowledge needed for reasoning and prediction of text continuations.  I can't afford that and am limited to what can be achieved with a modest dataset.  My aim is to demonstrate neural architectures for memory, deliberative reasoning and continual learning. I therefore need to train on data based upon constrained language and semantics that will enable effective learning with a modest dataset and model size.
 
 * ***We still have a lot to learn about learning!***
