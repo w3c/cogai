@@ -40,17 +40,23 @@ The W3C Cognitive AI Community Group seeks to demonstrate the potential of Cogni
 
 We are using GitHub for documents, issue tracking and open source components. We have a [public mailing list](https://lists.w3.org/Archives/Public/public-cogai/), and an [IRC channel](https://www.w3.org/wiki/IRC) **#cogai**.
 
+## Current Work
+
+* [Chunks and Rules](https://w3c.github.io/cogai/chunks-and-rules.html)
+* [Plausible Knowledge Notation](https://w3c.github.io/cogai/pkn.html)
+* [Neural Networks for Human-like AI](agents/README.md)
+
 ## Webinars
 
-We are hoping to arrange a series of recorded webinars and invite contributions, see [webinar planning](webinars/README.md)
+This is a series of recorded webinars, see [webinar planning](webinars/README.md)
 
-* 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](https://youtu.be/GMDGbRQSWyo), video of talk for Darmstadt Ontology Group, see also the [slides](http://www.w3.org/2023/06-Human-like-AI.pdf).
+* 7 March 2024, The role of symbolic knowledge at the dawn of AGI, as presented to the Estes Park Group: [slides](https://www.w3.org/2024/03-Raggett-estes-park.pdf), and [video recording](https://www.youtube.com/watch?v=OdtpzE67W1U)
 
 ## Background materials
 
 * Talks
   * 04 July 2023 [Combining Digital Twins with Cognitive Agents](https://www.w3.org/2023/07-Raggett-SimSwarm.pdf), talk at ETSI IoT Week 2023
-  * 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](http://www.w3.org/2023/06-Human-like-AI.pdf), talk for Darmstadt Ontology Group
+  * 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](http://www.w3.org/2023/06-Human-like-AI.pdf), see [video recording](https://youtu.be/GMDGbRQSWyo) talk for Darmstadt Ontology Group
   * 18 April 2023 [Human-Like AI for Artificial General Intelligence](http://www.w3.org/2023/04-Raggett-towards-AGI.pdf), as part of the [Special day on Human-AI interaction, DATE 2023](https://www.date-conference.com/call-for-papers#Special-Day-on-Human-AI-Interaction)
   * 20 February 2023 - [Human-like AI for Artificial General Intelligence - research challenges for the Intelligent Web of Things](https://www.w3.org/2023/02-Raggett-towards-AGI.pdf))
   * 14 November 2022 - [Cognitive Agents, Plausible Reasoning and Scalable Knowledge Engineering](https://www.w3.org/2022/11/Raggett-AI-Priorities.pdf), Workshop on Computing across the Continuum for the US NSF and the European Commission
