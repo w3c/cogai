@@ -7,7 +7,7 @@ Humans learn from single examples, but back propagation requires large numbers o
 
 Individual biological neurons are error prone. This can be compensated through redundancy in the form of distributed representations. Back propagation is effective for predicting statistical distributions, e.g. language models predict the probability distribution over the vocabulary for each position in the sequence. How can this be adapted to work with very small numbers of samples?
 
-In a symbolic representation, we can use explicit counts and make localised decisions according to what is most likely given what we currently know. A neural network could perhaps use limited statistics to commit to particular decisions rather than an open ended approach that leaves the decisions to the last moment.
+In a symbolic representation, we can use explicit counts and make localised decisions according to what is most likely given what we currently know. A neural network could perhaps use limited statistics to commit to local decisions rather than leaving the decisions to the last layer. This points to a more modular approach to language models.
 
 Hebbian learning is bottom up, altering relative connection weights based upon the level of activation. How can this be applied to learning single examples of token sequences? How can this be further extended to support learning generalisations for groups of tokens and their interrelationships?  How can this take advantage of knowledge gained through instruction (rote learning) and through experience (reinforcement learning)?
 
