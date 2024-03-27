@@ -191,7 +191,7 @@ Learning language is based upon learning the hidden parsing and generation rules
 
 Learning would work faster bottom up looking for regularities, e.g. numbers as digit sequences. This requires defining a learning metric separate from the masking technique used for large language models.  This will involve looking for regularities at progressively higher levels. What kind of network model could support that?  That also relates to learning generalisations across episodes. In principle, bottom up techniques can be made to work better with top down attention.
 
-We are therefore searching the literature for some practical ideas we can readily implement. One source of inspiration is [A Complementary Learning Systems Approach to Temporal Difference Learning](https://arxiv.org/pdf/1905.02636.pdf), 2019, Sam Blakeman and Denis Mareschal.
+Does the literature hold clues to relevant ideas that can be readily implemented? One source of inspiration is [A Complementary Learning Systems Approach to Temporal Difference Learning](https://arxiv.org/pdf/1905.02636.pdf), 2019, Sam Blakeman and Denis Mareschal.
 
 
 ***to be continued...***
