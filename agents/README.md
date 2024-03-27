@@ -148,7 +148,6 @@ That is far from ideal!   We first need to explain how to interpret digit sequen
 Microsoft Copilot explains how to break down the addition of 158,764 and 73 step by step as follows:
 
 > Let’s break down the addition of 158,764 and 73 step by step:<br>
-> <br>
 > 1. Ones Place Value:<br>
 >   Add the ones place digits: 4 + 3 = 7.<br>
 >   Write down the 7 in the ones place.<br>
