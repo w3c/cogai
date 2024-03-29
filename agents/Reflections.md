@@ -86,7 +86,7 @@ Supervised learning can be applied to parsing natural language, e.g. [Parsing Na
 
 A sequence could be recognised via a neural state machine that updates the internal state as it processes each item in the sequence.  A form of self-organising map could support generalisations via forming clusters in an embedding space. If the state is treated as a superposition, the state could represent generalisations as substates. This suggests looking at work on self-organising maps and how they might be combined with sequences.
 
-We could envisage an architecture with several state machines connected in series to process progressively higher levels of abstractions. Each state machine passes a tensor to the following state machine. This might work for lazy parsing that splits the input into non-overlapping sequences for instance noun phrase, verb phrase, prepositional phrase, etc. What shape would the tensor need, and how can it be interpreted?
+We could envisage an architecture with several state machines connected in series to process progressively higher levels of abstractions. Each state machine passes a tensor to the following state machine. This might work for lazy parsing that splits the input into non-overlapping sequences, for instance, noun phrase, verb phrase, prepositional phrase, etc. What shape would the tensor need, and how can it be interpreted?
 
 Natural language involves non-adjacent dependencies, e.g. between a verb and a prepositional phrase, or between an indefinite pronoun and the thing it refers to. This suggests the need for working memory as distinct from sequence memory. Deliberative reasoning and explicit memory would allow for longer range attention.
 
