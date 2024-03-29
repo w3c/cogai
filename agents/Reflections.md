@@ -19,7 +19,7 @@ Our brains are like prediction machines continually comparing the world to our i
 
 * Transformers model statistical dependencies across positions in the sequence, and I need to understand why the positional embeddings are also needed, as at first glance they seem redundant.
 
-* The tensor *(shape: seq_len, d_model)* passed from the encoder to the decoder is only approximate, and reconstruction of the output relies on models of statistical likelihood in the encoder layers, and as such is liable to convincing hallucinations.
+* The tensor *(shape: seq_len, d_model)* passed from the encoder to the decoder is only approximate, and reconstruction of the output relies on models of statistical likelihood in the decoder layers, and as such is liable to convincing hallucinations.
 
 * I need to develop a script to provide large numbers of examples for elementary math, so I can explore how training depends on the size of the dataset for a given model size. My initial experience shows that Transformers struggle with small datasets no matter how many epochs you use. RNNs by contrast are able to quickly learn small datasets, but struggle with longer ones. RNNs also have difficulties with long range attention.
 
