@@ -71,25 +71,20 @@ Our brains are like prediction machines continually comparing the world to our i
 
 * **Sequence memory**: watching a drama series, I noted that when resuming watching after taking a break, I recognized the subtitled text I had seen before the break. I wouldn't have been able to  recall it, but clearly remembered having seen that text earlier. This ability fades with a longer interval, but can be strengthened if you repeatedly watch the same drama series.
 
-  This implies that we somehow store and later recognise temporal sequences. This ability relates to how we learn patterns from one or more examples.  Some tokens in the sequence stand out, e.g. "question" and "answer" in my training examples.   I think that these tokens are recognised on their own right, perhaps based upon when we last saw them or perhaps due to a measure of how much meaning they carry.  Digits carry less meaning, and we learn to treat groups of digits as numbers.
+This implies that we somehow store and later recognise temporal sequences. This ability relates to how we learn patterns from one or more examples.  Some tokens in the sequence stand out, e.g. "question" and "answer" in my training examples.   I think that these tokens are recognised on their own right, perhaps based upon when we last saw them or perhaps due to a measure of how much meaning they carry.  Digits carry less meaning, and we learn to treat groups of digits as numbers.
 
   * How do we store and recognise temporal sequences?
   * How do we compute a measure of significance?
   * How do we use distributed representations tolerant of error prone neurons?
   * How do we learn to group tokens and associated them with a label (e.g. number)?
 
-  Recursive Neural Networks (RNNs)  could be part of the solution, but can they recognise examples that have only be presented once?  How can they make this less likely the longer the interval since the sequence was last presented? Can RNNs support hierarchical patterns akin to chart parsers? What other kinds of neural networks could serve these purposes?  
+Recursive Neural Networks (RNNs) could be part of the solution, but can they recognise examples that have only be presented once?  How can they make this less likely the longer the interval since the sequence was last presented? Can RNNs support hierarchical patterns akin to chart parsers? What other kinds of neural networks could serve these purposes?  
 
-  We exhibit curiousity and attention to the unexpected. The corollary is that we learn to predict sequences and direct attention when the prediction fails.
+Supervised learning can be applied to parsing natural language, e.g. [Parsing Natural Scenes and Natural Language with Recursive Neural Networks](https://www-nlp.stanford.edu/pubs/SocherLinNgManning_ICML2011.pdf), 2011, Socher et al. Self-guided learning is used for Transformer-based language models, but the approach is slow and requires large models and vast datasets.
 
-  * See [Parsing Natural Scenes and Natural Language with Recursive Neural Networks](https://www-nlp.stanford.edu/pubs/SocherLinNgManning_ICML2011.pdf), 2011, Socher et al. This describes parsing in terms of merging adjacent tokens.  I need to finish reading the paper, but in principle, we could replace a pair of adjacent tokens by a new token when it makes sense to merge them, e.g. for digits forming a number, 
+* ***We exhibit curiousity and attention to the unexpected. To put it differently, we learn to predict sequences and direct attention when the prediction fails.***
 
-    In a statistical model we could  model a token at one layer with a distribution at the next layer that describes which arcs it belongs to, e.g. a digit is part of a number which is part of a noun phrases which acts as a subject for a verb. This would involve a vector for each position where the vector describes a superposition of labels.
+A sequence could be recognised via a neural state machine that updates the internal state as it processes each item in the sequence.  A form of self-organising map could support generalisations via forming clusters in an embedding space. If the state is treated as a superposition, the state could represent generalisations as substates. This suggests looking at work on self-organising maps and how they might be combined with sequences.
 
-    That doesn't seem to work for bindings that are not directly adjacent, e.g. a prepositional phrase acting as a verb slot of some kind. It may be more effective to apply statistical considerations in respect to commiting to parsing decisions.  A token has a distribution of part of speech labels, a distribution of word senses, and a distribution of syntactic and semantic bindings.  The bindings can be modelled as labelled directed binary arcs.
-
-    The chart perspective involves labelled directed binary arcs that have a start and end position in the token sequence that model dependencies. Each arc starts from some position and extends to earlier or later positions.
-
-* How can sequential processing, as described above, be combined with continual learning?
-
-I need to understand how a neural network can remember a specific sequence, as well as capturing relationships between similar sequences. This could relate to the idea of lazy parsing that splits the input into subsequences for instance noun phrase, verb phrase, prepositional phrase, etc. We then need a means to model the relationships between this chunks.
+This might work for lazy parsing that splits the input into non-overlapping subsequences for instance noun phrase, verb phrase, prepositional phrase, etc. We then need an attention model for the relationships between the chunks.
+ 
