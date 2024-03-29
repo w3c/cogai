@@ -52,8 +52,8 @@ Our brains are like prediction machines continually comparing the world to our i
 * How can bottom-up learning work in the absence of a top-down signal?  You start by storing the first example, and then adapt as you observe further examples, looking for generalisations and specialisations.
 
   * Hebbian learning boosts connection weights according to their importance to the current sample.  Normalisation is required to avoid run-away weights. This might be achieved via lateral inhibition. A big enough change to remember single examples is likely to impair memory of older examples. How could a slow learning rate could be used alongside a fast learning rate?
-  * Generalisation as a means to account for multiple examples. This can be implemented using explicit memory for recent examples and a combined representation for older ones.
-  * Specialisation is needed to compensate for over generalisation.
+  * Generalisation as a means to account for multiple examples. This can be implemented using explicit memory for recent examples and a combined representation for older ones. Explicit memory allows for replay as a means to boost learning. Clusters in embedding spaces provide evidence for generalisation based upon similar meanings.
+  * Specialisation is needed to compensate for over generalisation which can occur with small numbers of examples.
   * Chart parsing as an analogy where we label sequences of tokens by their most likely role, e.g. a sequence of digits as a number. 
   * We need to accumulate sufficient statistics to merit the introduction of a new chart label.
   * We may want to split or merge labels as the accumulating evidence suggests.
