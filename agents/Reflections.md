@@ -125,6 +125,10 @@ Could this work using a pipeline for successive state machines, where each machi
 
 An even more ambitious goal is to learn the co-dependencies of abstract tokens, e.g. semantic constraints on which noun phrases can appear as the subject of a given verb.  That would involve an attention mechanism, as a preposition (for instance) may be some distance from its verb.
 
+An even more ambitious goal is to learn the co-dependencies of abstract tokens, e.g. semantic constraints on which noun phrases can appear as the subject of a given verb.  That would involve an attention mechanism plus some form of working memory, as a preposition (for instance) may be separated from its verb.
+
+* How could the pipeline be integrated with working memory for long range attention?
+
 ##### Memory Consolidation
 
 A further challenge is how to consolidate short term memories into long term memories.  The short term learning mechanism will push out older memories in favour of recent experience.  We would like a means to use short term memory to train long term memory.  A less interesting possibility would be to run the long term and short term systems independently in parallel, but this would preclude long term learning from just a few examples.   Animals are very much able to retain strong memories from single examples when appropriate, e.g. life threatening events.
