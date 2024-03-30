@@ -118,8 +118,9 @@ where the next token after "add" is a digit that is likely to be followed by oth
 where "subtract" appears in place of "add", and is likewise followed by a digit. We can interpret this class as an *operator*.  We want to learn abstract tokens, e.g. *nouns* and *adjectives* as generalisations of individual tokens, and *noun phrases* as an abstract class of tokens that span multiple tokens.
 
 * How to support abstract tokens that span multiple lower-level tokens?
-* How to support co-dependencies between abstract tokens?
 
 An even more ambitious goal is to learn the co-dependencies of abstract tokens, e.g. semantic constraints on which noun phrases can appear as the subject of a given verb.  That would involve an attention mechanism, as a preposition (for instance) may be some distance from its verb.
+
+* How to support co-dependencies between abstract tokens?
 
 A further challenge is how to consolidate short term memories into long term memories.  The short term learning mechanism will push out older memories in favour of recent experience.  We would like a means to use short term memory to train long term memory.  A less interesting possibility would be to run the long term and short term systems independently in parallel, but this would preclude long term learning from just a few examples.   Animals are very much able to retain strong memories from single examples when appropriate, e.g. life threatening events.
