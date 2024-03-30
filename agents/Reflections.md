@@ -90,3 +90,36 @@ We could envisage an architecture with several state machines connected in serie
 
 Natural language involves non-adjacent dependencies, e.g. between a verb and a prepositional phrase, or between an indefinite pronoun and the thing it refers to. This suggests the need for working memory as distinct from sequence memory. Deliberative reasoning and explicit memory would allow for longer range attention.
 
+##### Sequence Learning Machine
+* [Compositional generalization through meta sequence-to-sequence learning](https://arxiv.org/abs/1906.05381), 2019, Brendan M. Lake.  Combines RNNs with an Attention based queries on external memory, and what he refers to as meta-training. However, it seems that this is far from learning from very few examples.
+
+Is sequence learning really sequence to sequence learning?  We want to learn to predict the next token based upon the previous tokens in the sequence and our memory of previous sequences. The prediction is essentially remembering a previously seen sequence with the same preceding tokens.
+
+We could use random numbers to label the states. Each state is initialised with the current input token. If we've seen this state before, and depending on whether the input token matches the prediction, we either strengthen the prediction or merge in a new prediction.  We can use forgetting parameters so that predictions are weakened if they are wrong and boosted if they are right. The initial strength for a new prediction is strong.
+
+The initial state provides weak predictions for the first token, e.g. that all tokens are equally likely. As experience is gained, this settles down into the probability distribution for initial tokens. When a sequence is finished, we need to reset the state to the initial state. This involves a means to signal the start, middle or end of the sequence. We also signal whether this is an unexpected sequence or a familiar one.
+
+* Input:  token, prediction, position, hidden state
+* Output: prediction, position, hidden state, familiarity
+
+The model could be extended to support generalisations via clustering tokens in an embedding space and using a similarity metric for evaluating predictions. 
+
+* How is the embedding learned?  
+* How to support different kinds of generalisations?
+
+One kind of generalisation is where the next token belong to a common class, e.g. *digits* as in:
+
+> add 123 to 4
+
+where the next token after "add" is a digit that is likely to be followed by other digits, which together signal a *number*. Another generalisation deals with the preceding token, e.g.
+
+> subtract 4 from 128
+
+where "subtract" appears in place of "add", and is likewise followed by a digit. We can interpret this class as an *operator*.  We want to learn abstract tokens, e.g. *nouns* and *adjectives* as generalisations of individual tokens, and *noun phrases* as an abstract class of tokens that span multiple tokens.
+
+* How to support abstract tokens that span multiple lower-level tokens?
+* How to support co-dependencies between abstract tokens?
+
+An even more ambitious goal is to learn the co-dependencies of abstract tokens, e.g. semantic constraints on which noun phrases can appear as the subject of a given verb.  That would involve an attention mechanism, as a preposition (for instance) may be some distance from its verb.
+
+A further challenge is how to consolidate short term memories into long term memories.  The short term learning mechanism will push out older memories in favour of recent experience.  We would like a means to use short term memory to train long term memory.  A less interesting possibility would be to run the long term and short term systems independently in parallel, but this would preclude long term learning from just a few examples.   Animals are very much able to retain strong memories from single examples when appropriate, e.g. life threatening events.
