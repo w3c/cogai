@@ -107,11 +107,11 @@ The model could be extended to support generalisations via clustering tokens in 
 * How is the embedding learned?  
 * How to support different kinds of generalisations?
 
-One kind of generalisation is where the next token belong to a common class, e.g. *digits* as in:
+One kind of generalisation is where the next token belongs to a common class, e.g. *digits* as in:
 
 > add 123 to 4
 
-where the next token after "add" is a digit that is likely to be followed by other digits, which together signal a *number*. Another generalisation deals with the preceding token, e.g.
+where the next token after "add" is a digit that is likely to be followed by other digits, which together signal a *number*. Another generalisation deals with the previous token, e.g.
 
 > subtract 4 from 128
 
@@ -119,7 +119,7 @@ where "subtract" appears in place of "add", and is likewise followed by a digit.
 
 * How to support abstract tokens that span multiple lower-level tokens?
 
-Could this work using a pipeline for successive state machines, where each machine generates a sequence for input to next state machine?  Without a stack, the pipeline length would need to be at least equal to the maximum depth of the abstract parse tree.
+Could this work using a pipeline for successive state machines, where each machine generates a sequence for input to the next state machine?  Without a stack, the pipeline length would need to be at least equal to the maximum depth of the abstract parse tree.
 
 * How to support co-dependencies between abstract tokens?
 
