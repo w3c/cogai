@@ -128,6 +128,9 @@ An even more ambitious goal is to learn the co-dependencies of abstract tokens, 
 An even more ambitious goal is to learn the co-dependencies of abstract tokens, e.g. semantic constraints on which noun phrases can appear as the subject of a given verb.  That would involve an attention mechanism plus some form of working memory, as a preposition (for instance) may be separated from its verb.
 
 * How could the pipeline be integrated with working memory for long range attention?
+* How does the pipeline support reasoning and language generation?
+
+Reasoning operates on the latent semantics in working memory. How does the sequence learning pipeline translate language to a representation of latent semantics (language encoding)?  Language generation works off latent semantics, and learns from the language encoder, how does that work?
 
 ##### Memory Consolidation
 
