@@ -102,22 +102,39 @@ The initial state provides weak predictions for the first token, e.g. that all t
 * Input:  token, prediction, position, hidden state
 * Output: prediction, position, hidden state, familiarity
 
-The model could be extended to support generalisations via clustering tokens in an embedding space and using a similarity metric for evaluating predictions. 
+Sequences can be associated with identifiers corresponding to a hash function over the items that form the sequence, where the hash function is chosen to be sensitive to permutations of the items. This approach enables the sequence to be recognised and associated with parameters, e.g. its strength and semantics. This approach breaks down when the items are noisy.
 
-* How is the embedding learned?  
+Sequence recognition could be extended to support generalisations via clustering tokens in an embedding space and using a similarity metric for evaluating predictions. 
+
+* How is the embedding learned?
+
+Related approaches include Kohonen self-organising maps (SOM) and word2vec. SOMs map their input to their output based upon a similarity metric operating on properties associated with the input. Word2vec and similar algorithms map words to points in an n-dimensional space. You can either try to predict a word based upon nearby words *(cbow)* or vice versa *(skipgram)*. The former is good for common words and the latter is good for rare words.
+
+We are looking for an incremental learning algorithm that can work with limited statistics, and provide guidance for managing abstract classes, e.g. operators and digits, as well as when adjacent items should be treated as a collection, e.g. adjacent digits forming a number.
+
+How do we recognise that different sequences correspond to the same pattern? In other words, which yield the same sequence after transformations that replace tokens with abstract classes where appropriate. This points to algorithms that transform an input sequence to an output sequence. Learning is based upon seeking to explain differences between prediction and observation.
+
+There is a risk that the learning algorithm simply discards differences, e.g. mapping all sequences to a single symbol. What kind of inductive bias can produce models that provide an effective basis for reasoning? This involves some notion of grounding understanding in respect to the tasks to be learned.
+
+Existing work on induction of grammar focuses on learning from a large number of examples. We need an approach that makes informed decisions based upon just a few examples, proposing and refining hypotheses as new data suggests.
+
 * How to support different kinds of generalisations?
 
 One kind of generalisation is where the next token belongs to a common class, e.g. *digits* as in:
 
 > add 123 to 4
 
-where the next token after "add" is a digit that is likely to be followed by other digits, which together signal a *number*. Another generalisation deals with the previous token, e.g.
+where the next token after "add" is a digit that is likely to be followed by other digits, which together signal a *number*.  In this example, *add* predicts a number, *to* then another number.
+
+Another generalisation deals with the previous token, e.g.
 
 > subtract 4 from 128
 
-where "subtract" appears in place of "add", and is likewise followed by a digit. We can interpret this class as an *operator*.  We want to learn abstract tokens, e.g. *nouns* and *adjectives* as generalisations of individual tokens, and *noun phrases* as an abstract class of tokens that span multiple tokens.
+where "subtract" appears in place of "add", and is likewise followed by a digit. We can interpret this class as an *operator*.
 
 * How to support abstract tokens that span multiple lower-level tokens?
+
+An example is *number* that predicts a sequence of *digit* which itself predicts a token in the range 0 to 9. We therefore need to support multiple levels of description.   We want to learn abstract tokens, e.g. *nouns* and *adjectives* as generalisations of individual tokens, and *noun phrases* as an abstract class of tokens that span multiple tokens.
 
 Could this work using a pipeline for successive state machines, where each machine generates a sequence for input to the next state machine?  Without a stack, the pipeline length would need to be at least equal to the maximum depth of the abstract parse tree.
 
