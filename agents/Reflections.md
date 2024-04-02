@@ -116,7 +116,7 @@ How do we recognise that different sequences correspond to the same pattern? In 
 
 There is a risk that the learning algorithm simply discards differences, e.g. mapping all sequences to a single symbol. What kind of inductive bias can produce models that provide an effective basis for reasoning? This involves some notion of grounding understanding in respect to the tasks to be learned.
 
-Existing work on induction of grammar focuses on learning from a large number of examples. We need an approach that makes informed decisions based upon just a few examples, proposing and refining hypotheses as new data suggests.
+Existing work on induction of grammar focuses on learning from a large number of examples. We need an approach that makes informed decisions based upon just a few examples, proposing and refining hypotheses as new data suggests.  Perhaps some form of shift-reduce processing can be combined with a means to learn how to make decisions?  How could this be realised as a neural network?
 
 * How to support different kinds of generalisations?
 
