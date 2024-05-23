@@ -19,16 +19,18 @@ Back propagation through time (BPTT) and recursive optimisation of a loss functi
 
 The simplest model of pulsed neurons involves a leaky integration of input pulses with a threshold for firing a pulse (LIF). A refined model allows for spike frequency adaptation (SFA) in which the threshold is slightly increased by recent activity. This is revealed by an increase in pulse interval for a constant stimulus. 
 
-<center><img src="../images/spike-frequency-adaptation.png" width="50%"><br><em>Copied from the <a href="https://celltypes.brain-map.org/overview">Allen Brain Atlas</a></center></em></center>
+<p align="center"><img src="../images/spike-frequency-adaptation.png" width="300px"><br><em>Courtesy of the <a href="https://celltypes.brain-map.org/overview">Allen Brain Atlas</a></center></em></p>
 
 The brain features both feedback and lateral connections in addition to feedforward connections.  Lateral connections are either local or remote, e.g. connecting different areas in the Neocortex. Recurrently connected neural networks are more powerful than feedforward networks as feedback can support tasks that require combination of information over time.  Spike frequency adaptation further increases the computational power, analogous to LSTM networks.
 
 The neuron and its synapses are chemically effected by recent activity and this can lead to long term changes when closely followed by a top-down learning signal that is optimised across a collection of similar tasks.
 
 The loss gradient with respect to a given connection weight $W_{ji}$ can be modelled as a sum over the product of learning signals $L^t_j$ and eligibility traces $\mathbf{\epsilon}^t_{ji}$ for presynaptic neuron $i$ to postsynaptic neuron $j$ at time $t$ as shown below:
+
 $$
 \Delta W_{ji} = -\eta {{dE}\over {dW_{ji}}} = -\eta\sum_t L^t_j e^t_{ji}
 $$
+
 The learning signal represents errors for the current time step. The eligibility trace is independent of the loss function $E$ and just depends on the history of activations of the pre- and post-synaptic neuron. How are the learning signal and eligibility trace computed?
 
 Sherr et al. (see above link) describe how a separate recurrent spiking network can be used to estimate the learning signals and enable single-shot learning for related groups of tasks.
@@ -40,10 +42,13 @@ The eligibility trace $e^t_{ji}$ is essentially a low pass filtered function of 
 $$
 e^t_{ji} = \frac{\partial z^t_i}{\partial \mathbf{h}^t_j}\cdot\mathbf{\epsilon}^t_{ji}
 $$
+
 where $\mathbf{h}^t_k$ is the internal state vector for neuron $j$ and  $\mathbf{\epsilon}^t_{ji}$ is a vector defined by:
+
 $$
-\mathbf{\epsilon}^t_{ji} = \frac{\partial \mathbf{h}^t_j}{\partial \mathbf{h}^{t-1}_j}\cdot\mathbf{\epsilon}^{t-1}_{ji} + \frac{\partial \mathbf{h}^t_j}{\partial W_{ji}}
+\mathbf{\epsilon}^t_{ji} = \frac{\partial \mathbf{h}^t_j}{\partial \mathbf{h}^{t-1}\_j}\cdot\mathbf{\epsilon}^{t-1}\_{ji} + \frac{\partial \mathbf{h}^t\_j}{\partial W_{ji}}
 $$
+
 Schorr et al don't define $z^t_i$ nor how to initialise $\mathbf{\epsilon}^t_{ji}$ for $t = 0$.  I am also unclear as how to compute partial differentials for state vectors except in relation to the relative change compared to the previous time slot.
 
 ##### Training data and loss function
