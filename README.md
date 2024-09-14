@@ -42,9 +42,10 @@ We are using GitHub for documents, issue tracking and open source components. We
 
 ## Current Work
 
-* [Chunks and Rules](https://w3c.github.io/cogai/chunks-and-rules.html)
-* [Plausible Knowledge Notation](https://w3c.github.io/cogai/pkn.html)
 * [Neural Networks for Human-like AI](agents/README.md)
+* [Chunks and Rules](https://w3c.github.io/cogai/chunks-and-rules.html)
+  * [Application to low-code control of digital twins](https://w3c.github.io/cogai/agents/low-code-with-chunks-and-rules.pdf)
+* [Plausible Knowledge Notation](https://w3c.github.io/cogai/pkn.html)
 
 ## Webinars
 
@@ -55,6 +56,7 @@ This is a series of recorded webinars, see [webinar planning](webinars/README.md
 ## Background materials
 
 * Talks
+  * 05 September 2024 [Application to low-code control of digital twins](https://w3c.github.io/cogai/agents/low-code-with-chunks-and-rules.pdf), talk at Swarm Computing Workshop, Brussels
   * 04 July 2023 [Combining Digital Twins with Cognitive Agents](https://www.w3.org/2023/07-Raggett-SimSwarm.pdf), talk at ETSI IoT Week 2023
   * 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](http://www.w3.org/2023/06-Human-like-AI.pdf), see [video recording](https://youtu.be/GMDGbRQSWyo) talk for Darmstadt Ontology Group
   * 18 April 2023 [Human-Like AI for Artificial General Intelligence](http://www.w3.org/2023/04-Raggett-towards-AGI.pdf), as part of the [Special day on Human-AI interaction, DATE 2023](https://www.date-conference.com/call-for-papers#Special-Day-on-Human-AI-Interaction)
@@ -85,7 +87,7 @@ A further line of work deals with the means to express and reason with imperfect
 
 Both PKN and chunks & rules can be considered in relation to RDF. RDF is a framework for symbolic graphs based upon labelled directed graph edges (aka *triples*). Compared to RDF, PKN and chunks & rules are higher level with additional semantics, and designed for use in human-like AI applications. Furthermore, both notations are designed to be easy to read and author compared with RDF serialisations such as RDF/XML, Turtle and even JSON-LD. See also the [Notation3 (N3) Language](https://w3c.github.io/N3/spec/) which is an assertion and logic language defined as a superset of RDF.
 
-Work is now underway on vector-space representations of knowledge using artificial neural networks. Advances with generative AI have shown the huge potential of vector-space representations in combination with deep learning. However, there is a long way to go to better model many aspects of human cognition, e.g. continual learning using a blend of type 1 and type 2 cognition, episodic memory, and the role of emotions and feelings in directing cognition. Symbolic models will continue to serve an important role for semantic interoperability.  Neurosymbolic systems combine the complementary strengths of vector space and symbolic approaches.
+Work is now underway on vector-space representations of knowledge using artificial neural networks. Advances with generative AI have shown the huge potential of vector-space representations in combination with deep learning. However, there is a long way to go to better model many aspects of human cognition, e.g. continual learning using a blend of type 1 and type 2 cognition, episodic memory, and the role of emotions and feelings in directing cognition. Symbolic models will continue to serve an important role for semantic interoperability.  Neurosymbolic systems combine the complementary strengths of vector space and symbolic approaches. For more details see [Neural Networks for Human-like AI](agents/README.md).
 
 ## Positioning relative to existing approaches to AI
 
