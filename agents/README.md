@@ -1,8 +1,6 @@
 # Human Inspired Cognitive Agents
 This describes work in progress on designing, implementing and testing artificial neural networks that mimic human cognition. Datasets and Python code resources will be added to this repository as work proceeds.
 
-* See [reflections on research challenges](Reflections.md)
-
 Large language models (LLMs) require vast training sets to cover the breadth of everyday knowledge needed for reasoning and prediction of text continuations. This is impractical to replicate on a small budget. The research goal is to demonstrate neural architectures for memory, deliberative reasoning and continual learning. To achieve that the training data is limited to constrained language and semantics as a means to enable effective learning with a modest dataset and model size.
 
 * ***We still have a lot to learn about learning!***
@@ -18,6 +16,34 @@ The first thought was to look at teaching materials for young children, and to c
 Spatial reasoning and a grasp of everyday physics would involve a richer neural architecture and a large dataset for recognising objects, understanding scenes, and learning spatial manipulation skills. That is something for much better resourced research teams!  We therefore should limit ourselves to text-based semantics, and enabling learning through a combination of memorisation and manipulation.
 
 It should be possible to provide digital worksheets as an alternative to visual perception and reasoning. This would be loosely equivalent to pencil and paper, enabling the cognitive agent to retrieve and augment structured information on the worksheet. Further study is needed to clarify how this could be implemented, e.g. tokenisation and embeddings in respect to input and output for worksheets.
+
+## Sentient AI as the successor to Generative AI
+
+This is to provide some context for work on building blocks for sentient AI.
+
+Generative AI uses prompts to generate text, images, sound and video, etc. after having been trained on vast corpora. In comparison, Sentient AI features continual learning and reasoning, mimicking human cognition to serve as agents that learn from experience and have a degree of self-awareness in respect to their environment, goals and performance.
+
+Work on natural language used to focus on grammatical rules that describe the regularities of language, e.g. noun phrases with determiners, adjectives and nouns. The focus slowly shifted to statistical models particularly in respect to speech recognition and machine translation.
+
+N-grams are based upon counting occurrences of word patterns within a corpus. They include unigrams for the probability of a given word, e.g. “apples", bigrams for the probability of a given word directly following another one, e.g. “apple” following “red”, and trigrams for the probability of a word given the preceding two words, e.g. “shiny red apples”.
+
+N-grams proved difficult to scale up, and were superseded by work on artificial neural networks, e.g. Recurrent Neural Networks (RNNs) which process text word by word to predict the next word based upon the preceding words. RNNs use hidden vectors to model the context provided by the preceding words. Like N-grams, the network is trained on a text corpora that is split into two parts for training and evaluation.
+
+RNNs are weak when the next word depends on a previous word that occurred many words before. As each word is processed, the context held in the hidden vectors gradually loses information on preceding words.  This weakness was solved by the introduction of the Transformer-based large language models (LLMs). These use an explicit buffer for the context and enables words to pay attention to any of the preceding words in the context. With a deep stack of layers, and training against vast corpora, the networks can capture semantic dependencies, enabling effective responses to text prompts. The context length is tens of thousands of words and rapidly increasing with newer models.
+
+Transformers need a costly initial training phase, followed by fine tuning on the target applications, before being deployed. For sentient AI, we want to enable continual learning, and for this it makes sense to look at progress in the cognitive sciences.  The large context buffers used by Transformers are biologically implausible as is back propagation with gradient descent, so how does the brain manage language understanding and generation?
+
+The insight from RNNs is that hidden vectors are insufficient for modelling the context so the solution is likely to be found in updating the synaptic weights to remember the context. Jonides et al. provide an [informative review of studies on short term memory](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3971378/).  This includes the processes of encoding, maintenance and retrieval. They conclude that short term memory consists of items in the focus of attention along with recently attended representations in long term memory.
+
+This could be modelled by splitting synaptic weights into short and long term components. The short term component is boosted by encoding and retrieval, and otherwise gradually decays. The longer term component uses a slower learning rate. The network layers are similar to RNNs, but use local prediction to obtain the learning signal for updating the weights in place of back propagation. Attention is uses cue-based retrieval. The details still need to  be worked out, and we expect to evaluate the approach using a pre-training phase before an evaluation phase on test data. If all goes well, this will pave the way towards implementing sequential cognition (type 2 processing).
+
+### Continual learning through continual prediction
+
+Conventional AI starts with training a model against a dataset, before evaluation using data set aside for that purpose, and then the application of the model, e.g. for speech recognition or image classification. Sentient AI changes the paradigm to one of continual learning. This uses continual prediction together with local learning in place of back propagation. This can be applied separately to each layer in a stack of layers that deal with progressively higher levels of abstraction. Continual prediction for token sequences uses the context of previous tokens to predict the next token. This prediction can then be compared with the observed token, or for higher layers, the data passed to it from adjacent layers.
+
+Local learning combines the error signal with a modified Hebbian rule for updating the synaptic weights, see e.g. Hebbian-decent ([Melchior and Wiskott, 2019](url)). Prediction involves attention to the context derived from earlier parts of the sequence. The context is held in associative memory included in each layer. This is a network that when presented with a cue, outputs the data previously given for that cue. This operation is insensitve to small errors in the cue. The synaptic weights can be updated on each presentation of a cue, but we could also use a learning signal to distinguish recall from store operations. The approach should provide for stochastic recall when multiple data samples are stored with the same cue, and likewise for closely similar cues associated with different data samples.  The learning rule can also be designed to differentiate between short and long term memory, using synaptic updates with the corresponding characteristics.
+
+Sentient AI can use combine feed-forward with feed-back from processing the previous token. This allows layers to support both understanding and generation in combination with continual learning. Sequential cognition can then be implemented in terms of transformations that update layer state. Reinforcement learning is based upon an episodic memory that allows for back propagation of rewards across the sequence of transformations.
 
 ## Elementary Mathematics as a tractable domain
 
