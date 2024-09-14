@@ -21,7 +21,7 @@ It should be possible to provide digital worksheets as an alternative to visual 
 
 This is to provide some context for work on building blocks for sentient AI.
 
-Generative AI uses prompts to generate text, images, sound and video, etc. after having been trained on vast corpora. In comparison, Sentient AI features continual learning and reasoning, mimicking human cognition to serve as agents that learn from experience and have a degree of self-awareness in respect to their environment, goals and performance.
+Generative AI uses prompts to generate text, images, sound and video, etc. after having been trained on vast corpora. In comparison, Sentient AI features continual learning and reasoning, mimicking human cognition to serve as agents that learn from experience and have a degree of self-awareness in respect to their environment, goals and performance. Sentient AI used wisely will boost productivity, providing a solution to the conundrum for the perenial funding gap for healthcare, education, public transport and culture, etc.
 
 Work on natural language used to focus on grammatical rules that describe the regularities of language, e.g. noun phrases with determiners, adjectives and nouns. The focus slowly shifted to statistical models particularly in respect to speech recognition and machine translation.
 
