@@ -28,7 +28,7 @@ The neuron and its synapses are chemically effected by recent activity and this 
 The loss gradient with respect to a given connection weight $W_{ji}$ can be modelled as a sum over the product of learning signals $L^t_j$ and eligibility traces $\mathbf{\epsilon}^t_{ji}$ for presynaptic neuron $i$ to postsynaptic neuron $j$ at time $t$ as shown below:
 
 $$
-\Delta W_{ji} = -\eta {{dE}\over {dW_{ji}}} = -\eta\sum_t L^t_j e^t_{ji}
+\Delta W_{ji} = -\eta { {dE} \over {dW_{ji}}} = -\eta\sum_t L^t_j e^t_{ji}
 $$
 
 The learning signal represents errors for the current time step. The eligibility trace is independent of the loss function $E$ and just depends on the history of activations of the pre- and post-synaptic neuron. How are the learning signal and eligibility trace computed?
