@@ -52,7 +52,7 @@ Associative memory maps cue patterns to data patterns even when the cue is noisy
 * Retrieval with degraded or noisy cues
 * Compound cues and data equivalent to Chunks
 * Functional, temporal and spatial cues
-* Stochastic selection: if there are multiple memories with very similar keys, the probability of retrieving any one of them depends on its level of activation, using some stochastic variant of winner-takes-all
+* Stochastic selection: if there are multiple memories with very similar cues, the probability of retrieving any one of them depends on its level of activation, using some stochastic variant of winner-takes-all
 * Single-shot storage rather than requiring repeated presentations of each cue/value pair
 * Short and long term memory with a model for boosting and decay
 * Minimisation of interference to ensure effective use of memory capacity, e.g. using sparse coding
