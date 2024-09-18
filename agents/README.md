@@ -45,6 +45,22 @@ Local learning combines the error signal with a modified Hebbian rule for updati
 
 Sentient AI can use combine feed-forward with feed-back from processing the previous token. This allows layers to support both understanding and generation in combination with continual learning. Sequential cognition can then be implemented in terms of transformations that update layer state. Reinforcement learning is based upon an episodic memory that allows for back propagation of rewards across the sequence of transformations.
 
+## Associative Memory
+
+Associative memory maps cue patterns to data patterns even when the cue is noisy or incomplete. Autoassociative networks reconstruct their input pattern, e.g. the full image of cat when given just the head of cat as could happen with occluded images. Heteroassociative networks use cues that are different from and  not part of the associated data. Some desirable requirements include:
+
+* Retrieval with degraded or noisy cues
+* Compound cues and data equivalent to Chunks
+* Functional, temporal and spatial cues
+* Stochastic selection: if there are multiple memories with very similar keys, the probability of retrieving any one of them depends on its level of activation, using some stochastic variant of winner-takes-all
+* Single-shot storage rather than requiring repeated presentations of each cue/value pair
+* Short and long term memory with a model for boosting and decay
+* Minimisation of interference to ensure effective use of memory capacity, e.g. using sparse coding
+
+One consideration is the role of biological constraints as hints on effective solutions. Pyramidal neurons in the cortex, for instance, connect to around 10,000 others, where the connections are random and taper off with increasing distance. This suggests the potential for rich lateral excitatory and inhibitory connections in respect to enabling sparse coding and mimicking hidden Markov models.
+
+Further study is now needed to better understand the literature and to gain implementation experience through simple experiments.
+
 ## Elementary Mathematics as a tractable domain
 
 What seems practical is the way children are tought elementary mathematics, provided we exclude  instructions and exercises that involve diagrams, e.g. graphs and geometry. 
