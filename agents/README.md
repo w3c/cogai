@@ -59,7 +59,13 @@ Associative memory maps cue patterns to data patterns even when the cue is noisy
 
 One consideration is the role of biological constraints as hints on effective solutions. Pyramidal neurons in the cortex, for instance, connect to around 10,000 others, where the connections are random and taper off with increasing distance. This suggests the potential for rich lateral inhibitory and excitatory connections in respect to enabling sparse coding and mimicking hidden Markov models.
 
-Further study is now needed to better understand the literature and to gain implementation experience through simple experiments.
+### Linear Networks vs Recurrent Networks
+
+Simple linear feedforward networks introduce noise in their outputs when there is noise in their inputs and can be analysed in terms of orthonormal basis vectors. Recurrent networks can be trained to dynamically find minima in their state space energy function, resulting in accurate recall of the output vectors despite noise in their inputs. Some important considerations include the training time, the recall time, the memory capacity and the possibility of converging on spurious minima.
+
+Simple networks include three layer networks where the middle layer deals with hidden values. Hierarchical associative memory involves a stack of layers. The learning rules can be designed to speed learning and recall. Work in the cognitive sciences suggests that recall time depends on the strength of the memory and the degree of interference from other memories. This can be seen as support for the use of recurrent networks.
+
+Further study is now needed to better understand the literature and to gain implementation experience through simple experiments. Fidelity to biological constraints is expected to yield better capabilities.
 
 ## Elementary Mathematics as a tractable domain
 
