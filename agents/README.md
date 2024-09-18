@@ -57,7 +57,7 @@ Associative memory maps cue patterns to data patterns even when the cue is noisy
 * Short and long term memory with a model for boosting and decay
 * Minimisation of interference to ensure effective use of memory capacity, e.g. using sparse coding
 
-One consideration is the role of biological constraints as hints on effective solutions. Pyramidal neurons in the cortex, for instance, connect to around 10,000 others, where the connections are random and taper off with increasing distance. This suggests the potential for rich lateral excitatory and inhibitory connections in respect to enabling sparse coding and mimicking hidden Markov models.
+One consideration is the role of biological constraints as hints on effective solutions. Pyramidal neurons in the cortex, for instance, connect to around 10,000 others, where the connections are random and taper off with increasing distance. This suggests the potential for rich lateral inhibitory and excitatory connections in respect to enabling sparse coding and mimicking hidden Markov models.
 
 Further study is now needed to better understand the literature and to gain implementation experience through simple experiments.
 
