@@ -14,6 +14,7 @@
     - [Operations on comma separated lists](#operations-on-comma-separated-lists)
     - [More complex queries](#more-complex-queries)
 - [Statements about statements](#statements-about-statements)
+- [Extension to swarm computing](#extension-to-swarm-computing)
 - [Tasks](#tasks)
 - [Ebbinghaus forgetting curve](#ebbinghaus-forgetting-curve)
 - [Test Suite](#test-suite)
@@ -444,13 +445,41 @@ In principle, contexts can be chained, e.g. to describe the beliefs of someone i
 
 Note: when mapping chunks to RDF, contexts can be mapped to named graphs.
 
+## Extension to swarm computing
+
+A cognitive agent can control multiple devices. In the [bottling demo](https://www.w3.org/Data/demos/chunks/robot/), the agent controls two conveyor belts, the robot arm, as well as the filling and capping machines. On a larger scale, we need multiple cognitive agents working together to control many devices. For that agents need to communicate.
+
+Agents can send each other asynchronous messages as chunks
+* Treat as events to trigger behaviour, or use to update the agent’s model of the world
+* Named agents or groups of agents
+* Named topics for interested agents
+
+Agents send arbitrary chunks using `@message` to identify the recipient, e.g. as in the following rule action:
+```
+# tell agent4 to start task t42
+start {@message agent4; task t42}
+```
+Messages can be sent with `@topic` to subscribers of named topics, e.g.
+```
+# send stop message on topic12
+stop {@topic topic12}
+```
+Agents can subscribe to a topic with `@do subscribe`, e.g.
+```
+# subscribe to topic12
+listen {@do subscribe; topic topic12}
+```
+The above decouples applications from the underlying details on how messages are sent between agents. There are plenty of suitable protocols to exploit, e.g. HTTP, MQTT, DDS and so forth.
+
+Further work is needed to allow an agent to proceed *only* when all agents in a named group have completed their assigned tasks. This needed when work is delegated to a group of agents, and we need to know when they have all finished. The next section discusses some considerations for task management.
+
 ## Tasks
 
-Tasks allow you to write rules that are only applicable to specific tasks. Tasks are associated with modules, and a given module can have multiple active tasks at the same time. You can use *@task* to name a task in a rule condition. This will succeed if the named task is currently active for the module for that condition. The set of active tasks are held independently of the module's buffer. Clearing the buffer doesn't clear the tasks. In rule actions you can use *@enter* with the name of a task to enter, and *@leave* with the name of a task to leave. You can enter or leave multiple tasks by using comma separated lists of task names.
+Tasks allow you to write rules that are only applicable to specific tasks. Tasks are associated with modules, and a given module can have multiple active tasks at the same time. You can use `@task` to name a task in a rule condition. This will succeed if the named task is currently active for the module for that condition. The set of active tasks are held independently of the module's buffer. Clearing the buffer doesn't clear the tasks. In rule actions you can use `@enter` with the name of a task to enter, and `@leave` with the name of a task to leave. You can enter or leave multiple tasks by using comma separated lists of task names.
 
-Tasks and contexts are complementary. You use *@context* to name a particular event/situation, e.g. having dinner at a restaurant, and *@task* to segregate rules for different tasks within the overall plan for having dinner (finding a table, reviewing the menu, ordering, paying the bill).
+Tasks and contexts are complementary. You use `@context` to name a particular event/situation, e.g. having dinner at a restaurant, and `@task` to segregate rules for different tasks within the overall plan for having dinner (finding a table, reviewing the menu, ordering, paying the bill).
 
-*It will often be convenient when leaving a task to automatically leave any of its sub-tasks. One idea would be to use @task to name a currently active task, and @subtask to enter a subtask for that task. If @task is missing, or doesn't name a currently active task, then @subtask would have the same semantics as @enter. We need to try this out to see how useful sub-tasks are in practice.*
+*It will often be convenient when leaving a task to automatically leave any of its sub-tasks. One idea would be to use `@task` to name a currently active task, and `@subtask` to enter a subtask for that task. If `@task` is missing, or doesn't name a currently active task, then `@subtask` would have the same semantics as `@enter`. We need to try this out to see how useful sub-tasks are in practice.*
 
 ## Ebbinghaus forgetting curve
 
