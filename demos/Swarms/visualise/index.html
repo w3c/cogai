@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Factory floor monitoring</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="visualise.js"></script>
+<style>
+	body {
+		background-color: #FFF;
+		//padding: 0 0 0 0;
+		padding: 5px 5px 5px 5px;
+		margin:0;
+	}
+	canvas {
+		border: 1px solid black;
+		background-color: #EEE;
+		perspective: none;
+	}
+	pre {
+		height: 1em;
+		min-height: 1em;
+		//max-height: 25em;
+		width: calc(100% - 2em);
+		overflow-y: auto;
+		white-space: pre-wrap;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	#log {
+		height: 10em;
+		max-height: 60em;
+		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
+	}
+	#factory {
+		text-align:center;
+	}
+	#scene {
+		margin: 0 0 0 0;
+		padding: 0 0 0 0;
+		
+	}
+	#scene:-webkit-full-screen {
+		width: 100%;
+		height: 100%;
+	}
+	
+	@media screen and (min-width: 1400px) {
+	 	#factory {
+   	        top:0;
+            left:0;
+            max-width: min(50%, 889px);
+            text-align:center;
+	 	}
+	}
+	
+	#explanation {
+		width: clamp(45ch, 80%, 100ch);
+	}
+	 
+	button {
+		background-color: rgb(230,230,230);
+		border-width: 0;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
+	}
+	#footnote {
+		font-style: italic;
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: middle;
+		float: left;
+		margin-right: 1em;
+	}
+	#control {
+		margin-top: 0;
+		margin-left: 20px;
+		margin-right: 20px;
+		font-family: sans-serif;
+		font-size: 6pt;
+		text-align: left;
+		clear: both;
+	}
+	fullscreenElement {
+		padding: black;
+	}
+	#offscreen {
+		vipwd
+		sibility: hidden;
+		display: none;
+	}
+</style>
+</head>
+<body>
+<div id="factory">
+<canvas id="scene" width="889" height="500"></canvas>
+<canvas id="offscreen" width="889" height="500"></canvas>
+
+<p id="control">Pan: shift + left button + mouse move (or with a single pressed finger). Zoom: shift + mouse wheel (or with two fingers). You can also use a gamepad with X and Y for zooming, and the directional keys for panning.</p>
+</div>
+
+<div id='logger'>
+<pre id='log'>
+</pre>
+<p>Log: <button id="clear">clear</button></p>
+</div>
+
+<div id="explanation">
+<h1>Factory floor monitoring</h1>
+
+<p>This is a web-based visualisation of the factory floor. The floor tiles are 10 metres apart. The visualisation uses WebSockets to stream updates from the server describing the scene in terms of robots, pallets, conveyor belts, mobile racks, etc. The server gathers this information from multiple sources to provide integrated situational awareness.</p>
+</div>
+
+<div id="footnote">
+<hr>
+<p><img src="art/eu.png" alt="eu logo"> This work is supported by the European Union's Horizon research and innovation programme under grant agreement No. 101092908 for project <a href="https://www.smart-edge.eu">SmartEdge</a> on swarm-based orchestration for the IoT.</p>
+</div>
+
+</body>
+</html>
