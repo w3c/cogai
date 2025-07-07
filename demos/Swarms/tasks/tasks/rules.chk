@@ -1,0 +1,24 @@
+# rule to initiate several tasks and queue chunk
+# process2 {} when all these tasks have completed
+process1 { } =>
+    task {@do task; @task ?task1},
+    task {@do task; @task ?task2},
+    task {@do task; @task ?task3},
+    process2 {@all ?task1, ?task2, ?task3},
+    recover2 {@failed ?task1, ?task2, ?task3}
+
+# tasks takes a random number of seconds to complete
+task {} =>
+    done {@do timer; max 5}
+    
+# signal that task succeeded
+done {} => 
+    finish {@do done}
+    
+# all tasks completed successfully
+process2 { } =>
+    show {@do log; message success}
+    
+# at least one task failed
+recover2 { } =>
+    show {@do log; message failure}

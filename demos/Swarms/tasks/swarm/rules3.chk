@@ -1,0 +1,10 @@
+start {} =>
+    show {@do log; message started}
+
+# task takes a random number of seconds to complete
+task {} =>
+    done {@do timer; max 5}
+    
+# signal that task succeeded
+done {} => 
+    finish {@do done}

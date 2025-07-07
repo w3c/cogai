@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Demo for chunk production rules</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../chunks.js"></script>
+<script type="text/javascript" src="swarm.js"></script>
+<style>
+    body {
+        padding-left:2em;
+    }
+	pre {
+		min-height: 1em;
+		width: calc(100% - 2em);
+		min-width: 40em;
+		overflow-y: auto;
+		padding: 0.5em;
+		margin: 0.5em;
+		border: solid 1px black;
+		color: rgb(150,80,80);
+		background-color: rgb(250,250,250);
+	}
+	#log {
+		min-height: 20em;
+		max-height: 60em;
+		overflow-y: scroll;
+		border-style: solid;
+		resize: vertical;
+	}
+	.comment {
+		color: green;
+	}
+	.implies {
+		color: navy;
+	}
+	.operator {
+		color: maroon;
+	}
+	.flex {
+	    display: flex;
+	    flex-wrap: wrap;
+	}
+	.flex div {
+	}
+	button {
+		font-style: italic;
+		font-weight: bold;
+		font-size: larger;
+		padding-left: 0.2em;
+		padding-right: 0.2em;
+	}
+	p {
+	    margin-top: 0.5em;
+	    margin-bottom: 0.5em;
+	    max-width:40em;
+	}
+	tt {
+	    color: brown;
+	}
+	.fig {
+	    max-width: 500px;
+	    text-align: center;
+	    padding-left:3%;
+	}
+	.fig img {
+	    max-width: 500px;
+	}
+	#footnote {
+	    font-size: smaller
+	}
+	#footnote img {
+		height: 3em;
+		vertical-align: middle;
+	    float: left;
+	    padding-right: 1em;
+	}
+</style>
+</head>
+<body>
+<h1>Demo for task synchronisation using chunks &amp; rules</h1>
+
+<p>This page demonstrates:</p>
+<ul>
+<li>Agent to agent messaging to named agents along with a pub/sub model for topic-based message distribution.</li>
+<li>How agents can initiate a local subtask and some remote tasks on other agents,  and wait for them all to complete.</li>
+</ul>
+
+<p>Press <em>Start</em> to initiate/restart the demo. More details are given in the <a href="#explanation">explanation</a> at the end of this page.</p>
+
+<p>Execute rules: <button type="button" id="start">Start</button>
+
+<div class="flex">
+<div>
+<p>Log:</p>
+<pre id='log'>
+</pre>
+</div>
+
+<div>
+<p><button id="factsButton">&#x25BC;</button> Facts graph:</p>
+<pre id='facts'>
+</pre>
+
+<p><button id="rulesButton1">&#x25BC;</button> Rules graph for Agent1:</p>
+<pre id='rules1'>
+</pre>
+
+<p><button id="rulesButton2">&#x25BC;</button> Rules graph for Agent2:</p>
+<pre id='rules2'>
+</pre>
+
+<p><button id="rulesButton3">&#x25BC;</button> Rules graph for Agent3:</p>
+<pre id='rules3'>
+</pre>
+</div>
+</div>
+
+<div id="#explanation">
+<h2 id="explanation">Explanation</h2>
+
+<p><a href="https://w3c.github.io/cogai/chunks-and-rules.html">Chunks &amp; Rules</a> is a framework developed by the <a href="https://github.com/w3c/cogai">W3C Cognitive AI Community Group</a> for implementing cognitive agents in terms of facts and rules. The approach is inspired by <a href="http://act-r.psy.cmu.edu/">ACT-R</a>, a popular cognitive architecture, which has been widely used in Cognitive Science with considerable success in modelling human behaviour and neural activity, whether doing mental arithmetic or driving a car.</p>
+
+<p class="fig"><img src="../art/cogai-arch.png" alt="cognitive AI architecture"></p>
+
+<p>The framework consists of multiple cognitive modules each of which has a buffer that can hold just one chunk, which is a set of related properties. The rule engine determines which rules match the buffers, stochastically selects one of these rules and executes its actions. Rules are given as a conjunctive list of conditions and a list of actions. Rule conditions and actions are modelled as chunks, where each chunk specifies which module it applies to. Actions are asynchronous with a few exceptions, enabling real-time control without interrupting cognition. There is a large suite of buit-in actions and an API for applications to define and register custom actions, as well as to insert chunks into the prioritised queue for each module's buffer.</p> 
+
+<p class="fig"><img src="../art/chunks-rules.png" alt="grammar for chunks and rules"></p>
+
+<p>Each chunk has a type, a unique identifier and a set of additional properties. Property values are names and numbers, or a sequence thereof. There is a syntactic shorthand for relationships which expand into a chunks where the <tt>@subject</tt> and <tt>@object</tt> properties define the subject and object for the relationship as the id's for other chunks. The relationship label is mapped to the chunk type. Rules can include variables for chunk property values, as distinguished by a "<tt>?</tt>" immediately preceding the variable name. Actions can trigger follow on behaviour when the action completes by pushing a chunk to a prioritised queue for a module buffer, for instance, after moving a robot arm to a designated position. Performance is fast because a) conditions are evaluated over a few buffers rather than large databases, and b) actions are asynchronous, enabling cognition to continue whilst actions take place.</p>
+
+<p>Chunks &amp; Rules can be used for cognitive agents with event driven concurrent threads of behaviour. Applications can use the chunk library API to mimic human perception with code that senses the environment, listens for messages from other agents, maintains chunk graphs as live models of the environment, and queues chunks to module buffers as events to trigger the corresponding behaviours. Agents can message each other by name with <tt>@message</tt> or by topic with <tt>@topic</tt>, where agents subscribe to the topics of interest using <tt>@subscribe</tt>. Each message is a chunk. The underlying protocol needs to support reliable, timely, in-sequence message delivery, e.g. zenoh, MQTT, DDS, WebTRC and Web Sockets.</p> 
+
+<p>Actions can either operate on module chunk graphs or actuate devices. Applications can register custom actions to mimic the brain's cortico-cerebellar circuit, where real-time control is dynamically adapted using perception of sensory data, analogous to how you reach for a coffee cup, fine tuning the motion of your hand out of the corner of your eyes as your hand gets closer to the cup. See the <a href="https://www.w3.org/Data/demos/chunks/robot/">bottling demo</a> for an example of a cognitive agent that implements real-time control over conveyor belts, a robot arm and other manufacturing machines.</p>
+
+<p>Tasks are an abstraction for named threads of behaviour. Rules can initiate tasks with <tt>@do task</tt> and signal success or failure with <tt>@do done</tt> and <tt>@do fail</tt> respectively, akin to JavaScript's resolve and reject. You can use <tt>@on</tt> to delegate a task to a named agent. This page shows how <tt>@all</tt> can be used to signal when all of the associated tasks have successfully completed. <tt>@any</tt> can be used to signal when any of the tasks have succeeded, and <tt>@failed</tt> to signal when any of the tasks have failed. The demo task uses a custom operation <tt>@do timer</tt> that takes a random time in seconds in the range set by the <tt>min</tt> and <tt>max</tt> properties. A timer can be used to recover when tasks take too long to complete.</p>
+
+<p>Swarms can be dynamic with agents entering and leaving the swarm. A simple approach to decentralised naming is for agents to name themselves with a large random integer. Agents can signal entering and leaving by publishing a message on an associated topic. For this purpose, it makes sense to include <tt>@from</tt> for the sender's name as part of the message chunk, where other properties can be used to describe the sender's capabilities. Messages can also be used to support consensus building, auctions, negotiations and distributed storage, as well as assigning agents to given roles.</p>
+
+<p>Future work will look at machine learning, e.g. task-based reinforcement learning across multiple agents. By keeping track of which rules were used in a given task, the agent can update each rule's strength based upon it's utility in attaining goals. The stronger the rule, the more likely it will be selected for execution. Ineffective rules will be forgotten. Neural networks seem like a good choice for modelling domain knowledge as a basis for guiding learning, including the process of learning to learn, so that agents can learn from just a few examples. A further question is whether neural networks are a better basis for implementing rules, rather than symbolically as with chunks &amp; rules. A related question is how to implement fuzzy rules inspired by fuzzy logic.
+</div>
+
+<p><em>Dave Raggett &lt;dsr@w3.org&gt;</em></p>
+
+<div id="footnote">
+<hr>
+<p id="ack"><img src="../art/eu.png" alt="eu logo"> Grateful acknowledgement for support from the <a href="https://nephele-project.eu/">Nephele</a> and <a href="https://www.smart-edge.eu/">SmartEdge</a> projects funded by the European Union’s Horizon Europe research and innovation programme under grant agreements 101070487 and 101092908</p>
+</div>
+
+</body>
+</html>
