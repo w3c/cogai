@@ -4,7 +4,7 @@ This describes extensions to chunks & rules to support a swarm of collaborating 
 
 * [Demo for synchronising tasks local to an agent](https://www.w3.org/Data/demos/chunks/tasks/tasks/)
 * [Demo for agent to agent messaging, task delegation and synchronisation](https://www.w3.org/Data/demos/chunks/tasks/swarm/)
-* [Paper on Web based monitoring, orchestration and simulation](../../visualise/raggett-geics-2025.pdf)
+* [Paper on Web based monitoring, orchestration and simulation](../visualise/raggett-geics-2025.pdf)
 
 Chunks & Rules can be used for cognitive agents with event driven concurrent threads of behaviour. Applications can use the chunk library API to mimic human perception with code that senses the environment, listens for messages from other agents, maintains chunk graphs as live models of the environment, and queues chunks to module buffers as events to trigger the corresponding behaviours. Agents can message each other by name with `@message` or by topic with `@topic`, where agents subscribe to the topics of interest using `@subscribe`. Each message is a chunk. The underlying protocol needs to support reliable, timely, in-sequence message delivery, e.g. zenoh, MQTT, DDS, WebTRC and Web Sockets.
 
