@@ -7,6 +7,10 @@ One use case is for managing a distribution warehouse where robot forklifts are 
 
 * [SimSwarm: warehouse](https://www.w3.org/Data/demos/chunks/warehouse/)
 
+Extensions to Chunks & Rules support agent to agent messaging, task delegation and synchronisation.
+
+* [Swarm Agent Orchestration](tasks/README.md)
+
 ## Route Planning
 
 One of the challenges is to plan routes for the robot forklifts. This prompted work on web-based demos for different approaches:
