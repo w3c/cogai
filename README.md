@@ -101,7 +101,7 @@ Research challenges include mimicry, emotional and social intelligence, natural 
 
 ## Next Generation Artificial Neural Networks (ANNs)
 
-Today’s ANNs use a lot of electrical power especially for training. This is creating big demand on the national grid and acts as a downside for the expanded use of AI. The brain uses just a few watts, perhaps 20W, and is five orders of magnitude more power efficient than GPUs. The brain features local analog processing and spikes for long range communication. Can we match that?
+Today’s ANNs use a lot of electrical power especially for training. This is creating a big demand on the national grid and acts as a downside for the expanded use of AI. The brain uses just a few watts, perhaps 20W, and is five orders of magnitude more power efficient than GPUs. The brain features local analog processing and spikes for long range communication. Can we match that?
 
 A very promising approach is to use light pulses conveyed via optical waveguides as a replacement for electrical conductors within and between integrated circuits. This uses less power and is faster. We can build upon the extensive experience with CMOS fabrication for hybrid photonic devices that combine electronic and optical components in the same chip.
 
