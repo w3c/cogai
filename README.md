@@ -8,7 +8,7 @@ This repository is for work by the [W3C Cognitive AI Community Group](https://ww
  - [Background materials](#background-materials)
  - [Program of work](#program-of-work)
  - [Positioning relative to existing approaches to AI](#positioning-relative-to-existing-approaches-to-ai)
- - [Next Generation Artificial Neural Networks (ANNs)](#next-generation-artificial-neural-networks-(anns))
+ - [Next Generation Artificial Neural Networks (ANNs)](#next-generation-artificial-neural-networks-anns))
  - [Historical context](#historical-context)
  - [Cognitive Architecture](#cognitive-architecture)
  - [Long Term Aims](#long-term-aims)
@@ -88,7 +88,8 @@ A further line of work deals with the means to express and reason with imperfect
 
 Both PKN and chunks & rules can be considered in relation to RDF. RDF is a framework for symbolic graphs based upon labelled directed graph edges (aka *triples*). Compared to RDF, PKN and chunks & rules are higher level with additional semantics, and designed for use in human-like AI applications. Furthermore, both notations are designed to be easy to read and author compared with RDF serialisations such as RDF/XML, Turtle and even JSON-LD. See also the [Notation3 (N3) Language](https://w3c.github.io/N3/spec/) which is an assertion and logic language defined as a superset of RDF.
 
-Work is now underway on vector-space representations of knowledge using artificial neural networks. Advances with generative AI have shown the huge potential of vector-space representations in combination with deep learning. However, there is a long way to go to better model many aspects of human cognition, e.g. continual learning using a blend of type 1 and type 2 cognition, episodic memory, and the role of emotions and feelings in directing cognition. Symbolic models will continue to serve an important role for semantic interoperability and explainability.  Neurosymbolic systems combine the complementary strengths of vector space and symbolic approaches. For more details see [Neural Networks for Human-like AI](agents/README.md).
+Work is now underway on vector-space representations of knowledge using artificial neural networks. Advances with generative AI have shown the huge potential of vector-space representations in combination with deep learning. However, there is a long way to go to better model many aspects of human cognition, e.g. continual learning using a blend of type 1 and type 2 cognition, episodic memory, and the role of emotions and feelings in directing cognition. Symbolic models will continue to serve an important role for semantic interoperability and explainability.  Neurosymbolic systems combine the complementary strengths of vector space and symbolic approaches. For more details see [Neural Networks for Human-like AI](agents/README.md) and [task-based orchestration](demos/Swarms/tasks/README.md).
+
 
 ## Positioning relative to existing approaches to AI
 
