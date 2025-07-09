@@ -8,6 +8,7 @@ This repository is for work by the [W3C Cognitive AI Community Group](https://ww
  - [Background materials](#background-materials)
  - [Program of work](#program-of-work)
  - [Positioning relative to existing approaches to AI](#positioning-relative-to-existing-approaches-to-ai)
+ - [Next Generation Artificial Neural Networks (ANNs)](#next-generation-artificial-neural-networks-(anns))
  - [Historical context](#historical-context)
  - [Cognitive Architecture](#cognitive-architecture)
  - [Long Term Aims](#long-term-aims)
