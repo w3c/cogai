@@ -57,7 +57,7 @@ This is a series of recorded webinars, see [webinar planning](webinars/README.md
 ## Background materials
 
 * Talks
-  * 08 July 2025 [cognitive control of digital twins in swarm system](demos/Swarms/tasks/Raggett-cognitive-digital-twins.pdf)
+  * 08 July 2025 [cognitive control of digital twins in swarm system](demos/Swarms/tasks/Raggett-cognitive-digital-twins.pdf), lecture + demos at the Edge AI summer school, Pisa
   * 05 September 2024 [Application to low-code control of digital twins](https://w3c.github.io/cogai/agents/low-code-with-chunks-and-rules.pdf), talk at Swarm Computing Workshop, Brussels
   * 04 July 2023 [Combining Digital Twins with Cognitive Agents](https://www.w3.org/2023/07-Raggett-SimSwarm.pdf), talk at ETSI IoT Week 2023
   * 14 June 2023 [Human-like AI: from logic to argumentation, reasoning with imperfect knowledge in the era of AGI](http://www.w3.org/2023/06-Human-like-AI.pdf), see [video recording](https://youtu.be/GMDGbRQSWyo) talk for Darmstadt Ontology Group
