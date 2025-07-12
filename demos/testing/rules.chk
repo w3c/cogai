@@ -246,3 +246,42 @@ run {test test24}
 test24 {}, !test{@module facts; a c}
   =>
     action {@do result; test test24; result true}
+
+# test @all and @do done
+run {test test25} => test25 {}
+test25 { } =>
+    task1 {@do task; @task ?task1},
+    task1 {@do task; @task ?task2},
+    all {@all ?task1, ?task2}
+all { } =>
+    action {@do result; test test25; result true}
+     
+# test @failed and @do fail
+run {test test26} => test26 {}
+test26 { } =>
+    task1 {@do task; @task ?task1},
+    task2 {@do task; @task ?task2},
+    failed {@failed ?task1, ?task2}
+failed { } =>
+    action {@do result; test test26; result true}
+
+# test @any and @do done and @do fail
+run {test test27} => test27 {}
+test27 { } =>
+    task1 {@do task; @task ?task1},
+    task2 {@do task; @task ?task2},
+    any {@any ?task1, ?task2}
+any { } =>
+    action {@do result; test test27; result true}
+
+task1 {} =>
+    done {@do timer; max 0.1; result true}
+    
+task2 {} =>
+    done {@do timer; max 0.1; result false}
+    
+done {result true} =>
+    result {@do done}
+
+done {result false} =>
+    result {@do fail}

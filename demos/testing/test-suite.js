@@ -131,14 +131,27 @@ function test () {
 				ruleEngine.run();
 				
 				if (++i < buttons.length)
-					setTimeout(test, 1000);
+					setTimeout(test, 100);
 			};
 			
-			setTimeout(test, 1000);
+			setTimeout(test, 100);
 		});
 	};
 	
 	let actions = {
+		timer: function (action, values) {
+		    let goal = goalModule.readBuffer();		    
+		    let max = values.max ? values.max : 5;
+		    let time = Math.floor(1000 * Math.random() * max);
+		    let chunk = action.clone(true);
+		    chunk.setValue("time", time);
+		    chunk.setValue("@task", goal.properties["@task"]);
+				
+			setTimeout(() => {
+                log("timeout after " + time + " mS");
+			    goalModule.pushBuffer(chunk);
+			}, time);
+		},
 		result: function (action, properties) {
 			let test = properties.test;
 			if (test !== undefined) {
