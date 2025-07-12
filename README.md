@@ -141,7 +141,11 @@ Zooming in on cognition and the role of the basal ganglia as a sequential rule e
 <p align="center"><img alt="cognitive architecture" src="images/rule-engine.png" width="70%"><br>
 Image of cognitive architecture for deliberative reasoning (System 2)</p>
 
-This has been implemented as an open source JavaScript library and used as the basis for an [evolving suite of demos](demos/README.md).
+This has been implemented as an open source JavaScript library and used as the basis for an [evolving suite of demos](demos/README.md).  The syntax is simple, and includes a shorthand for relationships:
+
+<p align="center"><img alt="grammar for chunks and rules" src="images/chunks-rules.png" width="70%"><br>
+Image of railroad version of grammar for chunks and rules</p>
+
 
 New work is underway on vector space approaches inspired by human cognition and the advances in generative AI. This will mimic human language processing (sequential, hierarchical and predictive), implicit and explicit memory, continual learning, and Type 1 and 2 cognition. This is being implemented in Python and PyTorch. Language processing uses retained feedback connections in conjunction with a small sliding window to mimic the buffering limitations of the phonological loop. Type 2 cognition features a vector based implementation of chunks and rules. Explicit memory (episodic and encyclopaedic) is based upon a vector database designed to mimic characteristics of human memory (forgetting curve, spreading activation and spacing effect). The different modules are integrated through shared access to the latent semantics (loosely equivalent to the buffers in the above diagram).
 
