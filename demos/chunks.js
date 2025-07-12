@@ -176,6 +176,10 @@ class Chunk {
 				}
 			} else if (old !== value) {
 				forgetValue(old);
+				
+				if (Array.isArray(value) && value.length === 1)
+				    value = value[0];
+				    
 				chunk.properties[name] = value;
 				rememberValue(value);
 			}
@@ -237,6 +241,10 @@ class Chunk {
 			forgetValue(value);
 		};
 		
+		chunk.forgetProperty = function (name) {
+		    chunk.removeValue(name, chunk.properties[name])
+		}
+		
 		chunk.hasValue = function (name, value) {
 			let current = chunk.properties[name];
 			
@@ -255,11 +263,11 @@ class Chunk {
 			
 			return false;
 		};
-	
+		
 		chunk.toString = function (options) {
 			let now = chunk.graph ? chunk.graph.now : undefined;
 			if (options === undefined)
-				options = {};
+				options = {concise: true};
 			
 			if (options.concise) {					
 				let s= chunk.type + ' ';
@@ -305,11 +313,14 @@ class Chunk {
 			
 			// verbose syntax
 			
-			let s = chunk.type + (chunk.id ? ' ' + chunk.id : '') + ' {\n';
+			let s = chunk.type + (chunk.id ? ' ' + chunk.id : '') + ' {';
+			let empty = true;
 			
 			// sub-symbolic parameters
 			
 			if (now !== undefined && chunk.strength !== undefined) {
+			    empty = false;
+			    s += '\n';
 				s += '   @strength ' +  chunk.strength + '\n';
 				s += '   @ago ' +  (now - chunk.lastAccessed) + '\n';
 				s += '   @use ' +  chunk.usage + '\n';
@@ -320,6 +331,11 @@ class Chunk {
 			let props = chunk.properties;
 			for (let name in props) {
 					if (props.hasOwnProperty(name)) {
+					    if (empty) {
+					        empty = false;
+					        s += '\n';
+					    }
+					    
 						s += '   ' + name + ' ';
 						let value = props[name];
 						
@@ -657,8 +673,8 @@ function ChunkGraph (source) {
 				if (value[i][0] === '?') {
 					list[i] = bindings[value[i].substr(1)];
 					
-					if (list[i] === undefined)
-						return undefined;
+					//if (list[i] === undefined)
+					//	return undefined;
 				} else
 					list[i] = value[i];
 			}
@@ -674,6 +690,32 @@ function ChunkGraph (source) {
 			
 		return [value];
 	};
+
+	// return a copy of a chunk with variables replaced by their values
+	graph.cloneFromBindings = function (donor, bindings) {
+        let chunk = new Chunk(donor.type, donor.id);
+        let props = donor.properties;
+        for (let name in props) {
+            if (props.hasOwnProperty(name)) {
+            //    if (name[0] === '@' && name !== "@task")
+            //        continue;
+                    
+                let value = props[name];
+                value = get_value_list(value, bindings);
+                
+                if (value === undefined)
+                    debug = true;
+                    
+                if (value.length > 1)
+                    chunk.properties[name] = value;
+                else if (value.length === 1)
+                    chunk.properties[name] = value[0];
+                else
+                    delete chunk.properties[name];
+            }
+        }
+        return chunk;		    
+    };
 	
 	// used for both chunk recall and for matching rule conditions
 	// where the given chunk is matched with the condition chunk
@@ -699,7 +741,15 @@ function ChunkGraph (source) {
 			"@pop" : true,
 			"@shift" : true,
 			"@unshift" : true,
-			"@clear" : true
+			"@clear" : true,
+			"@all" : true,
+			"@any" : true,
+			"@failed" : true,
+			"@message" : true,
+			//"@topic" : true,
+			"@subscribe" : true,
+			"@unsubscribe" : true,
+			"@on" : true
 		};
 		
 		// these are matched like normal properties
@@ -707,6 +757,7 @@ function ChunkGraph (source) {
 			"@subject": true,
 			"@object": true,
 			"@task": true,
+			"@topic": true,
 			"@context": true,
 			"@more": true,
 			"@index": true
@@ -2261,8 +2312,10 @@ function ChunkGraph (source) {
 						text += ',\n';
 				}
 			} else {
-				text += graph.chunks[actions].toString(options);
+				text += "   " + graph.chunks[actions].toString(options);
 			}
+			
+			text += '\n';
 			
 			return text;
 		}
@@ -2286,7 +2339,7 @@ function ChunkGraph (source) {
 		graph.parse(source);
 }
 
-function RuleEngine (log){
+function RuleEngine (logger, agent){
 	let engine = this;	
 	let modules = {};
 	let matchedBuffer = {};
@@ -2294,8 +2347,12 @@ function RuleEngine (log){
 	let runPending = false;
 	let unchanged = true;
 	
-	if (!log)
-		log = console.log;
+	if (!logger)
+		logger = console.log;
+	
+	let log = agent ? (message) => {
+            logger(agent.name + ": " + message);
+        } : logger;
 	
 	let randomIntFromInterval = function (min, max) {
   		return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -2359,6 +2416,8 @@ function RuleEngine (log){
 		graph.module = module;
 		
 		module.tasks = {};  // for tasks
+		module.taskCount = 0;
+		module.delegated = {}; // track tasks delegated to me
 		
 		// Every module has a single chunk buffer
 	
@@ -2380,7 +2439,7 @@ function RuleEngine (log){
 			if (chunk.id === undefined)	
 				chunk.id = module.graph.gensym();
 
-			log("push buffer with: " + chunk);
+			log("push " + module.name + " buffer with: " + chunk);
 
 			if (chunkBuffer === undefined) {
 				chunkBuffer = chunk;
@@ -2463,6 +2522,108 @@ function RuleEngine (log){
 		
 		module.getStatus = function () {
 			return bufferStatus;
+		};
+		
+		module.beginTask = function (taskID, agentName, chunk) {		    
+		    if (agentName && engine.agent) {
+		        engine.agent.delegateTask(agentName, module.name, taskID, chunk);
+		    } else {
+		        log("begin " + taskID);
+		    }
+		};
+		
+		// invoked as a result of another agent delegating me this task
+		module.delegatedTask = function (taskID, agentName, chunk) {
+		    // assign local taskID
+		    localID = "task" + (++module.taskCount);
+		    module.delegated[localID] = {agent: agentName, task: taskID};
+		    chunk.setValue("@task", localID);
+		    log("starting " + localID + " to implement " + agentName + "'s " + taskID);
+		    module.pushBuffer(chunk);
+		}
+		
+		// status is true if task succeeded else false
+		module.endTask = function (taskID, succeeded) {
+		    log("end " + taskID + ", " + (succeeded ? "succeeded" : "failed") + "\n");
+		    let operations = module.tasks[taskID];
+		    
+		    if (operations) {
+                for (let i = 0; i < operations.length; ++i) {
+                    let operation = operations[i];
+                    operation.method(taskID, succeeded);
+                }
+		    }
+		    
+		    let agent = engine.agent;
+		    let delegated = module.delegated[taskID];
+		    
+		    if (agent && delegated) {
+		        agent.sendTaskNotification(delegated.agent, module.name, delegated.task, succeeded);
+		        delete module.delegated[taskID];
+		    }
+		};
+		
+		// op is "@all", etc., tasks is list of tasks, chunk is result
+		module.addOperation = function (op, tasks, chunk) {
+		    let operation = {
+		        chunk: chunk,
+		        tasks: new Set(tasks),   //tasks.map((x) => x);
+		        method: (taskID, succeeded) => {
+		            // remove task from dependencies
+		            operation.tasks.delete(taskID);
+		            
+		            if (op === "@all") {
+		                // all tasks have succeeded
+		                if (succeeded && operation.tasks.size === 0) {
+		                    module.pushBuffer(operation.chunk);
+		                    log("@all completed");
+		                }
+		            } else if (op === "@any") {
+		                // any task succeeded
+		                if (succeeded) {
+		                    module.pushBuffer(operation.chunk);
+		                    operation.tasks.clear();
+		                    log("@any completed");
+		                }
+		            } else if (op === "@failed") {
+		                // any task failed
+		                if (!succeeded) {
+		                    module.pushBuffer(operation.chunk);
+		                    operation.tasks.clear();
+		                    log("@failed completed");
+		                }
+		            }
+		            
+		            if (operation.tasks.size === 0) {		                
+		                // remove from list of operations for dependency tasks
+		                for (let i = 0; i < tasks.length; ++i) {
+		                    let taskID = tasks[i];
+		                    let operations = module.tasks[taskID];
+		                    
+		                    for (let j = 0; j < operations.length; ++j) {
+		                        if (operations[j] === operation) {
+		                            operations.splice(j, 1);
+		                            break;
+		                        }
+		                    }
+		                    
+		                    if (operations.length === 0)
+		                        delete module.tasks[taskID];
+		                }
+		            }
+		        }
+		    };
+		    
+		    for (let i = 0; i < tasks.length; ++i) {
+		        let taskID = tasks[i];
+		        operation.tasks[taskID] = taskID;
+		        
+		        if (module.tasks[taskID]) {
+		            module.tasks[taskID].push(operation)
+		        } else {
+		            module.tasks[taskID] = [operation];
+		        }
+		    }
 		};
 		
 		module.first = function (list) {
@@ -2642,7 +2803,7 @@ function RuleEngine (log){
 					value = bindings[v];
 					
 					if (value === undefined) {
-						log("undefined variable in property "
+						console.log("undefined variable in property "
 							 + name + " with value " + value);
 					}
 				}
@@ -2665,8 +2826,15 @@ function RuleEngine (log){
 			"@subject": true,
 			"@object": true,
 			"@more": true,
-			"@enter": true,
-			"@leave" : true
+			"@task" : true,
+			"@all" : true,
+			"@any" : true,
+			"@failed" : true,
+			"@message" : true,
+			"@topic" : true,
+			"@subscribe" : true,
+			"@unsubscribe" : true,
+			"@on" : true
 		};
 			
 		for (let name in properties) {	
@@ -2686,6 +2854,73 @@ function RuleEngine (log){
 		}
 		
 		//log('apply ' + action + ' with bindings ' + JSON.stringify(bindings));
+		
+		if (properties["@all"]) {
+		    let chunk = module.graph.cloneFromBindings(action, bindings);
+		    module.addOperation("@all", values["@all"], chunk);
+		    return "all";
+		}
+
+		if (properties["@any"]) {
+		    let chunk = module.graph.cloneFromBindings(action, bindings);
+		    module.addOperation("@any", values["@any"], chunk);
+		    return "any";
+		}
+
+		if (properties["@failed"]) {
+		    let chunk = module.graph.cloneFromBindings(action, bindings);
+		    module.addOperation("@failed", values["@failed"], chunk);
+		    return "failed";
+		}
+
+		if (properties["@message"]) {
+		    if (engine.agent) {
+                let chunk = module.graph.cloneFromBindings(action, bindings);
+                let agentName = values["@message"]
+                chunk.forgetProperty("@message");
+	            chunk.setValue("@from", engine.agent.name);
+                engine.agent.send(agentName, chunk);
+		    } else {
+		        log("@message only supported for agents");
+		    }
+
+		    return "message";
+		}
+
+		if (properties["@topic"]) {
+		    if (engine.agent) {
+                let chunk = module.graph.cloneFromBindings(action, bindings);
+                let topic = values["@topic"];
+                engine.agent.publish(topic, chunk);
+                module.clearBuffer();
+		    } else {
+		        log("@topic only supported for agents");
+		    }
+
+		    return "topic";
+		}
+
+		if (properties["@subscribe"]) {
+		    if (engine.agent) {
+                let topic = values["@subscribe"]
+                engine.agent.subscribe(topic);
+		    } else {
+		        log("@subscribe only supported for agents");
+		    }
+
+		    return "subscribe";
+		}
+
+		if (properties["@unsubscribe"]) {
+		    if (engine.agent) {
+                let topic = values["@unsubscribe"]
+                engine.agent.unsubscribe(topic);
+		    } else {
+		        log("@unsubscribe only supported for agents");
+		    }
+
+		    return "unsubscribe";
+		}
 
 		if (properties["@for"]) {
 			module.setStatus("okay");
@@ -2834,39 +3069,13 @@ function RuleEngine (log){
 			// values contains the variable bindings
 			
 			for (let name in values) {
-				if (name[0] === "@" && name !== "@enter"  && name !== "@leave"
-					 && name !== "@more" && name !== "@subject" && name !== "@object")
+			    // should we also exclude @any, @all and @failed here??
+				if (name[0] === "@" && name !== "@more" && name !== "@subject" && name !== "@object")
 					continue;
 					
 				if (values.hasOwnProperty(name)) {
 					if ((values[name] instanceof Negate) && values[name].negate === undefined) {
 						delete buffer.properties[name];
-					} else if (name === "@enter") {
-						let value = values[name];
-						if (Array.isArray(value)) {
-							for (let i = 0; i < value.length; ++i) {
-								log("entering " + value[i]);
-								module.tasks[value[i]] = true;
-							}
-						} else {
-							log("entering " + value);
-							module.tasks[value] = true;
-						}
-						delete buffer.properties["@enter"];
-						delete buffer.properties["@task"];
-					} else if (name === "@leave") {
-						let value = values[name];
-						if (Array.isArray(value)) {
-							for (let i = 0; i < value.length; ++i) {
-								log("exiting " + value[i]);
-								delete module.tasks[value[i]];
-							}
-						} else {
-							log("exiting " + value);
-							delete module.tasks[value];
-						}
-						delete buffer.properties["@leave"];
-						delete buffer.properties["@task"];
 					} else {
 						buffer.properties[name] = values[name];
 					}
@@ -2963,6 +3172,49 @@ function RuleEngine (log){
 				}
 			}
 			module.pushBuffer(chunk);
+		} else if (operation === "task") {
+			log("@do task");
+			let value = action.properties["@task"];
+			let taskID = value;
+			
+			if (taskID === undefined) {
+			    taskID = "task" + (++module.taskCount);
+			} else {
+                // is @task property a variable?
+                if (value[0] === "?") {
+                    let varname = value.substr(1);
+                
+                    // if unbound bind to new unique task name
+                    if (bindings[varname] === undefined)
+                        bindings[varname] = "task" + (++module.taskCount); 
+                    
+                    taskID = bindings[varname];
+                }
+			}
+
+			let chunk = module.graph.cloneFromBindings(action, bindings);
+			let agentName = chunk.properties["@on"];
+			chunk.forgetProperty("@do");
+			chunk.forgetProperty("@on");
+			chunk.setValue("@task", taskID);
+			module.beginTask(taskID, agentName, chunk);
+			
+			if (!agentName)
+			    module.pushBuffer(chunk);
+		} else if (operation === "done") {
+			let value = module.readBuffer().properties["@task"];
+			let taskID = value;
+			module.endTask(taskID, true);
+		} else if (operation === "fail") {
+			let value = module.readBuffer().properties["@task"];
+			let taskID = value;
+			
+			if (taskID)
+			    log("@do fail " + taskID);
+			else
+			    log("@do fail *** @task undefined ***");
+
+			module.endTask(taskID, false);
 		} else if (module && module.algorithms[operation]) {
 			module.setStatus("okay");
 			module.algorithms[operation](action, values, bindings);
@@ -3354,7 +3606,7 @@ function RuleEngine (log){
 			let match = matches[i];
 			let rule = match[0];
 			let bindings = match[1];
-			log("applying rule with:" + ppBindings(bindings) + "\n" 
+			log("applying rule:" + ppBindings(bindings) + "\n\n" 
 				+ modules.rules.graph.ruleToString(rule));
 			apply_actions(match);
 			clearStatus(); // to avoid pointless looping on same rule
@@ -3379,7 +3631,8 @@ function RuleEngine (log){
 			let i = (matches.length === 1 ? 0 : randomIntFromInterval(0, matches.length - 1));
 			let rule = matches[i][0];
 			let bindings = matches[i][1];
-			log("applying rule with:" + ppBindings(bindings) + "\n" 
+			log("goal: " + goal.readBuffer());
+			log("applying rule:" + ppBindings(bindings) + "\n\n" 
 				+ modules.rules.graph.ruleToString(rule));
 			apply_actions(matches[i]);
 			clearStatus(); // to avoid pointless looping on same rule
