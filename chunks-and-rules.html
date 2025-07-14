@@ -954,7 +954,7 @@ person { @id John }</pre>
     <p class="issue">Need to define requirements for how the rule engine supports reinforcement learning.</p>
   </section>
   
-  <section>
+  <section class="informative">
     <h2>Tasks and Synchronisation</h2>
     <p>An agent can be executing multiple threads of behavior concurrently. Such threads can be associated with chunk properties for task identifiers as a basis for synchronization. Use <code>@do task</code> in a rule action to initiate a task. Use <code>@all</code> and <code>@any</code> to queue chunks when all or any of a given set of tasks finish successfully, respectively. Use <code>@failed</code> to recover from failed tasks by queuing chunks to trigger recovery behavior.</p>
     
@@ -972,7 +972,7 @@ process1 {} =>
 
   </section>
 
-  <section>
+  <section class="informative">
     <h2>Agents and swarm computing</h2>
     <p>Chunks and Rules can be used to implement agents that can operate autonomously, making decisions and taking actions without constant human oversight. A single agent can control (or simulate) multiple devices, but for large systems with many devices it makes sense to use a set of collaborating agents playing different roles.</p>
     <p>Use <code>@message <em>agent</em></code> to send the enclosing chunk to one or more named agents. Agents process incoming messages as part of the process of perception using application specific code. Applications can use messages to update chunk graphs associated with the cognitive modules, or to queue chunks to module buffers for event driven behavior. Use a positive integer in the range 1 to 10 with the <code>@priority</code> property to ensure that urgent events are handled in a timely manner. 1 is the lowest priority, 10 is the highest.</p>
@@ -1219,8 +1219,12 @@ property p2 {name width; isa number; min 0}</pre>
     <p>Human memory focuses on what is useful based upon past experience. Memories fade over time unless they are used. Chunks support sub-symbolic parameters that mimic characteristics of human memory. The chunk activation is boosted each time the chunk is updated or recalled. It then decays over time like a leaky capacitor replicating the forgetting curve for human memory.</p>
     <p>Chunk recall is stochastic and influenced by the chunk's activation. Chunk buffers can only hold a single chunk. If matching chunks have the same activation, they are equally likely to be selected and loaded into the module's chunk buffer, otherwise the stronger the activation, the more likely a matching chunk will be selected. Chunks mimic the spacing effect in that the boost to a given chunk is progressively reduced if it occurs within a short time since the chunk was last boosted.</p>
     <p>Chunks further support spreading activation each time a chunk is updated or recalled. This boosts related chunks that are referenced from chunk property values in a wave that weakens as it spreads out. The greater the fan-out from a given chunk, the weaker the boost given to the linked chunks. You can think of this as a fixed amount of energy that is divided across the links and partially absorbed by each chunk it reaches. The wave stops when it falls below a threshold level.</p> 
+    </section>
     
-    <p class="issue">Need to explain how reinforcement learning boosts chunk rules based upon the number of steps needed to accomplish a task, along with how this supports machine learning for rule sets.</p>
+    <section class="informative">
+    <h2>Machine learning</h2>
+    <p>Machine learning for chunks and rules has two forms. The first is the automatic means by which chunk strengths are boosted with they are recalled, updated, or influenced by spreading activation, see the previous section. The second form is task-based reinforcement learning. Chunk rule engines can track which rules were used in a given thread of behavior and back propagate the reward/penalty when the task finishes successfully or unsuccessfully, respectively. If several rules match the same buffer states, then overtime this process will boost the rules that contributed to the task's success, whilst weakening rules that contributed to the task's failure.</p>
+    <p>New rules can be proposed stochastically and winnowed out through the process of trial and error. Unfortunately a purely random process for rule generation will lead to a very slow rate of learning. What we need instead is a way to use prior knowledge to guide rule generation, together with knowledge on how to decompose tasks into subtasks that the agent may already know how to accomplish, or which should be easier to learn. This is where neural networks have the potential to guide learning through their ability to handle statistical models of knowledge based upon extensive training on large corpora. A further opportunity is to use neural networks for fuzzy rules in place of explicit rules. There is lots of potential for further study!</p>
     </section>
 	
 	<section class="informative">
