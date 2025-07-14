@@ -741,7 +741,7 @@ bar {loop prop18; name ?name; value ?value}
 
         <section>
           <h5>The <dfn><code>@do task</code></dfn> operation</h5>
-          <p>Associates a thread of behavior with a identifier held in the [=@task=] property. for use in task synchronisation and reinforcement learning, see [=@all=], [=@any=] and [=@failed=]. If the [=@task=] property is undefined, it is bound to a new task identifier that must be unique to this module. </p>
+          <p>Associates a thread of behavior with a identifier held in the [=@task=] property. for use in task synchronisation and reinforcement learning, see [=@all=], [=@any=] and [=@failed=]. If the [=@task=] property is undefined, it is bound to a new task identifier that must be unique to this module. Use <code>@do task</code> in conjunction with <code>@on <em>agent</em></code> to delegate a task to another agent. Note that task identifiers are local to each agent.</p>
         </section>
 
         <section>
@@ -983,7 +983,7 @@ start { } =>
         <p>The above rule sends the chunk <code>hello {@from agent1}</code> to agent2.</p>
     </aside>
     <p>Use <code>@topic <em>topic</em></code> to broadcast the enclosing chunk to all agents currently subscribed to this topic. Use <code>@subscribe <em>topic</em></code> and <code>@unsubscribe <em>topic</em></code> to instruct this agent to subscribe or unsubscribe to the given topic or topics. The underlying communication protocol is application dependent and can use protocols that offer reliable, timely and in-sequence delivery, e.g. Zenoh, DDS, MQTT, HTTP, Web Sockets and WebRTC.</p>
-    <p>One agent can delegate tasks to other agents using <code>@to <em>agent</em></code> in conjunction with <code>@do task</code>. Agents can synchronise tasks across agents as in the following example:</p>
+    <p>One agent can delegate tasks to other agents using <code>@on <em>agent</em></code> in conjunction with <code>@do task</code>. Agents can synchronise tasks across agents as in the following example:</p>
     <aside class="example" title="synchronising local and remote tasks">
         <pre class="chk">
 process1 {} =>
