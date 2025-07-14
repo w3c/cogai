@@ -77,6 +77,9 @@
       margin-top: 1em;
       margin-bottom: 2em;
     }
+    code {
+        color: brown;
+    }
   </style>
 </head>
 <body>
@@ -680,6 +683,16 @@ digits { @shift 0, @to list }</pre>
         </section>
 
         <section>
+          <h5>The <dfn><code>@do done</code></dfn> operation</h5>
+          <p>Signals that the task associated with the current value of the [=@task=] property has  finished successfully.</p>
+        </section>
+
+        <section>
+          <h5>The <dfn><code>@do fail</code></dfn> operation</h5>
+          <p>Signals that the task associated with the current value of the [=@task=] property has finished unsuccessfully.</p>
+        </section>        
+
+        <section>
           <h5>The <dfn class="lint-ignore"><code>@do get</code></dfn> operation</h5>
           <p>Looks for a [=matching chunk=] in the module's [=graph of chunks=] and puts a copy of it in the [=module buffer=] if found. Modifying the [=properties=] of a [=chunk=] copied from a [=graph of chunks=] (e.g. through a [=@do update=] operation) will not alter the underlying [=graph of chunks=]. To save an updated [=chunk=], a [=@do put=] or [=@do patch=] command needs to be issued.</p>
         </section>
@@ -727,10 +740,50 @@ bar {loop prop18; name ?name; value ?value}
         </section>
 
         <section>
+          <h5>The <dfn><code>@do task</code></dfn> operation</h5>
+          <p>Associates a thread of behavior with a identifier held in the [=@task=] property. for use in task synchronisation and reinforcement learning, see [=@all=], [=@any=] and [=@failed=]. If the [=@task=] property is undefined, it is bound to a new task identifier that must be unique to this module. </p>
+        </section>
+
+        <section>
           <h5>The <dfn><code>@do update</code></dfn> operation</h5>
           <p>Directly updates the [=module buffer=] if the chunk [=type=] for the [=action=] is the same as the [=chunk=] currently held in the [=module buffer=]. The operation updates the properties given in the [=action=], leaving aside properties prefixed with an <code>@</code> character, and leaving other existing properties unchanged. If the chunk [=type=] for the action is not the same as the [=chunk=] currently held in the [=module buffer=], a new [=chunk=] is created with the properties given in the [=action=], excluding properties prefixed with an <code>@</code> character. This is the default action when an [=action=] has neither an [=@do=] property nor an [=@for=] property.</p>
           <p class="issue">How can one update the properties prefixed with an <code>@</code> character in a [=chunk=] such as [=@context=], [=@subject=] or [=@object=]? A potential solution is to support the [=@map=] property as already supported for [=@compile=] and [=@uncompile=], along with an [=@unmap=] property. This would involve an asynchronous operation.</p>
         </section>
+
+        <section>
+          <h5>The <dfn><code>@message <em>agents</em></code></dfn> operation</h5>
+          <p>Sends a copy of the enclosing chunk to the list of agent names, e.g. <code>@message agent21</code>. The enclosing chunk is copied, the <code>@message property removed</code> and the <code>@from</code> property added to name the agent sending the message.</p>
+        </section>        
+
+        <section>
+          <h5>The <dfn><code>@all <em>tasks</em></code></dfn> operation</h5>
+          <p>Queues a copy of the enclosing chunk to the module buffer when all of the listed tasks have finished successfully.</p>
+        </section>        
+
+        <section>
+          <h5>The <dfn><code>@any <em>tasks</em></code></dfn> operation</h5>
+          <p>Queues a copy of the enclosing chunk to the module buffer when any of the listed tasks finish successfully. If more than one such task finishes successfully, the chunk is only queued for the first one.</p>
+        </section>        
+
+        <section>
+          <h5>The <dfn><code>@failed <em>tasks</em></code></dfn> operation</h5>
+          <p>Queues a copy of the enclosing chunk to the module buffer when any of the listed tasks  finish unsuccessfully. If more than one such task finish unsuccessfully, the chunk is only queued for the first one.</p>
+        </section>        
+
+        <section>
+          <h5>The <dfn><code>@subscribe <em>topics</em></code></dfn> operation</h5>
+          <p>Subscribes this agent to the list of topic names, so that this agent will subsequently receive messages broadcast on any of those topics.</p>
+        </section>        
+
+        <section>
+          <h5>The <dfn><code>@topic <em>topics</em></code></dfn> operation</h5>
+          <p>Broadcasts a copy of the enclosing chunk to all agents currently subscribed to the given topics. </p>
+        </section>        
+
+        <section>
+          <h5>The <dfn><code>@unsubscribe <em>topics</em></code></dfn> operation</h5>
+          <p>Unsubscribes this agent to the list topic names.</p>
+        </section>        
       </section>
     </section>
   </section>
@@ -899,6 +952,51 @@ person { @id John }</pre>
     <p>The rule engine is invoked whenever any of the module buffers are changed, including when [=queue=] is popped. It then searches for rules whose conditions match the current state of the buffers. If a rule has multiple conditions, they must all match the current state of the buffers. If there are multiple matching rules, a stochastic process is applied to select which one to execute. This process is based upon the activation of the rule's root chunk, i.e. the chunk with [=@condition=] and [=@action=]. The higher the activation, the more likely the rule will be selected. See Section [[[#mimicking-human-memory]]].</p>
     <p>Executing a rule is a process in which the sequence of actions are applied in the same order that they appear in the rule. Actions are for the most part asynchronous with a few exceptions, see Section [[[#rules]]]. Implementations may index module buffers to speed the process of matching rule conditions to the buffers. One such approach involves a discrimination network akin to Charles Forgy's [[Rete Match Algorithm]].</p>
     <p class="issue">Need to define requirements for how the rule engine supports reinforcement learning.</p>
+  </section>
+  
+  <section>
+    <h2>Tasks and Synchronisation</h2>
+    <p>An agent can be executing multiple threads of behavior concurrently. Such threads can be associated with chunk properties for task identifiers as a basis for synchronization. Use <code>@do task</code> in a rule action to initiate a task. Use <code>@all</code> and <code>@any</code> to queue chunks when all or any of a given set of tasks finish successfully, respectively. Use <code>@failed</code> to recover from failed tasks by queuing chunks to trigger recovery behavior.</p>
+    
+    <aside class="example" title="synchronising local tasks">
+        <pre class="chk">
+process1 {} =>
+    a {@do task; @task ?task1},
+    b {@do task; @task ?task2},
+    c {@do task; @task ?task3},
+    process2 {@all ?task1, ?task2, ?task3},
+    recover1 {@failed ?task1, ?task2, ?task3}
+        </pre>
+        <p>The above rule initiates three subtasks and then triggers follow on behaviour when either all of the subtasks finished successfully, or any one of them failed. The <code>@do task</code> operator queues a copy the enclosing chunk to the module buffer, removing the <code>@do</code> property. For the first subtask the following chunk is queued: <code>a {}</code>. The task is implemented by a rule with a matching condition.</p>
+    </aside>
+
+  </section>
+
+  <section>
+    <h2>Agents and swarm computing</h2>
+    <p>Chunks and Rules can be used to implement agents that can operate autonomously, making decisions and taking actions without constant human oversight. A single agent can control (or simulate) multiple devices, but for large systems with many devices it makes sense to use a set of collaborating agents playing different roles.</p>
+    <p>Use <code>@message <em>agent</em></code> to send the enclosing chunk to one or more named agents. Agents process incoming messages as part of the process of perception using application specific code. Applications can use messages to update chunk graphs associated with the cognitive modules, or to queue chunks to module buffers for event driven behavior. Use a positive integer in the range 1 to 10 with the <code>@priority</code> property to ensure that urgent events are handled in a timely manner. 1 is the lowest priority, 10 is the highest.</p>
+    <aside class="example" title="sending a message to a named agent">
+        <pre class="chk">
+start { } =>
+    hello {@message agent2}
+        </pre>
+        <p>The above rule sends the chunk <code>hello {@from agent1}</code> to agent2.</p>
+    </aside>
+    <p>Use <code>@topic <em>topic</em></code> to broadcast the enclosing chunk to all agents currently subscribed to this topic. Use <code>@subscribe <em>topic</em></code> and <code>@unsubscribe <em>topic</em></code> to instruct this agent to subscribe or unsubscribe to the given topic or topics. The underlying communication protocol is application dependent and can use protocols that offer reliable, timely and in-sequence delivery, e.g. Zenoh, DDS, MQTT, HTTP, Web Sockets and WebRTC.</p>
+    <p>One agent can delegate tasks to other agents using <code>@to <em>agent</em></code> in conjunction with <code>@do task</code>. Agents can synchronise tasks across agents as in the following example:</p>
+    <aside class="example" title="synchronising local and remote tasks">
+        <pre class="chk">
+process1 {} =>
+    a {@do task; @task ?task1},
+    b {@do task; @on agent2; @task ?task2},
+    c {@do task; @on agent3; @task ?task3},
+    process2 {@all ?task1, ?task2, ?task3},
+    recover1 {@failed ?task1, ?task2, ?task3}
+        </pre>
+        <p>The above rule initiates a local subtask, and delegates two subtasks to other agents. <code>@all</code> is used to trigger behavior when all three tasks finish successfully, and <code>@failed</code> is used to trigger behavior when any of tasks finish unsuccessfully. Applications can use a customer timer action to handle the situation when the tasks take too long to complete.</p>
+    </aside>
+    <p>Swarms can be dynamic with agents entering and leaving. One way to ensure that each agent has a unique name is to use a UUID, another is generate a sufficiently large random integer. Discovery can be based on listening to a topic used by new agents to register their name. Well behaved agents can similarly notify other agents when they are leaving the swarm. Agent to agent messaging can be used for consensus formation, auctions for matching service providers with suppliers, assignments of roles and so forth.</p>
   </section>
 
   <section>
