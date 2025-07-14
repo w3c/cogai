@@ -995,7 +995,7 @@ process1 {} =>
         </pre>
         <p>The above rule initiates a local subtask, and delegates two subtasks to other agents. <code>@all</code> is used to trigger behavior when all three tasks finish successfully, and <code>@failed</code> is used to trigger behavior when any of tasks finish unsuccessfully. Applications can use a customer timer action to handle the situation when the tasks take too long to complete.</p>
     </aside>
-    <p>Swarms can be dynamic with agents entering and leaving. One way to ensure that each agent has a unique name is to use a UUID, another is generate a sufficiently large random integer. Discovery can be based on listening to a topic used by new agents to register their name. Well behaved agents can similarly notify other agents when they are leaving the swarm. Agent to agent messaging can be used for consensus formation, auctions for matching service providers with suppliers, assignments of roles and so forth.</p>
+    <p>Swarms can be dynamic with agents entering and leaving. One way to ensure that each agent has a unique name is to use a UUID, another is generate a sufficiently large random integer. Discovery can be based on listening to a topic used by new agents to register their name. Well behaved agents can similarly notify other agents when they are leaving the swarm. Agent to agent messaging can be used for consensus formation, auctions for matching service providers with suppliers, automated negotiation, assignments of roles and so forth.</p>
   </section>
 
   <section>
