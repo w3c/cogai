@@ -232,14 +232,20 @@ window.addEventListener("load", () => {
 	        agents[name] = this;
 	    }
 	    
-	    send (agentName, chunk) {
-	        // send chunk to named agent
-	        let agent = agents[agentName];
-	        
-	        if (agent) {
-	            agent.receive(chunk);
-	        } else {
-	            log(this.name + ": Error trying to send to unknown agent " + agentName);
+	    send (agentNames, chunk) {
+	        // send chunk to named agents
+	        if (!Array.isArray(agentNames))
+	            agentNames = [agentNames];
+	            
+	        for (let i = 0; i < agentNames.length; ++i) {
+	            const name = agentNames[i];
+                const agent = agents[name];
+            
+                if (agent) {
+                    agent.receive(chunk);
+                } else {
+                    log(this.name + ": Error trying to send to unknown agent " + name);
+                }
 	        }
 	    }
 	    
@@ -252,26 +258,45 @@ window.addEventListener("load", () => {
 	        this.goalModule.pushBuffer(chunk);
 	    }
 	    
-	    subscribe (topic) {
-	        log(this.name + ": subscribe to " + topic);
-	        addSubscriber(topic, this);
-	    }
-	    
-	    unsubscribe (topic) {
-	        log(this.name + ": unsubscribe from " + topic);
-	        removeSubscriber(topic, this);
-	    }
-	    
-	    publish (topic, chunk) {
-	        // anonymously send chunk to all agents
-	        // currently subscribed to this topic
-	        log(this.name + ": publish: " + chunk);
-	        const subscribers = getSubscribers(topic);
+	    subscribe (topics) {
+	        if (!Array.isArray(topics))
+	            topics = [topics];
 	        
-	        for (let i = 0; i < subscribers.length; ++i) {
-	            let agent = agents[subscribers[i]];
-	            agent.receive(chunk);
+	        for (let i = 0; i < topics.length) {
+	            const topic = topics[i];
+                log(this.name + ": subscribe to " + topic);
+                addSubscriber(topic, this);
 	        }
+	    }
+	    
+	    unsubscribe (topics) {
+	        if (!Array.isArray(topics))
+	            topics = [topics];
+	        
+	        for (let i = 0; i < topics.length) {
+	            const topic = topics[i];
+                log(this.name + ": unsubscribe from " + topic);
+                removeSubscriber(topic, this);
+	        }
+	    }
+	    
+	    publish (topics, chunk) {
+            // anonymously send chunk to all agents
+            // currently subscribed to this topic
+            log(this.name + ": publish: " + chunk);
+            
+            if (!Array.isArray(topics))
+	            topics = [topics];
+	        
+	        for (let i = 0; i < topics.length) {
+	            const topic = topics[i];
+	            const subscribers = getSubscribers(topic);
+	        
+                for (let j = 0; j < subscribers.length; ++j) {
+                    let agent = agents[subscribers[j]];
+                    agent.receive(chunk);
+                }
+            }
 	    }
 	    
 	    delegateTask (agentNames, moduleName, taskID, chunk) {
