@@ -757,12 +757,12 @@ bar {loop prop18; name ?name; value ?value}
 
         <section>
           <h5>The <dfn><code>@any <em>tasks</em></code></dfn> operation</h5>
-          <p>Queues a copy of the enclosing chunk to the module buffer when any of the listed tasks finish successfully. If more than one such task finishes successfully, the chunk is only queued for the first one.</p>
+          <p>Queues a copy of the enclosing chunk to the module buffer when any of the listed tasks finish successfully. If more than one such task finishes successfully, the chunk is only queued for the first one to do so.</p>
         </section>        
 
         <section>
           <h5>The <dfn><code>@failed <em>tasks</em></code></dfn> operation</h5>
-          <p>Queues a copy of the enclosing chunk to the module buffer when any of the listed tasks  finish unsuccessfully. If more than one such task finish unsuccessfully, the chunk is only queued for the first one.</p>
+          <p>Queues a copy of the enclosing chunk to the module buffer when any of the listed tasks  finish unsuccessfully. If more than one such task finish unsuccessfully, the chunk is only queued for the first one to do so.</p>
         </section>        
 
         <section>
@@ -782,7 +782,7 @@ bar {loop prop18; name ?name; value ?value}
 
         <section>
           <h5>The <dfn><code>@unsubscribe <em>topics</em></code></dfn> operation</h5>
-          <p>Unsubscribes this agent to the list topic names.</p>
+          <p>Unsubscribes this agent to the list of topic names.</p>
         </section>        
       </section>
     </section>
@@ -966,7 +966,7 @@ process1 {} =>
     process2 {@all ?task1, ?task2, ?task3},
     recover1 {@failed ?task1, ?task2, ?task3}
         </pre>
-        <p>The above rule initiates three subtasks and then triggers follow on behaviour when either all of the subtasks finished successfully, or any one of them failed. The <code>@do task</code> operator queues a copy the enclosing chunk to the module buffer, removing the <code>@do</code> property. For the first subtask the following chunk is queued: <code>a {}</code>. The task is implemented by a rule with a matching condition.</p>
+        <p>The above rule initiates three subtasks and then triggers follow on behaviour when either all of the subtasks finished successfully, or any one of them failed. The <code>@do task</code> operator queues a copy the enclosing chunk to the module buffer, removing the <code>@do</code> property. For the first subtask the following chunk is queued: <code>a {}</code>. The task is implemented by a rule with a matching condition. You are free to set the chunk type and additional properties as needed for your application requirements.</p>
     </aside>
 
   </section>
