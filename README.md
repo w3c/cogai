@@ -43,6 +43,8 @@ We are using GitHub for documents, issue tracking and open source components. We
 
 ## Current Work
 
+* [Immersive Web](https://www.w3.org/2025/webgpu/), a vision and series of demos towards that vision
+* [Neural Network Model Format](nnm/README.md), an easy to work with format and software library for use with WebNN
 * [Neural Networks for Human-like AI](agents/README.md)
 * [Chunks and Rules](https://w3c.github.io/cogai/chunks-and-rules.html)
   * [Application to low-code control of digital twins](https://w3c.github.io/cogai/agents/low-code-with-chunks-and-rules.pdf)
