@@ -1,8 +1,8 @@
 # Neural Network Model (NNM) File Format
 
-Existing neural network frameworks, e.g. TensorFlow, are huge and hard to use.  We want to introduce a lightweight easy to understand framework that dramatically simplifies working with neural networks.  The aim is for a simple file format together with a small JavaScript library. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters.
+Existing neural network frameworks, e.g. TensorFlow, are huge and hard to use.  We want to introduce a lightweight easy to understand framework that dramatically simplifies working with neural networks.  The aim is to devise a simple file format together with a small JavaScript library. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters.
 
-A further consideration is to enable training models with WebNN, a platform neutral APWe for exploiting NPUs, GPUs and CPUs. WebNN is designed for inference not training.  Our solution is to transform a high level model into an inverse model designed to support training as an inference process.  This involves automatic differentiation  for the operators provided by WebNN and computational graphs based upon them.
+A further consideration is to enable training models with WebNN, a platform neutral API. We for exploiting NPUs, GPUs and CPUs. WebNN is designed for inference not training.  Our solution is to transform a high level model into an inverse model designed to support training as an inference process.  This involves automatic differentiation  for the operators provided by WebNN and computational graphs based upon them.
 
 ------
 
