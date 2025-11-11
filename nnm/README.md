@@ -123,7 +123,7 @@ resblock:layers
 	relu();
 ```
 
-We need to expand this example to cover the layer details. In principle, each layer could declare a local name, e.g. `x:conv()` for the layer's output.  GeminWe distinguishes fixed parameters from trainable parameters. WebNN defines operands and options for each operator.
+We need to expand this example to cover the layer details. In principle, each layer could declare a local name, e.g. `x:conv()` for the layer's output.  We distinguish fixed parameters from trainable parameters. WebNN defines operands and options for each operator.
 
 The *conv2d* operator has 3 operands: input, filter and bias, plus several options: padding, strides, dilations, groups, inputLayout, and filterLayout. The layout options take named layouts, e.g. 'nchw' and 'ohwi'. Bias is a 1D tensor. Padding, strides and dilations are lists of numbers.
 
