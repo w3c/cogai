@@ -123,11 +123,11 @@ resblock:layers
 	relu();
 ```
 
-We need to expand this example to cover the layer details. In principle, each layer could declare a local name, e.g. `x:conv()` for the layer's output.  We distinguish fixed parameters from trainable parameters. WebNN defines operands and options for each operator.
+This example needs to be expanded to include layer options in the round brackets using the syntax: `(name=value, name=value, ...)`. We distinguish fixed parameters from trainable parameters. In principle, each layer could declare a local name, e.g. `x:conv()` for the layer's output. WebNN defines operands and options for each operator.
 
 The *conv2d* operator has 3 operands: input, filter and bias, plus several options: padding, strides, dilations, groups, inputLayout, and filterLayout. The layout options take named layouts, e.g. 'nchw' and 'ohwi'. Bias is a 1D tensor. Padding, strides and dilations are lists of numbers.
 
-The fixed parameter could be set using the syntax: `(name=value, name=value, ...)`.  The NNM library would need to know the WebNN operators, their operands and options, as well as their constraints on shapes.
+The fixed parameters could be set .  The NNM library would need to know the WebNN operators, their operands and options, as well as their constraints on shapes.
 
 The WebNN spec defines how to calculate the output shape from the input shape for `matmul`. However, We want to infer the shape of trainable parameters rather than being required to provide them explicitly. We need algorithms for propagating shape constraints from each layer's input and output, along with its non trainable parameters, aka *hyperparameters*.  We will have to devise these algorithms ourselves using the forward algorithm in the WebNN spec as a reference.  When taken together with the need for automatic differentiation algorithms, it could rapidly become rather daunting!   We should focus on developing these incrementally, gradually expanding the set of operators and their options.
 
