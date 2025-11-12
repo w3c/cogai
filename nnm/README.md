@@ -2,7 +2,7 @@
 
 **Existing neural network frameworks, e.g. TensorFlow, are huge and hard to use.  We want to introduce a lightweight easy to understand framework that dramatically simplifies working with neural networks.** 
 
-The aim is to devise a simple file format together with a small JavaScript library for use with [WebNN](https://www.w3.org/TR/webnn/), W3C's platform neutral neural network web browser API with backends for NPUs, GPUs and CPUs. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters.
+The aim is to devise a simple file format together with a small JavaScript library for use with [WebNN](https://www.w3.org/TR/webnn/), W3C's platform neutral web browser neural network API with backends for NPUs, GPUs and CPUs. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters.
 
 A further consideration is to enable training models as WebNN is designed for inference not training.  Our solution is to transform a high level model into an inverse model designed to support training as an inference process.  This involves automatic differentiation for the operators provided by WebNN and computational graphs based upon them. NNM will define additional operators for user convenience for common operations, e.g. *residual* which mixes in the block's input, and *dense* which multiplies the input by a tensor, adds a bias, and applies an activation function.
 
