@@ -1,8 +1,10 @@
 # Neural Network Model (NNM) File Format
 
-Existing neural network frameworks, e.g. TensorFlow, are huge and hard to use.  We want to introduce a lightweight easy to understand framework that dramatically simplifies working with neural networks.  The aim is to devise a simple file format together with a small JavaScript library for use with WebNN, W3C's platform neutral web browser API with backends for NPUs, GPUs and CPUs. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters.
+**Existing neural network frameworks, e.g. TensorFlow, are huge and hard to use.  We want to introduce a lightweight easy to understand framework that dramatically simplifies working with neural networks.** 
 
-A further consideration is to enable training models as WebNN is designed for inference not training.  Our solution is to transform a high level model into an inverse model designed to support training as an inference process.  This involves automatic differentiation for the operators provided by WebNN and computational graphs based upon them.
+The aim is to devise a simple file format together with a small JavaScript library for use with WebNN, W3C's platform neutral web browser API with backends for NPUs, GPUs and CPUs. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters.
+
+A further consideration is to enable training models as WebNN is designed for inference not training.  Our solution is to transform a high level model into an inverse model designed to support training as an inference process.  This involves automatic differentiation for the operators provided by WebNN and computational graphs based upon them. NNM will define additional operators for user convenience for common operations, e.g. *residual* which mixes in the block's input, and *dense* which multiplies the input by a tensor, adds a bias, and applies an activation function.
 
 ------
 
@@ -49,40 +51,36 @@ Layers often involve multiple operations, e.g. matrix multiplication, addition, 
 
 Transformers are relatively complex and may be considered in terms of sub-layers rather than direct mapping to the operator graph. This suggests the value of a means to define a layer in terms of other layers rather than an operator graph.
 
-* One syntactic choice is whether to use brackets or names for scopes, i.e. `name:` as a prefix. 
+* One syntactic choice is whether to use brackets or names for scopes, i.e. `name:` as a prefix.  We take the latter approach below.
 
 * If each layer specifies the shape of its output, we only need to define the shape of the first layer's input, as the rest can be inferred, e.g. the layer input shape is the same as the output from the previous layer.
-* Having inferred the input and output shape we can deduce the shape of parameters from the operators, e.g. the width, height of a matrix used in a dense layer is [outputSize, inputSize], assuming a batch size of 1.
-* Given the batch size we can infer the shape for the input and output for training purposes. We wonder if the batch size alters the shape of the model parameters?  Best to start simple with a batch size of 1.
+* Having inferred the input and output shape for each operation, we can deduce the shape of model parameters, e.g. the width, height of a matrix used in a dense layer is [outputSize, inputSize], assuming a batch size of 1.
+* Given the batch size we can infer the shape for the input and output for training purposes. Does the batch size alters the shape of the model parameters?  We assume a batch size of 1 for the initial work and will add support for explicit batch sizes in following work.
 
 #### Application to a perceptron with single hidden layer
 
 We can refine the ideas using a perceptron with an input layer and an output layer. The input layer performs a linear transformation on the input and then applies a non-linear activation function like ReLU. The linear transformation involves a matrix multiplication followed by the addition of a bias vector.
 
-The output layer applies a further linear transformation followed by an activation, e.g. e.g., **`sigmoid`** for binary classification, **`softmax`** for multi-class classification, or no activation for regression.
+The output layer applies a further linear transformation followed by an activation, e.g., **`sigmoid`** for binary classification, **`softmax`** for multi-class classification, or no activation for regression.
 
-Before worrying about the syntax, it seems better to consider the object model. Initially, We chose `NNModel`, `NNEdge` and `NNVertext`, but now We want to try class names better suited to the objects, e.g. `NNModel`, `NNLayer`, `NNTensor` and `NNOperation`. At first glance:
+Before worrying about the syntax, it seems better to consider the object model, e.g. using classes: `NNModel`, `NNLayer`, `NNTensor` and `NNOperation`. These have the following properties:
 
 * **NNTensor**: name?, datatype, shape, value, input, outputs
 * **NNOperator**: name, inputs, output, options?
 * **NNLayer**: name, input, output, params, graph or layers
 * **NNModel**: layers, data, batch size, ...
 
-Where graph edges are operations, and graph vertices are tensors. 
-
 WebNN expects tensors to have attributes: *usage* ('read' or 'write'), *readable* (bool), *writable* (bool). These are not used for WebNN constants.   The attributes are easy to set for tensors serving as inputs or outputs to the model as a whole.  Model parameters are treated as inputs.  For recurrent networks, we need to treat hidden state as input and output.  The network is unrolled for a given number of time steps, and the hidden state carried over between successive invocations of the time window.
 
-Tensors for intermediate results don't need to be named.  When defining the graph using JavaScript, each operation is a method call on the `builder` object. Its return value is a tensor that can be used as an argument for another operator. The `NNOperator` object has properties for the operator's output and inputs (aka its *arguments*). We probably want to add properties to `NNTensor` for the `NNOperator` objects that use it as an input or output, as this would make it easier to traverse the graph.
+Tensors for intermediate results don't need to be named.  When defining a WebNN graph using JavaScript, each operation is a defined by method call on the `builder` object. Its return value is a tensor that can be used as an argument for another operator. The `NNOperator` object has properties for the operator's output and inputs (aka its *arguments*). These are also useful for `NNTensor` for the `NNOperator` objects that use it as an input or output, as this makes it easier to traverse the graph.
 
-`NNLayer` needs to determine's the graph's input, output and params. As a directed acyclic graph, the inputs and outputs can be readily determined from scanning the edges. Each graph must have a single input and output, where the other inputs are treated as model parameters. In principle, we could use the layer input and output properties to distinguish the `NNTensor` objects the graph uses for its input and output.  An algorithm can the scan the graph to determine the params.
+`NNLayer` needs to determine's the graph's input, output and model parameters. As a directed acyclic graph, the inputs and outputs can be readily determined from scanning the operations. A simplifying assumption is for each graph to have a single input and output, where the other inputs are treated as model parameters. 
 
-The layer's `graph`  property is the graph's output `NNOperator` object.  Its output must be the same as the layer's `output` property.  Similarly, exactly one of the graph's input tensors must be the same as the layer's `input` property. To traverse the graph, given an `NNOperator` object, you find the `NNTensor` objects from its input and outputs.   Given an `NNTensor` object, you can find the `NNOperator` objects from its inputs and outputs.
+The model as a whole needs to be consistent in respect to the tensor shapes. This is requires propagating shapes as constraints from the input and output.  As an example, consider a matrix used in a dense layer to transform an input vector to an output vector. The number of columns must be the same as the number of elements in the output vector, whilst the number of rows must be the same as the number of elements in the input vector. This generalises to higher rank inputs and outputs, see the [WebNN definition](https://www.w3.org/TR/webnn/#api-mlgraphbuilder-matmul).
 
-The model as a whole needs to be consistent in respect to the tensor shapes. This is requires propagating shapes as constraints from the input and output.  As an example, consider a matrix used in a dense layer to transform an input vector to an output vector. The number of columns must be the same as the number of elements in the output vector, whilst the number of roles must be the same as the number of elements in the input vector. This generalises to high rank inputs and outputs.
+The shape of a layer's output must be implied by its parameters. The shape of the layer's input is the shape of the tensor output by the preceding layer. This supports the use of dense layers to define a narrow waist as basis for encouraging generalisations in the latent space. A layer method propagates the shape from the layer's input and output to check for inconsistencies, and to identify the shapes for model parameters. For this we need to be able to distinguish unknown shape information to as part of a unification algorithm.
 
-The algorithm exploits layer parameters that determine the shape of its output tensor. In a simple example, a layer specifies the number of elements in its output vector. More generally, the layer could define the output shape.  This supports the use of dense layers to define a narrow waist as basis for encouraging generalisations in the latent space.
-
-This means that we should be able to provide a layer method to propagate the shape from the layer's input and output to check for inconsistencies, and to identify the shapes for model parameters. For this we need to be able to distinguish unknown shape information to as part of a unification algorithm.
+Note that such inference won't succeed in all cases.  A `matmul` followed by another `matmul` introduces a free variable for the tensor shape for the intermediate result. The parser should detect this and warn the user.  A work around is to split the layer into two, so that the intermediate shape can be explicitly specified.
 
 #### How to get going on this?
 
@@ -100,17 +98,11 @@ dense:layers
 	activation();
 ```
 
-This allows a sequence of  layers to be used to define new layer types. The terms must be either predefined, e.g. built-in operations, or set via named arguments in round brackets when the layer is instantiated. The above example treats `activation` as a variable that is bound to `relu` or `softmax`.
+Here `name:layers` introduces a named sequence of layers, listed from start to finish. Each layer has a name and a set of parameters in brackets. These can be named, e.g. *activation* in `activation=relu`, or unnamed for operands in the order defined for the layer type. The *add* operation, for example, takes a single operand in addition to the input from the previous layer. In the above, `b` introduces a model parameter for a bias vector.
 
-We may need a functional notation for operations involving parallel sequences of layers. Here is a trivial example:
+This syntax allows new layer types (e.g. *dense*)  to be defined as a sequence of  layers. Some parameters have predefined meanings, e.g. *shape* which refers to the shape of the tensor output by the layer. Others are matched by name, thus *activation* acts as a macro, so that the operation is set when the layer is instantiated. Terms which are not predefined, nor set in the layer parameters, are interpreted as the name of model parameters, e.g. `w` and `b`  in the above example. We distinguish fixed parameters from trainable parameters.
 
-```
-dense:graph activation(add(matmul(input, w), b));
-```
-
-In principle, local identifiers could be given for the output of particular operators, e.g. `x` as in  `x = matmul(input, w)`.
-
-Skip or residual connections use an add operation with a name, e.g. *input* for the layer's input as in:
+Skip or residual connections, e.g. *residual* in the following example, mix in the layer's input. An optional parameter can be used to scale the input prior to it being added to the output of the preceding layer.
 
 ```
 # residual block as a component in ResNet
@@ -119,15 +111,21 @@ resblock:layers
 	batchNorm(),
 	relu(),
 	conv2d(),
-	add(input), # add the block's input for a residual connection
+	residual(), # add the block's input for a residual connection
 	relu();
 ```
 
-This example needs to be expanded to include layer options in the round brackets using the syntax: `(name=value, name=value, ...)`. We distinguish fixed parameters from trainable parameters. In principle, each layer could declare a local name, e.g. `x:conv()` for the layer's output.
+This example lacks the parameters needed for detail control, e.g. for the 2D convolution operator. WebNN defines operands and options for each operator. The *conv2d* operator has 3 operands: input, filter and bias, plus several options: padding, strides, dilations, groups, inputLayout, and filterLayout. The layout options take named layouts, e.g. 'nchw' and 'ohwi'. Bias is a 1D tensor. Padding, strides and dilations are lists of numbers. The NNM library would need to know the WebNN operators, their operands and options, as well as their constraints on shapes.
 
-WebNN defines operands and options for each operator. The *conv2d* operator has 3 operands: input, filter and bias, plus several options: padding, strides, dilations, groups, inputLayout, and filterLayout. The layout options take named layouts, e.g. 'nchw' and 'ohwi'. Bias is a 1D tensor. Padding, strides and dilations are lists of numbers. The NNM library would need to know the WebNN operators, their operands and options, as well as their constraints on shapes.
+The WebNN spec defines how to calculate the output shape from the input shape for `matmul`. However, we want to infer the shape of trainable parameters rather than being required to provide them explicitly. We need algorithms for propagating shape constraints from each layer's input and output, according to its non-trainable parameters.  We will have to devise these algorithms ourselves using the forward algorithm in the WebNN spec as a reference.  When taken together with the need for automatic differentiation algorithms, it could rapidly become rather daunting!   We should focus on developing these incrementally, gradually expanding the set of operators and their options.
 
-The WebNN spec defines how to calculate the output shape from the input shape for `matmul`. However, We want to infer the shape of trainable parameters rather than being required to provide them explicitly. We need algorithms for propagating shape constraints from each layer's input and output, according to its non-trainable parameters.  We will have to devise these algorithms ourselves using the forward algorithm in the WebNN spec as a reference.  When taken together with the need for automatic differentiation algorithms, it could rapidly become rather daunting!   We should focus on developing these incrementally, gradually expanding the set of operators and their options.
+We will need a notation for models that have process different data in parallel.  The syntax for this could use nested function calls, as in:
+
+```
+dense:graph activation(add(matmul(input, w), b));
+```
+
+Another approach would utilise layers that take operands for multiple layers, as a means to combine data  output by different sequences of layers.
 
 #### Next steps
 
