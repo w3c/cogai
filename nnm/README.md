@@ -22,7 +22,7 @@ Some useful terms:
 
 **Tensor Layout**: how the tensor's data is arranged in memory, *layout* refers to the specific *ordering of the axes (dimensions)* of the tensor. This dictates how the multi-dimensional data is linearized (flattened) for storage in the computer's one-dimensional memory space.
 
-**Shape:** The dimensions of a tensor, specifying the size of each axis (e.g., $(3, 224, 224)$ for an image).
+**Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image.
 
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
 
