@@ -28,7 +28,7 @@ Some useful terms:
 
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
-**Hyperparameters:** Configuration settings (e.g., learning rate, kernel size, number of layers) that are set **before** training and remain constant.
+**Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
 
 ------
 
