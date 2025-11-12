@@ -66,13 +66,20 @@ The output layer applies a further linear transformation followed by an activati
 Before worrying about the syntax, it seems better to consider the object model, e.g. using classes: `NNModel`, `NNBlock`, `NNLayer` and `NNTensor`. These have the following properties:
 
 * **NNModel**: layers, data, batch size, ...
-  the neural network model and its hyperparameters
+
+​	the neural network model and its hyperparameters
+
 * **NNBlock**: name, params, layers
-  prototype for a named sequence of NNLayer objects
+
+​	prototype for a named sequence of NNLayer objects
+
 * **NNLayer**: name, arguments, inputs, output 
-  instantiation of NNBlock or a built-in operator
+
+​	instantiation of NNBlock or a built-in operator
+
 * **NNTensor**: name?, datatype, shape, value, input, outputs
-  a tensor used for input, output or intermediate result
+
+​	a tensor used for input, output or intermediate result
 
 WebNN expects tensors to have attributes: *usage* ('read' or 'write'), *readable* (bool), *writable* (bool). These are not used for WebNN constants. The attributes are easy to set for tensors serving as inputs or outputs to the model as a whole.  Model parameters are treated as inputs.  For recurrent networks, we need to treat hidden state as input and output.  The network is unrolled for a given number of time steps, and the hidden state carried over between successive invocations of the time window.
 
