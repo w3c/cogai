@@ -14,9 +14,9 @@ Some useful terms:
 
 **Model Layout:** The specific arrangement or structure of layers (e.g., sequential, parallel, residual) within a neural network model, defining the flow of data.
 
-**Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation,  *dense networks* which connect *every layer to every other layer* in a feed-forward fashion.
-
 **Layer**: A module or processing unit within the model that performs a specific transformation on its input data.
+
+**Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation,  *dense networks* which connect *every layer to every other layer* in a feed-forward fashion.
 
 **Tensor:** A multi-dimensional array used to represent data (input, output, weights) in a neural network.
 
