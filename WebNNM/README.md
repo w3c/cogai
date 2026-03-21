@@ -19,3 +19,25 @@ A detailed specification for the `webnnm.js` library is in preparation and will 
 Support for saving and loading binary files with the model and parameters is in development and will be integrated shortly. We also expect to develop supplementary libraries for importing models in other formats, e.g. ONNX. These libraries will be usable with NodeJS as well as with web pages. One challenge is the potential for decompiling lower level models, such as those using ONNX, to higher level easier to understand models expressed in WebNNM.
 
 Further out, we hope to apply WebNNM to multimodal models for video and audio as a basis for acccessible virtual worlds, where the phone or laptop's camera and microphone are used to capture the user's facial expressions and project them onto the user's avatar, along with speech to text support for intent-based accessibility, since everyone should be able to choose how they interact with applications according to their personal preferences and capabilities. Other work is planned on moving beyond back propagation to support continual learning and short term memory, inspired by human cognition. If you would like to help with this, please get in touch!
+
+## Some useful terms:
+
+**Model:** The complete network architecture, including its layers and learned weights, designed to perform a specific task, e.g., classification.
+
+**Model Layout:** The specific arrangement or structure of layers (e.g., sequential, parallel, residual) within a neural network model, defining the flow of data.
+
+**Layer**: A module or processing unit within the model that performs a specific transformation on its input data. Layers can be divided into sublayers, as a means to modularise the network architecture.
+
+**Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation, *dense networks* which connect *every layer to every other layer* in a feed-forward fashion.
+
+**Tensor:** A multi-dimensional array used to represent data (input, output, weights) in a neural network.
+
+**Tensor Layout**: how the tensor's data is arranged in memory, *layout* refers to the specific *ordering of the axes (dimensions)* of the tensor. This dictates how the multi-dimensional data is linearized (flattened) for storage in the computer's one-dimensional memory space.
+
+**Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image.
+
+**Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
+
+**Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
+
+**Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
