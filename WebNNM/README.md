@@ -6,10 +6,10 @@ WebNNM uses a simple model format together with a small open source JavaScript l
 Running neural network models in the browser is well suited to small to medium sized models, such as those used for image classification, and real-time processing of audio and video. Large language models with many billions of parameters will still need to be run in the cloud. WebNN uses `int32` for tensor dimensions and likewise limits the maximum tensor size (in bytes) to 2,147,483,647, equivalent to 1 billion `float16` numbers. For scalable extended reality applications this points to a distributed approach combining the edge and cloud to maximum advantage.
 
 As an introduction, please take a look at the following demos:
-* Inference with dense layers
-* Inference with numeric literals
-* Testing against a small dataset
-* Training against a small dataset
+* [Inference with dense layers](https://www.w3.org/2026/webnnm/examples/test1.html)
+* [Inference with numeric literals](https://www.w3.org/2026/webnnm/examples/test2.html)
+* [Testing against a small dataset](https://www.w3.org/2026/webnnm/examples/test3.html)
+* [Training against a small dataset](https://www.w3.org/2026/webnnm/examples/test4.html)
 
 A detailed specification for the `webnnm.js` library is in preparation and will be linked from here.
 
