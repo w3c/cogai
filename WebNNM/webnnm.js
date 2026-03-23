@@ -1457,25 +1457,103 @@ class NNTopology {
         let name = node.attributes.name;
         if (name) this.namedNodes.set(name, node);
     }
+    
+    // Return list of nodes in execution order after pruning
+    // nodes that aren't on a path from an Input, Parameter,
+    // or Numeric Literal node to a designated output node
+    getExecutionOrder(nodes) {
+        const targets = Object.values(this.outputs);
+        if (targets.length === 0) {
+            return [];
+        }
 
-    getExecutionOrder(outputs) {
-        const nodes = Array.isArray(outputs) ? outputs : [outputs];
-        const state = new Map();
-        const sorted = [];
+        const sources = nodes.filter(n => n.inputs.length === 0);
 
-        const visit = (node) => {
-            if (!node || state.get(node) === 2) return;
-            if (state.get(node) === 1) throw new Error(`Cycle involving ${node.name}`);
-            state.set(node, 1);
-            node.inputs.forEach(visit);
-            state.set(node, 2);
-            sorted.push(node);
-        };
+        const reachableFromSources = new Set();
+        const forwardStack = [...sources];
+        sources.forEach(s => reachableFromSources.add(s));
 
-        nodes.forEach(visit);
-        return sorted;
+        const successors = new Map();
+        nodes.forEach(n => successors.set(n.name, []));
+        nodes.forEach(n => {
+            n.inputs.forEach(input => {
+                if (successors.has(input.name)) {
+                    successors.get(input.name).push(n);
+                }
+            });
+        });
+
+        while (forwardStack.length > 0) {
+            const u = forwardStack.pop();
+            for (const v of (successors.get(u.name) || [])) {
+                if (!reachableFromSources.has(v)) {
+                    reachableFromSources.add(v);
+                    forwardStack.push(v);
+                }
+            }
+        }
+
+        const canReachTargets = new Set();
+        const backwardStack = [...targets];
+        targets.forEach(t => canReachTargets.add(t));
+
+        while (backwardStack.length > 0) {
+            const v = backwardStack.pop();
+            for (const u of v.inputs) {
+                if (!canReachTargets.has(u)) {
+                    canReachTargets.add(u);
+                    backwardStack.push(u);
+                }
+            }
+        }
+
+        const prunedNodes = new Set(
+            [...reachableFromSources].filter(n => canReachTargets.has(n))
+        );
+
+        const inDegree = new Map();
+        const adj = new Map();
+    
+        for (const node of prunedNodes) {
+            inDegree.set(node.name, 0);
+            adj.set(node.name, []);
+        }
+
+        for (const node of prunedNodes) {
+            for (const inputNode of node.inputs) {
+                if (prunedNodes.has(inputNode)) {
+                    adj.get(inputNode.name).push(node);
+                    inDegree.set(node.name, (inDegree.get(node.name) || 0) + 1);
+                }
+            }
+        }
+
+        const queue = [];
+        for (const node of prunedNodes) {
+            if ((inDegree.get(node.name) || 0) === 0) {
+                queue.push(node);
+            }
+        }
+
+        const executionList = [];
+        while (queue.length > 0) {
+            const u = queue.shift();
+            executionList.push(u);
+
+            for (const v of (adj.get(u.name) || [])) {
+                inDegree.set(v.name, inDegree.get(v.name) - 1);
+                if (inDegree.get(v.name) === 0) {
+                    queue.push(v);
+                }
+            }
+        }
+
+        if (executionList.length !== prunedNodes.size) {
+            throw new Error("Cycle detected in the neural network topology during sort.");
+        }
+
+        return executionList;
     }
-
     serialize() {
         let lines = [];
         
