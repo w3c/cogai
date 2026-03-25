@@ -44,6 +44,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image. Input tensor shapes typically start with the batch size, then the sequence length (temporal models), followed by the features. For images, features include channels (e.g. RGB colours), height and width. *NCHW* places channels before positional information (generally best for modern GPUs), whilst *NHWC* does the reverse.
 
+**Reshaping**: is the process of changing the dimensions of a tensor without altering its underlying data or the total number of elements, essentially "reinterpreting" how the data is laid out in memory. It is used to flatten data, for batch prepararation and dimension alignment.
+
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
 
 **Broadcasting**: allows operations between tensors of different shapes by virtually "stretching" the smaller tensor to match the dimensions of the larger one without actually copying the data in memory.
