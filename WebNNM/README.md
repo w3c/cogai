@@ -52,7 +52,7 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Overfitting**: occurs when a model memorizes noise and specific details of the training data rather than learning general patterns, making a separate testing subset essential to objectively measure how well the model performs on new, unseen information.
 
-**Datasets**: Datasets used for training models are typically split into three subsets: training, validation and testing.  The training subset is used for training. The validation subset is used to tune settings and monitor performance during training, and may be omitted for smaller datasets. The testing subset provides a final, unbiased evaluation of the finished model.
+**Datasets**: used for training models are typically split into three subsets: training, validation and testing.  The training subset is used for training. The validation subset is used to tune settings and monitor performance during training, and may be omitted for smaller datasets. The testing subset provides a final, unbiased evaluation of the finished model.
 
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
