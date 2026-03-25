@@ -30,7 +30,7 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 ## Some useful terms:
 
-**Model:** The complete network architecture, including its layers and learned weights, designed to perform a specific task, e.g., classification.
+**Model:** The complete network architecture, including its layers and learned parameters, designed to perform a specific task, e.g., classification.
 
 **Model Layout:** The specific arrangement or structure of layers (e.g., sequential, parallel, residual) within a neural network model, defining the flow of data.
 
