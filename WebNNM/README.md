@@ -18,7 +18,9 @@ A detailed specification for the `webnnm.js` library is in preparation and will 
 
 For inference, model parameters are baked into the graph as constants, reducing the time to prepare the next batch. During training a ping/pong approach is used for the parameters and their momentum to keep the tensors in the NPU or GPU, only reading the updated parameters after the final epoch. The implementation uses a variant of the [Refined Lion optimiser](https://www.nature.com/articles/s41598-025-07112-4) which offers faster convergence using less memory than [AdamW](https://optimization.cbe.cornell.edu/index.php?title=AdamW). Our implementation uses the softsign function $f(x) = x / (1 + |x|)$ in place of *arctan*, which isn't supported by WebNN. Softsign is continuous and differentiable everywhere, is faster to compute, and like *arctan*, smooths out the discrete steps of the original Lion optimizer. You can also choose other optimizers: [Stochastic Gradient Descent with Momentum](https://arxiv.org/abs/2602.23444) (SGDM), [Nesterov Accelerated Gradient](https://hengshuaiyao.github.io/papers/nesterov83.pdf) (NAG) and [EvoLved Sign Momentum](https://arxiv.org/abs/2310.05898) (Lion).
 
-![comparison of sign, arctan and softsign activation functions](../images/update-functions.png)
+<p align="center">
+  <img src="../images/update-functions.png" width="80%" alt="comparison of sign, arctan and softsign activation functions">
+</p>
 
 Support for saving and loading binary files with the model and parameters is in development and will be integrated shortly. We also expect to develop supplementary libraries for importing models in other formats, e.g. ONNX and Hugging Face. These libraries will be usable with NodeJS as well as with web pages. One challenge is the potential for decompiling lower level models, such as those using ONNX, to higher level easier to understand models expressed in WebNNM.
 
