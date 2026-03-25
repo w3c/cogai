@@ -36,7 +36,7 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Layer**: A module or processing unit within the model that performs a specific transformation on its input data. Layers can be divided into sublayers, as a means to modularise the network architecture.
 
-**Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation, *dense networks* which connect *every layer to every other layer* in a feed-forward fashion.
+**Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation, *dense networks* where every neuron in one layer is connected to every single neuron in the following layer. Skip connections are essential for networks with many layers as a means to avoid vanishing gradients that inhibit training.
 
 **Tensor:** A multi-dimensional array used to represent data (input, output, parameters) in a neural network. The array items are associated with a data type. WebNN supports the following datatypes: float32, float16, int32, uint32, int8, uint8, int4, and uint4. Training typically benefits from higher precision (like float32) to maintain numerical stability during millions of tiny weight updates, whereas inference can often be "quantized" to lower precision (like int8 or float16) to maximize speed and reduce memory usage without significantly hurting accuracy.
 
@@ -56,7 +56,9 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
 
-**Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.
+**Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.  Successful training depends on avoiding vanishing or exploding gradients. This can be mitigated through a variety of techniques, e.g. skip connections, layer normalization, adjustment to the learning rate and the choice of tensor initialisation algorithms, e.g. Glorot or He, as appropriate the the activation function. WebNNM uses context-senstive heuristics for initialising model parameters.
+
+**Layer normalization**: is a technique that improve training performance by standardizing the activations of a single layer for each individual sample by calculating the mean and variance across all its features, ensuring that the inputs to the next layer remain within a stable numerical range.
 
 **Momentum**: is an enhancement to gradient descent that accumulates a moving average of past gradients to help the optimizer accelerate through flat regions and dampen oscillations in steep, narrow valleys.
 
