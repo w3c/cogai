@@ -46,6 +46,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
 
+**Broadcasting**: allows operations between tensors of different shapes by virtually "stretching" the smaller tensor to match the dimensions of the larger one without actually copying the data in memory.
+
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
 **Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
@@ -53,6 +55,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 **Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.
 
 **Momentum**: is an enhancement to gradient descent that accumulates a moving average of past gradients to help the optimizer accelerate through flat regions and dampen oscillations in steep, narrow valleys.
+
+**Graphs**: are composed of nodes and arcs. Artificial neural networks form directed acyclic graphs where arcs are tensors, and the nodes are operators, inputs, outputs, trainable parameters, or literals, e.g. explicit numbers. An inference graph computes the outputs from the inputs. A testing graph computes the loss, i.e. the difference between the predicted and expected outputs. A training graph computes updates to trainable parameters and their momentum. The graph has three stages: the first computes the output from each layer and the overall loss, the second computes the gradients, i.e. partial derivative of the loss with respect to each parameter. The third and final part applies the optimizer algorithm to compute updates to trainable parameters and their momentum.
 
 **Datasets**: used for training models are typically split into three subsets: training, validation and testing.  The training subset is used for training. The validation subset is used to tune settings and monitor performance during training, and may be omitted for smaller datasets. The testing subset provides a final, unbiased evaluation of the finished model.
 
