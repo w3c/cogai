@@ -50,6 +50,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Broadcasting**: allows operations between tensors of different shapes by virtually "stretching" the smaller tensor to match the dimensions of the larger one without actually copying the data in memory.
 
+**Layer normalization**: is a technique that improves training performance by standardizing the activations of a single layer for each individual sample by calculating the mean and variance across all its features, ensuring that the inputs to the next layer remain within a stable numerical range.
+
 **Max pooling**: is a downsampling operation that slides a window over an input (like an image) and selects only the maximum value within that window to represent the entire area.
 
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
@@ -57,8 +59,6 @@ Back propagation is like trying to learn many complex skills all at the same tim
 **Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
 
 **Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.  Successful training depends on avoiding vanishing or exploding gradients. This can be mitigated through a variety of techniques, e.g. skip connections, layer normalization, adjustment to the learning rate and the choice of tensor initialisation algorithms, e.g. Glorot or He, as appropriate the the activation function. WebNNM uses context-senstive heuristics for initialising model parameters.
-
-**Layer normalization**: is a technique that improves training performance by standardizing the activations of a single layer for each individual sample by calculating the mean and variance across all its features, ensuring that the inputs to the next layer remain within a stable numerical range.
 
 **Momentum**: is an enhancement to gradient descent that accumulates a moving average of past gradients to help the optimizer accelerate through flat regions and dampen oscillations in steep, narrow valleys.
 
