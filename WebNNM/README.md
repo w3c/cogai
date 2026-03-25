@@ -40,9 +40,15 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Tensor Layout**: how the tensor's data is arranged in memory, *layout* refers to the specific *ordering of the axes (dimensions)* of the tensor. This dictates how the multi-dimensional data is linearized (flattened) for storage in the computer's one-dimensional memory space.
 
-**Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image.
+**Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image. Input tensor shapes typically start with the batch size, then the sequence length (temporal models), followed by the features. For images, features include channels (e.g. RGB colours), height and width. *NCHW* places channels before positional information, whilst *NHWC* does the reverse.
 
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
+
+**Batches**: are used to divide a dataset into smaller groups to make the training process more memory-efficient and to provide more frequent, stable updates to the model's weights via gradient descent.
+
+**Sequence**: a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context where the meaning of an element depends on what came before it.
+
+**Epoch**: represents one full pass of the entire training dataset through the neural network, used to give the model multiple opportunities to learn patterns and minimize error across all available data.
 
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
