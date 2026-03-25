@@ -50,6 +50,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Broadcasting**: allows operations between tensors of different shapes by virtually "stretching" the smaller tensor to match the dimensions of the larger one without actually copying the data in memory.
 
+**Max pooling**: is a downsampling operation that slides a window over an input (like an image) and selects only the maximum value within that window to represent the entire area.
+
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
 **Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
