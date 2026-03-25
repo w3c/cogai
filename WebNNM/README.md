@@ -40,7 +40,7 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Tensor Layout**: how the tensor's data is arranged in memory, *layout* refers to the specific *ordering of the axes (dimensions)* of the tensor. This dictates how the multi-dimensional data is linearized (flattened) for storage in the computer's one-dimensional memory space.
 
-**Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image. Input tensor shapes typically start with the batch size, then the sequence length (temporal models), followed by the features. For images, features include channels (e.g. RGB colours), height and width. *NCHW* places channels before positional information, whilst *NHWC* does the reverse.
+**Shape:** The dimensions of a tensor, specifying the size of each axis, e.g. [3, 224, 224] for an image. Input tensor shapes typically start with the batch size, then the sequence length (temporal models), followed by the features. For images, features include channels (e.g. RGB colours), height and width. *NCHW* places channels before positional information (generally best for modern GPUs), whilst *NHWC* does the reverse.
 
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
 
@@ -48,7 +48,11 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Sequence**: a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context where the meaning of an element depends on what came before it.
 
-**Epoch**: represents one full pass of the entire training dataset through the neural network, used to give the model multiple opportunities to learn patterns and minimize error across all available data.
+**Epoch**: represents one full pass of the entire training dataset through the neural network, used to give the model multiple opportunities to learn patterns and minimize error across all available data. Gradient descent usually requires many epochs to converge.
+
+**Overfitting**: occurs when a model memorizes noise and specific details of the training data rather than learning general patterns, making a separate testing subset essential to objectively measure how well the model performs on new, unseen information.
+
+**Datasets**: Datasets used for training models are typically split into three subsets: training, validation and testing.  The training subset is used for training. The validation subset is used to tune settings and monitor performance during training, and may be omitted for smaller datasets. The testing subset provides a final, unbiased evaluation of the finished model.
 
 **Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
