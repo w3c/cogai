@@ -44,16 +44,22 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
 
-**Batches**: are used to divide a dataset into smaller groups to make the training process more memory-efficient and to provide more frequent, stable updates to the model's weights via gradient descent.
+**Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
 
-**Sequence**: a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context where the meaning of an element depends on what came before it.
+**Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
+
+**Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.
+
+**Momentum**: is an enhancement to gradient descent that accumulates a moving average of past gradients to help the optimizer accelerate through flat regions and dampen oscillations in steep, narrow valleys.
+
+**Datasets**: used for training models are typically split into three subsets: training, validation and testing.  The training subset is used for training. The validation subset is used to tune settings and monitor performance during training, and may be omitted for smaller datasets. The testing subset provides a final, unbiased evaluation of the finished model.
 
 **Epoch**: represents one full pass of the entire training dataset through the neural network, used to give the model multiple opportunities to learn patterns and minimize error across all available data. Gradient descent usually requires many epochs to converge.
 
 **Overfitting**: occurs when a model memorizes noise and specific details of the training data rather than learning general patterns, making a separate testing subset essential to objectively measure how well the model performs on new, unseen information.
 
-**Datasets**: used for training models are typically split into three subsets: training, validation and testing.  The training subset is used for training. The validation subset is used to tune settings and monitor performance during training, and may be omitted for smaller datasets. The testing subset provides a final, unbiased evaluation of the finished model.
+**Batches**: are used to divide a dataset into smaller groups to make the training process more memory-efficient and to provide more frequent, stable updates to the model's weights via gradient descent.
 
-**Non-trainable parameters**: static parameters that are given explicitly in the model and not subject to training.
+**Sequence**: a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context where the meaning of an element depends on what came before it.
 
-**Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
+
