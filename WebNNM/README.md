@@ -1,5 +1,5 @@
 # WebNNM for Browser AI
-Existing neural network frameworks, e.g. TensorFlow and ONNX, are huge and hard to use. WebNNM is a lightweight easy to understand framework that dramatically simplifies working with neural networks.
+Existing neural network frameworks, e.g. TensorFlow and ONNX, are huge and hard to use. WebNNM is a lightweight easy to understand high-level framework that dramatically simplifies working with neural networks.
 
 WebNNM uses a simple model format together with a small open source JavaScript library (`webnnm.js`) for use with WebNN, W3C's platform-neutral neural network API for web browsers, with backends for NPUs, GPUs and CPUs. The library compiles models into inference, testing and training graphs. Automated inference is used to determine the shapes of trainable parameters from layer inputs, outputs and non-trainable parameters. The complementary `dataset.js` module provides a parent class for dataset specific classes, and can be used for training and testing models against your chosen dataset. This lends itself to privacy friendly federated learning where the user data never leaves the browser. 
 
