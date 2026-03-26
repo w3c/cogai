@@ -7,6 +7,7 @@ Running neural network models in the browser is well suited to small to medium s
 
 As an introduction, please take a look at the following demos:
 * [Inference with dense layers](https://www.w3.org/2026/webnnm/examples/test1.html)
+* [Inference with repeated layers](https://www.w3.org/2026/webnnm/examples/test1.1.html)
 * [Inference with numeric literals](https://www.w3.org/2026/webnnm/examples/test2.html)
 * [Testing against a small dataset](https://www.w3.org/2026/webnnm/examples/test3.html)
 * [Training against a small dataset](https://www.w3.org/2026/webnnm/examples/test4.html)
