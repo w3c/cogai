@@ -73,14 +73,13 @@ export class NNModel {
                 
                 if (model.blocks.size) {
                     model.dag = new NNTopology(model.blocks);
-                
-                    log('Neural network graph in execution order:');
-                    log(model.dag.serialize());
-                    
                     let names = [];
                     for (const name in model.dag.params)
                         names.push(name);
-                    log(`\nParameter names: ${names.join(', ')}`);
+                    log(`\nParameter names: ${names.join(', ')}\n`);
+                
+                    log('Neural network graph in execution order:');
+                    log(model.dag.serialize() + '\n');   
                 }
             } else if (config.url) {
                 const response = await fetch(url);
@@ -202,7 +201,138 @@ export class NNModel {
         if (tensors) tensors[name] = tensor;
         return tensor;
     }
+    
+    // helper for model.scout and model.test
+    // updates inputs and outputs as name->MLTensor
+    async prepareTestInputs (batch, batchSize, inputs, outputs, scouting = false) {
+        const model = this;
+        const webnn = model.#webnn;
         
+        function prefix (name) {
+            const parts = name.split(':');
+            return parts[0];
+        }
+        
+        // add validCount to inputs for actual number of samples in batch
+        const validCount = batch.validCount; // actual number of samples
+        const descriptor = {dataType: 'int32', shape: [], readable: false,  writable: true};
+        const tensor = await webnn.createTensor(descriptor);
+        webnn.writeTensor(tensor, new Int32Array([validCount]));
+        inputs['validCount'] = tensor;
+        
+        // add scouting metrics to outputs if needed
+        if (scouting) {
+            const descriptor = {dataType: 'float32', shape: [], readable: true,  writable: false};
+            outputs['metric:gradRatio'] = await webnn.createTensor(descriptor);            
+            outputs['metric:deadRatio'] = await webnn.createTensor(descriptor);           
+        }
+
+        // get tensor for sample model inputs, then write them
+        for (const key in model.dag.inputs) {
+            // prepare tensor for model input
+            const node = model.dag.inputs[key];
+            const descriptor = node.descriptor(batchSize);
+            const blockName = prefix(key);
+            
+            if (!batch.inputs[blockName])
+                throw new Error(`dataset lacks data for ${blockName}`);
+                
+            const tensor = await webnn.createTensor(descriptor);
+            webnn.writeTensor(tensor, batch.inputs[blockName].data);
+            inputs[key] = tensor;
+        }
+        
+        // add model params as inputs
+        for (const key in model.dag.params) {
+            const param = model.dag.params[key]; // ParamNode
+            const descriptor = param.descriptor(batchSize);
+            const tensor = await webnn.createTensor(descriptor);
+            webnn.writeTensor(tensor, param.buffer);
+            inputs[key] = tensor;
+        }
+        
+        // get tensors for expected model outputs, then write them
+        for (const key in model.dag.outputs) {
+            const blockName = prefix(key);
+            const lossName = blockName + ':loss';
+            const expectedName = blockName + ':expected';
+
+            // prepare tensor reading back the batch loss
+            const node = model.dag.outputs[key];
+            
+            // copy descriptor for model output
+            let expectedDescriptor = {...node.descriptor(batchSize)};
+            let lossDescriptor = {...expectedDescriptor};
+            lossDescriptor.shape = [];  // it is a scalar output
+            
+            // update flags as this will an input to the graph
+            expectedDescriptor.readable = false;
+            expectedDescriptor.writable = true;
+            
+            let tensor = await webnn.createTensor(lossDescriptor);
+            outputs[lossName] = tensor;
+            
+            if (!batch.inputs[blockName])
+                throw new Error(`dataset lacks data for ${blockName}`);
+                
+            tensor = await webnn.createTensor(expectedDescriptor);
+            inputs[expectedName] = tensor;
+            webnn.writeTensor(tensor, batch.outputs[blockName].data);
+        }
+    }
+    
+    // helper for model.scout()
+    calculateHealthScore(m) {
+        let score = 0;
+        // Penalty for vanishing/exploding gradients (ideal ratio is ~1.0)
+        const logGrad = Math.abs(Math.log10(m.gradRatio + 1e-9));
+        score -= logGrad * 10; 
+
+        // Penalty for dead neurons (0% is best)
+        score -= (m.deadRatio * 100);
+
+        // Find highest initial loss
+        let highestLoss = 0;
+        for (const blockName in m.losses) {
+            const loss = m.losses[blockName];
+            if (loss > highestLoss)
+                highestLoss = loss 
+        }
+        
+        // Reward for lower initial loss (within reason)
+        
+        score -= highestLoss; 
+
+        return score;
+    }
+
+    // helper for model.scout()
+    captureWeights() {
+        const snapshot = {};
+        for (const [name, param] of Object.entries(this.dag.params)) {
+            // Clone the current buffer (assuming param.data is the ArrayBuffer/TypedArray)
+            snapshot[name] = new param.buffer.constructor(param.buffer);
+        }
+        return snapshot;
+    }
+
+    // helper for model.scout()
+    restoreWeights(snapshot) {
+        for (const [name, data] of Object.entries(snapshot)) {
+            this.dag.params[name].buffer.set(data);
+        }
+    }
+
+    // helper for reading back scalar value from tensor
+    async readScalar (tensor) {
+        const model = this;
+        const webnn = model.#webnn;
+        const loss = await webnn.readTensor(tensor);  
+        const DataType = NNModel.ML_TYPE_MAP(tensor.dataType);
+        const array = new DataType(loss);
+        return array[0];
+    }
+    
     // Run the WebNN inference graph on the application supplied inputs
     // The model config overrides the model in respect to the
     // values for batch size and sequence length used for inference
@@ -225,12 +355,18 @@ export class NNModel {
     // Run WebNN testing graph on dataset passed on start up
     // Batched testing where last batch is usually smaller
     // Allow for models with multiple inputs and outputs
-    async test () {
+    async test (subset) {
         const model = this;
         const dataset = model.#dataset;
-        const subset = dataset.subsetRole.TESTING;
+        subset = subset ?? dataset.subsetRole.TESTING;
+        const testing = (subset === dataset.subsetRole.TESTING);
         const webnn = model.#webnn;
+        const testingSampleCount = dataset.subsetSize(subset);
         
+        // nothing to test if no data!
+        if (testingSampleCount === 0)
+            return;
+                    
         function prefix (name) {
             const parts = name.split(':');
             return parts[0];
@@ -239,75 +375,29 @@ export class NNModel {
         let averageLosses = {};
         let numberOfSamples = 0;
         
-        log(`\nTesting against ${dataset.name()} dataset:`);
-
         // prepare evaluation epoch as iterator over batches
         dataset.prepareBatches(subset);
         const batchCount = dataset.getNumBatches(subset);
-        const batchSize = dataset.getBatchSize(); // fixed for all batches
+        const batchSize = dataset.getBatchSize(); // fixed for all batches      
         const graph = await model.#engine.testingGraph(batchSize);
         const inputs = {}, outputs = {};
         
-        for (let i = 0; i < batchCount; ++i) {
-            const batch = dataset.getNextBatch(subset, model);
-            // last batch has zeros for missing samples
-            const validCount = batch.validCount; // actual number of samples
-            
-            // get tensor for sample model inputs, then write them
-            for (const key in model.dag.inputs) {
-                // prepare tensor for model input
-                const node = model.dag.inputs[key];
-                const descriptor = node.descriptor(batchSize);
-                const blockName = prefix(key);
-                const name = blockName + ':input';
-                
-                if (!batch.inputs[blockName])
-                    throw new Error(`dataset lacks data for ${blockName}`);
-                    
-                const tensor = await webnn.createTensor(descriptor);
-                webnn.writeTensor(tensor, batch.inputs[blockName].data);
-                inputs[name] = tensor;
-            }
-            
-            {
-                // update tensor with the actual number of samples in each batch
-                const descriptor = {dataType: 'int32', shape: [], readable: false,  writable: true};
-                const tensor = await webnn.createTensor(descriptor);
-                webnn.writeTensor(tensor, new Int32Array([validCount]));
-                inputs['validCount'] = tensor;
-            }
-            
-            // get tensors for expected model outputs, then write them
-            for (const key in model.dag.outputs) {
-                const blockName = prefix(key);
-                const lossName = blockName + ':loss';
-                const expectedName = blockName + ':expected';
+        if (testing)
+            log(`\nTesting against ${dataset.name()} dataset: ${testingSampleCount} test samples`);
+        else
+            log(`\nValidation: ${testingSampleCount} samples`);
 
-                // prepare tensor reading back the batch loss
-                const node = model.dag.outputs[key];
-                
-                // copy descriptor for model output
-                let expectedDescriptor = {...node.descriptor(batchSize)};
-                let lossDescriptor = {...expectedDescriptor};
-                lossDescriptor.shape = [];  // it is a scalar output
-                
-                // update flags as this will an input to the graph
-                expectedDescriptor.readable = false;
-                expectedDescriptor.writable = true;
-                
-                let tensor = await webnn.createTensor(lossDescriptor);
-                outputs[lossName] = tensor;
-                
-                if (!batch.inputs[blockName])
-                    throw new Error(`dataset lacks data for ${blockName}`);
-                    
-                tensor = await webnn.createTensor(expectedDescriptor);
-                inputs[expectedName] = tensor;
-                webnn.writeTensor(tensor, batch.outputs[blockName].data);
-            }
+        for (let i = 0; i < batchCount; ++i) {
+            const testBatch = dataset.getNextBatch(subset, model);
+            const validCount = testBatch.validCount; // actual number of samples
+            
+            // initialise inputs and outputs excluding metrics
+            await this.prepareTestInputs (testBatch, batchSize, inputs, outputs, false);
             
             await webnn.dispatch(graph, inputs, outputs);
-            log(`  processed batch ${i+1}, size ${batchSize}, actual ${validCount}`);
+            
+            if (testing)
+                log(`  processed batch ${i+1}, size ${batchSize}, actual ${validCount}`);
 
             // readback the loss for each model output
             for (const key in model.dag.outputs) {
@@ -315,18 +405,16 @@ export class NNModel {
                 const blockName = prefix(key);
                 const name = blockName + ':loss';
                 const tensor = outputs[name]
-                const loss = await webnn.readTensor(tensor);  
-                const DataType = NNModel.ML_TYPE_MAP(tensor.dataType);
-                const array = new DataType(loss);
+                const loss = await this.readScalar(tensor);
         
                 if (averageLosses[name] === undefined)
-                    averageLosses[name] = validCount * array[0];
+                    averageLosses[name] = validCount * loss;
                 else
-                    averageLosses[name] += validCount * array[0];
+                    averageLosses[name] += validCount * loss;
             }
             
             numberOfSamples += validCount;
-        } 
+        }
         
         for (const name in averageLosses) {
             const loss = averageLosses[name]
@@ -335,14 +423,90 @@ export class NNModel {
         }           
     }
  
+    /**
+     * Searches for the best initialization seed by evaluating gradients and activations.
+     * @param {NNDataset} dataset - The dataset to pull a pilot batch from.
+     * @param {number} numSeeds - How many random initializations to test.
+     * @returns {Promise<Object>} The metrics of the winning seed.
+     */
+    async scout (dataset, numSeeds = 5) {
+        const model = this;
+        const webnn = model.#webnn;
+        const batchSize = 16; // Small batch for speed
+        let bestScore = -Infinity;
+        let bestWeights = null;
+        let winningMetrics = null;
+        
+        const originalBatchSize = dataset.getBatchSize(); // save batch size
+        dataset.setBatchSize(batchSize);  // small for efficient scouting (e.g., 16)
+        const graph = await this.#engine.scoutingGraph(batchSize);
+
+        // Prepare a pilot batch
+        const subset = dataset.subsetRole.TRAINING;
+        dataset.prepareBatches(subset);
+        const pilotBatch = dataset.getNextBatch(subset, this);
+        const inputs = {}, outputs = {};
+
+        for (let i = 0; i < numSeeds; i++) {
+            // Randomize parameters with a new seed
+            // We use i as the seed for reproducibility
+            this.dag.randomizeParams(i);
+            
+            // initialise inputs and outputs including metrics
+            await this.prepareTestInputs (pilotBatch, batchSize, inputs, outputs, true);
+
+            // Run the scouting graph
+            await webnn.dispatch(graph, inputs, outputs);
+            
+            // Read back metrics
+            const losses = {};
+            for (const key in model.dag.outputs) {
+                const blockName = key.split(':')[0];
+                losses[blockName] = await this.readScalar(outputs[blockName + ':loss']);
+            }
+            
+            const deadRatio = await this.readScalar(outputs['metric:deadRatio']);
+            const gradRatio = await this.readScalar(outputs['metric:deadRatio']);
+            const metrics = {losses:losses, deadRatio:deadRatio, gradRatio:gradRatio};
+        
+            // Calculate a "Health Score" (Higher is better)
+            // We penalize dead neurons and vanishing gradients
+            const score = this.calculateHealthScore(metrics);
+            
+            let lossData = [];
+            for (const blockName in losses)
+                lossData.push(blockName+':loss=' + losses[blockName].toFixed(4));
+            
+            const lossInfo = lossData.join(', ');
+        
+            //log(`Seed ${i}: Score=${score.toFixed(2)}, ${lossInfo}, GradRatio=${gradRatio.toFixed(4)}, Dead=${(deadRatio*100).toFixed(1)}%`);
+
+            if (score > bestScore) {
+                bestScore = score;
+                winningMetrics = metrics;
+                // 5. Save a snapshot of these "winning" weights
+                bestWeights = this.captureWeights();
+            }
+        }
+
+        // Apply the best weights found back to the model
+        this.restoreWeights(bestWeights);
+        
+        // Restore batch size prior to training loop
+        dataset.setBatchSize(originalBatchSize);
+        
+        log(`Selected best initialization with score: ${bestScore.toFixed(2)}`);
+    
+        return winningMetrics;
+    }
+
     // Run WebNN training graph on dataset passed on start up
     // Batched testing where last batch is usually smaller
-    // Allow for models with multiple inputs and outputs
-    // #### Revise to match changes to model.test() ####
+    // Allows for models with multiple inputs and outputs
     async train (hyperparams) {
         const model = this;
         const dataset = model.#dataset;
-        const subset = dataset.subsetRole.TESTING;
+        const subset = dataset.subsetRole.TRAINING;
         const webnn = model.#webnn;
         const inputBanks = new Array(2);
         const outputBanks = new Array(2);
@@ -351,24 +515,35 @@ export class NNModel {
         let averageLosses = {};
         let numberOfSamples = 0;
         
-        if (hyperparams === undefined) {
-            hyperparams = {
-                lr: 0.001,
-                beta1: 0.9,
-                weightDecay: 0.01,
-                epochs: 20
-            }
+        // default hyper parameters
+        const defaults = {
+            lr: 0.001,
+            beta1: 0.9,
+            weightDecay: 0.01,
+            epochs: 20,
+            scoutSeeds: 100
         }
         
-        const epochs = hyperparams.epochs ?? 20;
+        hyperparams = { ...defaults, ...hyperparams }; // user values override defaults
         
+        const epochs = hyperparams.epochs;
+        const validationSize = dataset.subsetSize(dataset.subsetRole.VALIDATION);
+        
+        // Pass the dataset and the number of seeds to test.
+        if (hyperparams.scoutSeeds > 0) {
+            log(`\nScouting for best initialization (testing ${hyperparams.scoutSeeds} seeds)...`);
+            await model.scout(dataset, hyperparams.scoutSeeds);
+        }
+    
         // prepare evaluation epoch as iterator over batches
         dataset.prepareBatches(subset);
         const batchCount = dataset.getNumBatches(subset);
         const batchSize = dataset.getBatchSize(); // fixed for all batches
+        const trainingSampleCount = dataset.subsetSize(subset);
         const graph = await model.#engine.trainingGraph(batchSize, hyperparams);
 
-       log(`\nTraining against ${dataset.name()} dataset: average loss per sample`);
+        log(`\nTraining against ${dataset.name()} dataset: ${trainingSampleCount} training samples,`)
+        log(`showing average loss per sample:`);
 
         let bank = 0; // used to switch banks on odd/even batches
         inputBanks[0] = {}; inputBanks[1] = {};
@@ -522,14 +697,19 @@ export class NNModel {
                }
             
                 numberOfSamples += validCount;
+                
+                if (validationSize > 0)
+                    model.test(dataset.subsetRole.VALIDATION);
             } 
-        
-            for (const name in averageLosses) {
-                const loss = averageLosses[name]
-                const blockName = name.split(':')[0];
-                log(`  Epoch ${epoch}, ${blockName}:loss = ${loss/numberOfSamples}`);
-            }
             
+            if (epochs < 100 || epoch % 50 === 0 || epoch === 1) {
+                for (const name in averageLosses) {
+                    const loss = averageLosses[name]
+                    const blockName = name.split(':')[0];
+                    log(`  Epoch ${epoch}, ${blockName}:loss = ${loss/numberOfSamples}`);
+                }
+            }
+                    
             dataset.prepareBatches(subset); // prepare for next epoch           
         }
         
@@ -538,7 +718,9 @@ export class NNModel {
             const param = model.dag.params[key];
             const tensor = outputBanks[bank][key]
             param.buffer = await webnn.readTensor(tensor);
-        }       
+        }
+        
+        log('');      
     }
  
     // convenience function for displaying typed array
@@ -621,12 +803,15 @@ export class NNModel {
         model.blocks = blocks;
 
         // Nested helper to validate layer sequences
-        function parseLayers(layersInput, blockName) {
+        function parseLayers (layersInput, blockName) {
             let layers = [];
     
             // Split by comma ONLY if not inside [] OR (), preventing
             // splitting "dense(shape=[128], activation=relu)" into two items
-            const layerStrings = layersInput.split(/,(?![^\[\(]*[\]\)])/).map(l => l.trim());
+            //const layerStrings = layersInput.split(/,(?![^\[\(]*[\]\)])/).map(l => l.trim());
+            
+            // Split by comma ONLY if not inside [] OR (), allowing for inner nested brackets
+            const layerStrings = layersInput.split(/,(?!(?:[^\[\]\(\)]|\[[^\[\]]*\]|\([^()]*\))*[\]\)])/).map(l => l.trim());
 
             for (const str of layerStrings) {
                 if (str === "") continue;
@@ -640,35 +825,61 @@ export class NNModel {
         }
         
         // Helper to validate individual layer syntax
-        function parseLayer(input) {
+        function parseLayer (input) {
             const match = input.match(/^(\w+)\((.*)\)$/);
             if (!match) return null;
 
             const [_, name, innerContent] = match;
 
-            // Split by comma, but ONLY if the comma is not inside square brackets [ ]
-            // This uses a "negative lookahead" to ensure we don't split [128, 64]
-            const parts = innerContent.split(/,(?![^\[]*\])/).map(p => p.trim());
+            // IMPROVED: Split by comma, but ignore commas inside any number of nested brackets
+            const parts = [];
+            let currentPart = "";
+            let depth = 0;
+            for (let char of innerContent) {
+                if (char === '[' || char === '(') depth++;
+                else if (char === ']' || char === ')') depth--;
+        
+                if (char === ',' && depth === 0) {
+                    parts.push(currentPart.trim());
+                    currentPart = "";
+                } else {
+                    currentPart += char;
+                }
+            }
+            if (currentPart) parts.push(currentPart.trim());
 
             const operands = [];
             const options = new Map();
 
-            // Categorize each part
             parts.forEach(part => {
                 if (part.includes('=')) {
-                    const [key, value] = part.split('=');
+                    const index = part.indexOf('=');
+                    const key = part.substring(0, index).trim();
+                    const value = part.substring(index + 1).trim();
                     const n = Number(value);
-                    options.set(key.trim(), isNaN(value) ? value.trim() : n);
+                    options.set(key, isNaN(n) || value === "" ? value : n);
                 } else if (part.length > 0) {
                     const n = Number(part);
-                    operands.push(isNaN(part) ? part : n);
+                    operands.push(isNaN(n) || part === "" ? part : n);
                 }
             });
-            
+    
+            // Process single shape: [3, 224, 224]
             const shape = options.get('shape');
-            
-            if (shape)
-                options.set('shape', shape.match(/-?\d+/g).map(Number));
+            if (shape && typeof shape === 'string') {
+                options.set('shape', shape.match(/\d+/g).map(Number));
+            }
+
+            // Process multiple shapes: [[128], [80], [40]]
+            const shapes = options.get('shapes');
+            if (shapes && typeof shapes === 'string') {
+                // IMPROVED: Matches each individual inner array [ ... ]
+                const nestedArrays = shapes.match(/\[[\d,\s]+\]/g);
+                if (nestedArrays) {
+                    const parsedShapes = nestedArrays.map(s => s.match(/\d+/g).map(Number));
+                    options.set('shapes', parsedShapes);
+                }
+            }
 
             return new NNLayer(name, operands, options);
         }
@@ -701,7 +912,7 @@ class NNEngine {
     }
     
     cacheGraph (graph, mode, batchSize) {
-        log(`  ${mode} graph compiled for batch size ${batchSize}`)
+        log(`${mode} graph compiled for batch size ${batchSize}`)
         const key = `${mode}-${batchSize}`;
         return this.#graphCache[key] = graph;
     }
@@ -752,7 +963,106 @@ class NNEngine {
             gradients[node.name] = lossGradient;
         }
     }
+    
+    // helper for scoutingGraph to assess parameter space
+    buildGradientNorm(builder, gradTensor) {
+        // L2 Norm: sqrt(sum(grad^2))
+        const squared = builder.pow(gradTensor, builder.constant(gradTensor.dataType, 2.0));
+        const axes = Array.from({ length: gradTensor.shape.length }, (_, i) => i);
+        const sumSq = builder.reduceSum(squared, { axes });
+        return builder.sqrt(sumSq);
+    }
+
+    // helper for scoutingGraph to assess parameter space
+    buildDeadNeuronRatio(builder, activations, dataType = 'float32') {
+        // Count values <= 0.0 (for ReLU)
+        const zero = builder.constant(dataType, 0.0);
+        const isDead = builder.lesserOrEqual(activations, zero);
+        const deadFloats = builder.cast(isDead, dataType);
+    
+        const axes = Array.from({ length: activations.shape.length }, (_, i) => i);
+        const deadCount = builder.reduceSum(deadFloats, { axes });
+    
+        // Divide by total number of elements in the activation tensor
+        const totalSize = activations.shape.reduce((a, b) => a * b, 1);
+        return builder.div(deadCount, builder.constant(dataType, totalSize));
+    }
+    
+    // helper for monitoring the activation of the deepest hidden layer, i.e.
+    // closest to the output, as that is where signal death is most apparent,
+    // but note that some graphs may have multiple outputs
+    findDeepestActivation(executionList) {
+        const activations = executionList.filter(node => node.isActivation());
+        return activations.length > 0 ? activations[activations.length - 1] : null;
+    }
+    
+    // helper to assess vanishing gradients when neurons have flatlined
+    buildSaturationMetric(builder, activations, monitorNode) {
+        // Delegate to the specific node implementation
+        return monitorNode.buildSaturationMetric(builder, activations);
+    }
+
+    // used to assess potential starting points for training from a random pool
+    // compute metrics sensitive to dead neurons and vanishing or exploding gradients
+    async scoutingGraph(batchSize) {
+        // ... standard builder setup ...
+        const builder = new MLGraphBuilder(this.model.webnn());
+        const executionList = this.model.dag.executionList;
+        const operands = {};
+        const gradients = {};
+        const builderOutput = {};
+
+        // passes in the number of valid samples for this batch
+        // used to mask invalid samples as part of WebNN graph
+        const validCount = builder.input('validCount', {
+            dataType:'int32', shape:[], readable:false, writable:true,
+        })
+
+        // 1. Run Forward Pass
+        for (const node of executionList) {
+            operands[node.name] = node.type === 'param' 
+                ? builder.input(node.name, node.descriptor(batchSize))
+                : node.build(builder, operands, batchSize);
         
+            // Loss calculation as standard
+            if (node.type === 'output') {
+                this.computeLoss(builder, builderOutput, node, gradients, operands, validCount, batchSize);
+            }
+        }
+
+        // 2. Run Backward Pass
+        const context = { builder, batchSize, operands, gradients };
+        for (let i = executionList.length; i > 0; --i) {
+            executionList[i-1].backprop(context);
+        }
+
+        // 3. Dynamic Metric Extraction
+        const paramKeys = Object.keys(this.model.dag.params);
+        const firstGrad = gradients[paramKeys[0]];
+        const lastGrad = gradients[paramKeys[paramKeys.length - 1]];
+
+        // Metric A: Gradient Ratio
+        builderOutput['metric:gradRatio'] = builder.div(
+            this.buildGradientNorm(builder, firstGrad),
+            this.buildGradientNorm(builder, lastGrad)
+        );
+
+        // Metric B: Activation Saturation
+        const monitorNode = this.findDeepestActivation(executionList);
+        if (monitorNode) {
+            builderOutput['metric:deadRatio'] = this.buildSaturationMetric(
+                builder, 
+                operands[monitorNode.name], 
+                monitorNode
+            );
+        } else {
+            // Fallback if no activation found
+            builderOutput['metric:deadRatio'] = builder.constant('float32', 0.0);
+        }
+
+        return await builder.build(builderOutput);
+    }
+
     async inferenceGraph (batchSize =  1) {
         let graph = this.cachedGraph('inference', batchSize);
         if (graph) return graph;
@@ -792,7 +1102,9 @@ class NNEngine {
         
         // scan through nodes in forward order of execution
         for (const node of executionList) {
-            operands[node.name] = node.build(builder, operands, batchSize);
+            operands[node.name] = node.type === 'param' 
+                ? builder.input(node.name, node.descriptor(batchSize))
+                : node.build(builder, operands, batchSize);
             
             if (node.type === 'output') {
                 this.computeLoss(builder, builderOutput, node, gradients, operands, validCount, batchSize);
@@ -813,14 +1125,28 @@ class NNEngine {
         const operands = {}; 
         const builderOutput = {}; 
         const gradients = {}; // Initialize gradients object
+        const algorithm = (hyperParams.optimizer ?? 'rlion').toLowerCase();
                 
+        const optimizers = {
+            'rlion': this.applyRefinedLyon,
+            'lion':  this.applyLyon,
+            'nag':   this.applyNesterov,
+            'sgdm':  this.applySGDMomentum
+        };
+
+        if (!(algorithm in optimizers)) {
+            const message = `Unsupported training optimizer: '${algorithm}'` +
+                `\nAvailable algorithms: ${Object.keys(optimizers).join(', ')}`;
+            throw new Error(message);
+        }
+
         const validCount = builder.input('validCount', {
             dataType:'int32', shape:[], readable:true, writable:true,
         });
 
         // Forward pass & compute losses/gradients
         for (const node of executionList) {
-            operands[node.name] = node.type === 'constant'
+            operands[node.name] = node.type === 'param'
               ?  builder.input(node.name, node.descriptor(batchSize))
               : operands[node.name] = node.build(builder, operands, batchSize);
             
@@ -864,14 +1190,8 @@ class NNEngine {
             });
 
             // Compute the updated values
-            const { nextWeight, nextMomentum } = this.applyRefinedLyon(
-                builder, 
-                currentWeight, 
-                gradient, 
-                currentMomentum,
-                dataType,
-                hyperParams
-            );
+            const { nextWeight, nextMomentum } = optimizers[algorithm].call(this,
+                builder, currentWeight, gradient, currentMomentum, dataType, hyperParams);
 
             // Add them to the graph's output dictionary
             builderOutput[`${paramName}`] = nextWeight;
@@ -882,18 +1202,9 @@ class NNEngine {
         return this.cacheGraph(graph, 'training', batchSize);
     }
     
-    /**
-     * Applies the Refined Lyon optimizer mathematically.
-     * @param {MLGraphBuilder} builder 
-     * @param {MLOperand} weight - The current weight/bias tensor
-     * @param {MLOperand} gradient - The gradient for this weight/bias
-     * @param {MLOperand} momentum - The current momentum buffer
-     * @param {Object} hyperParams - lr, beta1, weightDecay
-     * @param {string} dataType - weight's actual datatype
-     * @returns {Object} { nextWeight, nextMomentum }
-     */
-    applyRefinedLyon(builder, weight, gradient, momentum, dataType, hyperParams) {
-        const { lr = 0.001, beta1 = 0.9, weightDecay = 0.01 } = hyperParams;
+    // implements the original Lion optimizer (Evolved Sign Momentum)
+    applyLyon(builder, weight, gradient, momentum, dataType, hyperParams) {
+        const { lr = 0.0001, beta1 = 0.9, weightDecay = 0.01 } = hyperParams;
 
         // Create scalars for the math
         const beta1Op = builder.constant(dataType, beta1);
@@ -910,7 +1221,6 @@ class NNEngine {
         const signM = builder.sign(nextMomentum);
         const signGrad = builder.sign(gradient);
         const lyonUpdate = signM;
-        //const lyonUpdate = builder.mul(signM, signGrad);
 
         // 3. Apply Weight Decay: update + (weightDecay * weight)
         const decayTerm = builder.mul(wdOp, weight);
@@ -918,6 +1228,118 @@ class NNEngine {
 
         // 4. Update Weights: w_next = weight - (lr * finalUpdate)
         const step = builder.mul(lrOp, finalUpdate);
+        const nextWeight = builder.sub(weight, step);
+
+        return { nextWeight, nextMomentum };
+    }
+
+    // Refined Lion using a Softsign as WebNN doesn't support builder.atan()
+    // so we instead use f(x) = (alpha * x) / (1 + abs(alpha * x))
+    applyRefinedLyon(builder, weight, gradient, momentum, dataType, hyperParams) {
+        const {
+            lr = 0.0005, beta1 = 0.9, beta2 = 0.99, alpha = 10.0, weightDecay = 0.01 
+        } = hyperParams;
+
+        // Constants
+        const beta1Op = builder.constant(dataType, beta1);
+        const oneMinusBeta1Op = builder.constant(dataType, 1 - beta1);
+        const beta2Op = builder.constant(dataType, beta2);
+        const oneMinusBeta2Op = builder.constant(dataType, 1 - beta2);
+        const alphaOp = builder.constant(dataType, alpha);
+        const lrOp = builder.constant(dataType, lr);
+        const wdOp = builder.constant(dataType, weightDecay);
+        const oneOp = builder.constant(dataType, 1.0);
+
+        // 1. Interpolate for current update (c_t): beta1 * m_{t-1} + (1 - beta1) * g_t
+        const c_t = builder.add(
+            builder.mul(beta1Op, momentum),
+            builder.mul(oneMinusBeta1Op, gradient)
+        );
+
+        // 2. Continuous Update Step (Softsign Approximation)
+        // Replacing (2 * pi) * atan(alpha * c_t) with (alpha * c_t) / (1 + |alpha * c_t|)
+        const alpha_ct = builder.mul(alphaOp, c_t);
+        const refinedUpdate = builder.div(
+            alpha_ct,
+            builder.add(oneOp, builder.abs(alpha_ct))
+        );
+
+        // 3. Apply Decoupled Weight Decay
+        const decayTerm = builder.mul(wdOp, weight);
+        const totalUpdate = builder.add(refinedUpdate, decayTerm);
+
+        // 4. Update Weights: w_t = w_{t-1} - lr * totalUpdate
+        const nextWeight = builder.sub(weight, builder.mul(lrOp, totalUpdate));
+
+        // 5. Update Stored Momentum for next step (m_t): beta2 * m_{t-1} + (1 - beta2) * g_t
+        const nextMomentum = builder.add(
+            builder.mul(beta2Op, momentum),
+            builder.mul(oneMinusBeta2Op, gradient)
+        );
+
+        return { nextWeight, nextMomentum };
+    }
+
+    // Nesterov Accelerated Gradient (NAG)
+    applyNesterov(builder, weight, gradient, momentum, dataType, hyperParams) {
+        const { lr = 0.01, mu = 0.9, weightDecay = 0.0001 } = hyperParams;
+
+        // Create scalars for the graph operations
+        const lrOp = builder.constant(dataType, lr);
+        const muOp = builder.constant(dataType, mu);
+        const wdOp = builder.constant(dataType, weightDecay);
+
+        // 1. (Optional) Apply Decoupled Weight Decay
+        let finalGrad = gradient;
+        if (weightDecay > 0) {
+            const decayTerm = builder.mul(wdOp, weight);
+            finalGrad = builder.add(gradient, decayTerm);
+        }
+
+        // 2. Update Momentum (Velocity): v_next = (mu * v) + grad
+        const nextMomentum = builder.add(
+            builder.mul(muOp, momentum),
+            finalGrad
+        );
+
+        // 3. Compute the NAG Update: grad + (mu * v_next)
+        // This is the "look-ahead" term reformulated for the current gradient
+        const nagUpdate = builder.add(
+            finalGrad,
+            builder.mul(muOp, nextMomentum)
+        );
+
+        // 4. Update Weights: w_next = w - (lr * nagUpdate)
+        const step = builder.mul(lrOp, nagUpdate);
+        const nextWeight = builder.sub(weight, step);
+
+        return { nextWeight, nextMomentum };
+    }
+
+    // Stochastic Gradient Descent with Momentum (SGDM)
+    applySGDMomentum(builder, weight, gradient, momentum, dataType, hyperParams) {
+        const { lr = 0.001, momentumFactor = 0.9, weightDecay = 0.0001 } = hyperParams;
+
+        // Create constants
+        const lrOp = builder.constant(dataType, lr);
+        const muOp = builder.constant(dataType, momentumFactor);
+        const wdOp = builder.constant(dataType, weightDecay);
+
+        // 1. Apply Decoupled Weight Decay
+        let finalGradient = gradient;
+        if (weightDecay > 0) {
+            const decayTerm = builder.mul(wdOp, weight);
+            finalGradient = builder.add(gradient, decayTerm);
+        }
+
+        // 2. Update Momentum: m_next = (momentumFactor * m) + grad
+        const nextMomentum = builder.add(
+            builder.mul(muOp, momentum),
+            finalGradient
+        );
+
+        // 3. Update Weights: w_next = weight - (lr * m_next)
+        const step = builder.mul(lrOp, nextMomentum);
         const nextWeight = builder.sub(weight, step);
 
         return { nextWeight, nextMomentum };
@@ -1174,6 +1596,14 @@ class NNLayer {
         this.name = options.name || null;
     }
     
+    // return clone of self with given shape and shallow copy of options
+    clone (shape) {
+        const clone = new NNLayer(this.opName, [...this.args], new Map(this.options))
+        clone.options.set('shape', shape);
+        clone.options.delete('shapes');
+        return clone;
+    }
+    
     serialize () {
         const opName = this.opName;
         const args = this.args;
@@ -1183,10 +1613,11 @@ class NNLayer {
         function serializeOptions (options) {
             let text = '', i = 1, length = options.size;
             for (const [key, value] of options) {
-                if (value !== undefined && Array.isArray(value))
-                    text += `${key}=[${value}]${i++ < length ? ', ' : ''}`;
-                else
+                if (value !== undefined && Array.isArray(value)) {
+                    text += `${key}=${JSON.stringify(value)}${i++ < length ? ', ' : ''}`;
+                } else {
                     text += `${key}=${value}${i++ < length ? ', ' : ''}`;
+                }
             }
             return text;
         }
@@ -1279,7 +1710,7 @@ class NNTopology {
         this.executionList = this.getExecutionOrder(this.nodeHistory);
         this.nodeOutputs = this.getOutputs();
         this.applyShapeInference();
-        this.applyInitHeuristics();
+        this.randomizeParams();
     }
         
     getOutputs () {
@@ -1294,49 +1725,23 @@ class NNTopology {
         return outputs;
     }
     
+    #createPRNG(seed) {
+        return function() {
+            let t = seed += 0x6D2B79F5;
+            t = Math.imul(t ^ t >>> 15, t | 1);
+            t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+    }
+    
     // Rule of thumb to set initialisation info for weights and
     // bias based upon the associated activation operation.
     // Will need tweaking for different kinds of dense layers!
-    applyInitHeuristics () {
-        function fan (shape) {
-            return shape.length ? shape[shape.length - 1] : 1;
-        }
-        
-        function applyHeuristics(dag, node) {
-            const  addNode = node.inputs[0];
-            if (addNode) {
-                const matmulNode = addNode.inputs[0];
-                const biasNode = addNode.inputs[1];
-                if (matmulNode && biasNode &&
-                    matmulNode.type === 'matmul' &&
-                    biasNode.type === 'constant') {
-                    const weightsNode = matmulNode.inputs[1];
-                    if (weightsNode && weightsNode.type === 'constant') {
-                        const outputShape = matmulNode.attributes.shape;
-                        const inputShape = matmulNode.inputs[0].attributes.shape;
-                        if (node.type === 'softmax') {
-                            const r = Math.sqrt(6.0/(fan(inputShape) + fan(outputShape)));
-                            weightsNode.attributes.init = 'glorot';
-                            weightsNode.uniformDistribution(r);
-                            biasNode.attributes.bias = 0.1;
-                            biasNode.fill(biasNode.attributes.bias);
-                            
-                        } else if (node.type === 'relu') {
-                            const r = Math.sqrt(6.0/fan(inputShape));
-                            weightsNode.attributes.init = 'he';
-                            weightsNode.uniformDistribution(r);
-                            biasNode.attributes.bias = 0.0;
-                            biasNode.fill(biasNode.attributes.bias);
-                        }
-                    }
-                }
-            }
-        }
+    randomizeParams (seed = null) {
+        const rng = (seed !== null) ? this.#createPRNG(seed) : Math.random;
         
         for (const node of this.executionList) {
-            if (node.type === 'softmax' || node.type === 'relu') {
-                applyHeuristics(this, node);
-            }
+            node.initialize(rng);
         }
     }
 
@@ -1382,8 +1787,31 @@ class NNTopology {
         const block = this.blocks.get(blockName);
         let lastNode = currentInput;
         const lastLayer = block.layers[block.layers.length - 1];
+        const dataTypes = new Set(['float32','float16','int32','uint32',
+                                    'int8','uint8','int4','uint4']);
 
-        for (const layer of block.layers) {
+        // first scan for layers that want to be repeated
+        // these set shapes to a list of shapes where the
+        // cloned layers as assigned shape from the list
+        // so that you can define a narrow waist
+        
+        let layers = [...block.layers];  // make a working copy
+        
+        for (let i = 0; i < layers.length; ++i) {
+            const layer = layers[i];
+            let shapes = layer.options.get('shapes') ?? [];
+            
+            if (shapes.length > 0) {
+                layers.splice(i, 1); // remove current layer
+                // and replace it with clones with the desired shape
+                for (let j = 0; j < shapes.length; ++j) {
+                    layers.splice(i++, 0, layer.clone(shapes[j]));
+                }                
+            }
+        }
+        
+        // and now translate the layer into the DAG
+        for (const layer of layers) {
             // --- Macro Expansion ---
             if (this.blocks.has(layer.opName)) {
                 const nestedOptions = new Map([...macroOptions, ...layer.options]);
@@ -1432,9 +1860,13 @@ class NNTopology {
                     const numberNode = createNode('number', argName, [], {});
                     this.registerNode(numberNode);
                     inputs.push(numberNode);
+                } else if (dataTypes.has(argName)) {
+                    const stringNode = createNode('string', argName, [], {});
+                    this.registerNode(stringNode);
+                    inputs.push(stringNode);
                 } else {
                     const uniqueParamName = this.symbols.gensym(argName);
-                    const paramNode = createNode('constant', uniqueParamName, [], {});
+                    const paramNode = createNode('param', uniqueParamName, [], {});
                     this.params[uniqueParamName] = paramNode;
                     this.registerNode(paramNode);
                     inputs.push(paramNode);
@@ -1565,10 +1997,6 @@ class NNTopology {
     }
 }
 
-// class to compile WebNN graphs from instance of NNTopology
-// you can use it for inference, testing and training graphs
-class NNCompiler {
-}
 
 // Base class for DAG nodes for use in a directed acyclic graph as
 // an intermediate between the representation of the model syntax
@@ -1612,6 +2040,14 @@ class NNNode {
         }
         
         return count;
+    }
+    
+    isActivation () {
+        return false;
+    }
+
+    // nothing to do except for activation nodes
+    initialize (rng) {
     }
 
     shape (batchSize) {
@@ -1693,6 +2129,13 @@ class NNNode {
             : undefined;
     }
 
+    // Helper to calculate ratio of elements matching a boolean condition.
+    calculateRatio(builder, booleanMask, totalSize) {
+        const dataType = 'float32';
+        const count = builder.reduceSum(builder.cast(booleanMask, dataType));
+        return builder.div(count, builder.constant(dataType, totalSize));
+    }
+    
     // Abstract methods to be implemented by subclasses
 
     // subclasses should override this default implementation
@@ -1704,6 +2147,11 @@ class NNNode {
         return builder[opname](...this.args(operands), this.options());
     }
     
+    buildSaturationMetric(builder, activations) {
+        // Default: return 0.0 if not an activation or if no logic defined
+        return builder.constant('float32', 0.0);
+    }
+
     buildLoss (builder, prediction, expected, mask, validCount) {
         this.warn(`### missing 'buildLoss' implementation for ${this.type}`);
     }
@@ -1800,6 +2248,8 @@ class NNNode {
         this.warn(`backprop: missing implementation for ${this.type}`);
     }
     
+    
+    
     serialize () {
         let attrs = [];
         for (name in this.attributes) {
@@ -1812,7 +2262,7 @@ class NNNode {
             }
         }
 
-        if (['input', 'constant'].includes(this.type))
+        if (['input', 'param'].includes(this.type))
             return `   ${this.type}(${attrs.join(', ')})`;
         
         const inputNames = this.inputs.map(i => i.name || i.type);
@@ -1883,7 +2333,7 @@ class OutputNode extends NNNode {
 }
 
 // model parameters, e.g. weights and biases
-class ConstantNode extends NNNode {
+class ParamNode extends NNNode {
     descriptor (batchSize) {
         return {
             dataType: this.dataType(),
@@ -1893,24 +2343,49 @@ class ConstantNode extends NNNode {
         };
     }
     
-    randomize (min, max) {
+    
+    // uniform distribution in range min to max
+    randomize (min, max, rng = Math.random) {
         const size = this.size(this.attributes.shape);
         const buffer = this.createBuffer(size);
         const range = max - min;
     
         for (let i = 0; i < size; i++) {
-            buffer[i] = (Math.random() * range) + min;
+            buffer[i] = (rng() * range) + min;
         }
         
         return buffer;
     }
+    
+    // truncated normal distribution using Box-Muller transform
+    // limit is number of standard deviations to truncate at
+    truncatedNormalDistribution (mean = 0, stdDev = 1, limit = 2, rng = Math.random) {
+        const size = this.size(this.attributes.shape);
+        const buffer = this.createBuffer(size);
+        const bound = limit * stdDev;
 
-    uniformDistribution (r) {
+        for (let i = 0; i < size; i += 2) {
+            let x;
+            while (true) {
+                const u1 = rng();
+                const u2 = rng();
+                const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                x = z0 * stdDev + mean;
+                if (x >= mean - bound && x <= mean + bound) break; // within limits
+            }
+            buffer[i] = x;
+        }
+        
+        this.buffer = buffer; 
+    }
+
+    // uniform distribution in range -r to +r
+    uniformDistribution (r, rng = Math.random) {
         const size = this.size(this.attributes.shape);
         const buffer = this.createBuffer(size);
     
         for (let i = 0; i < size; i++) {
-            buffer[i] = (Math.random() * 2 * r) - r;
+            buffer[i] = (rng() * 2 * r) - r;
         }
         
         this.buffer = buffer;       
@@ -1952,29 +2427,6 @@ class ConstantNode extends NNNode {
 
 // numeric literals
 class NumberNode extends NNNode {
-    randomize (min, max) {
-        const size = this.size(this.attributes.shape);
-        const buffer = this.createBuffer(size);
-        const range = max - min;
-    
-        for (let i = 0; i < size; i++) {
-            buffer[i] = (Math.random() * range) + min;
-        }
-        
-        return buffer;
-    }
-
-    uniformDistribution (r) {
-        const size = this.size(this.attributes.shape);
-        const buffer = this.createBuffer(size);
-    
-        for (let i = 0; i < size; i++) {
-            buffer[i] = (Math.random() * 2 * r) - r;
-        }
-        
-        return buffer;       
-    }
-
     shape (batchSize) {
         return [...this.attributes.shape];
     }
@@ -1997,6 +2449,33 @@ class NumberNode extends NNNode {
     }
     build (builder, results, batchSize) {
         return builder.constant(this.dataType(), this.name);
+    }
+}
+
+// string literals - used by cast operator for target datatype
+class StringNode extends NNNode {
+    shape (batchSize) {
+        return [...this.attributes.shape];
+    }
+
+    tensorRank () {
+        const shape = this.attributes.shape;
+        
+        if (!Array.isArray(shape))
+            throw new Error("Shape must be an array.");
+            
+        return shape.length;
+    }
+
+    forwardShapeInference (shape) {
+        return this.keepShape(shape);
+    }
+    
+    backprop (context) { 
+        // nothing to do here
+    }
+    build (builder, results, batchSize) {
+        return this.name;  // e.g. 'float16'
     }
 }
 
@@ -2193,6 +2672,45 @@ class ReluNode extends NNNode {
         return builder.relu(...this.args(operands));
     }
 
+    // Saturated when the value is less than or equal to zero (the "dead neuron" state)
+    buildSaturationMetric(builder, activations) {
+        const totalSize = activations.shape.reduce((a, b) => a * b, 1);
+        const isDead = builder.lesserOrEqual(activations, builder.constant('float32', 0.0));
+        return this.calculateRatio(builder, isDead, totalSize);
+    }
+
+    isActivation () {
+        return true;
+    }
+
+    // used to initialise params
+    initialize (rng) {
+        // weightAlg: 'he', biasValue: 0.01
+        function fan (shape) {
+            return shape.length ? shape[shape.length - 1] : 1;
+        }
+        
+        const  addNode = this.inputs[0];
+        if (addNode) {
+            const matmulNode = addNode.inputs[0];
+            const biasNode = addNode.inputs[1];
+            if (matmulNode && biasNode &&
+                matmulNode.type === 'matmul' &&
+                biasNode.type === 'param') {
+                const weightsNode = matmulNode.inputs[1];
+                if (weightsNode && weightsNode.type === 'param') {
+                    const outputShape = matmulNode.attributes.shape;
+                    const inputShape = matmulNode.inputs[0].attributes.shape;
+                    const r = Math.sqrt(6.0/fan(inputShape));
+                    weightsNode.attributes.init = 'he';
+                    weightsNode.uniformDistribution(r, rng);
+                    biasNode.attributes.bias = 0.01;
+                    biasNode.fill(biasNode.attributes.bias);
+                }
+            }
+        }
+    }
+
     forwardShapeInference (shape) {
         return this.keepShape(shape);
     }
@@ -2232,6 +2750,84 @@ class SoftmaxNode extends NNNode {
         super (...args);
     }
     
+    build (builder, operands, batchSize) {
+        const shape = this.shape(batchSize);
+        const axis = shape.length - 1;
+        return builder[this.type](...this.args(operands), axis, this.options);
+    }
+
+    // SoftMax is saturated if the probability distribution becomes too "peaky"
+    // (one class dominates) or too "flat" (maximum uncertainty). A common metric
+    // for SoftMax saturation is measuring if the highest probability is near 1.0
+    buildSaturationMetric (builder, activations) {
+        const totalSize = activations.shape.reduce((a, b) => a * b, 1);
+        // Find the max probability per sample
+        const maxProb = builder.reduceMax(activations, { axes: [1], keepDimensions: true });
+        // Saturated if the max probability is > 0.95 (highly confident/peaky)
+        const isSaturated = builder.greaterOrEqual(maxProb, builder.constant('float32', 0.95));
+        return this.calculateRatio(builder, isSaturated, totalSize);
+    }
+
+    buildLoss (builder, prediction, expected, mask, validCount) {
+        // --- 1. Compute Scalar Monitoring Loss (Cross Entropy) ---
+        const epsilon = builder.constant({dataType: 'float32',
+                                            shape: [1]}, new Float32Array([1e-7]));
+        const safePrediction = builder.add(prediction, epsilon);
+        const logPrediction = builder.log(safePrediction);
+        const product = builder.mul(expected, logPrediction);
+        const maskedProduct = builder.mul(mask, product);
+        
+        // To get the mean loss, divide by validCount, not just sum it
+        const sum = builder.reduceSum(maskedProduct);
+        const validCountFloat = builder.cast(validCount, 'float32');
+        const meanLoss = builder.div(builder.neg(sum), validCountFloat);
+
+        // --- 2. Compute Loss Gradient Tensor ---
+        // Derivative of Softmax + CrossEntropy is: (Prediction - Expected)
+        let lossGradient = builder.sub(prediction, expected);
+        
+        // Apply the mask to the gradient so invalid samples don't affect weights
+        lossGradient = builder.mul(lossGradient, mask);
+
+        // Scale the gradient by 1/N to match the Mean Loss calculation
+        lossGradient = builder.div(lossGradient, validCountFloat);
+
+        // use meanLoss for reporting and gradient for back propagation
+        return { batchLoss: meanLoss, lossGradient: lossGradient };
+    }
+
+    isActivation () {
+        return true;
+    }
+
+    // used to initialise params
+    initialize (rng) {
+        // weightAlg: 'he', biasValue: 0.01
+        function fan (shape) {
+            return shape.length ? shape[shape.length - 1] : 1;
+        }
+        
+        const  addNode = this.inputs[0];
+        if (addNode) {
+            const matmulNode = addNode.inputs[0];
+            const biasNode = addNode.inputs[1];
+            if (matmulNode && biasNode &&
+                matmulNode.type === 'matmul' &&
+                biasNode.type === 'param') {
+                const weightsNode = matmulNode.inputs[1];
+                if (weightsNode && weightsNode.type === 'param') {
+                    const outputShape = matmulNode.attributes.shape;
+                    const inputShape = matmulNode.inputs[0].attributes.shape;
+                    const r = Math.sqrt(6.0/(fan(inputShape) + fan(outputShape)));
+                    weightsNode.attributes.init = 'glorot';
+                    weightsNode.truncatedNormalDistribution(0, r, 2, rng);
+                    biasNode.attributes.bias = 0.0;
+                    biasNode.fill(biasNode.attributes.bias);
+                }
+            }
+        }
+    }
+
     // Softmax does not change the shape of the tensor
     // so rely on parent's implementation for shape()
 
@@ -2274,47 +2870,13 @@ class SoftmaxNode extends NNNode {
 
         this.accumulateGradient(context, x, dX);
         gradients[x.name] = dX;
-    }
-    
-    build (builder, operands, batchSize) {
-        const shape = this.shape(batchSize);
-        const axis = shape.length - 1;
-        return builder[this.type](...this.args(operands), axis, this.options);
-    }
-
-    buildLoss (builder, prediction, expected, mask, validCount) {
-        // --- 1. Compute Scalar Monitoring Loss (Cross Entropy) ---
-        const epsilon = builder.constant({dataType: 'float32',
-                                            shape: [1]}, new Float32Array([1e-7]));
-        const safePrediction = builder.add(prediction, epsilon);
-        const logPrediction = builder.log(safePrediction);
-        const product = builder.mul(expected, logPrediction);
-        const maskedProduct = builder.mul(mask, product);
-        
-        // To get the mean loss, divide by validCount, not just sum it
-        const sum = builder.reduceSum(maskedProduct);
-        const validCountFloat = builder.cast(validCount, 'float32');
-        const meanLoss = builder.div(builder.neg(sum), validCountFloat);
-
-        // --- 2. Compute Loss Gradient Tensor ---
-        // Derivative of Softmax + CrossEntropy is: (Prediction - Expected)
-        let lossGradient = builder.sub(prediction, expected);
-        
-        // Apply the mask to the gradient so invalid samples don't affect weights
-        lossGradient = builder.mul(lossGradient, mask);
-
-        // Scale the gradient by 1/N to match the Mean Loss calculation
-        lossGradient = builder.div(lossGradient, validCountFloat);
-
-        // use meanLoss for reporting and gradient for back propagation
-        return { batchLoss: meanLoss, lossGradient: lossGradient };
-    }
+    }    
 }
 
 const NODE_CLASSES = {
     'input': InputNode,
     'output': OutputNode,
-    'constant': ConstantNode,
+    'param': ParamNode,
     'number': NumberNode,
     'matmul': MatMulNode,
     'add': AddNode,
