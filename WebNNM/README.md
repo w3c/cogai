@@ -25,6 +25,13 @@ For inference, model parameters are baked into the graph as constants, reducing 
 
 The starting point for training models is to pick the initial values for the trainable parameters. This is done using stochastic algorithms selected according to the local activation function. Unfortunately, this may still result in a high initial loss that stubbornly refuses to train nicely. To try and avoid that, the library generates multiple sets of initial parameter values using different random number seeds, and applies metrics to select the most promising set for the training loop. Metrics are computed using a dedicated scouting graph. The metrics include: *Loss*, *Gradient Ratio*, and *Dead Ratio*. The gradient ratio detects vanishing or exploding gradients, whilst the dead ratio detects dead neurons or overconfident layers.
 
+| Metric | What it Measures | "What ""Good"" Looks Like" |
+|--------|------------------|----------------------------|
+| Loss | The immediate error between prediction and ground truth.|"A value consistent with random guessing (e.g., ln(10)≈2.3 for 10-class softmax)."|
+|Delta Loss|The change in loss (ΔL) given a change in weights (ΔW).|"Low enough to avoid ""explosions,"" but high enough to show the model is learning."|
+|Gradient Ratio|The ratio of gradient magnitudes between the first and last layers.|Close to 1 (indicates signals are flowing through the network without dying).|
+|Dead Ratio | The percentage of neurons (usually ReLU) that output 0 for all inputs.|As close to 0% as possible at start.|
+
 Support for saving and loading binary files with the model and parameters is in development and will be integrated shortly. We also expect to develop supplementary libraries for importing models in other formats, e.g. ONNX and Hugging Face. These libraries will be usable with NodeJS as well as with web pages. One challenge is the potential for decompiling lower level models, such as those using ONNX, to higher level easier to understand models expressed in WebNNM.
 
 Further out, we hope to apply WebNNM to multimodal models for video and audio as a basis for acccessible virtual worlds, where the phone or laptop's camera and microphone are used to capture the user's facial expressions and project them onto the user's avatar, along with speech to text support for intent-based accessibility, since everyone should be able to choose how they interact with applications according to their personal preferences and capabilities. One person may be happy with a games controller, whilst others may prefer to use their voice to convey higher level intents. Other work is planned on moving beyond back propagation to support continual learning and short term memory, inspired by human cognition.
