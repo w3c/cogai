@@ -32,6 +32,17 @@ The starting point for training models is to pick the initial values for the tra
 |Gradient Ratio|The ratio of gradient magnitudes between the first and last layers.|Close to 1 (indicates signals are flowing through the network without dying).|
 |Dead Ratio | The percentage of neurons (usually ReLU) that output 0 for all inputs.|As close to 0% as possible at start.|
 
+The library now keeps track of the sum of the weighted losses to decide when to take a snapshot of the model parameters during training. The iteration over epochs is abandoned when no improvement has been found within a given number of epochs. The number is set by the `patience` hyper parameter. The weights for each output is set by the `lossWeights` hyper parameter. This allows you to treat some outputs as more important than others in a multimodal model.
+
+The learning rate is managed according to the optimizer algorithm:
+|Feature|Lion / Refined Lion|SGDM|Nesterov|
+|-------|-------------------|----|--------|
+|Typical Max LR|0.0001 (Tiny)|0.1 (Large)|0.1 to 0.5 (Very Large)|
+|LR Sensitivity|High (Easy to break)|Medium|Low (Very stable)|
+|Best Schedule|Cosine + Warmup|Step / Slab Decay|Cosine Annealing|
+|Snapshot Timing|Wait for low LR tail|Anytime val_loss drops|Anytime val_loss drops|
+|WebNN Logic|Update lr tensor every epoch|Update lr tensor at "Steps"|Update lr tensor every epoch|
+
 Support for saving and loading binary files with the model and parameters is in development and will be integrated shortly. We also expect to develop supplementary libraries for importing models in other formats, e.g. ONNX and Hugging Face. These libraries will be usable with NodeJS as well as with web pages. One challenge is the potential for decompiling lower level models, such as those using ONNX, to higher level easier to understand models expressed in WebNNM.
 
 Further out, we hope to apply WebNNM to multimodal models for video and audio as a basis for acccessible virtual worlds, where the phone or laptop's camera and microphone are used to capture the user's facial expressions and project them onto the user's avatar, along with speech to text support for intent-based accessibility, since everyone should be able to choose how they interact with applications according to their personal preferences and capabilities. One person may be happy with a games controller, whilst others may prefer to use their voice to convey higher level intents. Other work is planned on moving beyond back propagation to support continual learning and short term memory, inspired by human cognition.
