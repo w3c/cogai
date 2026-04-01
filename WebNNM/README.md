@@ -25,7 +25,7 @@ For inference, model parameters are baked into the graph as constants, reducing 
 
 The starting point for training models is to pick the initial values for the trainable parameters. This is done using stochastic algorithms selected according to the local activation function. Unfortunately, this may still result in a high initial loss that stubbornly refuses to train nicely. To try and avoid that, the library generates multiple sets of initial parameter values using different random number seeds, and applies metrics to select the most promising set for the training loop. Metrics are computed using a dedicated scouting graph. The metrics include: *Loss*, *Gradient Ratio*, and *Dead Ratio*. The gradient ratio detects vanishing or exploding gradients, whilst the dead ratio detects dead neurons or overconfident layers.
 
-| Metric | What it Measures | "What ""Good"" Looks Like" |
+| Metric | What it Measures | What "Good" Looks Like |
 |--------|------------------|----------------------------|
 | Loss | The immediate error between prediction and ground truth.|"A value consistent with random guessing (e.g., ln(10)≈2.3 for 10-class softmax)."|
 |Delta Loss|The change in loss (ΔL) given a change in weights (ΔW).|"Low enough to avoid ""explosions,"" but high enough to show the model is learning."|
