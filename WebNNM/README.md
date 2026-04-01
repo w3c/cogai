@@ -32,7 +32,7 @@ The starting point for training models is to pick the initial values for the tra
 |Gradient Ratio|The ratio of gradient magnitudes between the first and last layers.|Close to 1 (indicates signals are flowing through the network without dying).|
 |Dead Ratio | The percentage of neurons (usually ReLU) that output 0 for all inputs.|As close to 0% as possible at start.|
 
-The library now keeps track of the sum of the weighted losses to decide when to take a snapshot of the model parameters during training. The iteration over epochs is abandoned when no improvement has been found within a given number of epochs. The number is set by the `patience` hyper parameter. The weights for each output is set by the `lossWeights` hyper parameter. This allows you to treat some outputs as more important than others in a multimodal model.
+The library now keeps track of the sum of the weighted losses to decide when to take a snapshot of the model parameters during training. The iteration over epochs is abandoned when no improvement has been found within a given number of epochs, as set with the `patience` hyper parameter. The weights for each output is set by the `lossWeights` hyper parameter. This allows you to treat some outputs as more important than others in a multimodal model.
 
 The best learning rate schedule depends on the optimizer algorithm. To keep things simple, the library currently implements a warm up phase followed by cosine annealing. The only time Slab Decay is a clear winner for SGDM is when you have a very noisy dataset or a model that is prone to sudden instability. Because the LR stays constant on a "slab," the weights have time to stabilize and reach a true equilibrium at that specific "temperature" before moving to the next stage.
 
