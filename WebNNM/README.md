@@ -58,9 +58,13 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Layer**: A module or processing unit within the model that performs a specific transformation on its input data. Layers can be divided into sublayers, as a means to modularise the network architecture.
 
+**Repeated Layers**: If you declare the shape option as a list of shapes, e.g. `dense(shapes=[[128],[80],[40]], activation=relu)`, the layer will be repeated with the given shapes, e.g. in the example, you get dense layers with shape [128], a second with shape [80] and a third with shape [40]. This is especially useful for compound layers.
+
 **Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation, *dense networks* where every neuron in one layer is connected to every single neuron in the following layer. Skip connections are essential for networks with many layers as a means to avoid vanishing gradients that inhibit training.
 
 **Tensor:** A multi-dimensional array used to represent data (input, output, parameters) in a neural network. The array items are associated with a data type. WebNN supports the following datatypes: float32, float16, int32, uint32, int8, uint8, int4, and uint4. Training typically benefits from higher precision (like float32) to maintain numerical stability during millions of tiny weight updates, whereas inference can often be "quantized" to lower precision (like int8 or float16) to maximize speed and reduce memory usage without significantly hurting accuracy.
+
+**Type Casting**: The library automatically inserts cast operations when needed to map tensors from a lower to a higher precision data type, e.g. `float16` to `float32`, and warns when the model tries to cast to a lower precision.
 
 **Tensor Layout**: how the tensor's data is arranged in memory, *layout* refers to the specific *ordering of the axes (dimensions)* of the tensor. This dictates how the multi-dimensional data is linearized (flattened) for storage in the computer's one-dimensional memory space.
 
@@ -70,7 +74,9 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Operators**: mathematical operations applied to the *operands* to compute the output, and subject to operator specific *options*.
 
-**Broadcasting**: allows operations between tensors of different shapes by virtually "stretching" the smaller tensor to match the dimensions of the larger one without actually copying the data in memory.
+**Broadcasting**: allows operations between tensors of different shapes by virtually "stretching" the smaller tensor to match the dimensions of the larger one without actually copying the data in memory. WebNN supports automatic broadcasting for selected operators, e.g. `add`.
+
+**Inference**: The library propagates data type and shape constraints across the model, so that you only need to specify these explicitly when you want greater control. Note that you do need to specify the data type and shape for the model inputs and outputs.
 
 **Layer normalization**: is a technique that improves training performance by standardizing the activations of a single layer for each individual sample by calculating the mean and variance across all its features, ensuring that the inputs to the next layer remain within a stable numerical range.
 
