@@ -8,7 +8,7 @@ Cognitive AI will be an important enabler for immersive presence in extended rea
 
 **WebXR**: platform neutral API for user interaction devices, e.g. games controllers, 3D headsets, smart glasses - opportunities for extensions for richer support for haptics.
 
-**WebNN**: platform neutral API for hardware acceleration of neural networks. Can be used for inference and training, e.g. personalisation as fine tuning, and privacy friendly federated learning. For training, a library is needed to generate training graphs as the gradient calculations are not intrinsic to WebNN.
+**WebNN**: platform neutral API for hardware acceleration of neural networks. Can be used for inference and training, e.g. personalisation as fine tuning, and privacy friendly federated learning. For training, the WebNNM library can be used needed to generate training graphs as the gradient calculations are not intrinsic to WebNN.
 
 **Scene descriptions**: taxonomy of resources with declarative and procedural components.
 
