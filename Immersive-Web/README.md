@@ -6,7 +6,7 @@ Cognitive AI will be an important enabler for immersive presence in extended rea
 
 **WebGPU**: platform neutral API for hardware acceleration of 3D graphics, providing compute shaders and superior performance compared to WebGL.
 
-**WebXR**: platform neutral API for user interaction devices, e.g. games controllers, 3D headsets, smart classes - opportunities for extensions for richer support for haptics.
+**WebXR**: platform neutral API for user interaction devices, e.g. games controllers, 3D headsets, smart glasses - opportunities for extensions for richer support for haptics.
 
 **WebNN**: platform neutral API for hardware acceleration of neural networks. Can be used for inference and training, e.g. personalisation as fine tuning, and privacy friendly federated learning.
 
