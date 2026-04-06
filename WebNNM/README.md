@@ -86,6 +86,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
 
+**Autoregressive Learning**: This a machine learning technique where a model learns to predict the next piece of data in a sequence based specifically on the pieces that came before it. This avoids the need for labelled data. A related approach is *autoencoding* where the model looks at the whole sequence at once (bidirectional) and fills in blanks in the middle, making it better for sentiment analysis or classification.
+
 **Gradient Descent**: This is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.  Successful training depends on avoiding vanishing or exploding gradients. This can be mitigated through a variety of techniques, e.g. skip connections, layer normalization, adjustment to the learning rate and the choice of tensor initialisation algorithms, e.g. Glorot or He, as appropriate to the activation function. WebNNM uses context-sensitive heuristics for initialising model parameters.
 
 **Momentum**: This is an enhancement to gradient descent that accumulates a moving average of past gradients to help the optimizer accelerate through flat regions and dampen oscillations in steep, narrow valleys.
