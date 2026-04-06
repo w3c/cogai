@@ -2,7 +2,7 @@
 
 Cognitive AI will be an important enabler for immersive presence in extended reality applications. Here is a brief account of a proposed architecture for scalable low-latency virtual worlds using Web technologies and AI:
 
-**Web Transport protocol and API**: UDP based asynchronous messaging for ArrayBuffers that can be handed directly to WebGPU for rendering without the need for parsing.
+**Web Transport protocol and API**: UDP based asynchronous messaging for ArrayBuffers that can be handed directly to WebGPU for rendering without the need for parsing. Clients stream their updates to the spatial zone's server, which merges data from different clients and streams it back to all clients in that zone.
 
 **WebGPU**: platform neutral API for hardware acceleration of 3D graphics, providing compute shaders and superior performance compared to WebGL.
 
