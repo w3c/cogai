@@ -58,7 +58,7 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Layer**: A module or processing unit within the model that performs a specific transformation on its input data. Layers can be divided into sublayers, as a means to modularise the network architecture.
 
-**Repeated Layers**: If you declare the shape option as a list of shapes, e.g. `dense(shapes=[[128],[80],[40]], activation=relu)`, the layer will be repeated with the given shapes, e.g. in the example, you get the first dense layer with shape [128], the second with shape [80] and the third with shape [40]. This is especially useful for compound layers.
+**Repeated Layers**: If you declare the shape option as a list of shapes, e.g. `dense(shapes=[[128],[80],[40]], activation=relu)`, the layer will be repeated with the given shapes. In the example, you get the first dense layer with shape [128], the second with shape [80] and the third with shape [40]. This is especially useful for compound layers.
 
 **Non-sequential Layers**: e.g. *residual networks* with skip connections, *inception networks* that apply in parallel several different types of convolutions with a max-pooling operation, *U-Net* with encoder-decoder networks as used for image segmentation, *dense networks* where every neuron in one layer is connected to every single neuron in the following layer. Skip connections are essential for networks with many layers as a means to avoid vanishing gradients that inhibit training.
 
