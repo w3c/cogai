@@ -1,6 +1,6 @@
 # Immersive Presence
 
-To be immersed in an extended reality environment is fun, but much better yet is to share that environment with others. Your device's camera and microphone can be used to project your facial expressions and voice on to your chosen avatar, including who you are looking at. You may be slouched on a sofa in your living room, but your avatar is shown moving around and gesturing, guided by your intents as conveyed with a games controller, spoken commands or other means at your disposal. This can be implemented using real-time AI models running in the browser. This page discusses how such models can be developed and implemented with WebNNM. The aim is a multimodal model that processes video and audio together for greater robustness through cross attention.
+To be immersed in an extended reality environment is fun, but much better yet is to share that environment with others. Your device's camera and microphone can be used to project your facial expressions and voice on to your chosen avatar, including who you are looking at. You may be slouched on a sofa in your living room, but your avatar is shown moving around and gesturing, guided by your intents as conveyed with a games controller, spoken commands or other means at your disposal. This can be implemented using real-time AI models running in the browser. This page discusses how such models can be developed and implemented with WebNNM. The aim is a multimodal model that processes video and audio together for greater robustness through cross attention, along with another model that manages your avatar's pose and movements.
 
 ## Audio Processing
 
@@ -21,4 +21,13 @@ A 3D model of the face divides into a set of vertices that delineate triangular 
 **Note**: one approach is to handle 3D rendering entirely within the neural network model. An encoder transforms video frames to latent representations, whilst a decoder does the reverse. We train the model using a combination of encoder and decoder. This is all very well, but at present, it is not well suited to managing complex scenes in real-time. A more practical approach encodes video frames to latent representations and decodes them to displacements to the face model's vertices and normals. These can then be streamed to the server, mixed with streams from other clients, and streamed back to all clients via Web Transport for dispatch to WebGPU.
 
 ## Staged Transfer Learning
+
+Transfer learning is a technique that adapts a model trained for one task for a different yet related task. This reduces the training effort compared with training a model for the second task from scratch. This approach essentially freezes the model parameters for lower layers whilst applying gradient descent to update the parameters for the other layers. 
+
+**Stage 1**: Learn image processing basics, e.g. using an image segmentation and classification task.
+**Stage 2**: Learn a generic latent space for all human faces via training a generic 3D model for all human faces with neutral expressions. This model outputs the face parameters and texture maps for each individual. A refinement is to dynamically generate texture maps as this can capture complex effects like skin wrinkling and blood flow (blushing) that a static texture can't.
+**Stage 3**: Learn 3D offsets and temporal weights for smoothly changing facial expressions, using priors that encourage distinct basis shapes.
+**Stage 4**: Personalize the model to each user, discovering their characteristic mannerisms.
+
+Each stage freezes the model parameters that are carried forward from the previous model and adds new layers for additional capabilities. The last stage can utilize MAML (Model-Agnostic Meta-Learning) to learn a new user's characteristics very quickly in the browser. The earlier stages require much greater computational effort and can be done in the cloud on powerful AI hardware.
 
