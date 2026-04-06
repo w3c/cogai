@@ -22,12 +22,15 @@ A 3D model of the face divides into a set of vertices that delineate triangular 
 
 ## Staged Transfer Learning
 
-Transfer learning is a technique that adapts a model trained for one task for a different yet related task. This reduces the training effort compared with training a model for the second task from scratch. This approach essentially freezes the model parameters for lower layers whilst applying gradient descent to update the parameters for the other layers. 
+Transfer learning is a technique that adapts a model trained for one task to a related but different task. This reduces the training effort compared with training a model for the second task from scratch. This approach essentially freezes the model parameters for lower layers whilst applying gradient descent to update the parameters for the other layers. 
 
-**Stage 1**: Learn image processing basics, e.g. using an image segmentation and classification task.
+**Stage 1**: Learn image processing basics, e.g. using a classification task that learns to distinguish objects from the background.
+
 **Stage 2**: Learn a generic latent space for all human faces via training a generic 3D model for all human faces with neutral expressions. This model outputs the face parameters and texture maps for each individual. A refinement is to dynamically generate texture maps as this can capture complex effects like skin wrinkling and blood flow (blushing) that a static texture can't.
-**Stage 3**: Learn 3D offsets and temporal weights for smoothly changing facial expressions, using priors that encourage distinct basis shapes.
+
+**Stage 3**: Learn 3D offsets and temporal weights for smoothly changing facial expressions across a large population of users, using priors that encourage distinct basis shapes as latent representations.
+
 **Stage 4**: Personalize the model to each user, discovering their characteristic mannerisms.
 
-Each stage freezes the model parameters that are carried forward from the previous model and adds new layers for additional capabilities. The last stage can utilize MAML (Model-Agnostic Meta-Learning) to learn a new user's characteristics very quickly in the browser. The earlier stages require much greater computational effort and can be done in the cloud on powerful AI hardware.
+Each stage freezes the model parameters that are carried forward from the previous model and adds new layers for additional capabilities. The first three stages require considerable computational effort and can be done in the cloud on powerful AI hardware using existing datasets. The last stage utilizes MAML (Model-Agnostic Meta-Learning) to learn a new user's characteristics very quickly in the browser as a background task on data captured from the browser. The data is divided into training and evaluation subsets for limited rounds of gradient descent with aggressive freezing of most parameters to speed learning.
 
