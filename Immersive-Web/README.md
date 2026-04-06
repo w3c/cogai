@@ -10,7 +10,7 @@ Cognitive AI will be an important enabler for immersive presence in extended rea
 
 **WebNN**: platform neutral API for hardware acceleration of neural networks. Can be used for inference and training, e.g. personalisation as fine tuning, and privacy friendly federated learning. For training, the WebNNM library can be used to generate training graphs as the gradient calculations are not intrinsic to WebNN.
 
-**Scene descriptions**: taxonomy of resources with declarative and procedural components.
+**Scene descriptions**: taxonomy of resources with declarative and procedural components. IMW is an extensible declarative format based upon collections of properties (i.e. chunks) that link to scripts that can be used to stochastically generate components and add behaviours.
 
 **Spatial Indexing**:  using trees and hierarchical bounding boxes to limit computation.
 
