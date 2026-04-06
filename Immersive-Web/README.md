@@ -4,11 +4,11 @@ Cognitive AI will be an important enabler for immersive presence in extended rea
 
 **Web Transport protocol and API**: UDP based asynchronous messaging for ArrayBuffers that can be handed directly to WebGPU for rendering without the need for parsing.
 
-**WebGPU**: API for hardware acceleration of 3D graphics, providing compute shaders and superior performance compared to WebGL.
+**WebGPU**: platform neutral API for hardware acceleration of 3D graphics, providing compute shaders and superior performance compared to WebGL.
 
-**WebXR**: API for user interaction devices, e.g. games controllers, 3D headsets, smart classes - opportunities for extensions for richer support for haptics.
+**WebXR**: platform neutral API for user interaction devices, e.g. games controllers, 3D headsets, smart classes - opportunities for extensions for richer support for haptics.
 
-**WebNN**: API for hardware acceleration of neural networks. Can be used for inference and training, e.g. personalisation as fine tuning, and privacy friendly federated learning.
+**WebNN**: platform neutral API for hardware acceleration of neural networks. Can be used for inference and training, e.g. personalisation as fine tuning, and privacy friendly federated learning.
 
 **Scene descriptions**: taxonomy of resources with declarative and procedural components.
 
