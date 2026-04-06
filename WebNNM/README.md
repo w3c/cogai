@@ -86,7 +86,7 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Hyperparameters:** Configuration settings (e.g. learning rate, number of layers) that are set **before** training and remain constant.
 
-**Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.  Successful training depends on avoiding vanishing or exploding gradients. This can be mitigated through a variety of techniques, e.g. skip connections, layer normalization, adjustment to the learning rate and the choice of tensor initialisation algorithms, e.g. Glorot or He, as appropriate to the activation function. WebNNM uses context-senstive heuristics for initialising model parameters.
+**Gradient Descent**: is an iterative optimization algorithm that calculates the "slope" of the error and adjusts the model's parameters in the opposite direction to find the lowest possible point of the loss function.  Successful training depends on avoiding vanishing or exploding gradients. This can be mitigated through a variety of techniques, e.g. skip connections, layer normalization, adjustment to the learning rate and the choice of tensor initialisation algorithms, e.g. Glorot or He, as appropriate to the activation function. WebNNM uses context-sensitive heuristics for initialising model parameters.
 
 **Momentum**: is an enhancement to gradient descent that accumulates a moving average of past gradients to help the optimizer accelerate through flat regions and dampen oscillations in steep, narrow valleys.
 
@@ -98,8 +98,8 @@ Back propagation is like trying to learn many complex skills all at the same tim
 
 **Overfitting**: occurs when a model memorizes noise and specific details of the training data rather than learning general patterns, making a separate testing subset essential to objectively measure how well the model performs on new, unseen information.
 
-**Batches**: are used to divide a dataset into smaller groups to make the training process more memory-efficient and to provide more frequent, stable updates to the model's weights via gradient descent.
+**Batches**: are used to divide a dataset into smaller groups to make the training process more memory-efficient and to provide more frequent, stable updates to the model's weights via gradient descent. The WebNNM model syntax omits the batch size, which is given by the inference context for inference, and by the dataset for testing and training.
 
-**Sequence**: a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context where the meaning of an element depends on what came before it.
+**Sequence**: a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context where the meaning of an element depends on what came before it. The WebNNM model syntax omits the sequence length, which is given by the inference context for inference, and by the dataset for testing and training. Note that for multimodal models, each modality will have its own sequence length, e.g. one for audio and another for video. 
 
 
