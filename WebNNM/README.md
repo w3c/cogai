@@ -76,7 +76,7 @@ Attention based memory uses Transformers to attend to anything in the context wi
 
 Associative memories function as a cache with saliency values that are boosted when a memory is selected, and otherwise decay over time. The stronger the salience, the more likely a particular memory will be retrieved compared to others. For language models, associative memory allow the model to keep track of salient information over a long time period without the need for a long (and expensive) context window.
 
-Another class of memory is based upon manifolds, which can be thought of as surfaces in high dimensional spaces. Instead of the idea of memory as a static address, memory can be modelled as dips and valleys in the surface. The classic version of manifold memory is the continuous attractor neural network (CANN). Recent research has shown the value of updating model weights on fast and slow timescales to better handle noise and drift.
+Another class of memory is based upon manifolds, which can be thought of as locally flat curved surfaces in high dimensional spaces. Instead of the idea of memory as a static address, memory can be modelled as dips and valleys in the surface. The classic version of manifold memory is the continuous attractor neural network (CANN). Recent research has shown the value of updating model weights on fast and slow timescales to better handle noise and drift.
 
 ## Some Useful Terms:
 
