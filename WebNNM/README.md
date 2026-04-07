@@ -60,7 +60,7 @@ Neural networks can be taxonomized in terms of the tasks they are designed to pe
 
 **Generative and Sequential Tasks**: These models can use prompts to generate text, images and music etc. Sequence to sequence models are often used to translate from say English to French. The models can involve autoregressive generation for sequences, transformers and diffusion algorithms that progressively turn noise into images.
 
-**Predictive and Regression Tasks**: These models output continuous numerical values, e.g. estimating the market value of a house, and various forms of time-series forecasting.
+**Predictive and Regression Tasks**: These models output continuous numerical values, e.g. estimating the market value of a house, and various forms of time-series forecasting, as well as estimating counts, e.g. the number of people in a crowd.
 
 **Structural and Embedding Tasks**: These transform data into a more useful form, e.g. autoencoders that compress data whilst keeping the important parts, and embeddings, e.g. turning words and images into vectors, so that similar things are close together in digital space, something useful for recommendation systems.
 
