@@ -62,8 +62,9 @@ Neural networks can be taxonomized in terms of the tasks they are designed to pe
 
 **Predictive and Regression Tasks**: These models output continuous numerical values, e.g. estimating the market value of a house, and various forms of time-series forecasting, as well as estimating counts, e.g. the number of people in a crowd.
 
-**Structural and Embedding Tasks**: These transform data into a more useful form, e.g. autoencoders that compress data whilst keeping the important parts, and embeddings, e.g. turning words and images into vectors, so that similar things are close together in digital space, something useful for recommendation systems.
+**Structural and Embedding Tasks**: These models transform data into a more useful form, e.g. autoencoders that compress data whilst keeping the important parts, and embeddings, e.g. turning words and images into vectors, so that similar things are close together in digital space, something useful for recommendation systems.
 
+**Scene Understanding Tasks**: These models can generate nodes and labelled arcs between them that describe a scene. Related techniques include message passing (Graph Neural Networks), relational transformers allowing objects to attend to every other object, and language priors for models that generate language-based descriptions of images or video.
 
 ## Some useful terms:
 
