@@ -24,7 +24,7 @@ A 3D model of the face has a set of vertices that delineate triangular patches. 
 
 ## Staged Transfer Learning
 
-Transfer learning is a technique that adapts a model trained for one task to a related task. This reduces the training effort compared with training a model for the second task from scratch. This approach essentially freezes the model parameters for lower layers whilst applying gradient descent to update the parameters for the other layers. 
+Transfer learning is a technique that adapts a model trained for one task for use in a related task. This reduces the training effort compared with training a model for the second task from scratch. This approach essentially freezes the model parameters for lower layers whilst applying gradient descent to update the parameters for the other layers. 
 
 **Stage 1**: Learn image processing basics, e.g. using a classification task that learns to distinguish objects from the background.
 
