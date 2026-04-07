@@ -58,7 +58,7 @@ Neural networks can be taxonomized in terms of the tasks they are designed to pe
 
 **Localization and Spatial Tasks**: These models are often used in computer vision, e.g. _object detection_ to place bounding boxes around each of the faces in a crowd, _semantic segmentation_ to label each pixel in an image, e.g. grass, road, car, sign, building, sky etc., and _instance segmentation_ to distinguish between individual objects of a given type, e.g. Sheep1, Sheep2, Dog1, etc.
 
-**Generative and Sequential Tasks**: These models can use prompts to generate text, images and music etc. Sequence to sequence models are often used to translate from say English to French. The models can involve autoregressive generation for sequences, transformers and diffusion algorithms that progressively turn noise into images.
+**Generative and Sequential Tasks**: These models can use prompts to generate text, images and music etc. Sequence to sequence models are often used to translate from say English to French. The models can involve autoregressive generation for sequences, along with transformers and diffusion algorithms that progressively turn noise into images.
 
 **Predictive and Regression Tasks**: These models output continuous numerical values, e.g. estimating the market value of a house, and various forms of time-series forecasting, as well as estimating counts, e.g. the number of people in a crowd.
 
