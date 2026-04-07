@@ -66,7 +66,7 @@ Neural networks can be taxonomized in terms of the tasks they are designed to pe
 
 **Scene Understanding Tasks**: These models describe images or video, either in terms of nodes and labelled arcs between them, or with natural language when given language priors. Related techniques include message passing with graph neural networks, and relational transformers that allow objects to attend to every other object.
 
-**Model Predictive Control Tasks**: These can be used to compute how to fulfill a given intent and execute it, using sensory feedback to adjust the trajectory for driving actuators. The models can be trained using deep reinforcement learning, and may use *world models* to  mentally practice the motion before putting it into practice.
+**Model Predictive Control Tasks**: These can be used to compute how to fulfill a given intent and execute it, optionally using sensory feedback to adjust the trajectory for driving actuators. The models can be trained using deep reinforcement learning, and may use *world models* to  mentally practice the motion before putting it into practice.
 
 ## Some useful terms:
 
