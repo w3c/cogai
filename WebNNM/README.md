@@ -64,7 +64,7 @@ Neural networks can be taxonomized in terms of the tasks they are designed to pe
 
 **Structural and Embedding Tasks**: These models transform data into a more useful form, e.g. autoencoders that compress data whilst keeping the important parts, and embeddings, e.g. turning words and images into vectors, so that similar things are close together in digital space, something useful for recommendation systems.
 
-**Scene Understanding Tasks**: These models describe images or video, either in terms of nodes and labelled arcs between them, or with natural language when given language priors. Related techniques include message passing with graph neural networks, and relational transformers that allow objects to attend to every other object.
+**Scene Understanding Tasks**: These models describe, e.g. images or video, either in terms of nodes and labelled arcs between them, or with natural language when given language priors. Related techniques include message passing with graph neural networks, and relational transformers that allow objects to attend to every other object.
 
 **Model Predictive Control Tasks**: These can be used to compute how to fulfill a given intent and execute it, optionally using sensory feedback to adjust the trajectory for driving actuators. The models can be trained using deep reinforcement learning, and may use *world models* to  mentally practice the motion before putting it into practice.
 
