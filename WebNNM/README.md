@@ -68,7 +68,17 @@ Neural networks can be taxonomized in terms of the tasks they are designed to pe
 
 **Model Predictive Control Tasks**: These can be used to compute how to fulfill a given intent and execute it, optionally using sensory feedback to adjust the trajectory for driving actuators. The models can be trained using deep reinforcement learning, and may use *world models* to  mentally practice the motion before putting it into practice, like a cat that pauses whilst assessing the risk before making a big jump.
 
-## Some useful terms:
+## Different Kinds of Neural Memory
+
+Artificial neural  networks have a variety of different memory mechanisms. Here are just a few of them: The model parameters (weights and biases) are an intrinsic form of memory that are set when the model is trained. Recurrrent neural networks (e.g. LSTM and GRU) have gated memories that allows the network to decide what information to keep and what to discard on each cycle.
+
+Attention based memory uses Transformers to attend to anything in the context window. Retrieval augmented generation searches external sources and pulls relevant information into the context window. The relevance may be determined using vector-based similarity to the query, where each entry in the database is stored with a vector index as a form of embedding.
+
+Associative memories function as a cache with saliency values that are boosted when a memory is selected, and otherwise decay over time. The stronger the salience, the more likely a particular memory will be retrieved compared to others. For language models, associative memory allow the model to keep track of salient information over a long time period without the need for a long (and expensive) context window.
+
+Another class of memory is based upon manifolds, which can be thought of as surfaces in high dimensional spaces. Instead of the idea of memory as a static address, memory can be modelled as dips and valleys in the surface. The classic version of manifold memory is the continuous attractor neural network (CANN). Recent research has shown the value of updating model weights on fast and slow timescales to better handle noise and drift.
+
+## Some Useful Terms:
 
 **Model:** The complete network architecture, including its layers and learned parameters, designed to perform a specific task, e.g., classification.
 
