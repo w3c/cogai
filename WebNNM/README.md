@@ -134,4 +134,4 @@ Another class of memory is based upon manifolds, which can be thought of as loca
 
 **Sequence**: This a structured ordering of data points, such as words in a sentence or daily stock prices, used to help a model capture temporal dependencies and context, where the meaning of an element depends on what came before it. The WebNNM model syntax omits the sequence length, which is given by the inference context for inference, and by the dataset for testing and training. Note that for multimodal models, each modality will have its own sequence length, e.g. one for audio and another for video. 
 
-
+**Recurrent Neural Networks**: These are models that deal with sequences. To allow efficient use of AI hardware, recurrent neural networks are usually unrolled for a given sequence length, where each stage corresponds to one element in the sequence. WebNN provides direct support for LSTM and GRU variants of recurrent neural networks, but you are free to design your own variant using lower-level operators.
