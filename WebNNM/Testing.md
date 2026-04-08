@@ -12,80 +12,11 @@ For an operator like `add`, the first operand $x$ is the output from the previou
 
 $$\frac{\partial L}{\partial b} = \sum_{\text{broadcasted axes}} \frac{\partial L}{\partial y}$$
 
-We can test the WebNNM `AddNode` implementation by randomly initialising $x$ and $b$, and using $x-\epsilon$ for the first sample $x+\epsilon$ for the second, where $\epsilon$ is small. The test graph computes the output $y$ and the analytic gradient $g$ from $x$ and $b$. The results can be used to measure the actual gradient for comparison with the gradient computed using the WebNN sub-graph provided by `AddNode.backprop`.
+To test the library's implementation of `backprop` we need to measure the gradient for a small change to each parameter value. For this first try adding $\epsilon$ and then try with subtracting $\epsilon$, looping over the tensor size, where $\epsilon$ is a small number e.g. 0.0001.
 
-```javascript
-async function computeAddGradientWithBatching() {
-    // 1. Initialize WebNN context and builder
-    const context = await navigator.ml.createContext();
-    const builder = new MLGraphBuilder(context);
+The `matmul` operator is similar, except its second operand is the weights matrix $w$. This requires a feature shape like `[2]` or `[3]`. We can then arrange for the weights to have a shape like `[2,3]`, which protects against symmetry blindness.
 
-    // 2. Define shapes and parameters
-    const batchSize = 2;
-    const featureSize = 1; // Keeping it to 1 feature for simplicity
-    const epsilon = 1e-4;
-
-    const xShape = [batchSize, featureSize];
-    const bShape = [featureSize]; // Will be broadcasted
-
-    // 3. Build the graph: y = x + b
-    const xOperand = builder.input('x', { dataType: 'float32', shape: xShape });
-    const bOperand = builder.input('b', { dataType: 'float32', shape: bShape });
-    const yOperand = builder.add(xOperand, bOperand);
-
-    const graph = await builder.build({ y: yOperand });
-
-    // 4. Prepare the test data
-    const xBase = 5.0; // The value of x we are evaluating the gradient at
-    const bValue = 2.0;
-
-    // Batch 0: x + epsilon
-    // Batch 1: x - epsilon
-    const xData = new Float32Array([
-        xBase + epsilon, 
-        xBase - epsilon  
-    ]);
-    const bData = new Float32Array([bValue]);
-    const yData = new Float32Array(batchSize * featureSize);
-
-    // 5. Create tensors and dispatch
-    const xTensor = await context.createTensor({ dataType: 'float32', shape: xShape, writable: true });
-    const bTensor = await context.createTensor({ dataType: 'float32', shape: bShape, writable: true });
-    const yTensor = await context.createTensor({ dataType: 'float32', shape: xShape, readable: true });
-
-    context.writeTensor(xTensor, xData);
-    context.writeTensor(bTensor, bData);
-
-    await context.dispatch(graph, { 'x': xTensor, 'b': bTensor }, { 'y': yTensor });
-
-    // 6. Read back the results
-    await context.readTensor(yTensor, yData);
-
-    // 7. Calculate Output and Gradients
-    const yPlus = yData[0];
-    const yMinus = yData[1];
-
-    // The actual output at xBase is the average of the perturbed outputs
-    // (or you could just compute it analytically as xBase + bValue)
-    const output = (yPlus + yMinus) / 2;
-
-    // Finite difference gradient approximation: (f(x+h) - f(x-h)) / 2h
-    const gradX = (yPlus - yMinus) / (2 * epsilon);
-
-    console.log(`Base Input (x): ${xBase}`);
-    console.log(`Bias (b): ${bValue}`);
-    console.log(`Outputs: [y_plus: ${yPlus.toFixed(5)}, y_minus: ${yMinus.toFixed(5)}]`);
-    console.log(`Calculated Output (y): ${output.toFixed(5)}`);
-    console.log(`Measured Gradient (dy/dx): ${gradX.toFixed(5)}`); 
-    
-    // For the add operator, the analytical gradient is 1.0
-    // So gradX should be extremely close to 1.0
-}
-
-computeAddGradientWithBatching();
-```
-
-The `matmul` operator is similar, except its second operand is the weights matrix $w$. We can therefore generalise the above code to build the graph for a generic operator given its operands and options, using random initialisation for the operands. The rest of the code remains the same.  We then need to utilise WebNNM to extend the graph to also compute and output the analytic gradient for comparison with the measured gradient.
+We can then generalise the  code to build the graph for a generic operator given its operands and options, using random initialisation for the operands. The rest of the code remains the same.  We then need to utilise WebNNM to extend the graph to also compute and output the analytic gradient for comparison with the measured gradient for each element in the model parameter.
 
 Some WebNN operators, e.g. `softmax` have only one operand. The test metadata thus needs to specify the number of operands and their shapes as well as any options to apply. Additional attributes include whether the operator preserves the shape of its first operand, and whether it supports broadcasting for its second operand.  We also need the shape of the output so we can test the `resolveForward` and `resolveBackward` methods.
 
