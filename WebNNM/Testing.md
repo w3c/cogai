@@ -14,7 +14,7 @@ $$\frac{\partial L}{\partial b} = \sum_{\text{broadcasted axes}} \frac{\partial 
 
 We can test the WebNNM `AddNode` implementation by randomly initialising $x$ and $b$, and using $x-\epsilon$ for the first sample $x+\epsilon$ for the second, where $\epsilon$ is small. The test graph computes the output $y$ and the analytic gradient $g$ from $x$ and $b$. The results can be used to measure the actual gradient for comparison with the gradient computed using the WebNN sub-graph provided by `AddNode.backprop`.
 
-```
+```javascript
 async function computeAddGradientWithBatching() {
     // 1. Initialize WebNN context and builder
     const context = await navigator.ml.createContext();
