@@ -76,7 +76,7 @@ async function computeAddGradientWithBatching() {
     console.log(`Bias (b): ${bValue}`);
     console.log(`Outputs: [y_plus: ${yPlus.toFixed(5)}, y_minus: ${yMinus.toFixed(5)}]`);
     console.log(`Calculated Output (y): ${output.toFixed(5)}`);
-    console.log(`Numerical Gradient (dy/dx): ${gradX.toFixed(5)}`); 
+    console.log(`Measured Gradient (dy/dx): ${gradX.toFixed(5)}`); 
     
     // For the add operator, the analytical gradient is 1.0
     // So gradX should be extremely close to 1.0
@@ -85,5 +85,5 @@ async function computeAddGradientWithBatching() {
 computeAddGradientWithBatching();
 ```
 
-The `matmul` operator is similar, except its second operand is the weights matrix $w$. We can therefore generalise the above code to build the graph for a generic operator given its operands and options. The rest of the code remains the same.  We then need to utilise WebNNM to extend the graph compute and output the analytic gradient.
+The `matmul` operator is similar, except its second operand is the weights matrix $w$. We can therefore generalise the above code to build the graph for a generic operator given its operands and options. The rest of the code remains the same.  We then need to utilise WebNNM to extend the graph to also compute and output the analytic gradient for comparison with the measured gradient.
 
