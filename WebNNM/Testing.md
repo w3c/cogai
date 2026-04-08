@@ -12,9 +12,9 @@ For an operator like `add`, the first operand $x$ is the output from the previou
 
 $$\frac{\partial L}{\partial b} = \sum_{\text{broadcasted axes}} \frac{\partial L}{\partial y}$$
 
-To test the library's implementation of `backprop` we need to measure the gradient for a small change to each parameter value. For this first try after adding $\epsilon$ and then try after subtracting $\epsilon$, looping over the tensor size, where $\epsilon$ is a small number e.g. 0.0001.
+To test the library's implementation of `backprop` we need to measure the gradient for a small change to each parameter value. For this first try after adding $\epsilon$ and then try after subtracting $\epsilon$, looping over the parameter's tensor size, where $\epsilon$ is a small number e.g. 0.0001.
 
-The `matmul` operator is similar, except its second operand is the weights matrix $w$. This requires a feature shape like `[2]` or `[3]`. We can then arrange for the weights to have a shape like `[2,3]`, which protects against symmetry blindness.
+The `matmul` operator is similar to `add`, except its second operand is the weights matrix $w$. This requires a feature shape like `[2]` or `[3]`. We can then arrange for the weights to have a shape like `[2,3]`, which protects against symmetry blindness.
 
 We can then generalise the  code to build the graph for a generic operator given its operands and options, using random initialisation for the operands. The rest of the code remains the same.  We then need to utilise WebNNM to extend the graph to also compute and output the analytic gradient for comparison with the measured gradient for each element in the model parameter.
 
