@@ -87,3 +87,5 @@ computeAddGradientWithBatching();
 
 The `matmul` operator is similar, except its second operand is the weights matrix $w$. We can therefore generalise the above code to build the graph for a generic operator given its operands and options, using random initialisation for the operands. The rest of the code remains the same.  We then need to utilise WebNNM to extend the graph to also compute and output the analytic gradient for comparison with the measured gradient.
 
+Some WebNN operators, e.g. `softmax` have only one operand. The test metadata thus needs to specify the number of operands and their shapes as well as any options to apply. Additional attributes include whether the operator preserves the shape of its first operand, and whether it supports broadcasting for its second operand.  We also need the shape of the output so we can test the `resolveForward` and `resolveBackward` methods.
+
