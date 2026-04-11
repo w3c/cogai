@@ -44,6 +44,14 @@ The best learning rate schedule depends on the optimizer algorithm. To keep thin
 |Snapshot Timing|Wait for low LR tail|Anytime val_loss drops|Anytime val_loss drops|
 |WebNN Logic|Update lr tensor every epoch|Update lr tensor at "Steps"|Update lr tensor every epoch|
 
+Developers will often want to apply transfer learning to fine tune a pretrained model or to adapt it to a new purpose. WebNNM seeks to make this easy for newcomers whilst giving experts all the control they need. The library computes a depth metric based upon the path length from any DAG node to any input node, and likewise to any output node. Newcomer and intermediate developers set their preferences via the _hyperparameters_ passed to training. Experts can override that by setting learning rate multipliers as layer options. For multimodal models you might have a much longer pipeline for video than audio. The depth metric therefore avoids cross attention to remain within a given modality.
+
+|User Level|Interaction|Underlying Metric|
+|----------|-----------|-----------------|
+|**Newcomer**|_I want to do transfer learning_|**Normalized Path Ratio** (Hidden)|
+|**Intermediate**|_Freeze the first 50% of the model_|**Plasticity Slider** (Using Path Ratio)|
+|**Expert**|_Set this specific block or layer to use this LR multiplier_|**Explicit Overrides** (Bypassing Path Ratio)|
+
 Support for saving and loading binary files with the model and parameters is in development and will be integrated shortly. We also expect to develop supplementary libraries for importing models in other formats, e.g. ONNX and Hugging Face. These libraries will be usable with NodeJS as well as with web pages. One challenge is the potential for decompiling lower level models, such as those using ONNX, to higher level easier to understand models expressed in WebNNM. We also plan work on exporting models to the MLIR format for training models on powerful AI hardware in the cloud in conjunction with the XLA compiler, see the <a href="https://openxla.org">OpenXLA project</a>.
 
 Further out, we hope to apply WebNNM to multimodal models for video and audio as a basis for acccessible virtual worlds, where the phone or laptop's camera and microphone are used to capture the user's facial expressions and project them onto the user's avatar, along with speech to text support for intent-based accessibility, since everyone should be able to choose how they interact with applications according to their personal preferences and capabilities. One person may be happy with a games controller, whilst others may prefer to use their voice to convey higher level intents. Other work is planned on moving beyond back propagation to support continual learning and short term memory, inspired by human cognition.
