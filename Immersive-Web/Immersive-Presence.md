@@ -42,3 +42,19 @@ This maps hierarchical intents to movements, e.g. running, walking, turning, ges
 
 The development strategy is similar to that for facial expressions, using an encoder that maps the video frames to latent representations and a decoder that does the reverse, incorporating 3D modelling for the human body, and a perceptual loss function that compares the predicted video frames with the actual frames. It uses a generic 3D model for the body, and outputs parameters and texture maps, that are used to render to a 2D projection. Clothing crumples as the limbs move, necessitating dynamic texture maps. The models can be trained using a similar staged transfer learning process. This will only work for basic intents due to the paucity of training data for higher level intents. That gap can be filled using symbolic approaches, e.g. based upon Chunks & Rules.
 
+## Further Considerations
+
+The frame rates for rendering 3D models in Web browsers dynamically depend on the computational load and the speed of the device the browser is running on. This requires a flexible approach to modelling how facial gestures and body pose change over time.  Conventional recurrent neural networks assume a fixed time interval, making them unsuitable. The solution is to instead use *liquid neural networks* (LNNs) which use numerical approximations to differential equations for smooth functions over time. Liquid neural networks can be combined with spatial models for the mesh used to skin an avatar along with the bones that form its skeleton.
+
+The *analysis by synthesis* approach requires a differentiable loss function. Traditional graphics pipelines (e.g. WebGPU) are not differentiable, because deciding if a pixel is inside or outside a triangle is a hard, discrete step. The work around is to replace the step function by a smooth differentiable function (akin to the difference between the *sign* and *softsign* functions). The forward chain then looks like:
+
+1. **AI model output**: quaternions (continuous, differentiable)
+2. **Linear Blend Skinning**: multiplication and addition (differentiable)
+3. **Camera Projection**: matrix multiplication (differentiable)
+4. **Soft Rasterization**: each pixel is assigned a probability being in a given triangle (differentiable)
+5. **Loss Calculation**: from comparing predicted and expected images for a given point in time (differentiable)
+
+The approach requires the AI model to mask out the background. The loss function needs to allow for mis-alignment during training, and may consider the silhouette, semantic features and textures. As such it will make sense to use a weighted sum over functions that pay attention to different aspects as part of a staged transfer learning process.
+
+Training is computationally expensive, and will need to be carried out in the cloud with powerful AI accelerators.  WebNNM can be used to export models to the StableHLO MLIR dialect with that in mind.
+
