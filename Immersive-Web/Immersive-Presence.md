@@ -53,7 +53,7 @@ The *analysis by synthesis* approach requires a differentiable loss function. Tr
 1. **AI model output**: quaternions (continuous, differentiable)
 2. **Linear Blend Skinning**: multiplication and addition (differentiable)
 3. **Camera Projection**: matrix multiplication (differentiable)
-4. **Soft Rasterization**: each pixel is assigned a probability being in a given triangle (differentiable)
+4. **Soft Rasterization**: each pixel is assigned a probability for being in a given triangle (differentiable)
 5. **Loss Calculation**: from comparing predicted and expected images for a given point in time (differentiable)
 
 The approach requires the AI model to mask out the background. The loss function needs to allow for mis-alignment during training, and may consider the silhouette, semantic features and textures. As such it will make sense to use a weighted sum over functions that pay attention to different aspects as part of a staged transfer learning process.
