@@ -30,7 +30,7 @@ Transfer learning is a technique that adapts a model trained for one task for us
 
 **Stage 2**: Learn a generic latent space for all human faces via training a generic 3D model for all human faces with neutral expressions. This model outputs the face parameters and texture maps for each individual based upon a large dataset of images of people's heads in different poses. The dataset says which images are for the same person. A refinement is to dynamically generate texture maps as this can capture complex effects like skin wrinkling and blood flow (blushing) that a static texture can't.
 
-**Stage 3**: Learn model parameters for vertex/normal deltas and temporal weights for smoothly changing facial expressions across a large population of users, using priors that encourage distinct basis shapes as latent representations. This doesn't need labels for facial expressions.
+**Stage 3**: Learn model parameters for vertex/normal deltas and temporal weights for smoothly changing facial expressions across a large population of users, using priors that encourage distinct basis shapes as latent representations. This doesn't need labels for facial expressions, although that could be useful in circumstances where it isn't practical to use a camera to image the user's face.
 
 **Stage 4**: Personalize the model to each user, discovering their characteristic mannerisms.
 
