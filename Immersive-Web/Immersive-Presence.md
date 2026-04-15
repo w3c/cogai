@@ -46,7 +46,7 @@ The development strategy is similar to that for facial expressions, using an enc
 
 The frame rates for rendering 3D models in Web browsers dynamically depend on the computational load and the speed of the device the browser is running on. This requires a flexible approach to modelling how facial gestures and body pose change over time.  Conventional recurrent neural networks assume a fixed time interval, making them unsuitable. The solution is to instead use *liquid neural networks* (LNNs) which use numerical approximations to differential equations for smooth functions over time. Liquid neural networks can be combined with spatial models for the mesh used to skin an avatar along with the bones that form its skeleton.
 
-The *analysis by synthesis* approach requires a differentiable loss function. Traditional graphics pipelines (e.g. WebGPU) are not differentiable, because deciding if a pixel is inside or outside a triangle is a hard, discrete step. The work around is to replace the step function by a smooth differentiable function (akin to the difference between the *sign* and *softsign* functions). The forward chain then looks like:
+The *analysis by synthesis* approach requires a differentiable loss function. Traditional graphics pipelines (e.g. WebGPU) are not differentiable, because deciding if a pixel is inside or outside a triangle is a hard, discrete step. The work around is to replace the step function by a smooth differentiable function (akin to the difference between the *sign* and *softsign* functions). The forward chain in the training graph then looks like:
 
 1. **AI model output**: quaternions (continuous, differentiable)
 2. **Linear Blend Skinning**: multiplication and addition (differentiable)
