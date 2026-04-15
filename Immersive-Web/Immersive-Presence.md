@@ -50,7 +50,7 @@ The *analysis by synthesis* approach requires a differentiable loss function. Tr
 
 The approach requires the AI model to mask out the background. The loss function needs to allow for mis-alignment during training, and may consider the silhouette, semantic features and textures. As such it will make sense to use a weighted sum over functions that pay attention to different aspects as part of a staged transfer learning process.
 
-Training is computationally expensive, and will need to be carried out in the cloud with powerful AI accelerators.  WebNNM can be used to export models to the StableHLO MLIR dialect with that in mind.
+Training is computationally expensive, and will need to be carried out in the cloud with powerful AI accelerators.  WebNNM can be used to export models to the StableHLO MLIR dialect with that in mind. Soft rasterization can be implemented using a headless setup with compute shaders, for instance, using the [nvdiffrast](https://nvlabs.github.io/nvdiffrast/) PyTorch library that targets CUDA kernels.
 
 ## Intent-Based Behaviours
 
