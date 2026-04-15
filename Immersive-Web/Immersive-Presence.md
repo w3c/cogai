@@ -36,15 +36,7 @@ Transfer learning is a technique that adapts a model trained for one task for us
 
 Each stage freezes the model parameters that are carried forward from the previous model and adds new layers for additional capabilities. The first three stages require considerable computational effort and can be done in the cloud on powerful AI hardware using existing datasets. The last stage utilizes MAML (Model-Agnostic Meta-Learning) to learn a new user's characteristics very quickly in the browser as a background task on data captured from the browser. The data is divided into training and evaluation subsets for limited rounds of gradient descent with aggressive freezing of most parameters to speed learning.
 
-## Intent-Based Behaviours
-
-This maps hierarchical intents to movements, e.g. running, walking, turning, gesturing, picking things up, etc. inspired by the human cortico-cerebellar circuit. The model is learned from a weakly labelled dataset of videos. Autoregressive training is used to learn a basis set of movements, e.g. how a human-like avatar's skeleton moves when walking. This basis set is associated with intents from the labels. This generates bone positions for a sequence of key frames, leaving WebGPU to interpolate between frames. Note that this requires a means to map intents to tensors that can be used to condition the model.
-
-The development strategy is similar to that for facial expressions, using an encoder that maps the video frames to latent representations and a decoder that does the reverse, incorporating 3D modelling for the human body, and a perceptual loss function that compares the predicted video frames with the actual frames. It uses a generic 3D model for the body, and outputs parameters and texture maps, that are used to render to a 2D projection. Clothing crumples as the limbs move, necessitating dynamic texture maps. The models can be trained using a similar staged transfer learning process. This will only work for basic intents due to the paucity of training data for higher level intents. That gap can be filled using symbolic approaches, e.g. based upon Chunks & Rules, together with Agentic-AI (LLMs) for high-level reasoning that takes place on a longer time scale.
-
-Clients are responsible for modelling physics for the resources they own. This includes collision detection so that your avatar doesn't walk through solid walls or other avatars. WebGPU compute shaders can be used to speed calculations, e.g. tracking the distance of the avatar from the wall and signalling this to the AI model so that it stops in time. A hierarchy of intents will allow your avatar to plan actions, e.g. to walk from one room to another, in terms of lower level intents that the local AI model can deal with, including signalling when higher level reasoning is required. The intents are mapped into tensors, e.g. a 128-dimensional embedding for text-based commands, and fixed-range vectors for continuous inputs.
-
-## Further Considerations
+## Further Considerations for Training
 
 The frame rates for rendering 3D models in Web browsers dynamically depend on the computational load and the speed of the device the browser is running on. This requires a flexible approach to modelling how facial gestures and body pose change over time.  Conventional recurrent neural networks assume a fixed time interval, making them unsuitable. The solution is to instead use *liquid neural networks* (LNNs) which use numerical approximations to differential equations for smooth functions over time. Liquid neural networks can be combined with spatial models for the mesh used to skin an avatar along with the bones that form its skeleton.
 
@@ -59,4 +51,25 @@ The *analysis by synthesis* approach requires a differentiable loss function. Tr
 The approach requires the AI model to mask out the background. The loss function needs to allow for mis-alignment during training, and may consider the silhouette, semantic features and textures. As such it will make sense to use a weighted sum over functions that pay attention to different aspects as part of a staged transfer learning process.
 
 Training is computationally expensive, and will need to be carried out in the cloud with powerful AI accelerators.  WebNNM can be used to export models to the StableHLO MLIR dialect with that in mind.
+
+## Intent-Based Behaviours
+
+This maps hierarchical intents to movements, e.g. running, walking, turning, gesturing, picking things up, etc. inspired by the human cortico-cerebellar circuit. The model is learned from a weakly labelled dataset of videos. Autoregressive training is used to learn a basis set of movements, e.g. how a human-like avatar's skeleton moves when walking. This basis set is associated with intents from the labels. This generates bone positions for a sequence of key frames, leaving WebGPU to interpolate between frames. Note that this requires a means to map intents to tensors that can be used to condition the model.
+
+The development strategy is similar to that for facial expressions, using an encoder that maps the video frames to latent representations and a decoder that does the reverse, incorporating 3D modelling for the human body, and a perceptual loss function that compares the predicted video frames with the actual frames. It uses a generic 3D model for the body, and outputs parameters and texture maps, that are used to render to a 2D projection. Clothing crumples as the limbs move, necessitating dynamic texture maps. The models can be trained using a similar staged transfer learning process. This will only work for basic intents due to the paucity of training data for higher level intents. That gap can be filled using symbolic approaches, e.g. based upon Chunks & Rules, together with Agentic-AI (LLMs) for high-level reasoning that takes place on a longer time scale.
+
+### Physics
+
+Clients are responsible for modelling physics for the resources they own. This includes collision detection so that your avatar doesn't walk through solid walls or other avatars. WebGPU compute shaders can be used to speed calculations, e.g. tracking the distance of the avatar from the wall and signalling this to the AI model so that it stops in time. A hierarchy of intents will allow your avatar to plan actions, e.g. to walk from one room to another, in terms of lower level intents that the local AI model can deal with, including signalling when higher level reasoning is required. The intents are mapped into tensors, e.g. a 128-dimensional embedding for text-based commands, and fixed-range vectors for continuous inputs.
+
+### Interaction Loop
+
+The avatars use a hierarchical AI structure: The LLN handles the "muscle memory", e.g. walking, balancing, obstacle avoidance. Higher level behaviour handles the "logic". If the avatar is walking forward but a wall is in the way, it will slow down and signal "I am stuck". The high-level AI then takes over to decide what to do, e.g. planning a new route. The LLN has a multi-stream input including:
+
+* **Intent**: Instead of a discrete command like "Move to (X,Y)," this is a high-frequency stream. If the user is using a joystick, the LNN sees the acceleration of the stick, allowing it to translate a sudden jerk into a panicked stumble or a sharp turn.
+* **Avatar State** (proprioception): This includes current joint angles, velocity, and "momentum." The LNN uses this to ensure that if a "Stop" intent arrives while the avatar is sprinting, the model calculates the necessary deceleration steps (the "slide") automatically.
+* **Proximity/Collision Warnings**: This is akin to "whiskers". allowing the LNN to perceive the distance to nearby objects, and treat an incoming collision as a "repulsive force" in its movement equations, allowing the avatar to naturally veer away from a wall.
+* **Time**: the time the LLN uses to compute its outputs. This can be supplemented by a scaling factor that speeds up or slows down time.
+
+The LLN output updates the avatar's state, including its position and rate of change. It can also signal when a smooth solution can't be found, as a way to request higher level cognition. This happens when the LLN's prediction for the next state deviates significantly from sensory information on the actual state, and conveys contextual information in the form of a high dimensional vector. Note that if the intent passed to the LLN changes, the LLN seeks a smooth transition rather than an unnatural abrupt change.
 
