@@ -48,7 +48,7 @@ The *analysis by synthesis* approach requires a differentiable loss function. Tr
 4. **Soft Rasterization**: each pixel is assigned a probability for being in a given triangle (differentiable)
 5. **Loss Calculation**: from comparing predicted and expected images for a given point in time (differentiable)
 
-Fuzzy triangles can be replaced by fuzzy volumes (Gaussian Splats). These are convenient for inferring 3D models from 2D images, and inherently differentiable. A hybrid approach combines Gaussian Splats with surface normals and materials to model the effects of lighting, and could be further extended to map splats back to textured triangles if textured low-polygon count models render significantly faster than models using splats.
+Fuzzy triangles can be replaced by fuzzy volumes (Gaussian Splats, see [demo](https://www.w3.org/2026/splat/)). These are convenient for inferring 3D models from 2D images, and inherently differentiable. A hybrid approach combines Gaussian Splats with surface normals and materials to model the effects of lighting, and could be further extended to map splats back to textured triangles if textured low-polygon count models render significantly faster than models using splats.
 
 The approach to training requires the AI model to mask out the background. The loss function needs to allow for mis-alignment during training, and may consider the silhouette, semantic features and textures. As such it will make sense to use a weighted sum over functions that pay attention to different aspects as part of a staged transfer learning process. 
 
