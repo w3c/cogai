@@ -71,7 +71,7 @@ The avatars use a hierarchical AI structure: The LLN handles the "muscle memory"
 * **Intent**: Instead of a discrete command like "Move to (X,Y)," this is a high-frequency stream. If the user is using a joystick, the LNN sees the acceleration of the stick, allowing it to translate a sudden jerk into a panicked stumble or a sharp turn.
 * **Avatar State** (proprioception): This includes current joint angles, velocity, and "momentum." The LNN uses this to ensure that if a "Stop" intent arrives while the avatar is sprinting, the model calculates the necessary deceleration steps (the "slide") automatically.
 * **Proximity/Collision Warnings**: This is akin to "whiskers", allowing the LNN to perceive the distance to nearby objects, and treat an incoming collision as a "repulsive force" in its movement equations, allowing the avatar to naturally veer away from a wall.
-* **Time**: the time the LLN uses to compute its outputs. This can be supplemented by a scaling factor that speeds up or slows down time.
+* **Time**: the moment in time used by the LLN to compute the outputs. This can be supplemented by a scaling factor that speeds up or slows down time.
 
 The LLN output updates the avatar's state, including its position and rate of change. It can also signal when a smooth solution can't be found, as a way to request higher level cognition. This happens when the LLN's prediction for the next state deviates significantly from sensory information on the actual state, and conveys contextual information in the form of a high dimensional vector. Note that if the intent passed to the LLN changes, the LLN seeks a smooth transition rather than an unnatural abrupt change.
 
