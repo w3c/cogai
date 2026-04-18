@@ -75,3 +75,11 @@ The avatars use a hierarchical AI structure: The LLN handles the "muscle memory"
 
 The LLN output updates the avatar's state, including its position and rate of change. It can also signal when a smooth solution can't be found, as a way to request higher level cognition. This happens when the LLN's prediction for the next state deviates significantly from sensory information on the actual state, and conveys contextual information in the form of a high dimensional vector. Note that if the intent passed to the LLN changes, the LLN seeks a smooth transition rather than an unnatural abrupt change.
 
+### Scaling
+
+To realise the potential for rendering 3D scenes with millions of splats, considerable care is needed to streamline the workload for CPU and GPU and avoid the communication between them becoming a bottleneck. One technique is to use the space the virtual camera can see (the frustum) and the bounding volume hierarchy (BVH) to limit rendering for the splats within each view tile, where the viewing area is split into a set of overlapping tiles.
+
+For each tile, compute shaders can be used to search the BVH for the splats and to then sort them back to front for rendering using a staged process informed by the scene composition. A further task for the GPU is to apply the bone positions and velocities to update the skin for the current time. The position of one bone may depend on the position of another as joints are actuated. Ideally, the GPU can be used to process many avatars and their bones in parallel.
+
+The CPU meanwhile deals with user interaction and using WebNN to run a liquid neural network to compute the bone positions and velocities for transmission to WebGPU and the server for streaming to other clients. The CPU is also needed to coordinate the physics modelling and high-level reasoning needed for avatars to behave realistically. Whilst quantized large language models can run at the edge, it may be better to run agentic AI in the cloud, leaving the device CPU, GPU and NPU free to work on low latency interaction.
+
