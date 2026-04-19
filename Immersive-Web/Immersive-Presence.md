@@ -85,4 +85,4 @@ The CPU meanwhile deals with user interaction and using WebNN to run a liquid ne
 
 The CPU is also needed to coordinate physics modelling and high-level reasoning needed for avatars to behave realistically. Whilst quantized large language models can run at the edge, it may be better to run agentic AI in the cloud, leaving the device CPU, GPU and NPU free to work on low latency interaction.
 
-
+For level of detail control and low-end devices, the number of splats can be reduced and their size increased to compensate. A complication is that an avatar may be close to one client's avatar and far away from another's. Streaming a set of blats for a sequence of scales is one possibility. Another is to use the GPU to decimate each avatar's blats, in a stage inserted between frustum culling and sorting, based upon the avatar's distance. For low-end devices, the server could handle this to reduce the load on such clients. 
