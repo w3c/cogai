@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Web Neural Network Models (WebNNM)</title>
+  <script async class="remove" src="https://www.w3.org/Tools/respec/respec-w3c"></script>
+  <script class="remove">
+    var respecConfig = {
+      shortName: "webnnm",
+      specStatus: "CG-DRAFT",
+      noRecTrack: true,
+      edDraftURI: "https://w3c.github.io/cogai/webnnm/",
+      editors:  [
+        {
+          name: "Dave Raggett",
+          company: "W3C",
+          companyURL: "https://www.w3.org/",
+          w3cid: "2682"
+        }
+      ],
+      group: "cogai",
+      github: {
+        repoURL: "https://github.com/w3c/cogai/",
+        branch: "master"
+      },
+      localBiblio: {
+        "WEBNNM-INTRO": {
+          title: "Introduction to WebNNM",
+          href: "https://github.com/w3c/cogai/blob/master/WebNNM/README.md",
+          authors: [
+            "Dave Raggett"
+          ]
+        },
+        "WEBNN": {
+          title: "Web Neural Network API",
+          href: "https://www.w3.org/TR/webnn/",
+          authors: [
+             "Web Machine Learning Working Group"
+          ]
+        }
+      }
+    };
+  </script>
+  <style>
+    .railroad {
+      margin-top: 1em;
+      margin-bottom: 2em;
+    }
+  </style>
+</head>
+<body>
+  <section id="abstract">
+    <p>Existing neural network frameworks are huge and hard to use. WebNNM is a lightweight easy to understand high-level framework that  simplifies working with neural networks for newcomers whilst offering experts fine grained control. This specification defines a high-level format for neural network models, and the API exposed by the associated JavaScript library. For an introduction and links to web-based demos, see [[WEBNNM-INTRO]].</p>
+  </section>
+
+  <section id="sotd">
+    <p>This document reflects implementation experience, but is still subject to change. Feedback is welcome through <a href="https://github.com/w3c/cogai/issues">GitHub issues</a> or on the <a href="mailto:public-cogai@w3.org">public-cogai@w3.org</a> mailing-list (with <a href="https://lists.w3.org/Archives/Public/public-cogai/">public archives</a>).</p>
+  </section>
+
+  <section class="informative">
+    <h2>Introduction</h2>
+    <p>This specification introduces a simple notation and API for inference, testing and training neural networks models in Web browsers using [[WebNN]] for hardware acceleration. The intent is to make developing and using neural networks easy for newcomers, whilst offering experts fine grained control.</p>
+
+    <p>WebNNM makes it easy to define neural network models in terms of blocks and layers. This includes the means to define layers as a composition of other layers, and to repeat layers using a sequence of tensor shapes. The WebNNM library is a JavaScript module that offers a simple API for declaring models, loading models from previously saved snapshots, and using them for inference, testing and training in conjunction with a JavaScript module for handling datasets.</p>
+  </section>
+
+  <section id="conformance">
+    <p>The grammatical rules in this document are to be interpreted as described in [[[RFC5234]]] [[RFC5234]].</p>
+    <section>
+      <h3>Conformance classes</h3>
+      <p>Conformance to this specification is defined for five conformance classes:</p>
+      <dl>
+        <dt><dfn>WebNNM model</dfn></dt>
+        <dd>A serialization of a [=neural network model=] as a file. A [=WebNNM document=] is conformant to this specification if it follows the grammar described in <a href="#webnnm-grammar"></a>.</dd>
+        <dt><dfn>WebNNM snapshot</dfn></dt>
+        <dd>A serialization of a model and its parameters as a binary file. A [=WebNNM snapshot=] is conformant to this specification if it follows the format described in <a href="#webnnm-snapshot"></a>.</dd>
+        <dt><dfn>WebNNM authoring tool</dfn></dt>
+        <dd>An application that writes a [=WebNNM document=]. An [=authoring tool=] is conformant to this specification if it writes a conforming [=WebNNM document=].</dd>
+        <dt><dfn>WebNNM parser</dfn></dt>
+        <dd>A [=parser=] transforms a [=WebNNM document=] into another representation. A [=parser=] is conformant to this specification if it accepts any conforming [=WebNNM document=].</dd>
+        <dt><dfn>WebNNM Library</dfn></dt>
+        <dd>A software library that exposes the [=WebNNM API=] conforming to this specification.</dd>
+      </dl>
+    </section>
+  </section>
+
+  <section>
+    <h2>Blocks and Layers</h2>
+    <p>WebNNM models are defined as a set of blocks, where each block has a set of properties, including a sequence of layers.</p>
+    
+    <aside class="example" title="WebNNM model">
+      <p>Here is an example with a <em>model</em> block that declares an input and an output, along with a sequence of dense layers. These are in turn defined by the <em>dense</em> block as a sequence of layers that multiply the input by a matrix, add a bias and apply an activation.</p>
+<pre class="chk"><code>mode:name basic-model;
+model:input shape=[784];
+model:output shape=[10];
+model:layers 
+    dense(shapes=[[128],[80],[40]], activation=relu),
+    dense(shape=[10], activation=softmax);
+dense:layers
+    matmul(w),
+    add(b),
+    activation();
+</code></pre>
+    </aside>
+
+    <p>Each layer has an operator, e.g. <em>matmul</em>, and zero or more operands followed by zero or more options. In this example, <em>shapes, shape</em> and <em>activation</em> are options. The <em>shapes</em> option signifies that a layer is to be repeated using the corresponding tensors shapes. In this case, a dense layer with output shape [128], a second with shape [80] and a third with shape [40].  WebNNM uses macros to bind options and their values. This is used to bind the activation to "relu" or "softmax". <em>w</em> and <em>b</em> are operands used to name model parameters. Note that the tensor shapes are declared without the dimensions for the batch size or sequence length, which are bound later. You are free to declare the data types if needed. The default data type is <code>float32</code>, subject to type inference. WebNNM applies tensor data type and shape inference, removing the need to explicitly specify the shape for every layer.</p>
+    
+    <p>The permitted datatypes are taken from [[WebNN]]: <code>float32</code>, <code>float16</code>, <code>int32</code>, <code>uint32</code>, <code>int8</code>, <code>uint8</code>, <code>int4</code>, and <code>uint4</code> (in order of decreasing precision). Note that [[WebNN]] places further restrictions on which data types can be used for certain operators. In addition, [[WebNN]] uses <code>int32</code> for the size of each dimension, limiting it a maximum of 2147483648.</p>
+    
+    <p>WebNNM applies inference from the inputs and outputs. Automatic data type casts are applied when needed from a lower to a higher precision, e.g. <code>float16</code> to <code>float32</code>, but not from a higher to a lower precision. Note that type casting is applied lazily from the inputs to the outputs, i.e. preserving the lower precision until a cast to a higher precision is required. If you need greater control, you can provide explicit data types on the layers of interest.</p>
+    
+    <p>Block input and output properties are expressed as the block name, followed by a colon then "input" or "output" respectively. This is followed by an optional data type and then a required shape, e.g. <code>model:input float16 shape=[784]</code>. Block properties are terminated with a semicolon. Layers are comma separated. The block <em>name</em> property is used when saving a snapshot.</p>
+  </section>
+
+  <section>
+    <h2>Directed Acyclic Graphs</h2>
+    <p>WebNNM parses to an object model for blocks and layers, and from there to a  directed acyclic graph (DAG) with node types for inputs, outputs, parameters, literals and WebNN operations. Each node has an explicit data type and tensor shape. Nodes that are not on a path from an input node to an output node are culled, excluding parameters and literals. Higher level operations are decomposed into WebNN operations as part of the process of building the DAG. Parameter nodes are annotated with attributes relating to how their tensors should be initialised based upon the activation function, for instance the <em>Glorot</em> or <em>He</em> algorithms, as well as good initial values for bias parameters.</p>
+    <p>The DAG is used to build executable WebNN graphs on demand for inference, testing and training. For testing, the dataset provides a sequence of batches of test data where the last batch may be smaller than the rest. The testing graph uses masking to ignore the missing data in the last batch.  Training is similar. The training graph starts with a forward pass to compute the loss, then a backwards pass to compute the gradient of the loss with respect to each model parameter. This is followed by an optimizer that computes updates for the model parameters along with their momentum. A ping/pong approach is used to retain parameter values in the GPU or NPU's memory until training is complete. Further details are given in the next section.</p>
+  </section>
+  
+  <section>
+    <h2>WebNNM Application Programming Interface</h2>
+    <p>This section describes the API for inference, testing and training, along with the API used for datasets.</p>
+    
+    <aside class="example" title="WebNNM setup">
+      <p>Here is an example that declares a model and then tests it using a simple dataset.</p>
+<pre class="chk"><code>import {NNModel} from "../webnnm.js"; // import WebNNM library
+import * as Iris from "./datasets/iris-dataset.js"; // import an example dataset
+    
+window.addEventListener("load", async () => { 
+    let dataset = await Iris.Dataset.create('./datasets/iris-dataset.csv');
+
+    const source = `
+        model:name test-model;
+        model:loss categoricalCrossEntropy;
+        model:input shape=[4];
+        model:output shape=[3];
+        model:layers 
+            dense(shape=[3], activation=relu),
+            dense(shape=[3], activation=softmax);
+        dense:layers
+            matmul(w),
+            add(b),
+            activation();
+	`;
+
+    const config = {
+        source: source,  // or set url property to load from server
+        dataset: dataset,
+    };
+
+    const model = await NNModel.create(config);
+    
+    await model.test(); // evaluate using dataset cited in config
+});</code></pre>
+    </aside>
+
+    <p>The example starts with importing the WebNNM module and a dataset module. The application logic is called when the web page has finished loading. Note that the <em>load</em> event handler is marked as <code>async</code>, which is essential for subsequent use of <code>await</code> within the handler. The handler creates an instance of the dataset and declares the WebNNM model. These are passed to the <code>NNModel.create()</code> to create an instance of the model and bind it to the dataset. Finally, the application calls <code>model.test()</code> to apply the test subset of data provided by the dataset. Note that the WebNNM library calls the <code>log</code> function to log messages. This function defaults to <code>console.log</code>, but can be overridden by the application to log messages to the web page.</p>
+        
+    <section>
+      <h2>Inference</h2>
+      <p>This section describes the API for inference.</p>
+      
+    <aside class="example" title="WebNNM inference">
+      <p>Here is an example that declares a model and and runs it.</p>
+<pre class="chk"><code>import {NNModel} from "../webnnm.js";
+
+window.addEventListener("load", async () => { 
+
+    const source = `
+        model:name test-model;
+        model:input int32 shape=[5];
+        model:output float32 shape=[5];
+        model:layers
+            add(1, dataType=float16), 
+            pow(2);
+	`;
+
+    const config = {
+        source: source,  // or set url property to load from server
+    };
+
+    const model = await NNModel.create(config);
+
+    // get a fresh inference context with default batch size of 1
+    const context = await model.createContext();
+    
+    // initialise model input to 1
+    let input = await context.setData([1, 2, 3, 4, 5]);
+    
+    // run model with the inference context
+    await model.run(context);
+    
+    const output = await context.output();
+        
+    log(``);
+    log(`input = ${model.view(input)}`);
+    log(`output = ${model.view(output)}`);
+});</code></pre>
+    </aside>
+        
+    <p>The example starts with <code>int32</code> for the input tensor and progressively casts it to <code>float16</code> and finally to <code>float32</code> for the output tensor. Note the use of numeric literals for operands for the <code>add</code> and <code>pow</code> operations.</p>
+
+    <p>The application calls <code>model.createContext()</code> to create a context object for inference. This object is used to initialise the input tensor before calling <code>model.run(context)</code> to create and execute the inference graph. <code>context.output()</code> is then used to retrieve the output tensor. Note the use of <code>model.view()</code> as a convenience function for logging tensors.</p>
+    
+    <p>Context object methods:</p>
+    <dl>
+    <dt><code>setBatchSize(batchSize)</code></dt> <dd>Set the inference batch size, default = 1.</dd>
+    <dt><code>async input(name)</code></dt> <dd>Get the named input, defaults to first input.</dd>
+    <dt><code>async output(name)</code></dt> <dd>Get the named output, defaults to first output.</dd>
+    <dt><code>async randomize(blockName, lower, upper)</code></dt> <dd>Initialise input with named block to random numbers between <em>lower</em> and <em>upper</em>. If the block name is missing, it will initialise the first input. Default is -1 for lower and +1 for upper.</dd>
+    <dt><code>setData(blockName, data)</code></dt> <dd>Set input for named block from an array of numbers. If the block name is missing, it will initialise the first input. The data must be an array of numbers with the number items equal to the tensor size.</dd>
+    </dl>
+    </section>
+    <section>
+      <h2>Testing</h2>
+      <p>This section describes the API for testing.</p>
+      
+    <aside class="example" title="WebNNM testing">
+      <p>Here is an example that declares a model and and run the test data on it.</p>
+<pre class="chk"><code>import {NNModel} from "../webnnm.js"; // import WebNNM library
+import * as Iris from "./datasets/iris-dataset.js"; // import an example dataset
+    
+window.addEventListener("load", async () => { 
+    let dataset = await Iris.Dataset.create('./datasets/iris-dataset.csv');
+
+    const source = `
+        model:name test-model;
+        model:loss categoricalCrossEntropy;
+        model:input shape=[4];
+        model:output shape=[3];
+        model:layers 
+            dense(shape=[3], activation=relu),
+            dense(shape=[3], activation=softmax);
+        dense:layers
+            matmul(w),
+            add(b),
+            activation();
+	`;
+
+    const config = {
+        source: source,  // or set url property to load from server
+        dataset: dataset,
+    };
+
+    const model = await NNModel.create(config);
+    
+    await model.test(); // evaluate using dataset cited in config
+});</code></pre>
+    </aside>
+
+      <dl>
+      <dt><code>model.test()</code></dt> <dd>runs the testing graph on the testing subset of the dataset.</dd>
+      </dl>
+    </section>
+    <section>
+      <h2>Training</h2>
+      <p>This section describes the API for training.</p>
+
+    <aside class="example" title="WebNNM training">
+      <p>Here is an example that declares a model and and trains it on the training data.</p>
+<pre class="chk"><code>import {NNModel} from "../webnnm.js"; // import WebNNM library
+import * as Iris from "./datasets/iris-dataset.js"; // import an example dataset
+    
+window.addEventListener("load", async () => { 
+    let dataset = await Iris.Dataset.create('./datasets/iris-dataset.csv', {});
+
+    const source = `
+        model:name test-model;
+        model:loss categoricalCrossEntropy;
+        model:input shape=[4];
+        model:output shape=[3];
+        model:layers 
+            dense(shape=[3], activation=relu),
+            dense(shape=[3], activation=softmax);
+        dense:layers
+            matmul(w),
+            add(b),
+            activation();
+	`;
+
+    const config = {
+        source: source,  // or set url property to load from server
+        dataset: dataset,
+    };
+
+    const model = await NNModel.create(config);
+    
+    // training using training subset of data
+    await model.train({
+        epochs: 5000,
+        optimizer: 'rlion',
+        seeds: 50,
+    });
+    
+    await model.test(); // independent assessment using testing subset of data
+});</code></pre>
+    </aside>
+    
+      <p>Training is similar to testing, but requires a set of training options:</p>
+
+      <dl>
+      <dt><code>model.train(options)</code></dt> <dd>runs the training graph on the training subset of the dataset.</dd>
+      </dl>
+      
+      <p>The options is an object with the following optional properties.</p>
+      
+      <dl>
+      <dt>epochs</dt> <dd>the maximum number of epochs to train, default = 20</dd>
+      <dt>lr</dt> <dd>the maximum learning rate, note the default depends on the choice of optimizer</dd>
+      <dt>warmupEpochs</dt> <dd>for cosine annealing, use 0 to auto-calculate based on total epochs</dd>
+      <dt>seeds</dt> <dd>the number of seeds to scout to evaluate potential starting points for training</dd>
+      <dt>patience</dt> <dd>the maximum number of epochs to continue after minium loss</dd>
+      <dt>lossWeights</dt> <dd>to weight outputs when computing the epoch loss</dd>
+      <dt>optimizer</dt> <dd>name of the learning rate optimizer: 'lion', 'rlion', 'nesterov', or 'sgdm', default = 'rlion'</dd>
+      <dt>weightDecay</dt> <dd>an attribute for learning optimizers</dd>
+      <dt>momentumFactor</dt> <dd>an attribute for the sgdm optimizer</dd>
+      <dt>beta1</dt> <dd>an attribute for the lion and rlion optimizers</dd>
+      <dt>beta2</dt> <dd>an attribute for the rlion optimizer</dd>
+      <dt>freeze</dt> <dd>what proportion of the layers to freeze for transfer learning (0.0 to 1.0)</dd>
+      <dt>scaling</dt> <dd>'auto', 'on' or 'off' for gradient scaling</dd>
+      <dt>clipping</dt> <dd>'auto', 'on' or 'off' for gradient clipping</dd>
+      <dt>scale</dt> <dd>initial gradient scaling factor, default = 1000</dd>
+      <dt>growthInterval</dt> <dd>number of batches before increasing scale factor</dd>
+      </dl>
+      
+      <p>The model parameters are validated after each epoch if the dataset provides a validation subset. The testing subset is run when training completes. On detecting a minima in the loss, the model weights are saved, and training continues for a given number of epochs. The training loss is reported every 50 epochs.</p>
+      
+      <p>WebNNM supports a choice of learning rate optimizer. The choices all involve tracking the gradient and its momentum for each of the model parameters:</p> 
+      
+      <dl>
+      <dt>EvoLved Sign Momentum (lion)</dt> <dd>A memory-efficient stochastic gradient descent method discovered by Google. Unlike Adam, which tracks both first and second-order moments, Lion only tracks momentum. It uses the sign operator on the momentum to determine the update direction, allowing for a smaller memory footprint and often better performance at large batch sizes.</dd>
+      <dt>Refined Lion (rlion)</dt> <dd>Improves upon the original Lion optimizer by replacing the discrete sign function with a continuous, non-linear bounded function, yielding more stable updates. WebNNM uses <code>softsign</code> in place of <code>arctan</code>, which isn't supported by WebNN.</dd>
+      <dt>Nesterov Accelerated Gradient (nesterov)</dt> <dd>An advanced momentum-based optimizer that improves upon standard gradient descent by incorporating a "look-ahead" mechanism. Instead of calculating the gradient at the current parameter position, it computes the gradient at the position where the parameters will be after applying the current momentum velocity. This anticipation allows the algorithm to correct its course more effectively, leading to faster convergence and reduced oscillations.</dd>
+      <dt>Stochastic Gradient Descent with Momentum (sgdm)</dt> <dd>A popular optimization algorithm that enhances standard Stochastic Gradient Descent (SGD) by adding a momentum term. This term accumulates an exponential moving average of past gradients to accelerate convergence, help navigate narrow valleys, and avoid getting stuck in shallow local minima.</dd>
+      </dl>
+    <section>
+      <h3>Cosine Annealing</h3>
+      <p>WebNNM manages training in terms of a warm up phase in which the learning rate is gradually increased to the maximum learning rate. After that the learning rate is gradually reduced using cosine annealing to a very low value when reaching the maximum number of epochs. The default value for <code>warmupEpochs</code> is 5% of the maximum number of epochs, or 1, whichever is larger.</p>
+    </section>
+    <section>
+      <h3>Multimodal Models</h3>
+      <p>For multimodal models with multiple outputs, WebNNM allows you to define weights for combining the losses for each output. This allows you to boost a given modality when it is dominated by another as a means to prevent vanishing gradients. <code>lossWeights</code> is a list of the numerical weights, which should add up to 1.0.</p>
+    </section>
+    <section>
+      <h3>Transfer Learning</h3>
+      <p>WebNNM supports transfer learning by allowing you to freeze parameter updates for the early layers of the network. This is based upon annotating each node in the DAG with the maximum number of nodes to reach an input node, and likewise to reach an output node. The <code>freeze</code> hyperparameter is a number in the range 0 to 1, defaulting to 0. Parameters associated with nodes closer to the outputs are updated with a fraction that goes from 0 to 1 in a sinusoidal pattern (in range 0 to pi/2). This range is discretised into 5 buckets to enable kernel optimization.</p>
+    </section>
+    <section>
+      <h3>Training Stability</h3>
+      <p>Training involves computing gradients that risk vanishing or exploding. For models with many layers it is good practice to introduce skip connections that bypass a few layers that would otherwise overly weaken the learning signals. It is common to use <code>float32</code> whilst training to provide an adequate precision for gradients. However, the hardware accelerators in consumer grade equipment may not support <code>float32</code>, motivating the use of a lower precision, e.g. <code>float16</code>. This increases the risk of underflow and overflow during gradient calculations. Another consideration is that whilst GPUs can be used for hardware acceleration of neural networks, they consume considerably more electrical power than NPUs like Apple's ANE. To speed up training in the browser and reduce power consumption, it is desirable to find ways to increase training stability when using <code>float16</code>.</p>
+      
+      <p>To address this challenge, WebNNM supports techniques to boost weak gradients and ignore updates that overflow the maximum number supported for a given precision. The <code>scaling</code> hyperparameter is 'auto', 'on' or 'off' to control gradient scaling. The <code>clipping</code> hyperparameter is 'auto', 'on' or 'off' to control overflow detection. Use <code>scale</code> to set the initial gradient scaling factor. The scale is gradually boosted until overflow is detected at which point it is reduced. The <code>growthInterval</code> hyperparameter sets the number of batches without clipping to wait before boosting the scale factor. The forward and backward passes may use <code>float16</code> for speed, but it is better to keep the model parameters in <code>float32</code>, and likewise to cast from <code>float16</code> to <code>float32</code> for operations like <code>softmax</code> and <code>batchnorm</code>. WebNNM will do this for you unless you explicitly set the data types in the model.</p>
+    </section>
+    </section>
+    <section>
+      <h2>Datasets</h2>
+      <p>This section describes the API for datasets.</p>
+      
+    </section>
+    <section>
+      <h2>WebNNM Snapshot File Format</h2>
+      <p>This section describes the binary file format for model snapshots.</p>
+      
+      <ul>
+      
+    </section>
+  </section>  
+  
+  <section id="index" class="appendix">
+  </section>
+</body>
+</html>
