@@ -5,13 +5,39 @@ const NN_READABLE = 1;  // used for model outputs
 const NN_WRITABLE = 2; // used for model inputs
 const NN_READ_WRITE = (NN_READABLE | NN_WRITABLE);
 
+// testing harness interface
+export class NNTest {
+    constructor (webnn) {
+        this.webnn = webnn;
+    }
+    
+    static async create (config) {
+        // Check for WebNN API support
+        if (!navigator.ml) {
+            log("Error: WebNN API is not supported in this browser.");
+            return;
+        }
+        
+        try {
+            const webnn = await navigator.ml.createContext(config);
+            return new NNTest(webnn);
+        } catch (e) {
+            log("failed to acquire WebNN context");
+        }
+    }
+    
+    // create a DAG node for a given operator type
+    makeNode (type, name, inputs, attributes={}) {
+        return createNode(type, name, inputs, attributes);
+    }
+}
+
 export class NNModel {
     #webnn;
     #config;
     #engine;
     #dataset;
     #datasetToModel = {}; // maps names of inputs and outputs
-    #graphCache = {}; // cache of prepared models
 
     constructor (webnn, config = {}) {
         this.#webnn = webnn;
@@ -80,6 +106,17 @@ export class NNModel {
                 
                     log('Neural network graph in execution order:');
                     log(model.dag.serialize() + '\n');   
+                    
+                    // for debugging
+                    const numGroups = 2;
+                    log(`\nDAG Parameter path ratios:`);
+                    model.dag.executionList.forEach(node => {
+                        if (node.type === 'param') {
+                            log(`  ${node.name}: max dist to input ${node.maxDistToInput}` +
+                                `, max dist to output ${node.maxDistToOutput}` +
+                                `, path ratio = ${(node.maxDistToInput/(node.maxDistToInput+node.maxDistToOutput)).toFixed(3)}`);
+                        }
+                    });
                 }
             } else if (config.url) {
                 const response = await fetch(url);
@@ -466,7 +503,7 @@ export class NNModel {
             }
             
             const deadRatio = await this.readScalar(outputs['metric:deadRatio']);
-            const gradRatio = await this.readScalar(outputs['metric:deadRatio']);
+            const gradRatio = await this.readScalar(outputs['metric:gradRatio']);
             const metrics = {losses:losses, deadRatio:deadRatio, gradRatio:gradRatio};
         
             // Calculate a "Health Score" (Higher is better)
@@ -503,36 +540,112 @@ export class NNModel {
     // Run WebNN training graph on dataset passed on start up
     // Batched testing where last batch is usually smaller
     // Allows for models with multiple inputs and outputs
-    async train (hyperparams) {
+    async train (hyperParams) {
         const model = this;
         const dataset = model.#dataset;
         const subset = dataset.subsetRole.TRAINING;
         const webnn = model.#webnn;
         const inputBanks = new Array(2);
         const outputBanks = new Array(2);
+        const algorithm = (hyperParams.optimizer ?? 'rlion').toLowerCase();
         
         // report average loss per sample after every batch and each epoch
         let averageLosses = {};
         let numberOfSamples = 0;
+        let bestLoss = Infinity;  // validation loss if applicable
+        let bestEpoch = 0;
         
         // default hyper parameters
         const defaults = {
-            lr: 0.001,
-            beta1: 0.9,
-            weightDecay: 0.01,
-            epochs: 20,
-            scoutSeeds: 100
+            epochs: 20,            // maximum number of epochs
+            seeds: 100,            // number of seed initialisations to scout
+            patience: 500,         // max number of epochs to continue after minium
+            warmupEpochs: 0,       // 0 to auto-calculate based on total epochs
+            lossWeights: {},       // to weight outputs when computing epochLoss
+            scaling: 'auto',       // else 'on' or 'off' for gradients
+            clipping: 'auto',      // else 'on' or 'off' for global norm
+            scale: 1000,           // initial gradient scaling factor
+            growthInterval: 1000,  // number of batches before increasing scale
         }
         
-        hyperparams = { ...defaults, ...hyperparams }; // user values override defaults
+        // set default loss weights for each output
+        for (const key in model.dag.outputs) {
+            const name = key.split(':')[0];
+            defaults.lossWeights[name] = 1.0;
+        }
         
-        const epochs = hyperparams.epochs;
+        // now set optimiser specific defaults
+        switch (algorithm) {
+            case 'lion':
+                defaults.lr = 0.0001, defaults.beta1 = 0.9, defaults.weightDecay = 0.01;
+                break;
+            case 'rlion':
+                defaults.lr = 0.0005, defaults.beta1 = 0.9, defaults.beta2 = 0.99,
+                defaults.alpha = 10.0, defaults.weightDecay = 0.01;
+                break;
+            case 'nesterov':
+                defaults.lr = 0.01, defaults.mu = 0.9, defaults.weightDecay = 0.0001;
+                break;
+            case 'sgdm':
+                defaults.lr = 0.001, defaults.momentumFactor = 0.9, defaults.weightDecay = 0.0001
+                break;
+            default: {
+                const message = `Unsupported training optimizer: '${algorithm}'\n` +
+                `Available algorithms are: 'lyon', 'rlion', 'sgdm', 'nesterov'`;
+                throw new Error(message);
+            }
+        }
+        
+        hyperParams = { ...defaults, ...hyperParams }; // user values override defaults
+        
+        const epochs = hyperParams.epochs;
         const validationSize = dataset.subsetSize(dataset.subsetRole.VALIDATION);
+        let patience = hyperParams.patience;
         
+        // --- Synchronization for CPU/GPU Pipelining ---
+        
+        // Track whether each bankIndex is currently free to be written to.
+        // Both bankIndexs start as 'true' so the first two iterations resolve immediately.
+        const bankIndexReady = [true, true]; 
+        
+        // Track pending Promise resolvers if the CPU is waiting for a bankIndex.
+        const bankIndexResolvers = [null, null];
+
+        // Pause CPU until requested bankIndex (0 or 1) is ready for input
+        function isReadyForInput(bankIndex) {
+            if (bankIndexReady[bankIndex]) {
+                // The bankIndex is free (e.g., first loop iteration, or GPU finished early).
+                // Mark it as busy and resolve immediately.
+                bankIndexReady[bankIndex] = false;
+                return Promise.resolve();
+            }
+            
+            // bankIndex is still busy, so return a promise and store its resolver
+            // so that setReadyForInput can call it later.
+            return new Promise(resolve => {
+                bankIndexResolvers[bankIndex] = resolve;
+            });
+        }
+
+        // Called when NPU/GPU no longer needs this bankIndex (0 or 1)
+        function setReadyForInput(bankIndex) {
+            if (bankIndexResolvers[bankIndex]) {
+                // The CPU was already waiting for this bankIndex. 
+                // Resolve the stored promise to unblock the CPU loop.
+                const resolve = bankIndexResolvers[bankIndex];
+                bankIndexResolvers[bankIndex] = null; // Clear the resolver
+                resolve();
+            } else {
+                // The GPU finished before the CPU even asked for this bankIndex again.
+                // Simply mark it as ready for the future.
+                bankIndexReady[bankIndex] = true;
+            }
+        }
+                
         // Pass the dataset and the number of seeds to test.
-        if (hyperparams.scoutSeeds > 0) {
-            log(`\nScouting for best initialization (testing ${hyperparams.scoutSeeds} seeds)...`);
-            await model.scout(dataset, hyperparams.scoutSeeds);
+        if (hyperParams.seeds > 0) {
+            log(`\nScouting for best initialization from ${hyperParams.seeds} seeds`);
+            await model.scout(dataset, hyperParams.seeds);
         }
     
         // prepare evaluation epoch as iterator over batches
@@ -540,12 +653,17 @@ export class NNModel {
         const batchCount = dataset.getNumBatches(subset);
         const batchSize = dataset.getBatchSize(); // fixed for all batches
         const trainingSampleCount = dataset.subsetSize(subset);
-        const graph = await model.#engine.trainingGraph(batchSize, hyperparams);
+        const graph = await model.#engine.trainingGraph(batchSize, hyperParams);
 
-        log(`\nTraining against ${dataset.name()} dataset: ${trainingSampleCount} training samples,`)
+        // Calculate Steps for the LR Schedule ---
+        const totalSteps = epochs * batchCount;
+        const warmupEpochs = hyperParams.warmupEpochs || Math.max(1, Math.floor(epochs * 0.05));
+        const warmupSteps = warmupEpochs * batchCount;
+
+        log(`\nTraining against ${dataset.name()} dataset: ${trainingSampleCount} training samples for ${epochs} epochs`);
         log(`showing average loss per sample:`);
 
-        let bank = 0; // used to switch banks on odd/even batches
+        let bankIndex = 0; // used to switch bankIndexs on odd/even batches
         inputBanks[0] = {}; inputBanks[1] = {};
         outputBanks[0] = {}; outputBanks[1] = {};
         
@@ -571,31 +689,31 @@ export class NNModel {
             const DataType = NNModel.ML_TYPE_MAP(dataType);
             webnn.writeTensor(tensor, new DataType(size));
         }
-        
+                
         // create input tensors for model inputs (aka features)
-        // add these to both input banks
+        // add these to both input bankIndexs
         for (const key in model.dag.inputs) {
             const node = model.dag.inputs[key];
             const descriptor = node.descriptor(batchSize);
-            const tensor = await webnn.createTensor(descriptor);
-            inputBanks[0][node.name] = inputBanks[1][node.name] = tensor;
+            inputBanks[0][node.name] = await webnn.createTensor(descriptor);
+            inputBanks[1][node.name] = await webnn.createTensor(descriptor);
         }
         
         // prepare input tensors for expected outputs
-        // prepare output tensors for batch losses, add to banks
+        // prepare output tensors for batch losses, add to bankIndexs
         for (const key in model.dag.outputs) {
             const node = model.dag.outputs[key];
-            const expectedDescriptor = node.descriptor(batchSize);
-            const lossDescriptor = {...expectedDescriptor}; // an output
-            lossDescriptor.shape = []; // make it a scalar
-            expectedDescriptor.readable = false; // make it an input
-            expectedDescriptor.writable = true;
+            const expectedDesc = node.descriptor(batchSize);
+            const lossDesc = {...expectedDesc}; // an output
+            lossDesc.shape = []; // make it a scalar
+            expectedDesc.readable = false; // make it an input
+            expectedDesc.writable = true;
             let name = prefix(key) + ':expected';
-            let tensor = await webnn.createTensor(lossDescriptor);
-            inputBanks[0][name] =  inputBanks[1][name] = tensor;
+            inputBanks[0][name] = await webnn.createTensor(expectedDesc);
+            inputBanks[1][name] = await webnn.createTensor(expectedDesc);
             name = prefix(key) + ':loss';
-            tensor = await webnn.createTensor(expectedDescriptor);
-            outputBanks[0][name] =  outputBanks[1][name] = tensor;
+            outputBanks[0][name] = await webnn.createTensor(lossDesc);
+            outputBanks[1][name] = await webnn.createTensor(lossDesc);
         }
         
         // prepare read/write tensors for params+momentum 
@@ -610,24 +728,55 @@ export class NNModel {
         }  
         
         // assign tensor for the actual number of samples in each batch
-        const descriptor = {dataType: 'int32', shape: [], readable: false,  writable: true};
-        const tensor = await webnn.createTensor(descriptor);
-        inputBanks[0]['validCount'] = inputBanks[1]['validCount'] = tensor;
-            
+        const validDesc = {dataType: 'int32', shape: [], readable: false,  writable: true};
+        inputBanks[0]['validCount'] = await webnn.createTensor(validDesc);
+        inputBanks[1]['validCount'] = await webnn.createTensor(validDesc);
+        
+        // assign tensor for learning rate - will be dynamically managed
+        const lrDesc = {dataType: 'float32', shape: [], readable: false,  writable: true};
+        inputBanks[0]['lr'] = await webnn.createTensor(lrDesc);
+        inputBanks[1]['lr'] = await webnn.createTensor(lrDesc);;
+        
+        // dummy output tensor used to determine when training graph has been executed
+        const syncDesc = {dataType: 'float32', shape: [], readable: true,  writable: false};
+        outputBanks[0]['sync'] = await webnn.createTensor(syncDesc);
+        outputBanks[1]['sync'] = await webnn.createTensor(syncDesc);
+        
         // iterate through training epochs
-        for (let epoch = 1; epoch <= epochs; ++ epoch) {
+        for (let epoch = 1; epoch <= epochs && --patience > 0; ++ epoch) {
             let averageLosses = {};
-            let numberOfSamples = 0;
+            let epochSamples = 0;
+            let epochLoss = 0;
 
             // iterate through batches for this epoch
-            for (let i = 0; i < batchCount; ++i) {
-                bank = i&1;
+            for (let batchIndex = 0; batchIndex < batchCount; ++batchIndex) {
+                bankIndex = batchIndex & 1;
 
                 const batch = dataset.getNextBatch(subset, model);// last batch has zeros for missing samples
                 const validCount = batch.validCount; // actual number of samples
                 
-                const inputs = inputBanks[bank];
-                const outputs = outputBanks[bank];
+                const inputs = inputBanks[bankIndex];
+                const outputs = outputBanks[bankIndex];
+                
+                // Returns a promise that resolved by bankIndexNowReadyForInput(bankIndex)
+                // Note: this resolves immediately on the first call
+                await isReadyForInput(bankIndex);
+                
+                // Calculate scheduled LR for this specific step
+                const currentStep = (epoch - 1) * batchCount + batchIndex + 1;
+                let currentLR;
+                
+                if (currentStep <= warmupSteps) {
+                    // Phase 1: Linear Warmup (from 0 to max_lr)
+                    currentLR = hyperParams.lr * (currentStep / warmupSteps);
+                } else {
+                    // Phase 2: Cosine Annealing (from max_lr down to ~0)
+                    const progress = (currentStep - warmupSteps) / (totalSteps - warmupSteps);
+                    currentLR = hyperParams.lr * 0.5 * (1 + Math.cos(Math.PI * progress));
+                }
+                
+                // write learning rate
+                webnn.writeTensor(inputs['lr'], new Float32Array([currentLR]));
                 
                 // write the valid count
                 webnn.writeTensor(inputs['validCount'], new Int32Array([validCount]));
@@ -675,52 +824,97 @@ export class NNModel {
                     webnn.writeTensor(tensor, batch.outputs[blockName].data, inputs);
                 }
 
-                await webnn.dispatch(graph, inputs, outputs);
-                //log(`    processed batch ${i+1}, size ${batchSize}`);
-
-                // readback the batch loss for each model output
-                for (const key in model.dag.outputs) {
-                    const node = model.dag.outputs[key];
-                    const blockName = prefix(key);
-                    const name = blockName + ':loss';
-                    const tensor = outputs[name]
-                    const loss = await webnn.readTensor(tensor);  
-                    const DataType = NNModel.ML_TYPE_MAP(tensor.dataType);
-                    const array = new DataType(loss);
-                            
-                    if (averageLosses[name] === undefined)
-                        averageLosses[name] = validCount * array[0];
-                    else
-                        averageLosses[name] += validCount * array[0];
-                        
-                    //log(`    Batch ${i+1}, bank ${bank}, ${blockName}:loss = ${array[0]}`);
-               }
-            
-                numberOfSamples += validCount;
+                // dispatch returns immediately without a promise!
+                webnn.dispatch(graph, inputs, outputs);
                 
-                if (validationSize > 0)
-                    model.test(dataset.subsetRole.VALIDATION);
-            } 
+                // reading a tensor returns a promise that is
+                // resolved once the graph has been executed
+                // we read 'sync' to implement the 'then' logic
+                
+                webnn.readTensor(outputs['sync']).then(async () => {
+                    //log(`    processed batch ${i+1}, size ${batchSize}`);
+
+                    // readback the batch loss for each model output
+                    for (const key in model.dag.outputs) {
+                        const node = model.dag.outputs[key];
+                        const blockName = prefix(key);
+                        const name = blockName + ':loss';
+                        const tensor = outputs[name];
+                        const loss = await webnn.readTensor(tensor);  
+                        const DataType = NNModel.ML_TYPE_MAP(tensor.dataType);
+                        const array = new DataType(loss);
+                            
+                        if (averageLosses[name] === undefined)
+                            averageLosses[name] = validCount * array[0];
+                        else
+                            averageLosses[name] += validCount * array[0];
+                        
+                        //log(`    Batch ${i+1}, bankIndex ${bankIndex}, ${blockName}:loss = ${array[0]}`);
+                    }
             
-            if (epochs < 100 || epoch % 50 === 0 || epoch === 1) {
-                for (const name in averageLosses) {
-                    const loss = averageLosses[name]
-                    const blockName = name.split(':')[0];
-                    log(`  Epoch ${epoch}, ${blockName}:loss = ${loss/numberOfSamples}`);
-                }
-            }
+                    epochSamples += validCount;
+                
+                    // only on last batch in each epoch
+                    if (batchIndex === batchCount - 1) {
+                        let totalBatchLoss = 0;
+                    
+                        // periodically report progress
+                        if (epochs < 100 || epoch % 50 === 0 || epoch === 1) {
+                            // perform validation pass if applicable
+                            if (validationSize > 0)
+                                model.test(dataset.subsetRole.VALIDATION);
+            
+                            for (const name in averageLosses) {
+                                const lossValue = averageLosses[name]
+                                const blockName = name.split(':')[0];
+                                totalBatchLoss += lossValue * hyperParams.lossWeights[blockName];
+                                if (patience > 0)
+                                    log(`  Epoch ${epoch}, ${blockName}:loss = ${lossValue/epochSamples}`);
+                            }
+                            
+                            epochLoss += (totalBatchLoss * validCount);
+                            
+                            if (epochs >= 100 && epochLoss < bestLoss) {
+                                // read back params
+                                for (const key in model.dag.params) {
+                                    const param = model.dag.params[key];
+                                    const tensor = outputBanks[bankIndex][key]
+                                    param.buffer = await webnn.readTensor(tensor);
+                                }
+                                bestLoss = epochLoss;
+                                bestEpoch = epoch;
+                                patience = hyperParams.patience;
+                            }
+                        }
+                    
+                        if (epoch === epochs) {
+                            if (epochLoss < bestLoss) {
+                                 // read back params after finishing training
+                                for (const key in model.dag.params) {
+                                    const param = model.dag.params[key];
+                                    const tensor = outputBanks[bankIndex][key]
+                                    param.buffer = await webnn.readTensor(tensor);
+                                }
+                                bestEpoch = epoch;
+                            }
+        
+                            log(`best params from epoch ${bestEpoch}`);
+                        }
+                    }
+                    
+                    setReadyForInput(bankIndex);
+                }).catch((error) => {
+                    setReadyForInput(bankIndex);
+                    throw error;
+                });
+            } 
                     
             dataset.prepareBatches(subset); // prepare for next epoch           
         }
         
-        // read back params after finishing training
-        for (const key in model.dag.params) {
-            const param = model.dag.params[key];
-            const tensor = outputBanks[bank][key]
-            param.buffer = await webnn.readTensor(tensor);
-        }
-        
-        log('');      
+        // epoch loop finished
+        if (patience <= 0)
+            log(`best params from epoch ${bestEpoch}`);
     }
  
     // convenience function for displaying typed array
@@ -973,21 +1167,6 @@ class NNEngine {
         return builder.sqrt(sumSq);
     }
 
-    // helper for scoutingGraph to assess parameter space
-    buildDeadNeuronRatio(builder, activations, dataType = 'float32') {
-        // Count values <= 0.0 (for ReLU)
-        const zero = builder.constant(dataType, 0.0);
-        const isDead = builder.lesserOrEqual(activations, zero);
-        const deadFloats = builder.cast(isDead, dataType);
-    
-        const axes = Array.from({ length: activations.shape.length }, (_, i) => i);
-        const deadCount = builder.reduceSum(deadFloats, { axes });
-    
-        // Divide by total number of elements in the activation tensor
-        const totalSize = activations.shape.reduce((a, b) => a * b, 1);
-        return builder.div(deadCount, builder.constant(dataType, totalSize));
-    }
-    
     // helper for monitoring the activation of the deepest hidden layer, i.e.
     // closest to the output, as that is where signal death is most apparent,
     // but note that some graphs may have multiple outputs
@@ -1125,8 +1304,11 @@ class NNEngine {
         const operands = {}; 
         const builderOutput = {}; 
         const gradients = {}; // Initialize gradients object
+        const constantCache = new Map();
         const algorithm = (hyperParams.optimizer ?? 'rlion').toLowerCase();
-                
+            
+        // optimizer defaults are set by model.train()
+        
         const optimizers = {
             'rlion': this.applyRefinedLyon,
             'lion':  this.applyLyon,
@@ -1134,15 +1316,23 @@ class NNEngine {
             'sgdm':  this.applySGDMomentum
         };
 
-        if (!(algorithm in optimizers)) {
-            const message = `Unsupported training optimizer: '${algorithm}'` +
-                `\nAvailable algorithms: ${Object.keys(optimizers).join(', ')}`;
-            throw new Error(message);
-        }
+        const lr = builder.input('lr', { dataType:'float32', shape:[],
+            readable:true, writable:true
+        });
+        
+        builderOutput['sync'] = builder.identity(lr); // crutch for double buffering
 
         const validCount = builder.input('validCount', {
             dataType:'int32', shape:[], readable:true, writable:true,
         });
+
+        // prepare bucket constants for learning rates
+        const bucketValues = [0.0, 0.1, 0.5, 0.9, 1.0];
+        const bucketConstants = bucketValues.map(val => 
+            builder.constant({dataType: 'float32', shape: []}, new Float32Array([val]))
+        );
+        
+        const frozen = hyperParams.freeze !== undefined;
 
         // Forward pass & compute losses/gradients
         for (const node of executionList) {
@@ -1155,23 +1345,47 @@ class NNEngine {
             }
         }
         
-        // Reverse iteration for back propagation
+        // Reverse pass for back propagation
         const context = { builder, batchSize, operands, gradients };
         for (let i = executionList.length; i > 0; --i) {
             const node = executionList[i-1];
             node.backprop(context);
         }
         
-        // Apply Refined Lyon optimiser to compute updates
-        // Loop through this.model.dag.params here and apply Lyon logic
-        // using the gradients[paramName] populated by the reverse loop
+        // Apply selected optimiser algorithm to compute updates
+        // Loop through params using gradients from the reverse pass
         
         // Iterate over all trainable parameters in the model
         for (const paramName in this.model.dag.params) {
             const param = this.model.dag.params[paramName]; // param Node
-            const dataType = param.dataType();
+            const dataType = param.dataType;
             const shape = param.shape();
-
+            let lrm = bucketConstants[bucketValues.length - 1]; // defined as one
+            
+            if (param.lrm !== undefined) {
+                const value = param.lrm;
+                if (typeof value !== 'number' || value <= 0)
+                    throw new Error(`Learning rate multiplier '${value}' for parameter ${param.name} is not a positive number!`);
+                    
+                if (this.constantCache.has(value)) {
+                    lrm = this.constantCache.get(value);
+                } else {
+                    lrm = builder.constant({dataType: 'float32', shape: []}, new Float32Array([param.lrm]));
+                    this.constantCache.set(value, lrm);
+                }
+            } else if (frozen) {
+                // compute path ratio for this param
+                const r = param.maxDistToInput/(param.maxDistToInput + param.maxDistToOutput);
+                const r0 = hyperParams.freeze;
+                const ideal = Math.max(0.0, Math.sin(0.5 * Math.PI * (r - r0) / (1 - r0)));
+            
+                const bucketIndex = bucketValues.reduce((prev, curr, idx) =>
+                    Math.abs(curr - ideal) < Math.abs(bucketValues[prev] - ideal) ? idx : prev, 0
+                );
+            
+                lrm = bucketConstants[bucketIndex];
+            }
+            
             // The backprop loop should have populated gradients[paramName]
             const gradient = gradients[paramName];
             
@@ -1190,8 +1404,8 @@ class NNEngine {
             });
 
             // Compute the updated values
-            const { nextWeight, nextMomentum } = optimizers[algorithm].call(this,
-                builder, currentWeight, gradient, currentMomentum, dataType, hyperParams);
+            const { nextWeight, nextMomentum } = optimizers[algorithm].call(this, builder, 
+                currentWeight, gradient, currentMomentum, lr, lrm, dataType, hyperParams);
 
             // Add them to the graph's output dictionary
             builderOutput[`${paramName}`] = nextWeight;
@@ -1203,13 +1417,12 @@ class NNEngine {
     }
     
     // implements the original Lion optimizer (Evolved Sign Momentum)
-    applyLyon(builder, weight, gradient, momentum, dataType, hyperParams) {
-        const { lr = 0.0001, beta1 = 0.9, weightDecay = 0.01 } = hyperParams;
-
+    applyLyon(builder, weight, gradient, momentum, lr, lrm, dataType, hyperParams) {
+        const { beta1, weightDecay } = hyperParams;
+        
         // Create scalars for the math
         const beta1Op = builder.constant(dataType, beta1);
         const oneMinusBeta1Op = builder.constant(dataType, 1 - beta1);
-        const lrOp = builder.constant(dataType, lr);
         const wdOp = builder.constant(dataType, weightDecay);
 
         // 1. Update Momentum: m_next = beta1 * m + (1 - beta1) * grad
@@ -1227,7 +1440,7 @@ class NNEngine {
         const finalUpdate = builder.add(lyonUpdate, decayTerm);
 
         // 4. Update Weights: w_next = weight - (lr * finalUpdate)
-        const step = builder.mul(lrOp, finalUpdate);
+        const step = builder.mul(builder.mul(lr, lrm), finalUpdate);
         const nextWeight = builder.sub(weight, step);
 
         return { nextWeight, nextMomentum };
@@ -1235,18 +1448,15 @@ class NNEngine {
 
     // Refined Lion using a Softsign as WebNN doesn't support builder.atan()
     // so we instead use f(x) = (alpha * x) / (1 + abs(alpha * x))
-    applyRefinedLyon(builder, weight, gradient, momentum, dataType, hyperParams) {
-        const {
-            lr = 0.0005, beta1 = 0.9, beta2 = 0.99, alpha = 10.0, weightDecay = 0.01 
-        } = hyperParams;
-
+    applyRefinedLyon(builder, weight, gradient, momentum, lr, lrm, dataType, hyperParams) {
+        const { beta1, beta2, alpha, weightDecay } = hyperParams;
+        
         // Constants
         const beta1Op = builder.constant(dataType, beta1);
         const oneMinusBeta1Op = builder.constant(dataType, 1 - beta1);
         const beta2Op = builder.constant(dataType, beta2);
         const oneMinusBeta2Op = builder.constant(dataType, 1 - beta2);
         const alphaOp = builder.constant(dataType, alpha);
-        const lrOp = builder.constant(dataType, lr);
         const wdOp = builder.constant(dataType, weightDecay);
         const oneOp = builder.constant(dataType, 1.0);
 
@@ -1269,7 +1479,7 @@ class NNEngine {
         const totalUpdate = builder.add(refinedUpdate, decayTerm);
 
         // 4. Update Weights: w_t = w_{t-1} - lr * totalUpdate
-        const nextWeight = builder.sub(weight, builder.mul(lrOp, totalUpdate));
+        const nextWeight = builder.sub(weight, builder.mul(builder.mul(lr, lrm), totalUpdate));
 
         // 5. Update Stored Momentum for next step (m_t): beta2 * m_{t-1} + (1 - beta2) * g_t
         const nextMomentum = builder.add(
@@ -1281,11 +1491,10 @@ class NNEngine {
     }
 
     // Nesterov Accelerated Gradient (NAG)
-    applyNesterov(builder, weight, gradient, momentum, dataType, hyperParams) {
-        const { lr = 0.01, mu = 0.9, weightDecay = 0.0001 } = hyperParams;
-
+    applyNesterov(builder, weight, gradient, momentum, lr, lrm, dataType, hyperParams) {
+        const { mu, weightDecay } = hyperParams;
+        
         // Create scalars for the graph operations
-        const lrOp = builder.constant(dataType, lr);
         const muOp = builder.constant(dataType, mu);
         const wdOp = builder.constant(dataType, weightDecay);
 
@@ -1310,18 +1519,17 @@ class NNEngine {
         );
 
         // 4. Update Weights: w_next = w - (lr * nagUpdate)
-        const step = builder.mul(lrOp, nagUpdate);
+        const step = builder.mul(builder.mul(lr, lrm), nagUpdate);
         const nextWeight = builder.sub(weight, step);
 
         return { nextWeight, nextMomentum };
     }
 
     // Stochastic Gradient Descent with Momentum (SGDM)
-    applySGDMomentum(builder, weight, gradient, momentum, dataType, hyperParams) {
-        const { lr = 0.001, momentumFactor = 0.9, weightDecay = 0.0001 } = hyperParams;
-
+    applySGDMomentum(builder, weight, gradient, momentum, lr, lrm, dataType, hyperParams) {
+        const { momentumFactor, weightDecay } = hyperParams;
+        
         // Create constants
-        const lrOp = builder.constant(dataType, lr);
         const muOp = builder.constant(dataType, momentumFactor);
         const wdOp = builder.constant(dataType, weightDecay);
 
@@ -1339,7 +1547,7 @@ class NNEngine {
         );
 
         // 3. Update Weights: w_next = weight - (lr * m_next)
-        const step = builder.mul(lrOp, nextMomentum);
+        const step = builder.mul(builder.mul(lr, lrm), nextMomentum);
         const nextWeight = builder.sub(weight, step);
 
         return { nextWeight, nextMomentum };
@@ -1481,7 +1689,7 @@ class NNContext {
             this.#inputs[name] = tensor;
         }
         
-        const DataType = NNModel.ML_TYPE_MAP(input.dataType());
+        const DataType = NNModel.ML_TYPE_MAP(input.dataType);
         
         // randomize data with min <= value < max
 
@@ -1528,7 +1736,7 @@ class NNContext {
             buffer.fill(data);
             data = buffer;
         } else {
-            const DataType = NNModel.ML_TYPE_MAP(input.dataType());
+            const DataType = NNModel.ML_TYPE_MAP(input.dataType);
             data = new DataType(data);
         }
         
@@ -1632,14 +1840,14 @@ class NNLayer {
 // used for parsing block's input and output properties e.g. "float16 shape=[10,128]"
 class NNTensor {
     constructor (inputString) {
-        const regex = /^(?:(?<dtype>\w+)\s+)?shape\s*=\s*\[(?<shape>[\d,\s]+)\]$/;
+        const regex = /^(?:(?<dataType>\w+)\s+)?shape\s*=\s*\[(?<shape>[\d,\s]+)\]$/;
         const match = inputString.trim().match(regex);
 
         if (!match)
             throw new Error(`Failed to parse tensor: ${inputString}`);
 
-        const { dtype, _, shape } = match.groups;
-        this.dataType = dtype;
+        const { dataType, _, shape } = match.groups;
+        this.dataType = dataType;
         this.shape = shape
             .split(',')
             .map(dim => parseInt(dim.trim(), 10))
@@ -1673,6 +1881,8 @@ class SymbolTable {
 // of thumb for info for initialising weights and biases
 
 class NNTopology {
+    #dirty = true;   // execution list is missing or out of date
+    
     constructor(blocks) {
         this.blocks = blocks; 
         this.nodeHistory = [];
@@ -1709,7 +1919,7 @@ class NNTopology {
 
         this.executionList = this.getExecutionOrder(this.nodeHistory);
         this.nodeOutputs = this.getOutputs();
-        this.applyShapeInference();
+        this.resolveTensorMetadata();  // tensor shapes and datatypes
         this.randomizeParams();
     }
         
@@ -1744,42 +1954,90 @@ class NNTopology {
             node.initialize(rng);
         }
     }
+    
+    
+    // generate instance of CastNode, append it to
+    // execution list, and mark it as dirty
+    // this is called when examining node datatypes,
+    // an operand is found to have a different type
+    insertCastNode (operandNode, dataType) {
+        const cast = 'cast';
+        const typeNode = createNode('string', dataType, [], {});
+        const nodeName = this.symbols.gensym(cast);
+        const shape = operandNode.attributes.shape;
+        const castNode = createNode(cast, nodeName, [operandNode, typeNode], {shape:shape})
+        castNode.dataType = dataType;
+        this.executionList.push(typeNode, castNode);
+        this.#dirty = true;
+        return castNode;
+    }
 
+    // propagate tensor shapes and datatypes across DAG
     // one iteration should be sufficient in most cases
-    applyShapeInference(iterations = 2) {
+    resolveTensorMetadata(iterations = 1) {
         let queue = [];
         
         for (let i = 0; i < iterations; i++) {
-        
-            // Backward pass: Outputs -> Inputs
-            queue.push([undefined, Object.values(this.outputs)]);
-            
-            while (queue.length > 0) {
-                const [shape, nodes] = queue.pop();
-                nodes.forEach(node => {
-                    // each node input may have a different shape
-                    // so this returns a list of [shape, nodes]
-                    const inputs = node.reverseShapeInference(shape);
-                    if (inputs && inputs.length > 0) queue.push(...inputs);
-                });
-            }
-            
             // Forward pass: Inputs -> Outputs
-            queue.push([undefined, Object.values(this.inputs)]);
+            queue.push(Object.values(this.inputs));
 
             while (queue.length > 0) {
-                const [shape, nodes] = queue.pop();
+                const nodes = queue.pop();
                 
                 if (nodes) {
                     nodes.forEach(node => {
-                        // each node has only one output, which may
-                        // be used as the input for multiple nodes
+                        node.resolveForward();
                         const dependents = this.nodeOutputs[node.name];
-                        const shape2 = node.forwardShapeInference(shape);
-                        if (dependents) queue.push([shape2, dependents])
+                        if (dependents) queue.push(dependents)
                     });
                 }
             }
+
+            // Backward pass: Outputs -> Inputs
+            queue.push(Object.values(this.outputs));
+            
+            while (queue.length > 0) {
+                const nodes = queue.pop();
+                nodes.forEach(node => {
+                    node.resolveBackward();
+                    const inputs = node.inputs;
+                    if (inputs && inputs.length > 0) queue.push(inputs);
+                });
+            }
+        }
+        
+        // insert cast operations where needed
+        
+        for (const node of [...this.executionList]) {
+            if (!node.inputs || node.type === 'cast')
+                continue;
+            
+            const expectedType = node.dataType;
+            
+            if (expectedType) {
+                for (let i = 0; i < node.inputs.length; i++) {
+                    const inputNode = node.inputs[i];
+                    const inputType = inputNode.dataType;
+                    const inputPrec = TYPE_PRECEDENCE_MAP[inputType] || 0;
+                    const targetPrec = TYPE_PRECEDENCE_MAP[expectedType] || 0;
+
+                    // Safety Check: Only cast if moving up the precedence chain
+                    if (inputPrec < targetPrec) {
+                        const castNode = this.insertCastNode(inputNode, expectedType);
+                        node.inputs[i] = castNode;
+                    } else if (inputPrec > targetPrec) {
+                        this.warn(`### node ${node.name}: input ${inputNode.name} (${inputType}) ` +
+                                  `has higher precedence than expected (${expectedType}). Manual cast may be required.`);
+                    }
+                }
+            }
+        }
+               
+        // re-sort execution list if any cast nodes were inserted
+        // and recompute node dependencies
+        if (this.#dirty) {
+            this.executionList = this.getExecutionOrder(this.executionList);
+            this.nodeOutputs = this.getOutputs();
         }
     }
     
@@ -1827,7 +2085,7 @@ class NNTopology {
                     : this.namedNodes.get(skip);
 
                 const resName = this.symbols.gensym('res');
-                const resNode = createNode('add', resName, [lastNode, skipNode], {});
+                const resNode = createNode('add', resName, [lastNode, skipNode], layer.options);
                 this.registerNode(resNode);
                 lastNode = resNode;
                 continue;
@@ -1890,6 +2148,100 @@ class NNTopology {
         if (name) this.namedNodes.set(name, node);
     }
     
+    // annotate each node with a) maximum path length to an
+    // 'input' node and b) maximum distance to an 'output' node
+    measureDistances(nodes) {
+        const parents = {};
+        const inputs = [];
+        const outputs = [];
+        
+        // Initialisation & Strict Type Filtering
+        nodes.forEach(node => {
+            node.maxDistToInput = -Infinity;
+            node.maxDistToOutput = -Infinity; // Added initialization
+            
+            // Build adjacency map for forward traversal (maps node to its children)
+            if (node.inputs) {
+                node.inputs.forEach(upstreamNode => {
+                    if (!parents[upstreamNode.name]) parents[upstreamNode.name] = [];
+                    parents[upstreamNode.name].push(node);
+                });
+            }
+
+            // Only nodes explicitly typed as 'input' or 'output'
+            if (node.type === 'input') {
+                node.maxDistToInput = 0;
+                inputs.push(node);
+            }
+            
+            if (node.type === 'output') {
+                node.maxDistToOutput = 0; // Output nodes are 0 distance from an output
+                outputs.push(node);
+            }
+        });
+        
+        // --- Max Path Calculations (Memoized DFS) ---
+        
+        // 1. Max path FROM 'input' nodes
+        const maxInputMemo = new Map();
+        const getMaxPathToInput = (currentNode) => {
+            if (currentNode.type === 'input') return 0;
+            if (maxInputMemo.has(currentNode)) return maxInputMemo.get(currentNode);
+            
+            let currentMax = -Infinity;
+            const upstreamNodes = currentNode.inputs || [];
+            
+            upstreamNodes.forEach(upstream => {
+                const upstreamMax = getMaxPathToInput(upstream);
+                if (upstreamMax !== -Infinity) {
+                    currentMax = Math.max(currentMax, upstreamMax + 1);
+                }
+            });
+            
+            maxInputMemo.set(currentNode, currentMax);
+            currentNode.maxDistToInput = currentMax;
+            return currentMax;
+        };
+
+        // 2. Max path TO 'output' nodes
+        const maxOutputMemo = new Map();
+        const getMaxPathToOutput = (currentNode) => {
+            if (currentNode.type === 'output') return 0;
+            if (maxOutputMemo.has(currentNode)) return maxOutputMemo.get(currentNode);
+            
+            let currentMax = -Infinity;
+            const downstreamNodes = parents[currentNode.name] || []; // Look forward to children
+            
+            downstreamNodes.forEach(downstream => {
+                const downstreamMax = getMaxPathToOutput(downstream);
+                if (downstreamMax !== -Infinity) {
+                    currentMax = Math.max(currentMax, downstreamMax + 1);
+                }
+            });
+            
+            maxOutputMemo.set(currentNode, currentMax);
+            currentNode.maxDistToOutput = currentMax;
+            return currentMax;
+        };
+        
+        // Ensure every node gets annotated with both max paths
+        nodes.forEach(node => {
+            const maxIn = getMaxPathToInput(node);
+            getMaxPathToOutput(node); // Call this to ensure annotation happens
+        });
+        
+        // copy path lengths from operator to its parameter nodes
+        // also copy operator's learning rate multiplier override
+        nodes.forEach(node => {
+            if (node.type === 'param') {
+                const parent = parents[node.name][0];
+                node.maxDistToInput = parent.maxDistToInput;
+                node.maxDistToOutput = parent.maxDistToOutput;
+                node.lrm = parent.attributes.lrm;
+            }
+        });
+    }
+             
     // Return list of nodes in execution order after pruning
     // nodes that aren't on a path from an Input, Parameter,
     // or Numeric Literal node to a designated output node
@@ -1984,8 +2336,11 @@ class NNTopology {
             throw new Error("Cycle detected in the neural network topology during sort.");
         }
 
+        this.#dirty = false;
+        this.measureDistances(executionList);
         return executionList;
     }
+    
     serialize() {
         let lines = [];
         
@@ -2015,16 +2370,13 @@ class NNNode {
         this.inputs = inputs;      // Array of NNode instances
         this.attributes = attributes; // including operator options
         this.operator = this.type; // map type to WebNN operator name
+        this.dataType = attributes.dataType || null;
         this.broadcast = false;  // does operator support broadcast?
         this.preserveShape = true;  // does operator change the shape?
     }
 
-    dataType () {
-        return this.attributes.dataType ?? (this.inferredDataType ?? 'float32');
-    }
-    
     createBuffer (size) {
-        const DataType = NNModel.ML_TYPE_MAP(this.dataType());
+        const DataType = NNModel.ML_TYPE_MAP(this.dataType);
         return this.buffer = new DataType(size);
     }
     
@@ -2050,6 +2402,15 @@ class NNNode {
     initialize (rng) {
     }
 
+    descriptor (batchSize) {
+        return {
+            dataType: this.dataType,
+            shape: this.shape(batchSize),
+            readable: false,
+            writable: true,
+        };
+    }
+    
     shape (batchSize) {
         const sequenceLength = this.attributes.sequenceLength; // only defined for recurrent networks
         let shape = [...this.attributes.shape];
@@ -2077,47 +2438,156 @@ class NNNode {
         
         return true;
     }
-        
-    warn(message) {
-        log(message);
+    
+    // return MLIR syntax for node's shape and data type
+    MLIRType() {
+        const featureShape = this.attributes.shape; // e.g., [224, 224, 3]
+        const prefix = ["?"]; // Every node has a batch dimension
+    
+        // If this node belongs to a block with a sequence, add it
+        if (this.attributes.sequenceLength) {
+            prefix.push("?"); // Sequence is also dynamic in MLIR
+        }
+        const dataType = this.dataType; // e.g., "float32" -> "f32"
+    
+        // MLIR mapping: float32 -> f32, int32 -> i32
+        const mlirDtype = dataType.replace("float", "f").replace("int", "i");
+
+        // Prepend "?" for Batch (and optionally Sequence)
+        const mlirShape = [...prefix, ...featureShape].join("x");
+
+        return `tensor<${mlirShape}x${mlirDtype}>`;
+        // Result: "tensor<?x224x224x3xf32>"
     }
 
-    // propagate shape from an output to this node
-    // this deals with nodes that don't change shape
-    reverseShapeInference(shape) {
-        if (this.type === 'relu')
-            console.log('relu');
+    // Broadcasts an array of shapes into a single resulting shape.
+    // shapes is an array of shape arrays (e.g. [[10, 1], [1, 5]])
+    // Returns an array of integers for the broadcasted shape.
+    // Only suitable for use with Element-wise operators!!!
+
+    broadcastShapes(shapes) {
+        if (!shapes || shapes.length === 0) return [];
+
+        return shapes.reduce((shapeA, shapeB) => {
+            if (!shapeA && !shapeB)
+                return null;
+                
+            const lA = shapeA ? shapeA.length : 0;
+            const lB = shapeB ? shapeB.length : 0;
+            const maxLen = Math.max(lA, lB);
+            const result = new Array(maxLen);
+
+            for (let i = 0; i < maxLen; i++) {
+                const dimA = i < lA ? shapeA[lA - 1 - i] : 1;
+                const dimB = i < lB ? shapeB[lB - 1 - i] : 1;
+
+                if (dimA === dimB) {
+                    // Matches (e.g., 224 === 224, or "N" === "N")
+                    result[maxLen - 1 - i] = dimA;
+                } else if (dimA === 1) {
+                    // dimB wins (could be a number or a string "N")
+                    result[maxLen - 1 - i] = dimB;
+                } else if (dimB === 1) {
+                    // dimA wins
+                    result[maxLen - 1 - i] = dimA;
+                } else {
+                    // Real conflict: (e.g., "N" vs "M", or 224 vs 128)
+                    throw new Error(
+                        `Incompatible symbolic shapes: [${shapeA}] and [${shapeB}] at index ${i}`
+                    );
+                }
+            }
+            return result;
+        });
+    }
+        
+    warn (message) {
+        log(message);
+    }
     
-        const outShape = this.attributes.shape;
+    // NOTE: for operators that change the number of dimensions, e.g. reduceSum,
+    // squeeze and unsqueeze, we can't use `broadcastShapes` and need operator
+    // specific code to compute the new shape, for this override `resolveShape()`
+    
+    resolveShape () {
+        if (this.broadcast) {
+            // Extract shapes from parent nodes
+            const inputShapes = this.inputs.map(input => input.attributes.shape ?? null);
+            if (this.inputs.length > 0) {
+                // If one input is a scalar (NumberNode), broadcastShapes handles it fine
+                this.attributes.shape = this.broadcastShapes(inputShapes);
+            }
+        }
+    }
+
+    resolveForward () {
+        // SHAPE RESOLUTION default method
+        this.resolveShape();  // overridden for reduceSum, squeeze and unsqueeze
+
+        // TYPE RESOLUTION
+        if (this.attributes.dataType) {
+            // User explicitly set a type (e.g., "float16" for a specific layer)
+            this.dataType = this.attributes.dataType;
+        } else if (this.inputs.length > 0) {
+            // Fallback to LUB inference from parents
+            const inputTypes = this.inputs.map(input => input.dataType);
+            this.dataType = getLUB(inputTypes);
+        } else {
+            // Root node with no explicit type defaults to float32
+            this.dataType = this.dataType || "float32";
+        }
+
+        log(`[Forward] ${this.name} resolved to ${this.dataType}`);
+    }
+
+    resolveBackward() {
+        if (this.inputs.length === 0) return;
+
+        const inputTypes = this.inputs.map(input => input.dataType);
+        const requiredType = getLUB(inputTypes);
+
+        // Only attempt to "upgrade" the type if the user hasn't locked it
+        if (this.attributes.dataType) {
+            // If user locked it to FLOAT16 but children need FLOAT32:
+            if (TYPE_PRECEDENCE_MAP[requiredType] > TYPE_PRECEDENCE_MAP[this.dataType]) {
+                this.warn(`Node ${this.name} is locked to ${this.dataType}, but consumers require ${requiredType}. A Cast will be required.`);
+            }
+        } else if (TYPE_PRECEDENCE_MAP[requiredType] > TYPE_PRECEDENCE_MAP[this.dataType]) {
+            log(`[Backward] Upgrading inferred ${this.name} to ${requiredType}`);
+            this.dataType = requiredType;
+        }
         
-        if (!this.compatible(shape, outShape))
-            this.warn(`### operation ${this.name} has an inconsistent shape`);
-            
-        if (shape !== undefined && outShape === undefined)
-            this.attributes.shape = [...shape];
-        
-        if (!this.preserveShape)
-            shape = undefined;
-        
-        if (shape === undefined && outShape !== undefined)
-            shape = outShape;
-            
-        if (this.type === 'matmul') {
-            const s1 = this.inputs[0].attributes.shape;
-            const s2 = this.inputs[1].attributes.shape;
-            const s3 = this.attributes['shape'];
-            
-            if (s1 && s2) {
-                return [
-                    [s1, [this.inputs[0]]],
-                    [s2, [this.inputs[1]]]
-                ];
+        if (this.dataType) {
+            for (const input of this.inputs) {
+                if (input.dataType === null) {
+                    input.dataType = this.dataType;
+                }
             }
         }
         
-        return [[shape, this.inputs]];
+        // if shape is preserved, propagate shape to 1st operand
+        const shape = this.attributes.shape;
+        
+        if (shape && this.preserveShape) {
+            const input = this.inputs[0]; // 1st operand
+            const s1 = input.attributes.shape;
+            
+            if (s1) {
+                if (incompatible(s1, shape)) {
+                    let valid = false;
+                    
+                    if (this.broadcast)
+                        valid = isBroadcastable(s1, shape);
+                        
+                    if (!valid)
+                        this.warn(`### operation ${this.name} cannot broadcast to [${shape}]`);
+                }
+            } else {
+                input.attributes.shape = [...this.attributes.shape];
+            }
+        }
     }
-    
+
     args (operands) {
        const inputs = this.inputs; // array of names for NNNode
        return inputs.map(node => operands[node.name]); 
@@ -2138,7 +2608,7 @@ class NNNode {
     
     // Abstract methods to be implemented by subclasses
 
-    // subclasses should override this default implementation
+    // subclasses can override this default implementation
     // builder is instance of MLNNTopology
     // nodes is map: name -> MLOperand
     // args is list of MLOperands for operation's operands
@@ -2164,7 +2634,7 @@ class NNNode {
             this.warn(`### operation ${this.name} has an inconsistent shape`);
             
         if (s1 === undefined && shape !== undefined)
-            this.compatible(s1, shape) = shape;
+            return shape;
             
         return this.attributes['shape'];
     }
@@ -2197,7 +2667,7 @@ class NNNode {
         const s2 = this.inputs[1].attributes.shape;
         const s3 = this.attributes.shape;
 
-        if (!this.compatible(s1, shape))
+        if (incompatible(s1, shape))
             this.warn(`### operation ${this.name} has an inconsistent shape`);
 
         let outputShape;
@@ -2209,7 +2679,7 @@ class NNNode {
             outputShape = [...s1];
         }
         
-        if (!this.compatible(s2, outputShape))
+        if (incompatible(s2, outputShape))
             this.warn(`### operation ${this.name} has an inconsistent shape`);
             
         return outputShape
@@ -2221,23 +2691,37 @@ class NNNode {
         if (!Array.isArray(shape))
             throw new Error("Shape must be an array.");
 
-        return shape.length + 1;
+        return shape.length;
     }
     
     accumulateGradient (context, input, newGrad) {
         const gradients = context.gradients;
-        const name = input.name;
+        const inputName = input.name;
         
-        if (gradients[name]) {
-            gradients[name] = context.builder.add(gradients[name], newGrad);
+        if (gradients[inputName]) {
+            gradients[inputName] = context.builder.add(gradients[inputName], newGrad);
         } else {
-            gradients[name] = newGrad;
+            gradients[inputName] = newGrad;
         }
     }
     
-    // for operators that don't change the shape
-    forwardShapeInference(shape) {
-        this.warn(`forwardShapeInference: missing implementation for ${this.type}`);
+    // Called during graph construction to eagerly prepare tensors
+    prepare() {
+        this.dataType = this.inferDataType();
+        this.shape = this.resolveForwards();
+    }
+
+    // Resolves the datatype, explicit definitions override inferred types
+    inferDataType() {
+        if (this.dataType) return this.dataType;
+        
+        // Default inference: inherit from the first input operand
+        if (this.inputs && this.inputs.length > 0 && this.inputs[0].dataType) {
+            return this.inputs[0].dataType;
+        }
+        
+        // Fallback per WebNN spec defaults
+        return 'float32'; 
     }
 
     // retrieves this layer's output and gradient to compute
@@ -2247,8 +2731,6 @@ class NNNode {
     backprop(context) { 
         this.warn(`backprop: missing implementation for ${this.type}`);
     }
-    
-    
     
     serialize () {
         let attrs = [];
@@ -2261,6 +2743,8 @@ class NNNode {
                     attrs.push(`${name}=${value}`);
             }
         }
+        if (!this.attributes.dataType && this.dataType)
+            attrs.push(`dataType=${this.dataType}`);
 
         if (['input', 'param'].includes(this.type))
             return `   ${this.type}(${attrs.join(', ')})`;
@@ -2271,11 +2755,33 @@ class NNNode {
     }
 }
 
+class UnaryNode extends NNNode {
+    inferDataType() {
+        return this.dataType || this.inputs[0].dataType;
+    }
+
+    resolveForwards() {
+        // Shape matches input shape exactly
+        return [...this.inputs[0].shape];
+    }
+}
+
+class BinaryNode extends NNNode {
+    inferDataType() {
+        // Binary ops require matching data types in WebNN
+        return this.dataType || this.inputs[0].dataType; 
+    }
+
+    resolveForwards() {
+        return broadcastShapes(this.inputs[0].shape, this.inputs[1].shape);
+    }
+}
+
 // model input
 class InputNode extends NNNode {
     descriptor (batchSize) {
         return {
-            dataType: this.dataType(),
+            dataType: this.dataType,
             shape: this.shape(batchSize),
             readable: false,
             writable: true,
@@ -2290,7 +2796,7 @@ class InputNode extends NNNode {
         return buffer;
     }
     
-    forwardShapeInference (shape) {
+    resolveForwards (shape) {
         return this.keepShape(shape);
     }
     
@@ -2307,14 +2813,14 @@ class InputNode extends NNNode {
 class OutputNode extends NNNode {
     descriptor (batchSize) {
         return {
-            dataType: this.dataType(),
+            dataType: this.dataType,
             shape: this.shape(batchSize),
             readable: true,
             writable: false,
         };
     }
     
-    forwardShapeInference (shape) {
+    resolveForwards (shape) {
         return this.keepShape(shape);
     }
     
@@ -2323,7 +2829,9 @@ class OutputNode extends NNNode {
         // copy gradient to the preceding operation node
         const gradients = context.gradients;
         const gradient = gradients[this.name];
-        this.inputs.forEach(node => {gradients[node.name] = gradient});
+        this.inputs.forEach(node => {
+            this.accumulateGradient(context, node, gradient);
+        });
     }
     
     build (builder, operands, batchSize) {
@@ -2336,7 +2844,7 @@ class OutputNode extends NNNode {
 class ParamNode extends NNNode {
     descriptor (batchSize) {
         return {
-            dataType: this.dataType(),
+            dataType: this.dataType,
             shape: this.shape(batchSize),
             readable: false,
             writable: true,
@@ -2403,16 +2911,7 @@ class ParamNode extends NNNode {
         return [...this.attributes.shape];
     }
 
-    tensorRank () {
-        const shape = this.attributes.shape;
-        
-        if (!Array.isArray(shape))
-            throw new Error("Shape must be an array.");
-            
-        return shape.length;
-    }
-
-    forwardShapeInference (shape) {
+    resolveForwards (shape) {
         return this.keepShape(shape);
     }
     
@@ -2420,35 +2919,63 @@ class ParamNode extends NNNode {
         // nothing to do here
     }
     
-    build (builder, results, batchSize) {
+    build (builder, operands, batchSize) {
         return builder.constant(this.descriptor(), this.buffer);
     }
 }
 
-// numeric literals
+// numeric literals - using explicitly given or inferred data type
 class NumberNode extends NNNode {
+    constructor(name, type, inputs = [], attributes = {}) {
+        super(name, type, inputs, attributes);
+        this.value = name;
+        this.dataType = attributes.dataType ?? null;
+        this.attributes.shape = []; // Scalars are rank-0
+    }
+
+    descriptor(batchSize) {
+        // If the user didn't specify a type, default to float32 (JS standard)
+        // unless influenced by a parent node (advanced inference).
+        return {
+            dataType: this.fixedType || 'float32',
+            shape: this.options.shape || []
+        };
+    }
+    
     shape (batchSize) {
         return [...this.attributes.shape];
     }
 
-    tensorRank () {
-        const shape = this.attributes.shape;
-        
-        if (!Array.isArray(shape))
-            throw new Error("Shape must be an array.");
-            
-        return shape.length;
+    resolveForward () {
     }
+    
+    resolveBackward() {
+        // 1. Find what the consumers require (from NNNode base or topology)
+        // If this.dataType was already set by a consumer during backward propagation
+        if (!this.dataType) return;
 
-    forwardShapeInference (shape) {
-        return this.keepShape(shape);
+        const value = parseFloat(this.value);
+        const isInteger = Number.isInteger(value);
+
+        // 2. Perform compatibility check
+        if (this.dataType.startsWith('int') || this.dataType.startsWith('uint')) {
+            if (!isInteger) {
+                throw new Error(
+                    `Type Error: Numeric literal "${this.value}" is not an integer, ` +
+                    `but is being used in an operation requiring ${this.dataType}".`
+                );
+            }
+        }
+    
+        // Note: integer values can usually be represented with floats
+        log(`[Backward] resolved literal ${this.name} as ${this.dataType}`);
     }
     
     backprop (context) { 
         // nothing to do here
     }
-    build (builder, results, batchSize) {
-        return builder.constant(this.dataType(), this.name);
+    build (builder, operands, batchSize) {
+        return builder.constant(this.dataType, this.name);
     }
 }
 
@@ -2458,24 +2985,309 @@ class StringNode extends NNNode {
         return [...this.attributes.shape];
     }
 
-    tensorRank () {
-        const shape = this.attributes.shape;
-        
-        if (!Array.isArray(shape))
-            throw new Error("Shape must be an array.");
-            
-        return shape.length;
-    }
-
-    forwardShapeInference (shape) {
+    resolveForwards (shape) {
         return this.keepShape(shape);
     }
     
     backprop (context) { 
         // nothing to do here
     }
-    build (builder, results, batchSize) {
+    
+    build (builder, operands, batchSize) {
         return this.name;  // e.g. 'float16'
+    }
+}
+
+// used to cast to a given datatype e.g. float16
+class CastNode extends NNNode {
+    shape (batchSize) {
+        return [...this.attributes.shape];
+    }
+    
+    descriptor(batchSize) {
+        const desc = this.inputs[0].descriptor(batchSize);
+        return { ...desc, dataType: this.dataType };
+    }
+
+    resolveForwards (shape) {
+        return this.keepShape(shape);
+    }
+    
+    backprop(context) {
+        const { builder, gradients } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const inputDesc = this.inputs[0].descriptor(context.batchSize);
+        
+        // Only propagate gradients for float types
+        if (['float32', 'float16'].includes(inputDesc.dataType)) {
+             const inputGrad = builder.cast(grad, inputDesc.dataType);
+             this.accumulateGradient(context, this.inputs[0], inputGrad);
+        }
+    }
+    
+    build (builder, operands, batchSize) {
+        return builder.cast(...this.args(operands));
+    }
+}
+
+class ClampNode extends NNNode {
+    constructor(name, inputs, options = {}) {
+        super(name, inputs);
+        this.minValue = options.minValue;
+        this.maxValue = options.maxValue;
+    }
+
+    shape (batchSize) {
+        return [...this.attributes.shape];
+    }
+
+    descriptor(batchSize) {
+        return this.inputs[0].descriptor(batchSize);
+    }
+
+    resolveForwards (shape) {
+        return this.keepShape(shape);
+    }
+    
+    build(builder, operands, batchSize) {
+        const x = operands[this.inputs[0].name];
+        const options = {};
+        if (this.minValue !== undefined) options.minValue = this.minValue;
+        if (this.maxValue !== undefined) options.maxValue = this.maxValue;
+        return builder.clamp(x, options);
+    }
+
+    backprop(context) {
+        const { builder, gradients, operands } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const x = operands[this.inputs[0].name];
+        let mask = builder.constant({ dataType: 'float32', shape: [] }, new Float32Array([1.0]));
+
+        if (this.minValue !== undefined) {
+            const minTensor = builder.constant({dataType: 'float32', shape: []}, new Float32Array([this.minValue]));
+            mask = builder.mul(mask, builder.cast(builder.greaterOrEqual(x, minTensor), 'float32'));
+        }
+        if (this.maxValue !== undefined) {
+            const maxTensor = builder.constant({dataType: 'float32', shape: []}, new Float32Array([this.maxValue]));
+            mask = builder.mul(mask, builder.cast(builder.lesserOrEqual(x, maxTensor), 'float32'));
+        }
+
+        const inputGrad = builder.mul(grad, mask);
+        
+        if (gradients[this.inputs[0].name]) {
+            gradients[this.inputs[0].name] = builder.add(gradients[this.inputs[0].name], inputGrad);
+        } else {
+            gradients[this.inputs[0].name] = inputGrad;
+        }
+    }
+}
+
+class ConcatNode extends NNNode {
+    constructor(name, inputs, options = {}) {
+        super(name, inputs); // array of input nodes
+        this.axis = options.axis ?? 0;
+        this.preserveShape = false;
+    }
+
+    descriptor(batchSize) {
+        const descs = this.inputs.map(inp => inp.descriptor(batchSize));
+        const outShape = [...descs[0].shape];
+        outShape[this.axis] = descs.reduce((sum, desc) => sum + desc.shape[this.axis], 0);
+        return { dataType: descs[0].dataType, shape: outShape, readable: false, writable: false };
+    }
+
+    build(builder, operands, batchSize) {
+        const inputs = this.inputs.map(inp => operands[inp.name]);
+        return builder.concat(inputs, this.axis);
+    }
+
+    backprop(context) {
+        const { builder, gradients } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        // Determine split sizes dynamically based on inputs
+        const splits = this.inputs.map(inp => inp.descriptor(context.batchSize).shape[this.axis]);
+        const splitGrads = builder.split(grad, splits, { axis: this.axis });
+
+        for (let i = 0; i < this.inputs.length; i++) {
+            const inputName = this.inputs[i].name;
+            const inputGrad = splitGrads[i];
+            if (gradients[inputName]) {
+                gradients[inputName] = builder.add(gradients[inputName], inputGrad);
+            } else {
+                gradients[inputName] = inputGrad;
+            }
+        }
+    }
+}
+
+class ArgMaxNode extends NNNode {
+    constructor(name, inputs, options = {}) {
+        super(name, inputs);
+        this.axes = options.axes;
+        this.preserveShape = false;
+        this.keepDimensions = options.keepDimensions ?? false;
+    }
+
+    descriptor(batchSize) {
+        const inputDesc = this.inputs[0].descriptor(batchSize);
+        let outShape = [];
+        if (this.keepDimensions) {
+            outShape = inputDesc.shape.map((dim, i) => this.axes.includes(i) ? 1 : dim);
+        } else {
+            outShape = inputDesc.shape.filter((_, i) => !this.axes.includes(i));
+        }
+        return { dataType: 'int32', shape: outShape, readable: false, writable: false };
+    }
+
+    build(builder, operands, batchSize) {
+        const x = operands[this.inputs[0].name];
+        return builder.argMax(x, { axes: this.axes, keepDimensions: this.keepDimensions });
+    }
+
+    backprop(context) {
+        // Non-differentiable: We halt the gradient chain here.
+    }
+}
+
+class ArgMinNode extends NNNode {
+    constructor(name, inputs, options = {}) {
+        super(name, inputs);
+        this.axes = options.axes;
+        this.preserveShape = false;
+        this.keepDimensions = options.keepDimensions ?? false;
+    }
+
+    descriptor(batchSize) {
+        const inputDesc = this.inputs[0].descriptor(batchSize);
+        let outShape = [];
+        if (this.keepDimensions) {
+            outShape = inputDesc.shape.map((dim, i) => this.axes.includes(i) ? 1 : dim);
+        } else {
+            outShape = inputDesc.shape.filter((_, i) => !this.axes.includes(i));
+        }
+        return { dataType: 'int32', shape: outShape, readable: false, writable: false };
+    }
+
+    build(builder, operands, batchSize) {
+        const x = operands[this.inputs[0].name];
+        return builder.argMin(x, { axes: this.axes, keepDimensions: this.keepDimensions });
+    }
+
+    backprop(context) {
+        // Non-differentiable: We halt the gradient chain here.
+    }
+}
+
+class CumulativeSumNode extends NNNode {
+    constructor(name, inputs, options = {}) {
+        super(name, inputs);
+        this.axis = options.axis;
+        this.exclusive = options.exclusive ?? false;
+        this.reversed = options.reversed ?? false;
+    }
+
+    descriptor(batchSize) {
+        return this.inputs[0].descriptor(batchSize);
+    }
+
+    build(builder, operands, batchSize) {
+        const x = operands[this.inputs[0].name];
+        return builder.cumulativeSum(x, this.axis, { 
+            exclusive: this.exclusive, 
+            reversed: this.reversed 
+        });
+    }
+
+    backprop(context) {
+        const { builder, gradients } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        // Reverse the cumulative sum for the gradient
+        const inputGrad = builder.cumulativeSum(grad, this.axis, {
+            exclusive: this.exclusive,
+            reversed: !this.reversed
+        });
+
+        if (gradients[this.inputs[0].name]) {
+            gradients[this.inputs[0].name] = builder.add(gradients[this.inputs[0].name], inputGrad);
+        } else {
+            gradients[this.inputs[0].name] = inputGrad;
+        }
+    }
+}
+
+class BatchNormalizationNode extends NNNode {
+    constructor(name, inputs, options = {}) {
+        super(name, inputs); // inputs[0]=input, [1]=mean, [2]=var, [3]=scale(opt), [4]=bias(opt)
+        this.axis = options.axis ?? 1;
+        this.broadcast = true;
+        this.epsilon = options.epsilon ?? 1e-5;
+    }
+
+    descriptor(batchSize) {
+        return this.inputs[0].descriptor(batchSize);
+    }
+
+    build(builder, operands, batchSize) {
+        const input = operands[this.inputs[0].name];
+        const mean = operands[this.inputs[1].name];
+        const variance = operands[this.inputs[2].name];
+        const options = { epsilon: this.epsilon, axis: this.axis };
+        
+        if (this.inputs[3]) options.scale = operands[this.inputs[3].name];
+        if (this.inputs[4]) options.bias = operands[this.inputs[4].name];
+
+        return builder.batchNormalization(input, mean, variance, options);
+    }
+
+    backprop(context) {
+        const { builder, gradients, operands, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const x = operands[this.inputs[0].name];
+        const variance = operands[this.inputs[2].name];
+        const scale = this.inputs[3] ? operands[this.inputs[3].name] : null;
+        
+        const epsTensor = builder.constant({dataType: 'float32', shape: []}, new Float32Array([this.epsilon]));
+        const stdDev = builder.sqrt(builder.add(variance, epsTensor));
+        
+        // 1. Gradients w.r.t input (dL/dx)
+        let gradX = builder.div(grad, stdDev);
+        if (scale) gradX = builder.mul(gradX, scale);
+
+        if (gradients[this.inputs[0].name]) {
+            gradients[this.inputs[0].name] = builder.add(gradients[this.inputs[0].name], gradX);
+        } else {
+            gradients[this.inputs[0].name] = gradX;
+        }
+
+        // 2. Gradients w.r.t Scale and Bias
+        const axes = this.inputs[0].descriptor(batchSize).shape.map((_, i) => i).filter(i => i !== this.axis);
+
+        if (this.inputs[3]) { // scale gradient
+            const mean = operands[this.inputs[1].name];
+            const xNorm = builder.div(builder.sub(x, mean), stdDev);
+            const gradScale = builder.reduceSum(builder.mul(grad, xNorm), { axes, keepDimensions: false });
+            
+            if (gradients[this.inputs[3].name]) {
+                gradients[this.inputs[3].name] = builder.add(gradients[this.inputs[3].name], gradScale);
+            } else gradients[this.inputs[3].name] = gradScale;
+        }
+
+        if (this.inputs[4]) { // bias gradient
+            const gradBias = builder.reduceSum(grad, { axes, keepDimensions: false });
+            if (gradients[this.inputs[4].name]) {
+                gradients[this.inputs[4].name] = builder.add(gradients[this.inputs[4].name], gradBias);
+            } else gradients[this.inputs[4].name] = gradBias;
+        }
     }
 }
 
@@ -2492,25 +3304,35 @@ class MatMulNode extends NNNode {
         return [a[0], b[1]];
     }
 
-    forwardShapeInference(shape) {
+    resolveBackward () {
+        super.resolveBackward(); // to handle data type
+        
+        // now deal with shape consistency
         const s1 = this.inputs[0].attributes.shape;
         const s2 = this.inputs[1].attributes.shape;
-        const s3 = this.attributes['shape'];
+        const s3 = this.attributes.shape;
+        const shape = [s1[0], s3[0]]; // expected param shape
         
-        if (!this.compatible(s1, shape))
-            this.warn(`### operation ${this.name} has an inconsistent shape`);
-    
-        if (s1 && s2 && s3 && (s2[0] !== s1[0] || s2[1] !== s3[0]))
-            this.warn(`operation ${this.name} has an inconsistent shape`);
-    
-        if (s1 !== undefined && s2 === undefined && s3 !== undefined)
-            this.inputs[1].attributes.shape = [s1[0], s3[0]];
-        
-        return s3;
+        if (s2) {
+            if (incompatible(s2, shape)) {
+                let valid = false;
+                
+                if (this.broadcast)
+                    valid = isBroadcastable(s1, shape);
+                    
+                if (!valid)
+                    this.warn(`### operation ${this.name} cannot broadcast to [${shape}]`);
+            } else {
+                this.warn(`### operation ${this.name} has an inconsistent shape, expecting ${shape}`);
+            }
+        } else {
+            this.inputs[1].attributes.shape = [s1[0], s3[0]];        
+        }
     }
     
     backprop(context) {
         const builder = context.builder;
+        const batchSize = context.batchSize;
         const operands = context.operands;
         const gradients = context.gradients;
         const gradient = gradients[this.name];  // gradient of layer's output
@@ -2523,6 +3345,8 @@ class MatMulNode extends NNNode {
         
         const A = operands[a.name];
         const B = operands[b.name];
+        const rankA = a.shape(batchSize).length;
+        const rankB = b.shape(batchSize).length;
      
         // Helper to generate a permutation array that swaps only the last two dimensions
         // e.g., for 3D tensor [0, 1, 2] -> [0, 2, 1]
@@ -2534,22 +3358,20 @@ class MatMulNode extends NNNode {
             return perm;
         };
 
-        const transposedB = builder.transpose(B, { 
-            permutation: getTransposePermutation(b.tensorRank()) 
-        });
-        const transposedA = builder.transpose(A, { 
-            permutation: getTransposePermutation(a.tensorRank()) 
-        });
-
+        const transposedB = builder.transpose(B, { permutation: getTransposePermutation(rankB) });
+        const transposedA = builder.transpose(A, { permutation: getTransposePermutation(rankA) });
+        
         // dA = dY * B^T
-        const dA = builder.matmul(dY, transposedB);
+        let dA = builder.matmul(dY, transposedB);
         // dB = A^T * dY
-        const dB = builder.matmul(transposedA, dY);
+        let dB = builder.matmul(transposedA, dY);
+        
+        // Reduce broadcasted gradients back to original operand shapes
+        dA = broadcastReduce(builder, dA, dA.shape, a.shape(batchSize), batchSize);
+        dB = broadcastReduce(builder, dB, dB.shape, b.shape(batchSize), batchSize);
 
         this.accumulateGradient(context, a, dA);
         this.accumulateGradient(context, b, dB);
-        gradients[a.name] = dA;
-        gradients[b.name] = dB;  
     }
 
     build(builder, operands, batchSize) {
@@ -2557,111 +3379,368 @@ class MatMulNode extends NNNode {
     }
 }
 
-class AddNode extends NNNode {
-    constructor (...args) {
-        super (...args);
+// Parent class for element-wise mathematical binary nodes.
+// Provides shared shape inference and utility for accumulating gradients.
+
+class ElementWiseMathNode extends NNNode {
+    constructor(name, type, inputs, options) {
+        super(name, type, inputs, options);
         this.broadcast = true;
     }
-    
-    forwardShapeInference (shape) {
-        return this.simpleOpsShape(shape);
+
+    // Typical broadcast shape inference 
+    descriptor(batchSize) {
+        const descA = this.inputs[0].descriptor(batchSize);
+        const descB = this.inputs[1].descriptor(batchSize);
+        return {
+            dataType: descA.dataType, 
+            shape: this.broadcastShapes([descA.shape, descB.shape])
+        };
     }
 
-    backprop(context) { 
-        const builder = context.builder;
-        const batchSize = context.batchSize;
-        const gradients = context.gradients;
-    
-        // dY is the gradient of this layer's output
-        const dY = gradients[this.name];
-        if (!dY) return; // Dead branch or not required
-
-        const a = this.inputs[0];
-        const b = this.inputs[1];
-    
-        // The shape of dY matches the output shape of this AddNode
-        const outputShape = this.shape(batchSize);
-
-        // Reduce the incoming gradient to match the original shapes of inputs 'a' and 'b'
-        // If no broadcasting happened, your broadcastReduce function safely returns dY
-        const gradA = broadcastReduce(builder, dY, outputShape, a.shape(batchSize));
-        const gradB = broadcastReduce(builder, dY, outputShape, b.shape(batchSize));
-
-        // Safely accumulate the properly shaped gradients
-        this.accumulateGradient(context, a, gradA);
-        this.accumulateGradient(context, b, gradB);
-    
-        // Update the gradients dictionary for the next layers down
-        gradients[a.name] = gradA;
-        gradients[b.name] = gradB;
+    resolveBackward () {
+        super.resolveBackward(); // handle data type
+        
+        // now deal with shape consistency
+        const s1 = this.inputs[0].attributes.shape;
+        const s2 = this.inputs[1].attributes.shape;
+        const shape = this.attributes.shape;
+        
+        // bias should have same shape as this node
+        if (s2) {
+            if (incompatible(s2, shape)) {
+                let valid = false;
+                
+                if (this.broadcast)
+                    valid = isBroadcastable(s1, shape);
+                    
+                if (!valid)
+                    this.warn(`### operation ${this.name} cannot broadcast to [${shape}]`);
+            } else {
+                this.warn(`### operation ${this.name} has an inconsistent shape, expecting ${shape}`);
+            }
+        } else {
+            this.inputs[1].attributes.shape = [...shape];
+        }
     }
-    
+
+    // Standardised build that handles automatic casting
     build(builder, operands, batchSize) {
-        return builder.add(...this.args(operands));
+        const desc = this.descriptor(batchSize);
+        const targetType = desc.dataType;
+
+        let opA = operands[this.inputs[0].name];
+        let opB = operands[this.inputs[1].name];
+
+        // Cast Operand A if necessary
+        if (this.inputs[0].descriptor(batchSize).dataType !== targetType) {
+            opA = builder.cast(opA, targetType);
+        }
+
+        // Cast Operand B if necessary
+        if (this.inputs[1].descriptor(batchSize).dataType !== targetType) {
+            opB = builder.cast(opB, targetType);
+        }
+
+        // Call the internal implementation (e.g., _doBuild) 
+        // which now receives guaranteed matching types
+        return this._doBuild(builder, opA, opB);
+    }
+    
+    // Helper to reduce gradients if the forward pass involved shape broadcasting
+    reduceGradient(builder, grad, inputNode, batchSize) {
+        const gradShape = this.descriptor(batchSize).shape;
+        const inputShape = inputNode.descriptor(batchSize).shape;
+        return broadcastReduce(builder, grad, gradShape, inputShape, batchSize);
     }
 }
 
-class PowNode extends NNNode {
-    constructor (...args) {
-        super (...args);
-        this.broadcast = true;
+
+// Parent class for binary element-wise logical nodes
+class ElementWiseLogicalNode extends ElementWiseMathNode {
+    descriptor(batchSize) {
+        const descA = this.inputs[0].descriptor(batchSize);
+        const descB = this.inputs[1].descriptor(batchSize);
+        return {
+            dataType: 'uint8', // WebNN logical operators generally yield boolean/uint8 
+            shape: this.broadcastShapes(descA.shape, descB.shape)
+        };
+    }
+
+    backprop(context) {
+        // Logical comparisons are non-differentiable. No gradients are passed down.
+    }
+}
+
+// Parent class for unary element-wise logical nodes
+class UnaryLogicalNode extends NNNode {
+    descriptor(batchSize) {
+        const desc = this.inputs[0].descriptor(batchSize);
+        return {
+            dataType: 'uint8', 
+            shape: desc.shape
+        };
+    }
+
+    backprop(context) {
+        // Non-differentiable
+    }
+}
+
+class AddNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.add(opA, opB);
     }
     
-    forwardShapeInference (shape) {
-        return this.simpleOpsShape(shape);
-    }
-    
-    backprop (context) {
-        const builder = context.builder;
-        const operands = context.operands;
-        const gradients = context.gradients;
+    backprop(context) {
+        const { builder, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        // c = a + b
+        // da = dc, db = dc
+        if (this.inputs[0].type !== 'constant') {
+            let da = this.reduceGradient(builder, grad, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
         
-        const dY = gradients[this.name];
-        if (!dY) return;
-        
-        const a = this.inputs[0];
-        const b = this.inputs[1];
+        if (this.inputs[1].type !== 'constant') {
+            let db = this.reduceGradient(builder, grad, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
+    }
+}
+
+class SubNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.sub(opA, opB);
+    }
     
-        const A = operands[aName];
-        const B = operands[bName];
+    backprop(context) {
+        const { builder, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        // c = a - b 
+        // da = dc, db = -dc
+        if (this.inputs[0].type !== 'constant') {
+            let da = this.reduceGradient(builder, grad, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
+        if (this.inputs[1].type !== 'constant') {
+            let db = builder.neg(grad);
+            db = this.reduceGradient(builder, db, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
+    }
+}
+
+class MulNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.mul(opA, opB);
+    }
     
-        // We reuse the forward output A^B to save operations when computing dB
-        const Y = operands[this.name]; 
+    backprop(context) {
+        const { builder, operands, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
 
-        // --- 1. Compute Gradient for Base (A) ---
-        // Create a scalar constant '1' of the appropriate type (assuming float32 here)
-        const oneBuffer = new Float32Array([1]);
-        const oneConstant = builder.constant({type: 'float32', shape: []}, oneBuffer);
+        const a = operands[this.inputs[0].name];
+        const b = operands[this.inputs[1].name];
 
-        // B - 1
-        const B_minus_1 = builder.sub(B, oneConstant);
-        // A^(B - 1)
-        const A_pow_B_minus_1 = builder.pow(A, B_minus_1);
-        // B * A^(B - 1)
-        const B_mul_A_pow = builder.mul(B, A_pow_B_minus_1);
-        // dA = dY * (B * A^(B - 1))
-        const dA = builder.mul(dY, B_mul_A_pow);
+        // c = a * b
+        // da = dc * b, db = dc * a
+        if (this.inputs[0].type !== 'constant') {
+            let da = builder.mul(grad, b);
+            da = this.reduceGradient(builder, da, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
+        if (this.inputs[1].type !== 'constant') {
+            let db = builder.mul(grad, a);
+            db = this.reduceGradient(builder, db, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
+    }
+}
 
-        this.accumulateGradient(gradients, aName, dA);
-
-        // --- 2. Compute Gradient for Exponent (B) ---
-        // WebNN's `log` operator computes the natural logarithm (base e)
-        const lnA = builder.log(A);
-        // ln(A) * Y
-        const lnA_mul_Y = builder.mul(lnA, Y);
-        // dB = dY * (ln(A) * Y)
-        const dB = builder.mul(dY, lnA_mul_Y);
-
-        this.accumulateGradient(context, b, dB);
-        
-        // Handle broadcasting: if shapes differ, reduce sum the gradient across broadcasted dims
-        gradients[a.name] = broadcastReduce(builder, dA, dA.shape(batchSize), a.shape(batchSize));
-        gradients[a.name] = broadcastReduce(builder, dB, dB.shape(batchSize), b.shape(batchSize));
+class DivNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.div(opA, opB);
     }
 
-    build(builder, operands, batchSize) {
-        return builder.pow(...this.args(operands));
+    backprop(context) {
+        const { builder, operands, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const a = operands[this.inputs[0].name];
+        const b = operands[this.inputs[1].name];
+
+        // c = a / b
+        // da = dc / b
+        if (this.inputs[0].type !== 'constant') {
+            let da = builder.div(grad, b);
+            da = this.reduceGradient(builder, da, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
+        
+        // db = dc * (-a / b^2)
+        if (this.inputs[1].type !== 'constant') {
+            const negA = builder.neg(a);
+            const bSquared = builder.mul(b, b);
+            const negADivBSquared = builder.div(negA, bSquared);
+            let db = builder.mul(grad, negADivBSquared);
+            
+            db = this.reduceGradient(builder, db, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
     }
+}
+
+class MaxNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.max(opA, opB);
+    }
+
+    backprop(context) {
+        const { builder, operands, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const a = operands[this.inputs[0].name];
+        const b = operands[this.inputs[1].name];
+
+        // Route gradient to the larger value. If equal, generally routed to 'a'.
+        const maskA = builder.cast(builder.greaterOrEqual(a, b), grad.dataType);
+        const maskB = builder.cast(builder.lesser(a, b), grad.dataType);
+
+        if (this.inputs[0].type !== 'constant') {
+            let da = builder.mul(grad, maskA);
+            da = this.reduceGradient(builder, da, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
+        if (this.inputs[1].type !== 'constant') {
+            let db = builder.mul(grad, maskB);
+            db = this.reduceGradient(builder, db, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
+    }
+}
+
+class MinNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.min(opA, opB);
+    }
+
+    backprop(context) {
+        const { builder, operands, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const a = operands[this.inputs[0].name];
+        const b = operands[this.inputs[1].name];
+
+        // Route gradient to the smaller value
+        const maskA = builder.cast(builder.lesserOrEqual(a, b), grad.dataType);
+        const maskB = builder.cast(builder.greater(a, b), grad.dataType);
+
+        if (this.inputs[0].type !== 'constant') {
+            let da = builder.mul(grad, maskA);
+            da = this.reduceGradient(builder, da, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
+        if (this.inputs[1].type !== 'constant') {
+            let db = builder.mul(grad, maskB);
+            db = this.reduceGradient(builder, db, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
+    }
+}
+
+class PowNode extends ElementWiseMathNode {
+    _doBuild(builder, opA, opB) {
+        return builder.pow(opA, opB);
+    }
+
+    backprop(context) {
+        const { builder, operands, gradients, batchSize } = context;
+        const grad = gradients[this.name];
+        if (!grad) return;
+
+        const a = operands[this.inputs[0].name];
+        const b = operands[this.inputs[1].name];
+
+        // da = dc * (b * a^(b - 1))
+        if (this.inputs[0].type !== 'constant') {
+            // We can calculate a^(b-1) as (a^b / a)
+            const output = builder.pow(a, b);
+            const derivA = builder.mul(b, builder.div(output, a));
+            let da = builder.mul(grad, derivA);
+            
+            da = this.reduceGradient(builder, da, this.inputs[0], batchSize);
+            this.accumulateGradient(context, this.inputs[0], da);
+        }
+
+        // db = dc * (a^b * ln(a))
+        if (this.inputs[1].type !== 'constant') {
+            const output = builder.pow(a, b);
+            const lnA = builder.log(a);
+            const derivB = builder.mul(output, lnA);
+            let db = builder.mul(grad, derivB);
+            
+            db = this.reduceGradient(builder, db, this.inputs[1], batchSize);
+            this.accumulateGradient(context, this.inputs[1], db);
+        }
+    }
+}
+
+class EqualNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.equal(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class NotEqualNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.notEqual(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class GreaterNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.greater(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class GreaterOrEqualNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.greaterOrEqual(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class LesserNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.lesser(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class LesserOrEqualNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.lesserOrEqual(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class LogicalAndNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.logicalAnd(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class LogicalOrNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.logicalOr(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class LogicalXorNode extends ElementWiseLogicalNode {
+    build(builder, operands) { return builder.logicalXor(operands[this.inputs[0].name], operands[this.inputs[1].name]); }
+}
+
+class LogicalNotNode extends UnaryLogicalNode {
+    build(builder, operands) { return builder.logicalNot(operands[this.inputs[0].name]); }
+}
+
+class IsNanNode extends UnaryLogicalNode {
+    // WebNN often maps this to logicalIsNan or isNan depending on the specific API binding
+    build(builder, operands) { return builder.logicalIsNan(operands[this.inputs[0].name]); }
+}
+
+class IsInfiniteNode extends UnaryLogicalNode {
+    build(builder, operands) { return builder.logicalIsInfinite(operands[this.inputs[0].name]); }
 }
 
 class ReluNode extends NNNode {
@@ -2711,7 +3790,7 @@ class ReluNode extends NNNode {
         }
     }
 
-    forwardShapeInference (shape) {
+    resolveForwards (shape) {
         return this.keepShape(shape);
     }
     
@@ -2726,7 +3805,7 @@ class ReluNode extends NNNode {
         const X = this.inputs[0];
         
         // Create a zero scalar of the appropriate type to compare against
-        const dataType = this.dataType();
+        const dataType = this.dataType;
         const DataType = NNModel.ML_TYPE_MAP(dataType);
         const zeroBuffer = new DataType([0]); // Adjust based on this node's data type
         const zeroConstant = builder.constant({dataType: dataType, shape: []}, zeroBuffer);
@@ -2831,7 +3910,7 @@ class SoftmaxNode extends NNNode {
     // Softmax does not change the shape of the tensor
     // so rely on parent's implementation for shape()
 
-    forwardShapeInference (shape) {
+    resolveForwards (shape) {
         return this.keepShape(shape);
     }
     
@@ -2874,17 +3953,39 @@ class SoftmaxNode extends NNNode {
 }
 
 const NODE_CLASSES = {
-    'input': InputNode,
-    'output': OutputNode,
-    'param': ParamNode,
-    'number': NumberNode,
+    'input': InputNode, 'output': OutputNode, 'param': ParamNode,
+    'number': NumberNode, 'string': StringNode,
+    'cast': CastNode, 'clamp': ClampNode, 'concat': ConcatNode,
+    'argMax': ArgMaxNode, 'argMin': ArgMinNode,
+    'cumulativeSum': CumulativeSumNode, 'batchNorm': BatchNormalizationNode,
     'matmul': MatMulNode,
-    'add': AddNode,
-    'pow': PowNode,
+    'add': AddNode, 'sub': SubNode, 'mul': MulNode, 'div': DivNode,
+    'max': MaxNode, 'min': MinNode, 'pow': PowNode,
+    'equal': EqualNode, 'notEqual': NotEqualNode, 'greater': GreaterNode,
+    'greaterOrEqual': GreaterOrEqualNode, 'lesser': LesserNode,
+    'lesserOrEqual': LesserOrEqualNode, 'logicalNot': LogicalNotNode,
+    'logicalAnd': LogicalAndNode, 'logicalOr': LogicalOrNode,
+    'logicalXor': LogicalXorNode, 'isNaN': IsNanNode, 'isInfinite': IsInfiniteNode,
     'relu': ReluNode,
     'softmax': SoftmaxNode,
     // ... add all other operators here
 };
+
+// test if two shapes are different
+function incompatible (shape1, shape2) {
+    if (shape1 === undefined || shape2 === undefined)
+        return false; // unknown as yet
+        
+    if (shape1.length !== shape2.length)
+        return true; // different rank
+        
+    for (let i = 0; i < shape1.length; ++i) {
+        if (shape1[i] !== shape2[i])
+            return true; // different dimension size
+    }
+    
+    return false;
+}
 
 /**
  * Creates a new instance of a subclass of NNNode based upon the type.
@@ -2895,11 +3996,107 @@ const NODE_CLASSES = {
  */
  
 function createNode(type, name, inputs, attributes={}) {
-    const NodeClass = NODE_CLASSES[type] || NNode; // Fallback to base
+    const NodeClass = NODE_CLASSES[type]; // exception if unregistered type!!!
     const node = new NodeClass(name, type, inputs, attributes);
     node.type = type;
     node.attributes['name'] = name;
     return node;
+}
+
+// Information used for data type inference and casting
+
+const TYPE_PRECEDENCE_MAP = {
+    'float32': 10,
+    'float16': 9,
+    'int32': 8,
+    'uint32': 7,
+    'int8': 2,
+    'uint8': 1
+};
+
+// Reverse map to get data type name back from a number
+const TYPE_NAME_MAP = Object.fromEntries(
+  Object.entries(TYPE_PRECEDENCE_MAP).map(([name, value]) => [value, name])
+);
+
+function getLUB(dataTypes) {
+    // 1. Filter out null/undefined (uncommitted types)
+    const validTypes = dataTypes.filter(type => type !== null && type !== undefined);
+
+    // 2. If no inputs have a type yet (e.g., Add(Number, Number)), default to float32
+    if (validTypes.length === 0) {
+        return "float32";
+    }
+
+    // 3. Map valid types to precedence
+    const values = validTypes.map(type => {
+        const p = TYPE_PRECEDENCE_MAP[type];
+        if (p === undefined) throw new Error(`Unknown DataType: ${type}`);
+        return p;
+    });
+
+    // 4. Return the highest precedence among valid types
+    const maxPrecedence = Math.max(...values);
+    return TYPE_NAME_MAP[maxPrecedence];
+}
+
+// Reconciles types with an added "Promotion Bridge" rule:
+// If Int and Float are mixed, promote to at least Float32 
+// to prevent massive precision loss.
+
+function reconcileTypes(typeA, typeB) {
+    const isFloat = (type) => type.startsWith("float") || type.startsWith("complex");
+  
+    const aFloat = isFloat(typeA);
+    const bFloat = isFloat(typeB);
+
+    // If mixing types (e.g., int64 and float16), promote to float32
+    if (aFloat !== bFloat) {
+        return getLUB([typeA, typeB, "float32"]);
+    }
+
+    return getLUB([typeA, typeB]);
+}
+
+
+// Helper to verify if inputShape can be broadcast to outputShape
+function isBroadcastable(inputShape, outputShape) {
+    const inLen = inputShape.length;
+    const outLen = outputShape.length;
+
+    // WebNN broadcasting typically requires input rank <= output rank
+    if (inLen > outLen) return false;
+
+    // Check dimensions from right to left
+    for (let i = 1; i <= inLen; i++) {
+        const inDim = inputShape[inLen - i];
+        const outDim = outputShape[outLen - i];
+
+        // Dimension is valid if it matches OR if input is 1 (stretched)
+        if (inDim !== outDim && inDim !== 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Utility function for WebNN broadcast rules
+function broadcastShapes(shapeA, shapeB) {
+    const rankA = shapeA.length;
+    const rankB = shapeB.length;
+    const maxRank = Math.max(rankA, rankB);
+    const result = new Array(maxRank);
+    
+    for (let i = 0; i < maxRank; i++) {
+        const dimA = i < rankA ? shapeA[rankA - 1 - i] : 1;
+        const dimB = i < rankB ? shapeB[rankB - 1 - i] : 1;
+        
+        if (dimA !== dimB && dimA !== 1 && dimB !== 1) {
+            throw new Error(`Incompatible broadcast shapes: [${shapeA}] and [${shapeB}]`);
+        }
+        result[maxRank - 1 - i] = Math.max(dimA, dimB);
+    }
+    return result;
 }
 
 /**
