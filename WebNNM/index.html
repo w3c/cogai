@@ -335,6 +335,10 @@ window.addEventListener("load", async () => {
       <dt>Stochastic Gradient Descent with Momentum (sgdm)</dt> <dd>A popular optimization algorithm that enhances standard Stochastic Gradient Descent (SGD) by adding a momentum term. This term accumulates an exponential moving average of past gradients to accelerate convergence, help navigate narrow valleys, and avoid getting stuck in shallow local minima.</dd>
       </dl>
     <section>
+      <h3>Scouting for good starting points</h3>
+      <p>Training can be rather time consuming, so it makes sense to avoid waisting time when the initial choice of model parameter values doesn't train well. WebNNM creates a scouting graph to evaluate a set of randomly chosen potential starting points  using a few heuristics. The metrics include: Loss, Gradient Ratio, and Dead Ratio. The gradient ratio detects vanishing or exploding gradients, whilst the dead ratio detects dead neurons or overconfident layers.</p>
+    </section>
+    <section>
       <h3>Cosine Annealing</h3>
       <p>WebNNM manages training in terms of a warm up phase in which the learning rate is gradually increased to the maximum learning rate. After that the learning rate is gradually reduced using cosine annealing to a very low value when reaching the maximum number of epochs. The default value for <code>warmupEpochs</code> is 5% of the maximum number of epochs, or 1, whichever is larger.</p>
     </section>
