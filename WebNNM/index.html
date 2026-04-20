@@ -374,12 +374,13 @@ window.addEventListener("load", async () => {
     <h2>Appendices</h2>
     <section>
       <h3>WebNNM Test Harness</h3>
-      <p>This section describes the test harness used to validate the WebNNM library's implementation of analytic gradients. The approach taken is to measure the gradients for each parameter and compare it to the analytic value computed by the WebNNM library for each operator.  This done for repeatedly for a set of randomly initialised tensors for the parameters, and input from the previous layer. In more detail, for each operator:</p>
+      <p>This section describes the test harness used to validate the WebNNM library's implementation of analytic gradients. The approach taken is to measure the gradients for each parameter and compare it to the analytic value computed by the WebNNM library for each operator.  This done for repeatedly for a set of randomly initialised tensors for the parameters and the input from the previous layer. In more detail, for each operator:</p>
       <ol>
       <li>Compute the tensor for the parameter's analytic gradients</li>
-      <li>Compute the tensor for the parameter's measured gradients: iteratively for each element in the tensor, compute the loss after subtracting epsilon to the element, and again after adding epsilon to the element, where epsilon is a small number.
+      <li>Compute the tensor for the parameter's measured gradients: iteratively for each element in the tensor, compute the loss after subtracting epsilon from the element, and again after adding epsilon to the element, where epsilon is a small positive number.
       </li>
       </ol>
+      <p>Note: the analytic gradients for the WebNN recurrent operators, e.g. LSTM and GRU are computed by mapping them to the primitive operations and unrolling over time for a given sequence length.</p>
     </section>
     
   </section>
