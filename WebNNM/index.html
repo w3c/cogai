@@ -368,10 +368,20 @@ window.addEventListener("load", async () => {
   </section> 
   <section>
     <h2>Supported Operators</h2>
-    <p>This section lists the WebNN operators supported by WebNN along with additional operators, e.g. for skip connections and transformers, that are internally translated into WebNN operators.</p>
+    <p>This section lists the WebNN operators supported by WebNNM along with additional operators, e.g. for skip connections and transformers, that are internally translated into WebNN operators.</p>
   </section> 
   <section id="index" class="appendix">
     <h2>Appendices</h2>
+    <section>
+      <h3>WebNNM Test Harness</h3>
+      <p>This section describes the test harness used to validate the WebNNM library's implementation of analytic gradients. The approach taken is to measure the gradients for each parameter and compare it to the analytic value computed by the WebNNM library for each operator.  This done for repeatedly for a set of randomly initialised tensors for the parameters, and input from the previous layer. In more detail, for each operator:</p>
+      <ol>
+      <li>Compute the tensor for the parameter's analytic gradients</li>
+      <li>Compute the tensor for the parameter's measured gradients: iteratively for each element in the tensor, compute the loss after subtracting epsilon to the element, and again after adding epsilon to the element, where epsilon is a small number.
+      </li>
+      </ol>
+    </section>
+    
   </section>
 </body>
 </html>
