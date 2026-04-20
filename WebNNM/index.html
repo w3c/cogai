@@ -348,7 +348,7 @@ window.addEventListener("load", async () => {
     </section>
     <section>
       <h3>Transfer Learning</h3>
-      <p>WebNNM supports transfer learning by allowing you to freeze parameter updates for the early layers of the network. This is based upon annotating each node in the DAG with the maximum number of nodes to reach an input node, and likewise to reach an output node. The <code>freeze</code> hyperparameter is a number in the range 0 to 1, defaulting to 0. It describes the proportion of layers to freeze. Parameters associated with nodes closer to the outputs are updated with a fraction that goes from 0 to 1 in a sinusoidal pattern (in range 0 to pi/2). This range is discretised into 5 buckets to enable kernel optimization.</p>
+      <p>WebNNM supports transfer learning by allowing you to freeze parameter updates for the early layers of the network. This is based upon annotating each node in the DAG with the maximum number of nodes to reach an input node, and likewise to reach an output node. The <code>freeze</code> hyperparameter is a number in the range 0 to 1, defaulting to 0. It describes the proportion of layers to freeze, starting from the inputs. Parameters associated with nodes closer to the outputs are updated with a fraction that goes from 0 to 1 in a sinusoidal pattern (in range 0 to pi/2). This range is discretised into 5 buckets to enable kernel optimization.</p>
     </section>
     <section>
       <h3>Training Stability</h3>
@@ -371,6 +371,7 @@ window.addEventListener("load", async () => {
     <p>This section lists the WebNN operators supported by WebNN along with additional operators, e.g. for skip connections and transformers, that are internally translated into WebNN operators.</p>
   </section> 
   <section id="index" class="appendix">
+    <h2>Appendices</h2>
   </section>
 </body>
 </html>
