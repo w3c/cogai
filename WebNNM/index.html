@@ -357,7 +357,7 @@ window.addEventListener("load", async () => {
       <h3>Training Stability</h3>
       <p>Training involves computing gradients that risk vanishing or exploding. For models with many layers it is good practice to introduce skip connections that bypass a few layers that would otherwise overly weaken the learning signals. It is common to use <code>float32</code> whilst training to provide an adequate precision for gradients. However, the hardware accelerators in consumer grade equipment may not support <code>float32</code>, motivating the use of a lower precision, e.g. <code>float16</code>. This increases the risk of underflow and overflow during gradient calculations. Another consideration is that whilst GPUs can be used for hardware acceleration of neural networks, they consume considerably more electrical power than NPUs like Apple's ANE. To speed up training in the browser and reduce power consumption, it is desirable to find ways to increase training stability when using <code>float16</code>.</p>
       <p>To address this challenge, WebNNM supports techniques to boost weak gradients, to scale down overly large gradients, and ignore updates that overflow the maximum number supported for a given precision. The <code>scaling</code> hyperparameter controls gradient scaling, whilst <code>clipping</code> controls clipping. If you set these to 'auto' (the default) the library examines the width and depth of the model along with the activation functions to assess whether to enable scaling and clipping. For explicit control set these hyperparameter to 'on' or 'off' as desired.</p>
-      <p>To prevent underflow during the backward pass, WebNNM multiplies the loss $L$ by a scale factor $S$ (where $S \gg 1$) before backpropagation begins. By the chain rule, this scales every subsequent gradient in the computational graph:$$\nabla_{\theta} (L \cdot S) = S \cdot \nabla_{\theta} L$$This ensures that the intermediate gradients $g$ that would have been $10^{-7}$ (and thus zeroed out in <code>float16</code>) are now $g \cdot S$, keeping them within the precision range. We cannot apply the scaled gradients directly to the model's parameters, as this would be equivalent to using a learning rate that is $S$ times too large. Before the optimizer updates the paramter $\theta$, we must unscale the gradients back to their original magnitude:$$\theta_{t+1} = \theta_t - \eta \cdot \frac{\sum \nabla_{\theta} (L \cdot S)}{S}$$
+      <p>To prevent underflow during the backward pass, WebNNM multiplies the loss $L$ by a scale factor $S$ (where $S \gg 1$) before backpropagation begins. By the chain rule, this scales every subsequent gradient in the computational graph:$$\nabla_{\theta} (L \cdot S) = S \cdot \nabla_{\theta} L$$This ensures that the intermediate gradients $g$ that would have been $10^{-7}$ (and thus zeroed out in <code>float16</code>) are now $g \cdot S$, keeping them within the precision range. We cannot apply the scaled gradients directly to the model's parameters, as this would be equivalent to using a learning rate that is $S$ times too large. Before the optimizer updates the parameter $\theta$, the gradients need to be unscaled back to their original magnitude:$$\theta_{t+1} = \theta_t - \eta \cdot \frac{\sum \nabla_{\theta} (L \cdot S)}{S}$$
       <p>Use the <code>scale</code> hyperparameter to set the initial gradient scaling factor. The scale is doubled until overflow is detected at which point it is halved. To prevent instability, the <code>growthInterval</code> hyperparameter sets the number of batches without overflow to wait before boosting the scale factor. The forward and backward passes may use <code>float16</code> for speed, but it is better to keep the model parameters in <code>float32</code>, and likewise to cast from <code>float16</code> to <code>float32</code> for operations like <code>softmax</code> and <code>batchnorm</code>. WebNNM will do this for you unless you explicitly set the data types in the model.</p>
       <p>Clipping is based upon the scaled global (L2) norm $||\mathbf{G}||_2$ which is defined as the square root of the sum of the squares of every individual scalar value across all gradient tensors $g_i$:$$||\mathbf{G}||_2 = \sqrt{\sum_{i=1}^{n} \sum_{x \in g_i} x^2}$$
       <p>The training graph computes the rolling mean for the scaled global norm and its absolute deviation, as a basis for dynamically setting the clipping threshold:</p>
@@ -365,9 +365,9 @@ window.addEventListener("load", async () => {
         <li>Update mean: $\mu_{t} = \alpha \mu_{t-1} + (1 - \alpha) G$, where G is the current scaled global norm, and $\mu_0$ is set to the initial scaled global norm</li>
         <li>Update deviation: $\sigma_{t} = \alpha \sigma_{t-1} + (1 - \alpha) |G - \mu_t|$, where $\sigma_o$ is set to zero</li>
         <li>Compute dynamic threshold: $Threshold = \mu_t + (k \cdot \sigma_t)$</li>
-        <li>If $G > Threshold$, scale the gradients by $\frac{Threshold}{G}$</li>
+        <li>If $G > Threshold$, scale the gradients by $\frac{Threshold}{G+\epsilon}$, where $\epsilon$ is a very small positive number used to prevent the possibility of dividing by zero</li>
       </ol>
-      <p>Note that $k$ is normally 2.0, and boosted to 4.0 for the first 15 batches.</p>
+      <p>Note that $k$ is 4.0 for the first 15 batches and 2.0 after that.</p>
       <p><em>Work is underway to support automated gradient clipping (AGC) and regularization on a layer by layer basis.</em></p>
     </section>
     </section>
@@ -386,6 +386,10 @@ window.addEventListener("load", async () => {
   </section> 
   <section id="index" class="appendix">
     <h2>Appendices</h2>
+    <section>
+      <h3>WebNNM Model Syntax</h3>
+      <p>This section defines the grammar for the model syntax.</p>
+    </section>
     <section>
       <h3>WebNNM Test Harness</h3>
       <p>This section describes the test harness used to validate the WebNNM library's implementation of analytic gradients. The approach taken is to measure the gradients for each parameter and compare it to the analytic value computed by the WebNNM library for each operator.  This done for repeatedly for a set of randomly initialised tensors for the parameters and the input from the previous layer. In more detail, for each operator:</p>
