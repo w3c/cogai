@@ -113,7 +113,7 @@
     <h2>Introduction</h2>
     <p>This specification introduces a simple notation and API for inference, testing and training neural networks models in Web browsers using [[WebNN]] for hardware acceleration. The intent is to make developing and using neural networks easy for newcomers, whilst offering experts fine grained control.</p>
 
-    <p>WebNNM makes it easy to define neural network models in terms of blocks and layers. This includes the means to define layers as a composition of other layers, and to repeat layers using a sequence of tensor shapes. The WebNNM library is a JavaScript module that offers a simple API for declaring models, loading models from previously saved snapshots, and using them for inference, testing and training in conjunction with a JavaScript module for handling datasets. Models can be pre-trained in the cloud via WebNNM's support for export to the [[MLIR]] format. Fine-tuning in the browser then allows for privacy-friendly personalization, avoiding the need to send personal data to the cloud.</p>
+    <p>WebNNM makes it easy to define neural network models in terms of blocks and layers. This includes the means to define layers as a composition of other layers, and to repeat layers using a sequence of tensor shapes. The WebNNM library is a JavaScript module that offers a simple API for declaring models, loading models from previously saved snapshots, and using them for inference, testing and training in conjunction with JavaScript modules for handling datasets. Models can be pre-trained in the cloud via WebNNM's support for export to the [[MLIR]] format. Fine-tuning in the browser then allows for privacy-friendly personalization, avoiding the need to send personal data to the cloud.</p>
   </section>
 
   <section id="conformance">
@@ -513,6 +513,10 @@ window.addEventListener("load", async () => {
     <section>
       <h3>WebNNM Model Syntax</h3>
       <p>This section defines the grammar for the model syntax.</p>
+    </section>
+    <section>
+      <h3>WebNNM Snapshot Binary Format</h3>
+      <p>This section defines the binary format for models and their parameters.</p>
     </section>
     <section>
       <h3>WebNNM Test Harness</h3>
