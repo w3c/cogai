@@ -433,7 +433,8 @@ window.addEventListener("load", async () => {
       <dt>beta1</dt> <dd>an attribute for the lion and rlion optimizers, default depends on optimizer</dd>
       <dt>beta2</dt> <dd>an attribute for the rlion optimizer, default depends on optimizer</dd>
       <dt>freeze</dt> <dd>what proportion of the layers to freeze for transfer learning (0.0 to 1.0) default: 0.0</dd>
-      <dt>regularization</dt> <dd>'auto', 'l2' or 'off' for L2 regularization, default: 'auto'</dd>
+      <dt>regularization</dt> <dd>'auto', l1', 'l2', ''l1+l2' or 'off', default: 'auto'</dd>
+      <dt>optimizeFor</dt> <dd>'size' or 'edge', default: 'size'</dd>
       <dt>gradientScaling</dt> <dd>'auto', 'on' or 'off' for gradient scaling, default: 'auto'</dd>
       <dt>gradientClipping</dt> <dd>'auto', 'global', 'agc' or 'off' for gradient clipping, default: 'auto'</dd>
       <dt>scale</dt> <dd>initial gradient scaling factor, default = 1000</dd>
