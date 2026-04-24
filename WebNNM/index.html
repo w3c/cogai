@@ -415,10 +415,10 @@ window.addEventListener("load", async () => {
       <p>Training is similar to testing, but requires a set of training options:</p>
 
       <dl>
-      <dt><code>model.train(options)</code></dt> <dd>runs the training graph on the training subset of the dataset.</dd>
+      <dt><code>model.train(hyperparameters)</code></dt> <dd>runs the training graph on the training subset of the dataset.</dd>
       </dl>
       
-      <p>The options is an object with the following optional properties.</p>
+      <p>The options is an object with the following hyperparameters:</p>
       
       <dl>
       <dt>epochs</dt> <dd>the maximum number of epochs to train, default = 20</dd>
@@ -435,8 +435,8 @@ window.addEventListener("load", async () => {
       <dt>freeze</dt> <dd>what proportion of the layers to freeze for transfer learning (0.0 to 1.0) default: 0.0</dd>
       <dt>regularization</dt> <dd>'auto', l1', 'l2', ''l1+l2' or 'off', default: 'auto'</dd>
       <dt>optimizeFor</dt> <dd>'size' or 'edge', default: 'size'</dd>
-      <dt>gradientScaling</dt> <dd>'auto', 'on' or 'off' for gradient scaling, default: 'auto'</dd>
-      <dt>gradientClipping</dt> <dd>'auto', 'global', 'agc' or 'off' for gradient clipping, default: 'auto'</dd>
+      <dt>gradientScaling</dt> <dd>'auto', 'on' or 'off', default: 'auto'</dd>
+      <dt>gradientClipping</dt> <dd>'auto', 'global', 'agc' or 'off', default: 'auto'</dd>
       <dt>scale</dt> <dd>initial gradient scaling factor, default = 1000</dd>
       <dt>growthInterval</dt> <dd>number of batches before increasing scale factor, default: 1000</dd>
       </dl>
