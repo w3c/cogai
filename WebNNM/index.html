@@ -214,7 +214,7 @@ dense:layers
         </tr>
         <tr>
             <td><b>Multimodal Loss</b></td>
-            <td><b>Auto-Balanced:</b> Identifies sinks and learns lossWeights automatically.</td>
+            <td><b>Auto-Balanced:</b> Avoids underflow by learning relative weights automatically.</td>
             <td><b>Manual:</b> User must provide a dictionary/list of weights.</td>
             <td><b>Manual:</b> Logic is typically buried in the training_step.</td>
             <td><b>Manual:</b> Verbose implementation for multi-output loss.</td>
@@ -223,15 +223,15 @@ dense:layers
     
     <h3>Breakdown of the Heuristics</h3>
     <ul>
-<li><b>Gradient Scaling</b>: The logic explicitly checks for float16. In WebNN, leveraging float16 is one of the best ways to get speedups, but the gradients can easily fall below the minimum representable positive value of float16 ($\approx 5.96 \times 10^{-8}$). If the user enforces float16 but turns scaling off, it's almost guaranteed to stall, hence the strong warning.</li>
+<li><b>Gradient Scaling</b>: The logic explicitly checks for float16. In WebNN, leveraging float16 is one of the best ways to get speedups, but the gradients can easily fall below the minimum representable positive value of $float16$ ($\approx 5.96 \times 10^{-8}$). If the user enforces $float16$ but turns scaling off, it's almost guaranteed to stall, hence the strong warning.</li>
 <li><b>Gradient Clipping (AGC vs. Global Norm)</b>: Standard deep networks benefit from Global Norm clipping. However, if the DAG scan reveals a deep network (maxDepth > 15) but <em>no</em> normalization layers, it recommends/sets Adaptive Gradient Clipping (AGC). This is a nod to architectures like DeepMind's NFNets (Normalizer-Free Networks), where AGC is required to train without Batch Normalization.</li>
 <li><b>Regularization</b>: The system conducts a structural audit of the DAG to deploy an intelligent regularization strategy that balances <b>Generalization (L2)</b> with <b>Sparsity (L1)</b> based on the model’s "High Capacity" profile—a metric derived from depth, width, and the count of parameter-heavy operators. If a model lacks a sufficient "safety net" (a <b>Dropout Density</b> below 0.2), the system automatically enables <b>L2 Regularization</b> to prevent weight explosion and training data memorization. Furthermore, if the system detects a "Massive Input" (over 5,000 features), it injects <b>L1 Regularization</b> to act as a noise-gate, pruning irrelevant dimensions through feature selection. This dual-layered approach ensures that high-dimensional data and deep architectures remain stable and compressible, providing smart defaults for newcomers while supporting the control required by experts.</li>
-<li><b>Targeting Vulnerable float16 Ops</b>: It explicitly flags layers like softmax, log, exp, and normalizations (which calculate variance via sum-of-squares). The maximum value representable in float16 is <b>65504</b>; operations like $e^x$ easily blow past this limit, resulting in NaNs propagating backward through your DAG. Grouping the warnings prevents console spam.</li>
-<li><b>NPU Gentle Nudging</b>: By counting how many heavy parameters (matmul, conv2d) are lingering in float32, WebNNM can issue a single aggregate recommendation to the user. This bridges the gap between experts (who might want float32 precision explicitly) and newcomers (who might not realize their battery is draining because they missed an optimization opportunity).</li>
-<li><b>Dynamic Gradient Scaling Activation</b>: The gradient scaling logic is no longer binary based on a global dtype. It now calculates the <em>ratio</em> of float16 vs float32 heavy layers. If the network is primarily running its dense operations in float16, it auto-enables gradient scaling to protect the narrow dynamic range.</li>
-<li><b>Uncertainty-Based Loss Weighting</b>: Balances multimodal outputs, treating each mode's relative scale as a learnable weight ($s_i$) optimized directly within the WebNN graph. This approach is essential because mismatched loss magnitudes (e.g., MSE vs. Cross-Entropy) can cause dominant tasks to "drown out" others, especially in Float16 environments where underflow is a constant risk. By automating this balance via homoscedastic uncertainty, the model dynamically stabilizes the gradient flow without time-consuming manual tuning. This remains highly efficient for consumer NPUs as it eliminates CPU-GPU synchronization and provides per-task numerical scaling, ensuring all modalities contribute effectively to training.</li>
+<li><b>Targeting Vulnerable float16 Ops</b>: It explicitly flags layers like softmax, log, exp, and normalizations (which calculate variance via sum-of-squares). The maximum value representable in $float16$ is 65504; operations like $e^x$ easily blow past this limit, resulting in NaNs propagating backward through your DAG. Grouping the warnings prevents console spam.</li>
+<li><b>NPU Gentle Nudging</b>: By counting how many heavy parameters (matmul, conv2d) are lingering in $float32$, WebNNM can issue a single aggregate recommendation to the user. This bridges the gap between experts (who might want $float32$ precision explicitly) and newcomers (who might not realize their battery is draining because they missed an optimization opportunity).</li>
+<li><b>Dynamic Gradient Scaling Activation</b>: The gradient scaling logic is no longer binary based on a global dtype. It now calculates the <em>ratio</em> of $float16$ vs $float32$ heavy layers. If the network is primarily running its dense operations in float16, it auto-enables gradient scaling to protect the narrow dynamic range.</li>
+<li><b>Uncertainty-Based Loss Weighting</b>: Balances multimodal outputs, treating each mode's relative scale as a learnable weight ($s_i$) optimized directly within the WebNN graph. This approach is essential because mismatched loss magnitudes (e.g., MSE vs. Cross-Entropy) can cause dominant tasks to "drown out" others, especially in $float16$ environments where underflow is a constant risk. By automating this balance via homoscedastic uncertainty, the model dynamically stabilizes the gradient flow without time-consuming manual tuning. This remains highly efficient for consumer NPUs as it eliminates CPU-GPU synchronization and provides per-task numerical scaling, ensuring all modalities contribute effectively to training.</li>
    </ul>
-    <p>For consumer grade equipment, NPUs often support <em>float16</em> but not <em>float32</em>. To speed training and prolong battery life, it is desirable to enable WebNN to use the NPU where practical through the use of <em>float16</em> where this doesn't detract from training stability. WebNNM supports automatic casting and switches to <em>float32</em> for critical operations. Note that WebNNM does not support <em>bfloat16</em> although that may be added in future if and when it is added to WebNN.</p>
+    <p>For consumer grade equipment, NPUs often support $float16$ but not $float32$. To speed training and prolong battery life, it is desirable to enable WebNN to use the NPU where practical through the use of $float16$ where this doesn't detract from training stability. WebNNM supports automatic casting and switches to $float16$ for critical operations. Note that WebNNM does not support $bfloat16$ although that may be added in future if and when it is added to WebNN.</p>
   </section>
   
   <section>
@@ -413,6 +413,9 @@ window.addEventListener("load", async () => {
 });</code></pre>
     </aside>
     
+    <section>
+      <h3>Training Hyperparameters</h3>
+    
       <p>Training is similar to testing, but requires a set of training options:</p>
 
       <dl>
@@ -445,7 +448,11 @@ window.addEventListener("load", async () => {
       <dt>growthInterval</dt> <dd>number of batches before increasing scale factor, default: 1000</dd>
       </dl>
       
-      <p>The model parameters are validated after each epoch if the dataset provides a validation subset. On detecting a minima in the loss, the model weights are saved, and training continues for a given number of epochs. The training loss is reported every 50 epochs. Applications should run the testing subset when training completes.</p>
+    </section>
+    <section>
+      <h3>Validation, testing and learning rate optimizers</h3>
+      
+      <p>The model parameters are validated after each epoch if the dataset provides a validation subset. On detecting a minima in the loss, the model weights are saved, and training continues for a given number of epochs. The training loss is reported every 50 epochs. Applications should always test the model when training completes. Testing the model on independent data after training is essential to verify that the network has truly learned generalizable patterns rather than simply memorizing the training data.</p>
       
       <p>WebNNM supports a choice of learning rate optimizer. The choices all involve tracking the gradient and its momentum for each of the model parameters:</p> 
       
@@ -455,6 +462,7 @@ window.addEventListener("load", async () => {
       <dt>Nesterov Accelerated Gradient (nesterov)</dt> <dd>An advanced momentum-based optimizer that improves upon standard gradient descent by incorporating a "look-ahead" mechanism. Instead of calculating the gradient at the current parameter position, it computes the gradient at the position where the parameters will be after applying the current momentum velocity. This anticipation allows the algorithm to correct its course more effectively, leading to faster convergence and reduced oscillations.</dd>
       <dt>Stochastic Gradient Descent with Momentum (sgdm)</dt> <dd>A popular optimization algorithm that enhances standard Stochastic Gradient Descent (SGD) by adding a momentum term. This term accumulates an exponential moving average of past gradients to accelerate convergence, help navigate narrow valleys, and avoid getting stuck in shallow local minima.</dd>
       </dl>
+    </section>
     <section>
       <h3>Scouting for good starting points</h3>
       <p>Training can be rather time consuming, so it makes sense to avoid waisting time when the initial choice of model parameter values doesn't train well. WebNNM creates a scouting graph to evaluate a set of randomly chosen potential starting points  using a few heuristics. The metrics include: Loss, Gradient Ratio, and Dead Ratio. The gradient ratio detects vanishing or exploding gradients, whilst the dead ratio detects dead neurons or overconfident layers.</p>
