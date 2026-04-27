@@ -38,7 +38,7 @@
              "Web Machine Learning Working Group"
           ]
         },
-        "MLIR": {
+        "StableHLO/MLIR": {
           title: "Multi-Level Intermediate Representation",
           href: "https://mlir.llvm.org/",
           authors: [
@@ -113,7 +113,7 @@
     <h2>Introduction</h2>
     <p>This specification introduces a simple notation and API for inference, testing and training neural networks models in Web browsers using [[WebNN]] for hardware acceleration. The intent is to make developing and using neural networks easy for newcomers, whilst offering experts fine grained control.</p>
 
-    <p>WebNNM makes it easy to define neural network models in terms of blocks and layers. This includes the means to define layers as a composition of other layers, and to repeat layers using a sequence of tensor shapes. The WebNNM library is a JavaScript module that offers a simple API for declaring models, loading models from previously saved snapshots, and using them for inference, testing and training in conjunction with JavaScript modules for handling datasets. Models can be pre-trained in the cloud via WebNNM's support for export to the [[MLIR]] format. Fine-tuning in the browser then allows for privacy-friendly personalization, avoiding the need to send personal data to the cloud.</p>
+    <p>WebNNM makes it easy to define neural network models in terms of blocks and layers. This includes the means to define layers as a composition of other layers, and to repeat layers using a sequence of tensor shapes. The WebNNM library is a JavaScript module that offers a simple API for declaring models, loading models from previously saved snapshots, and using them for inference, testing and training in conjunction with JavaScript modules for handling datasets. Models can be pre-trained in the cloud via WebNNM's support for export to the [[StableHLO/MLIR]] format. Fine-tuning in the browser then allows for privacy-friendly personalization, avoiding the need to send personal data to the cloud.</p>
   </section>
 
   <section id="conformance">
@@ -225,7 +225,7 @@ dense:layers
     <ul>
 <li><b>Gradient Scaling</b>: The logic explicitly checks for float16. In WebNN, leveraging FP16 is one of the best ways to get speedups, but the gradients can easily fall below the minimum representable positive value of FP16 ($\approx 5.96 \times 10^{-8}$). If the user enforces FP16 but turns scaling off, it's almost guaranteed to stall, hence the strong warning.</li>
 <li><b>Gradient Clipping (AGC vs. Global Norm)</b>: Standard deep networks benefit from Global Norm clipping. However, if the DAG scan reveals a deep network (maxDepth > 15) but <em>no</em> normalization layers, it recommends/sets Adaptive Gradient Clipping (AGC). This is a nod to architectures like DeepMind's NFNets (Normalizer-Free Networks), where AGC is required to train without Batch Normalization.</li>
-<li><b>Regularization</b>: The system conducts a structural audit of the DAG to deploy an intelligent regularization strategy that balances <b>Generalization (L2)</b> with <b>Sparsity (L1)</b> based on the model’s "High Capacity" profile—a metric derived from depth, width, and the count of parameter-heavy operators. If a model lacks a sufficient "safety net" (a <b>Dropout Density</b> below 0.2), the system automatically enables <b>L2 Regularization</b> to prevent weight explosion and training data memorization. Furthermore, if the system detects a "Massive Input" (over 5,000 features), it injects <b>L1 Regularization</b> to act as a noise-gate, pruning irrelevant dimensions through feature selection. This dual-layered approach ensures that high-dimensional data and deep architectures remain stable and compressible, providing smart defaults for newcomers while maintaining the surgical control required by experts.</li>
+<li><b>Regularization</b>: The system conducts a structural audit of the DAG to deploy an intelligent regularization strategy that balances <b>Generalization (L2)</b> with <b>Sparsity (L1)</b> based on the model’s "High Capacity" profile—a metric derived from depth, width, and the count of parameter-heavy operators. If a model lacks a sufficient "safety net" (a <b>Dropout Density</b> below 0.2), the system automatically enables <b>L2 Regularization</b> to prevent weight explosion and training data memorization. Furthermore, if the system detects a "Massive Input" (over 5,000 features), it injects <b>L1 Regularization</b> to act as a noise-gate, pruning irrelevant dimensions through feature selection. This dual-layered approach ensures that high-dimensional data and deep architectures remain stable and compressible, providing smart defaults for newcomers while supporting the control required by experts.</li>
 <li><b>Targeting Vulnerable float16 Ops</b>: It explicitly flags layers like softmax, log, exp, and normalizations (which calculate variance via sum-of-squares). The maximum value representable in float16 is <b>65504</b>; operations like $e^x$ easily blow past this limit, resulting in NaNs propagating backward through your DAG. Grouping the warnings prevents console spam.</li>
 <li><b>NPU Gentle Nudging</b>: By counting how many heavy parameters (matmul, conv2d) are lingering in float32, WebNNM can issue a single aggregate recommendation to the user. This bridges the gap between experts (who might want float32 precision explicitly) and newcomers (who might not realize their battery is draining because they missed an optimization opportunity).</li>
 <li><b>Dynamic Gradient Scaling Activation</b>: The gradient scaling logic is no longer binary based on a global dtype. It now calculates the <em>ratio</em> of float16 vs float32 heavy layers. If the network is primarily running its dense operations in float16, it auto-enables gradient scaling to protect the narrow dynamic range.</li>
@@ -433,6 +433,9 @@ window.addEventListener("load", async () => {
       <dt>beta1</dt> <dd>an attribute for the lion and rlion optimizers, default depends on optimizer</dd>
       <dt>beta2</dt> <dd>an attribute for the rlion optimizer, default depends on optimizer</dd>
       <dt>freeze</dt> <dd>what proportion of the layers to freeze for transfer learning (0.0 to 1.0) default: 0.0</dd>
+      <dt>regularization</dt> <dd>'auto', L1', 'L2', ''L1+L2' or 'off', default: 'auto'</dd>
+      <dt>lambda1</dt> <dd>weight for L1 regularization, default: zero</dd>
+      <dt>lambda2</dt> <dd>weight for L2 regularization, default: zero</dd>
       <dt>regularization</dt> <dd>'auto', l1', 'l2', ''l1+l2' or 'off', default: 'auto'</dd>
       <dt>optimizeFor</dt> <dd>'size' or 'edge', default: 'size'</dd>
       <dt>gradientScaling</dt> <dd>'auto', 'on' or 'off', default: 'auto'</dd>
