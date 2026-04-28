@@ -223,13 +223,13 @@ dense:layers
     
     <h3>Breakdown of the Heuristics</h3>
     <ul>
-<li><b>Gradient Scaling</b>: The logic explicitly checks for float16. In WebNN, leveraging float16 is one of the best ways to get speedups, but the gradients can easily fall below the minimum representable positive value of $float16$ ($\approx 5.96 \times 10^{-8}$). If the user enforces $float16$ but turns scaling off, it's almost guaranteed to stall, hence the strong warning.</li>
+<li><b>Loss Functions</b>: Recommends the loss function based upon the final activation layer, the training label's tensor shape and data type, and an examination of a sample batch of training data. Warns when the user's choice of loss function is inappropriate due to a mismatch between the loss function and the data it will receive.</li>
+<li><b>Dynamic Gradient Scaling</b>: In WebNN, leveraging $float16$ is one of the best ways to get speedups, but the gradients can easily fall below the minimum representable positive value of $float16$ ($\approx 5.96 \times 10^{-8}$). WebNNM examines the <em>ratio</em> of $float16$ vs $float32$ heavy layers. If the network is primarily running its dense operations in $float16$, it auto-enables dynamic gradient scaling to protect the narrow dynamic range. If the user selects $float16$ but turns scaling off, it's almost guaranteed to stall, hence the strong warning.</li>
 <li><b>Gradient Clipping (AGC vs. Global Norm)</b>: Standard deep networks benefit from Global Norm clipping. However, if the DAG scan reveals a deep network (maxDepth > 15) but <em>no</em> normalization layers, it recommends/sets Adaptive Gradient Clipping (AGC). This is a nod to architectures like DeepMind's NFNets (Normalizer-Free Networks), where AGC is required to train without Batch Normalization.</li>
 <li><b>Regularization</b>: The system conducts a structural audit of the DAG to deploy an intelligent regularization strategy that balances <b>Generalization (L2)</b> with <b>Sparsity (L1)</b> based on the model’s "High Capacity" profile—a metric derived from depth, width, and the count of parameter-heavy operators. If a model lacks a sufficient "safety net" (a <b>Dropout Density</b> below 0.2), the system automatically enables <b>L2 Regularization</b> to prevent weight explosion and training data memorization. Furthermore, if the system detects a "Massive Input" (over 5,000 features), it injects <b>L1 Regularization</b> to act as a noise-gate, pruning irrelevant dimensions through feature selection. This dual-layered approach ensures that high-dimensional data and deep architectures remain stable and compressible, providing smart defaults for newcomers while supporting the control required by experts.</li>
 <li><b>Targeting Vulnerable float16 Ops</b>: It explicitly flags layers like softmax, log, exp, and normalizations (which calculate variance via sum-of-squares). The maximum value representable in $float16$ is 65504; operations like $e^x$ easily blow past this limit, resulting in NaNs propagating backward through your DAG. Grouping the warnings prevents console spam.</li>
 <li><b>NPU Gentle Nudging</b>: By counting how many heavy parameters (matmul, conv2d) are lingering in $float32$, WebNNM can issue a single aggregate recommendation to the user. This bridges the gap between experts (who might want $float32$ precision explicitly) and newcomers (who might not realize their battery is draining because they missed an optimization opportunity).</li>
-<li><b>Dynamic Gradient Scaling Activation</b>: The gradient scaling logic is no longer binary based on a global dtype. It now calculates the <em>ratio</em> of $float16$ vs $float32$ heavy layers. If the network is primarily running its dense operations in float16, it auto-enables gradient scaling to protect the narrow dynamic range.</li>
-<li><b>Uncertainty-Based Loss Weighting</b>: Balances multimodal outputs, treating each mode's relative scale as a learnable weight ($s_i$) optimized directly within the WebNN graph. This approach is essential because mismatched loss magnitudes (e.g., MSE vs. Cross-Entropy) can cause dominant tasks to "drown out" others, especially in $float16$ environments where underflow is a constant risk. By automating this balance via homoscedastic uncertainty, the model dynamically stabilizes the gradient flow without time-consuming manual tuning. This remains highly efficient for consumer NPUs as it eliminates CPU-GPU synchronization and provides per-task numerical scaling, ensuring all modalities contribute effectively to training.</li>
+<li><b>Uncertainty-Based Loss Weighting</b>: Balances multimodal/multi-task outputs, treating each output's relative scale as a learnable weight ($s_i$) optimized directly within the WebNN graph. This approach is essential because mismatched loss magnitudes (e.g., MSE vs. Cross-Entropy) can cause dominant tasks to "drown out" others, especially in $float16$ environments where underflow is a constant risk. By automating this balance via homoscedastic uncertainty, the model dynamically stabilizes the gradient flow without time-consuming manual tuning. This remains highly efficient for consumer NPUs as it eliminates CPU-GPU synchronization and provides per-task numerical scaling, ensuring all tasks contribute effectively to training.</li>
    </ul>
     <p>For consumer grade equipment, NPUs often support $float16$ but not $float32$. To speed training and prolong battery life, it is desirable to enable WebNN to use the NPU where practical through the use of $float16$ where this doesn't detract from training stability. WebNNM supports automatic casting and switches to $float16$ for critical operations. Note that WebNNM does not support $bfloat16$ although that may be added in future if and when it is added to WebNN.</p>
   </section>
@@ -430,7 +430,7 @@ window.addEventListener("load", async () => {
       <dt>warmupEpochs</dt> <dd>for cosine annealing, use 0 to auto-calculate based on total epochs, default: 0</dd>
       <dt>seeds</dt> <dd>the number of seeds to scout to evaluate potential starting points for training, default: 100</dd>
       <dt>patience</dt> <dd>the maximum number of epochs to continue after minium loss, default: 500</dd>
-      <dt>lossWeights</dt> <dd>to weight outputs when computing the epoch loss, default is 'auto' for equal weighting</dd>
+      <dt>lossWeights</dt> <dd>to weight outputs when computing the epoch loss, default is 'auto' for automatic weighting</dd>
       <dt>optimizer</dt> <dd>name of the learning rate optimizer: 'lion', 'rlion', 'nesterov', or 'sgdm', default: 'rlion'</dd>
       <dt>weightDecay</dt> <dd>an attribute for learning optimizers, default depends on optimizer</dd>
       <dt>momentumFactor</dt> <dd>an attribute for the sgdm optimizer, default depends on optimizer</dd>
@@ -440,7 +440,6 @@ window.addEventListener("load", async () => {
       <dt>regularization</dt> <dd>'auto', L1', 'L2', ''L1+L2' or 'off', default: 'auto'</dd>
       <dt>lambda1</dt> <dd>weight for L1 regularization, default: zero</dd>
       <dt>lambda2</dt> <dd>weight for L2 regularization, default: zero</dd>
-      <dt>regularization</dt> <dd>'auto', l1', 'l2', ''l1+l2' or 'off', default: 'auto'</dd>
       <dt>optimizeFor</dt> <dd>'size' or 'edge', default: 'size'</dd>
       <dt>gradientScaling</dt> <dd>'auto', 'on' or 'off', default: 'auto'</dd>
       <dt>gradientClipping</dt> <dd>'auto', 'global', 'agc' or 'off', default: 'auto'</dd>
@@ -472,8 +471,8 @@ window.addEventListener("load", async () => {
       <p>WebNNM manages training in terms of a warm up phase in which the learning rate is gradually increased to the maximum learning rate. After that the learning rate is gradually reduced using cosine annealing to a very low value when reaching the maximum number of epochs. The default value for <code>warmupEpochs</code> is 5% of the maximum number of epochs, or 1, whichever is larger.</p>
     </section>
     <section>
-      <h3>Multimodal Models</h3>
-      <p>Multimodal models combine different modalities, e.g. video and audio. Multimodal models provide superior accuracy and robustness by leveraging redundant information and cross-sensory context to resolve ambiguities that a single data source cannot. WebNNM allows you to specify the relative weights of each modality (or task) to avoid one modality drowning out the learning signals for another, especially in $float16$ environments where underflow is a constant risk. WebNNM addresses this challenge using <em>Uncertainty-Based Weighting</em>. Each task $i$ is assigned a learnable log-variance $s_i$. The total loss $L$ is computed as:$$L = \sum_i \left( \frac{1}{2e^{s_i}} L_i + \frac{1}{2}s_i \right)$$ This allows the optimizer to dynamically attenuate noisy tasks. To ensure stability in $float16$, $s_i$ is initialized at $0.0$ and a gradient scale $S \ge 128$ is recommended.</p>
+      <h3>Multimodal/Multi-task Models</h3>
+      <p>Multimodal models combine different modalities, e.g. video and audio. Multimodal models provide superior accuracy and robustness by leveraging redundant information and cross-sensory context to resolve ambiguities that a single data source cannot. Multi-task models are trained on multiple objectives from a shared representation. WebNNM allows you to specify the relative weights of each modality (or task) to avoid one modality drowning out the learning signals for another, especially in $float16$ environments where underflow is a constant risk. WebNNM addresses this challenge using <em>Uncertainty-Based Weighting</em>. Each task $i$ is assigned a learnable log-variance $s_i$. The total loss $L$ is computed as:$$L = \sum_i \left( \frac{1}{2e^{s_i}} L_i + \frac{1}{2}s_i \right)$$ This allows the optimizer to dynamically attenuate noisy tasks. To ensure stability in $float16$, $s_i$ is initialized at $0.0$ and a gradient scale $S \ge 128$ is recommended.</p>
      </p>
     </section>
     <section>
@@ -523,6 +522,75 @@ window.addEventListener("load", async () => {
     <section>
       <h3>WebNNM Model Syntax</h3>
       <p>This section defines the grammar for the model syntax.</p>
+    </section>
+    <section>
+      <h3>Loss Functions</h3>
+      <p>WebNNM supports the following loss functions and checks that they are consistent with the activation function, label format and a sample of the training data. You can set the loss function explicitly as  the <code>loss</code> property for the associated block, otherwise WebNNM will pick one for you based upon the context.</p>
+      <table>
+        <tr>
+            <td><b>Loss Function</b></td>
+            <td><b>Primary Task</b></td>
+            <td><b>Ideal Activation</b></td>
+            <td><b>Label Format</b></td>
+            <td><b>Comments</b></td>
+        </tr>
+        <tr>
+            <td><b>Mean Squared Error (MSE)</b></td>
+            <td>Regression</td>
+            <td>Linear</td>
+            <td>Continuous (Float)</td>
+            <td><b>Warning:</b> Highly sensitive to outliers. Squaring the error can cause gradients to explode if data isn&#39;t normalized.</td>
+        </tr>
+        <tr>
+            <td><b>Mean Absolute Error (MAE)</b></td>
+            <td>Regression</td>
+            <td>Linear</td>
+            <td>Continuous (Float)</td>
+            <td><b>Limitation:</b> Gradient is constant even for small errors, which can lead to &quot;jitter&quot; near the minimum. Use for robust regression with outliers.</td>
+        </tr>
+        <tr>
+            <td><b>Huber Loss</b></td>
+            <td>Regression</td>
+            <td>Linear</td>
+            <td>Continuous (Float)</td>
+            <td><b>Best Of Both:</b> Acts like MSE for small errors and MAE for large ones. Requires a `delta` hyperparameter to define the switch point.</td>
+        </tr>
+        <tr>
+            <td><b>Binary Cross-Entropy (BCE)</b></td>
+            <td>Binary / Multi-Label Classification</td>
+            <td>Sigmoid</td>
+            <td>$\{0, 1\}$ or Floats $[0, 1]$</td>
+            <td><b>Critical:</b> If using for multi-label, labels must not be mutually exclusive. For WebNN stability, recommend `BCEWithLogits`.</td>
+        </tr>
+        <tr>
+            <td><b>Categorical Cross-Entropy (CCE)</b></td>
+            <td>Multi-Class Classification</td>
+            <td>Softmax</td>
+            <td>One-Hot Vector (e.g., `[0, 1, 0]`)</td>
+            <td><b>Requirement:</b> Prediction and label shapes must match exactly. Inefficient memory-wise for high-dimensional label sets (e.g., 1000+ classes).</td>
+        </tr>
+        <tr>
+            <td><b>Sparse Categorical CE</b></td>
+            <td>Multi-Class Classification</td>
+            <td>Softmax</td>
+            <td>Integer (e.g., `3`)</td>
+            <td><b>Optimisation:</b> Exactly like CCE but mathematically handles integer indices. <b>Essential</b> for novices who haven&#39;t one-hot encoded their data.</td>
+        </tr>
+        <tr>
+            <td><b>KL Divergence</b></td>
+            <td>Distribution Matching</td>
+            <td>Softmax</td>
+            <td>Probabilities (Sum to $1.0$)</td>
+            <td><b>Expert Niche:</b> Used when labels are a probability distribution rather than a hard class. <b>Warning:</b> Fails if any target probability is exactly $0$.</td>
+        </tr>
+        <tr>
+            <td><b>Focal Loss</b></td>
+            <td>Imbalanced Classification</td>
+            <td>Sigmoid / Softmax</td>
+            <td>$\{0, 1\}$ or One-Hot</td>
+            <td><b>Expert Tip:</b> Down-weights &quot;easy&quot; examples to focus on &quot;hard&quot; ones. Recommend if `analyzeLabels()` detects $&gt; 90\%$ class imbalance.</td>
+        </tr>
+    </table>
     </section>
     <section>
       <h3>WebNNM Snapshot Binary Format</h3>
