@@ -531,69 +531,80 @@ window.addEventListener("load", async () => {
     <table>
     <tr>
         <td><b>Loss Function</b></td>
-        <td><b>Mathematical Form (L)</b></td>
-        <td><b>Expert System Guidance</b></td>
+        <td><b>Mathematical Form (Loss)</b></td>
+        <td><b>Explanation</b></td>
+        <td><b>Best Suited For</b></td>
         <td><b>WebNN Implementation Primitives</b></td>
     </tr>
     <tr>
         <td><b>Mean Squared Error (MSE)</b></td>
         <td>$\frac{1}{n}\sum(y - \hat{y})^2$</td>
-        <td><b>Standard Regression:</b> Default for continuous targets. Sensitive to outliers.</td>
+        <td>Calculates the average of the squares of the errors</td>
+        <td><b>Standard Regression:</b> Best for tasks where targets are continuous values and you want to penalize large errors more heavily than small ones, e.g. prediction house prices.</td>
         <td>`sub` $\rightarrow$ `pow(2)` $\rightarrow$ `reduceMean`</td>
     </tr>
     <tr>
         <td><b>Mean Absolute Error (MAE)</b></td>
         <td>$\frac{1}{n}\sum\|y - \hat{y}$</td>
-        <td><b>Robust Regression:</b> Better for datasets with noisy labels or extreme outliers.</td>
+        <td>Calculates the average of the absolute difference between targets and predictions</td>
+        <td><b>Robust Regression:</b> Ideal when your dataset contains significant outliers as it is less sensitive to extreem values than MSE.</td>
         <td>`sub` $\rightarrow$ `abs` $\rightarrow$ `reduceMean`</td>
     </tr>
     <tr>
         <td><b>Binary Cross-Entropy (BCE)</b></td>
         <td>$-\frac{1}{n}\sum [y\ln(p) + (1-y)\ln(1-p)]$</td>
+        <td>Measures the performance of a classification model whos output is a probability value between 0 and 1</td>
         <td><b>Binary Classification:</b> Used for single-label or multi-label &quot;yes/no&quot; tasks.</td>
         <td>`log`, `mul`, `neg`, `sub`</td>
     </tr>
     <tr>
         <td><b>Categorical Cross-Entropy (CCE)</b></td>
         <td>$-\sum y_i \ln(\hat{y}_i)$</td>
+        <td>Measures the difference between two probability distributions</td>
         <td><b>Multi-class Classification:</b> Standard for &quot;one-of-many&quot; classification. Expects Softmax inputs.</td>
         <td>`log`, `mul`, `reduceSum`, `neg`</td>
     </tr>
     <tr>
         <td><b>CCE with Logits (CCEL)</b></td>
         <td>$-\sum y_i \cdot {LogSoftmax}(\hat{y}_i)$</td>
+        <td>Combines Softmax activation and Cross-Entropy into a single stable step</td>
         <td><b>Stability Choice:</b> Expert system should force this if `NPU` (FP16) is detected to prevent overflow.</td>
         <td><b>`LogSoftmaxNode`</b> $\rightarrow$ `mul` $\rightarrow$ `neg`</td>
     </tr>
     <tr>
         <td><b>Sparse Categorical Cross-Entropy (SCE)</b></td>
         <td>$-\ln(\hat{y}_{target})$</td>
+        <td><b>Memory-Efficient Multi-class:</b> Identical to CCE but accepts integer labels (e.g. 3) instead of one-hot vectors ([0,0,1,0])</td>
         <td><b>Memory Efficient:</b> For use when labels are integer indices rather than one-hot vectors.</td>
         <td>`gather` (to select logits) $\rightarrow$ `neg`</td>
     </tr>
     <tr>
-        <td><b>Huber Loss (HL)</b></td>
+        <td><b>Hinge Loss (HIL)</b></td>
+        <td>$\sum \max(0, 1 - y_i \cdot \hat{y}_i)$</td>
+        <td><b>Support Vector Machines:</b> A &quot;maximum-margin&quot; loss function</td>
+        <td>Used for SVM-style classification; robust to small variations, where you want a safety margin between class boundaries.</td>
+        <td>`mul`, `sub`, `relu`</td>
+    </tr>
+    <tr>
+        <td><b>Huber Loss (HUL)</b></td>
         <td>$\begin{cases} \frac{1}{2}(y-\hat{y})^2 &amp; \text{if } \text{error} \leq \delta \\ \delta(\|y-\hat{y}\| - \frac{1}{2}\delta) &amp; \text{else} \end{cases}$</td>
+        <td><b>General Purpose Regression:</b> Acts as MSE for small errors and MAE for large errors</td>
         <td><b>Balanced Regression:</b> Switch to this if `scout` detects high variance in gradients.</td>
         <td>`sub`, `abs`, `where`, `mul`</td>
     </tr>
     <tr>
-        <td><b>Focal Loss (FL)</b></td>
-        <td>$-\alpha(1 - p_t)^\gamma \ln(p_t)$</td>
-        <td><b>Imbalanced Data:</b> Recommended if the `dataset` class counts are skewed.</td>
-        <td>`pow`, `sub`, `log`, `mul`</td>
-    </tr>
-    <tr>
         <td><b>KL Divergence (KLD)</b></td>
         <td>$\sum y_i \ln(\frac{y_i}{\hat{y}_i})$</td>
-        <td><b>Distribution Matching:</b> Used for Knowledge Distillation or VAEs.</td>
+        <td><b>Distribution Matching:</b> Measures how a probability distribution approximates a reference distribution</td>
+        <td>Used in Variational Autoencoders (VAEs) and Knowledge Distillation</td>
         <td>`div` (or `sub` of logs) $\rightarrow$ `mul`</td>
     </tr>
     <tr>
-        <td><b>Hinge Loss (HL)</b></td>
-        <td>$\sum \max(0, 1 - y_i \cdot \hat{y}_i)$</td>
-        <td><b>Max-Margin:</b> Used for &quot;SVM-style&quot; classification; robust to small variations.</td>
-        <td>`mul`, `sub`, `relu`</td>
+        <td><b>Focal Loss (FOL)</b></td>
+        <td>$-\alpha(1 - p_t)^\gamma \ln(p_t)$</td>
+        <td>Adds a $(1 - p_t)^\gamma$ factor to the Cross-Entropy loss</td>
+        <td><b>Imbalanced Data:</b> Recommended if the `dataset` class counts are skewed, where the model needs to focus on harder examples rather than on the easier ones.</td>
+        <td>`pow`, `sub`, `log`, `mul`</td>
     </tr>
     </table>
     </section>
