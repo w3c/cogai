@@ -505,9 +505,70 @@ window.addEventListener("load", async () => {
   <section>
     <h2>Supported Operators</h2>
     <p>This section lists the WebNN operators supported by WebNNM along with additional operators, e.g. for skip connections and transformers, that are internally translated into WebNN operators.</p>
-    
+
     <section>
-    </section>
+    <h3>WebNNM Operators</h3>
+    <p>Note that you can write <code>batchNorm</code> in place of <code>batchNormalization</code>, and likewise <code>instanceNorm</code> and <code>layerNorm</code>.</p>
+    <table>
+    <tr>
+        <td><b>Category</b></td>
+        <td><b>WebNN Operators</b></td>
+    </tr>
+    <tr>
+        <td><b>Tensor creation</b></td> 
+        <td>input, constant</td>   
+    </tr>
+    <tr>
+        <td><b>Tensor manipulation</b></td>    
+        <td>concat, expand, gather, gatherElements, scatterElements, gatherND, scatterND, where, pad, reshape, slice, split, transpose, resample2d, reverse, tile, triangular</td>   
+    </tr>
+    <tr>
+        <td><b>Tensor quantization</b></td>    
+        <td>quantizeLinear, dequantizeLinear</td>   
+    </tr>
+    <tr>
+        <td><b>Tensor casting</b></td>    
+        <td>cast</td>   
+    </tr>
+    <tr>
+        <td><b>Mathematics</b></td>    
+        <td>add, sub, mul, div, max, min, clamp, pow, abs, ceil, cos, erf, exp, floor, identity, log, neg, reciprocal, sin, sqrt, tan, tanh, sign, clamp</td>   
+    </tr>
+    <tr>
+        <td><b>Logical</b></td>    
+        <td>equal, notEqual, greater, greaterOrEqual, lesser, lesserOrEqual, logicalNot, logicalAnd, logicalOr, logicalXor</td>   
+    </tr>
+    <tr>
+        <td><b>Matrix manipulation</b></td>    
+        <td>matmul, gemm</td>   
+    </tr>
+    <tr>
+        <td><b>Convolution</b></td>    
+        <td>conv2d, convTranspose2d</td>   
+    </tr>
+    <tr>
+        <td><b>Pooling</b></td>    
+        <td>averagePool2d, l2Pool2d, maxPool2d</td>   
+    </tr>
+    <tr>
+        <td><b>Activation</b></td>    
+        <td>clamp, elu, gelu, hardSigmoid, hardSwish, leakyRelu, linear, prelu, relu, sigmoid, softmax, softplus, softsign, tanh</td>   
+    </tr>
+    <tr>
+        <td><b>Normalization</b></td>    
+        <td>batchNormalization, instanceNormalization, layerNormalization</td>   
+    </tr>
+    <tr>
+        <td><b>Reduction</b></td>    
+        <td>argMin, argMax, reduceL1, reduceL2, reduceLogSum, reduceLogSumExp, reduceMax, reduceMean, reduceMin, reduceProduct, reduceSum, reduceSumSquare, cumulativeSum</td>   
+    </tr>
+    <tr>
+        <td><b>Recurrent Neural Networks</b></td>    
+        <td>gruCell, gru, lstmCell, lstm</td>   
+    </tr>
+    </table>    
+
+    <section>
     <h3>WebNNM Operators not directly supported by WebNN</h3>
     <p>Some common operators are not built into WebNN and are compiled into WebNN sub-graphs. These include:</p>
     <dl>
@@ -534,77 +595,66 @@ window.addEventListener("load", async () => {
         <td><b>Mathematical Form (Loss)</b></td>
         <td><b>Explanation</b></td>
         <td><b>Best Suited For</b></td>
-        <td><b>WebNN Implementation Primitives</b></td>
     </tr>
     <tr>
         <td><b>Mean Squared Error (MSE)</b></td>
         <td>$\frac{1}{n}\sum(y - \hat{y})^2$</td>
         <td>Calculates the average of the squares of the errors</td>
         <td><b>Standard Regression:</b> Best for tasks where targets are continuous values and you want to penalize large errors more heavily than small ones, e.g. prediction house prices.</td>
-        <td>`sub` $\rightarrow$ `pow(2)` $\rightarrow$ `reduceMean`</td>
     </tr>
     <tr>
         <td><b>Mean Absolute Error (MAE)</b></td>
         <td>$\frac{1}{n}\sum\|y - \hat{y}$</td>
         <td>Calculates the average of the absolute difference between targets and predictions</td>
         <td><b>Robust Regression:</b> Ideal when your dataset contains significant outliers as it is less sensitive to extreem values than MSE.</td>
-        <td>`sub` $\rightarrow$ `abs` $\rightarrow$ `reduceMean`</td>
     </tr>
     <tr>
         <td><b>Binary Cross-Entropy (BCE)</b></td>
         <td>$-\frac{1}{n}\sum [y\ln(p) + (1-y)\ln(1-p)]$</td>
         <td>Measures the performance of a classification model whos output is a probability value between 0 and 1</td>
         <td><b>Binary Classification:</b> Used for single-label or multi-label &quot;yes/no&quot; tasks.</td>
-        <td>`log`, `mul`, `neg`, `sub`</td>
     </tr>
     <tr>
         <td><b>Categorical Cross-Entropy (CCE)</b></td>
         <td>$-\sum y_i \ln(\hat{y}_i)$</td>
         <td>Measures the difference between two probability distributions</td>
         <td><b>Multi-class Classification:</b> Standard for &quot;one-of-many&quot; classification. Expects Softmax inputs.</td>
-        <td>`log`, `mul`, `reduceSum`, `neg`</td>
     </tr>
     <tr>
         <td><b>CCE with Logits (CCEL)</b></td>
         <td>$-\sum y_i \cdot {LogSoftmax}(\hat{y}_i)$</td>
         <td>Combines Softmax activation and Cross-Entropy into a single stable step</td>
         <td><b>Stability Choice:</b> Expert system should force this if `NPU` (FP16) is detected to prevent overflow.</td>
-        <td><b>`LogSoftmaxNode`</b> $\rightarrow$ `mul` $\rightarrow$ `neg`</td>
     </tr>
     <tr>
         <td><b>Sparse Categorical Cross-Entropy (SCE)</b></td>
         <td>$-\ln(\hat{y}_{target})$</td>
         <td><b>Memory-Efficient Multi-class:</b> Identical to CCE but accepts integer labels (e.g. 3) instead of one-hot vectors ([0,0,1,0])</td>
         <td><b>Memory Efficient:</b> For use when labels are integer indices rather than one-hot vectors.</td>
-        <td>`gather` (to select logits) $\rightarrow$ `neg`</td>
     </tr>
     <tr>
         <td><b>Hinge Loss (HIL)</b></td>
         <td>$\sum \max(0, 1 - y_i \cdot \hat{y}_i)$</td>
         <td><b>Support Vector Machines:</b> A &quot;maximum-margin&quot; loss function</td>
         <td>Used for SVM-style classification; robust to small variations, where you want a safety margin between class boundaries.</td>
-        <td>`mul`, `sub`, `relu`</td>
     </tr>
     <tr>
         <td><b>Huber Loss (HUL)</b></td>
         <td>$\begin{cases} \frac{1}{2}(y-\hat{y})^2 &amp; \text{if } \text{error} \leq \delta \\ \delta(\|y-\hat{y}\| - \frac{1}{2}\delta) &amp; \text{else} \end{cases}$</td>
         <td><b>General Purpose Regression:</b> Acts as MSE for small errors and MAE for large errors</td>
         <td><b>Balanced Regression:</b> Switch to this if `scout` detects high variance in gradients.</td>
-        <td>`sub`, `abs`, `where`, `mul`</td>
     </tr>
     <tr>
         <td><b>KL Divergence (KLD)</b></td>
         <td>$\sum y_i \ln(\frac{y_i}{\hat{y}_i})$</td>
         <td><b>Distribution Matching:</b> Measures how a probability distribution approximates a reference distribution</td>
         <td>Used in Variational Autoencoders (VAEs) and Knowledge Distillation</td>
-        <td>`div` (or `sub` of logs) $\rightarrow$ `mul`</td>
     </tr>
     <tr>
         <td><b>Focal Loss (FOL)</b></td>
         <td>$-\alpha(1 - p_t)^\gamma \ln(p_t)$</td>
         <td>Adds a $(1 - p_t)^\gamma$ factor to the Cross-Entropy loss</td>
         <td><b>Imbalanced Data:</b> Recommended if the `dataset` class counts are skewed, where the model needs to focus on harder examples rather than on the easier ones.</td>
-        <td>`pow`, `sub`, `log`, `mul`</td>
     </tr>
     </table>
     </section>
