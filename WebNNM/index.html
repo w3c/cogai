@@ -508,7 +508,6 @@ window.addEventListener("load", async () => {
 
     <section>
     <h3>WebNNM Operators</h3>
-    <p>Note that you can write <code>batchNorm</code> in place of <code>batchNormalization</code>, and likewise <code>instanceNorm</code> and <code>layerNorm</code>.</p>
     <table>
     <tr>
         <td><b>Category</b></td>
@@ -567,7 +566,8 @@ window.addEventListener("load", async () => {
         <td>gruCell, gru, lstmCell, lstm</td>   
     </tr>
     </table>    
-
+    <p>Note that you can write <code>batchNorm</code> in place of <code>batchNormalization</code>, and likewise <code>instanceNorm</code> and <code>layerNorm</code>.</p>
+    </section>
     <section>
     <h3>WebNNM Operators not directly supported by WebNN</h3>
     <p>Some common operators are not built into WebNN and are compiled into WebNN sub-graphs. These include:</p>
@@ -578,6 +578,7 @@ window.addEventListener("load", async () => {
     <dt>reduceVariance(axes, keepDimensions=true)</dt><dd>This computes variance ($\sigma^2 = E[X^2] - (E[X])^2$) and is compiled using the WebNN <em>reduceMean</em> operator.</dd>
     <dt>logSoftmax()</dt><dd>Used for cross entropy loss with logits, this provides a numerically more stable alternative to applying a <em>log</em> operation after a <em>softmax</em> operation. We rewrite the Log-Softmax mathematically to be much more stable. By subtracting the maximum value $M$ from the input vector, we ensure that the largest value being exponentiated is $0$ ($e^0 = 1$).The stable formula for Log-Softmax is:$$\text{Log-Softmax}(x_i) = (x_i - M) - \log\left(\sum e^{x_j - M}\right)$$Where $M = \max(x)$.</dd>
     </dl>
+    </section>
   </section> 
   <section id="index" class="appendix">
     <h2>Appendices</h2>
